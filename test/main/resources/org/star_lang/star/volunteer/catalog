@@ -1,0 +1,45 @@
+/**
+ * 
+ * Copyright (C) 2013 Starview Inc
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation; either version
+ * 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library;
+ * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * @author fgm
+ *
+ */
+catalog is catalog{
+  content is hash{
+    "volunteers" -> "volunteers.star";
+    "ports" -> "ports.star";
+    "voltest"->"voltest.star";
+    "voltest2"->"voltest2.star";
+    "voltest3"->"voltest3.star";
+    "voltwoway"->"voltest.star";
+    "volrequest"->"volrequest.star";
+    "volrequest2"->"volrequest2.star";
+    "volrequest3"->"volrequest3.star";
+    "volquery"->"volquery.star";
+    "volOnewayRequest"->"volOnewayRequest.star";
+    "voltwowayrequest"->"voltwowayrequest.star";
+    "voltwowayporttest"->"voltwowayporttest.star";
+    "voltwowayquery"->"voltwowayquery.star";
+    "volallquery"->"volallquery.star";
+    "voltwowaymulti"->"voltwowaymulti.star";
+    "volmultinotify"->"volmultinotify.star";
+    "volmultirequest"->"volmultirequest.star";
+    "voltestrels"->"voltestrels.star";
+    "person"->"personVol.star";
+    "user"->"user.star";
+    "badreqvol"->"badreqvol.star";
+  }
+}

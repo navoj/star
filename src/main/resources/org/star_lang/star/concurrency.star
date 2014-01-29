@@ -1,0 +1,162 @@
+/**
+ * implement syntax layer over cml functions
+ * Copyright (C) 2013 Starview Inc
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation; either version
+ * 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library;
+ * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * @author fgm
+ *
+ */
+import compute;
+import task;
+import cml;
+private import strings;
+private import base;
+private import actors;
+
+-- support the form "wait for <rendezvous>"
+
+#prefix("wait for",999);
+#prefix("choose",980);
+#prefix("wrap",910);
+#prefix("guard",900);
+#prefix("incoming",900);
+#prefix("put",910);
+#infix("into",850);
+#prefix("timeout",700);
+#prefix("at",700);
+#prefix("always",700);
+
+#choose ?E :: expression :- E::rendezvous ## {
+  # ?L or ?R :: rendezvous :- L::rendezvous :& R::rendezvous;
+  # (?L) :: rendezvous :- L::rendezvous;
+  # always ?E :: rendezvous :- E::expression;
+  # never :: rendezvous;
+  # timeout ?T :: rendezvous :- T::expression;
+  # at ?T :: rendezvous :- T::expression;
+  # choose ?E :: rendezvous :- E::rendezvous;
+  # incoming ?Ch :: rendezvous :- Ch::expression;
+  # put ?M on ?Ch :: rendezvous :- M::expression :& Ch::expression;
+  # wrap ?R in ?P -> ?T :: rendezvous :- P::pattern :& R::rendezvous :& T::expression;
+  # wrap ?R in ?T :: rendezvous :- R::rendezvous :& T::expression;
+  # guard ?R :: rendezvous :- R::expression;
+  # ?R :: rendezvous :- R::expression;
+};
+
+#wait for ?E :: expression :- choose E :: expression;
+
+#choose ?Rendez ==> rEnder(Rendez) ## {
+  #rEnder(?L or ?R) ==> _choose2(rEnder(L),rEnder(R));
+  #rEnder((?R)) ==> rEnder(R);
+  #rEnder(always ?X) ==> alwaysRv(X);
+  #rEnder(never) ==> neverRv;
+  #rEnder(timeout ?T) ==> timeoutRv(T);
+  #rEnder(at ?T) ==> atDateRv(T);
+  #rEnder(choose ?R) ==> rEnder(R);
+  #rEnder(incoming ?Ch) ==> recvRv(Ch);
+  #rEnder(put ?M on ?Ch) ==> sendRv(Ch,M);
+  #rEnder(wrap ?R in ?P->?T) ==> wrapRv(rEnder(R),(function(P) is T));
+  #rEnder(wrap ?R in ?F) ==> wrapRv(rEnder(R),F);
+  #rEnder(guard ?R) ==> guardRv(R);
+  #rEnder(?E) ==> E;
+};
+
+#wait for ?R ==> await(choose R);
+
+type saNotifyFun of %t is alias of ((%t)=>()) => rendezvous of ();
+type saRequestFun of %t is alias of (for all %r such that ((%t)=>%r) => rendezvous of %r);
+  
+type concActor of %t is conAct0r(saNotifyFun of %t,saRequestFun of %t) or nonConActor;
+
+-- performing a speech action on a concActor involves sending the speech function
+-- to the underlying background server task and waiting for a reply.
+  
+implementation speech over concActor of %t determines (%t,task) is {
+  _query(conAct0r(_,SAfun),Qf,_,_) is await(SAfun(Qf));
+  _request(conAct0r(_,SAfun),Qf,_,_) is await(SAfun(Qf));
+  _notify(conAct0r(Notifyfun,_),Np) is await(Notifyfun(Np));
+};
+
+-- #prefix("concurrent actor",1999,2000); -- this is an impossible operator. Defined for the token.
+#token("concurrent actor");
+
+#concurrent actor{?Defs} :: expression :- Defs ;* statement;
+  
+#concurrent actor {?Defs} ==> actorHead(actorTheta(Defs));
+
+-- convenience to allow type declaration concurrent actor of {}
+#concurrent actor of ?T :: typeExpression :- T;*typeExpression;
+#concurrent actor of ?T ==> concActor of T;
+
+-- The trRequest constructor exposes the core handler function for concurrent actors 
+private type tractorSa is trRequest{
+    chnlType has kind type;
+    queryFun has type ()=>chnlType;
+    chnl has type channel of chnlType}
+  or trNotify(()=>(),channel of ());
+ 
+actorHead(Defs) is let{
+  actorChnl is channel();
+
+  -- standard speech action processing function    
+  speechFun(QF) is valof{
+    ReplyChnl is channel();
+    
+    -- send the request to the actor's server task
+    ignore background task { perform await(sendRv(actorChnl,trRequest{ type %t counts as chnlType; queryFun() is QF(Defs); chnl is ReplyChnl}))};
+     
+    valis recvRv(ReplyChnl);
+  };
+  
+  notifyFun(QF) is valof{
+     ReplyChnl is channel();
+    
+    -- send the notify to the actor's server task
+    ignore background task { perform await(sendRv(actorChnl,trNotify((procedure() do QF(Defs)),ReplyChnl)))};
+     
+    valis choose incoming ReplyChnl;
+  };
+  
+  loop() is task{
+    while true do{
+      case valof recv(actorChnl) in {
+        trRequest{queryFun = QF; chnl=RepChnl} do {
+          perform wait for put QF() on RepChnl; 
+        }
+        trNotify(QF,RepChnl) do {
+          perform wait for put () on RepChnl; -- reply immediately, before executing the notify itself 
+          QF();
+        }
+      };
+    }
+  };
+      
+  { ignore background loop() };
+} in conAct0r(notifyFun,speechFun);
+
+-- support the form select { <selectionRules> }
+#select{?R} :: action :- R;*selectionAction ## {
+  when ?C on ?Evt do ?Action :: selectionAction :- C::condition :& Evt::expression :& Action::action;
+  on ?Evt do ?Action :: selectionAction :- Evt::expression :& Action :: action;
+};
+#select{?R} :: expression :- R;*selectionRule ## {
+  #when ?C on ?Evt is ?Exp :: selectionRule :- C::condition :& Evt::expression :& Exp :: expression;
+  #on ?Evt is ?Exp :: selectionRule :- Evt::expression :& Exp::expression;
+};
+
+#select{?R} ==> wait for chooseRv(list of {ruleConvert(R)}) ## {
+  #when ?C on ?Evt do ?Action ==> guardRv(task{ if C then valis wrapRv(Evt,(procedure(_) do Action)) else valis neverRv });
+  #on ?Evt do ?Action ==> wrapRv(Evt,(procedure(_) do Action));
+  #when ?C on ?Evt is ?Exp ==> guardRv(task{ if C then valis wrapRv(Evt,fn _ => Exp) else valis neverRv});
+  #on ?Evt is ?Exp ==> wrapRv(Evt,fn _ => Exp); 
+};

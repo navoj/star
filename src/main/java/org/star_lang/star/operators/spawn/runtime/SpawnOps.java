@@ -1,0 +1,227 @@
+package org.star_lang.star.operators.spawn.runtime;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RecursiveAction;
+
+import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.operators.CafeEnter;
+import org.star_lang.star.operators.spawn.runtime.SpawnIdent.ThreadId;
+
+import com.starview.platform.data.EvaluationException;
+import com.starview.platform.data.IFunction;
+import com.starview.platform.data.IValue;
+import com.starview.platform.data.type.IType;
+import com.starview.platform.data.type.Location;
+import com.starview.platform.data.type.StandardTypes;
+import com.starview.platform.data.type.TypeVar;
+import com.starview.platform.data.type.UniversalType;
+import com.starview.platform.data.value.Factory;
+
+/**
+ * 
+ * Copyright (C) 2013 Starview Inc
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation; either version
+ * 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library;
+ * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * @author fgm
+ *
+ */
+public class SpawnOps
+{
+
+  public static class SpawnExp implements IFunction
+  {
+
+    public static final String name = "__spawnExp";
+
+    @CafeEnter
+    public static SpawnIdent enter(IFunction function)
+    {
+      FutureTask<IValue> task = new FutureTask<IValue>(new Task(function));
+      Task.scheduleFuture(task);
+
+      return new ThreadId(TypeUtils.getFunResultType(function.getType()), task);
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException
+    {
+      return enter((IFunction) args[0]);
+    }
+
+    @Override
+    public IType getType()
+    {
+      return type();
+    }
+
+    public static IType type()
+    {
+      TypeVar tv = new TypeVar();
+      return new UniversalType(tv, TypeUtils.functionType(TypeUtils.functionType(tv), TypeUtils.threadType(tv)));
+    }
+  }
+
+  public static class SpawnAction implements IFunction
+  {
+    public static final String name = "__spawnAction";
+
+    @CafeEnter
+    public static SpawnIdent enter(IFunction function)
+    {
+      FutureTask<IValue> task = new FutureTask<IValue>(new Task(function));
+      Task.scheduleFuture(task);
+
+      return new ThreadId(StandardTypes.voidType, task);
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException
+    {
+      return enter((IFunction) args[0]);
+    }
+
+    @Override
+    public IType getType()
+    {
+      return type();
+    }
+
+    public static IType type()
+    {
+      return TypeUtils.functionType(TypeUtils.procedureType(), TypeUtils.threadType(StandardTypes.voidType));
+    }
+  }
+
+  public static class SpawnQueuedAction implements IFunction
+  {
+
+    public static final String name = "__spawnQueuedAction";
+
+    @CafeEnter
+    public static IValue enter(final IFunction function)
+    {
+      @SuppressWarnings("serial")
+      ForkJoinTask<Void> task = new RecursiveAction() {
+        @Override
+        protected void compute()
+        {
+          try {
+            function.enter();
+          } catch (Exception t) {
+            System.out.println("Task failed due to an unhandled exception: " + t.toString());
+            t.printStackTrace();
+            throw new RuntimeException(t);
+          }
+        }
+      };
+      Task.scheduleFutureQueued(task);
+
+      return StandardTypes.unit;
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException
+    {
+      return enter((IFunction) args[0]);
+    }
+
+    @Override
+    public IType getType()
+    {
+      return type();
+    }
+
+    public static IType type()
+    {
+      return TypeUtils.procedureType(TypeUtils.procedureType());
+    }
+  }
+
+  public static class SpawnDelayedAction implements IFunction
+  {
+
+    public static final String name = "__spawnDelayedAction";
+
+    @CafeEnter
+    public static SpawnIdent enter(IFunction function, long delayInMS)
+    {
+      FutureTask<IValue> task = new FutureTask<IValue>(new Task(function));
+      Task.scheduleFutureDelayed(task, delayInMS);
+
+      return new ThreadId(StandardTypes.voidType, task);
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException
+    {
+      return enter((IFunction) args[0], Factory.lngValue(args[1]));
+    }
+
+    @Override
+    public IType getType()
+    {
+      return type();
+    }
+
+    public static IType type()
+    {
+      return TypeUtils.functionType(TypeUtils.procedureType(), StandardTypes.rawLongType, TypeUtils
+          .threadType(StandardTypes.voidType));
+    }
+  }
+
+  public static class Waitfor implements IFunction
+  {
+    public static final String name = "__waitforThread";
+
+    @CafeEnter
+    public static IValue enter(SpawnIdent spawn) throws EvaluationException
+    {
+      if (spawn instanceof ThreadId) {
+        ThreadId threadId = (ThreadId) spawn;
+        try {
+          return threadId.getValue().get();
+        } catch (InterruptedException e) {
+          throw new EvaluationException("spawned action: " + spawn + " interrupted");
+        } catch (ExecutionException e) {
+          if (e.getCause() instanceof EvaluationException)
+            throw (EvaluationException) e.getCause();
+          else
+            throw new EvaluationException(e.getMessage(), Location.nullLoc);
+        }
+      } else
+        throw new EvaluationException("cannot waitfor a non-thread");
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException
+    {
+      return enter((SpawnIdent) args[0]);
+    }
+
+    @Override
+    public IType getType()
+    {
+      return type();
+    }
+
+    public static IType type()
+    {
+      TypeVar tv = new TypeVar();
+      return new UniversalType(tv, TypeUtils.functionType(TypeUtils.threadType(tv), tv));
+    }
+  }
+}

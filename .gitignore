@@ -1,0 +1,4 @@
+# Ignore build output files
+target/
+.DS_Store
+

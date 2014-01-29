@@ -1,0 +1,5 @@
+catalog is catalog{
+  content is hash{
+	"fiberControlTest"->"fiberControlTest.star";
+  }
+}

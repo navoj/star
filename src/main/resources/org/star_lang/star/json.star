@@ -1,0 +1,336 @@
+/*
+ * 
+ * Copyright (C) 2013 Starview Inc
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation; either version
+ * 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library;
+ * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * @author fgm
+ */
+private import base;
+private import strings;
+private import sequences;
+private import option;
+private import arrays;
+private import cons;
+private import maps;
+private import iterable;
+private import compute;
+private import arithmetic;
+private import casting;
+private import folding;
+
+  -- implement an json type
+  -- intended to represent flexible datasets such as those found in JSON and XML
+
+  type json is 
+      iFalse or
+      iTrue or
+      iNull or
+      iColl(map of (string,json)) or
+      iSeq(list of json) or
+      iText(string) or
+      iNum(long) or
+      iFlt(float);
+
+  type infoPathKey is kString(string) or kInt(integer);
+  type infoPath is alias of list of infoPathKey;
+
+  implementation indexable over json determines (infoPath,json) is {
+    _index(I,K) is find(K,I);
+    _set_indexed(I,K,V) is updte(K,I,V);
+    _delete_indexed(I,K) is remve(K,I);
+  } using {
+    find has type (infoPath,json)=>option of json;
+    find(list of {},I) is some(I);
+    find(list of {Ky;..Keys},I) is 
+	case Ky in {
+	  kString(K) where I matches iColl(M) and M[K] matches S is find(Keys,S);
+	  kInt(Ix) where I matches iSeq(L) and L[Ix] matches S is find(Keys,S);
+	  _ default is none
+	};
+
+    updte has type (infoPath,json,json)=>json;
+    updte(list of {},I,_) is raise "path not valid";
+    updte(list of {Ky},I,V) is case Ky in {
+      kString(K) where I matches iColl(M) is iColl(M[K->V]);
+      kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->V]);
+      _ default is raise "illegal key $Ky"
+    };
+    updte(list of {Ky;..Keys},I,V) is case Ky in {
+      kString(K) where I matches iColl(M) is iColl(M[K->updte(Keys,M[K],V)]);
+      kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->updte(Keys,L[Ix],V)]);
+      _ default is raise "illegal key $Ky";
+    }
+
+    remve has type (infoPath,json)=>json;
+    remve(list of {},I) is I;
+    remve(list of {Ky},I) is case Ky in {
+      kString(K) where I matches iColl(M) is iColl(_delete_indexed(M,K));
+      kInt(Ix) where I matches iSeq(L) is iSeq(_delete_indexed(L,Ix));
+      _ default is raise "illegal key $Ky";
+    }
+    remve(list of {Ky;..Keys},I) is case Ky in {
+      kString(K) where I matches iColl(M) is iColl(_set_indexed(M,K,remve(Keys,M[K])));
+      kInt(Ix) where I matches iSeq(L) is iSeq(_set_indexed(L,Ix,remve(Keys,L[Ix])));
+      _ default is raise "illegal key $Ky";
+    }
+  }
+
+  implementation iterable over json determines json is {
+    _iterate(I,F,S) is infoIterate(I,F,S);
+  } using {
+    infoIterate(I,F,S) is let{
+      IterateInfo(_,NoMore(X)) is NoMore(X);
+      IterateInfo(iColl(M),St) is _iterate(M,IterateInfo,St);
+      IterateInfo(iSeq(L),St) is _iterate(L,IterateInfo,St);
+      IterateInfo(Info,St) default is F(Info,St);
+    } in IterateInfo(I,S);
+  }
+
+  implementation indexed_iterable over json determines (infoPath,json) is {
+    _ixiterate(I,F,St) is indexInfoIterate(I,F,St,list of {});
+  } using {
+    indexInfoIterate(_,_,NoMore(X),_) is NoMore(X);
+    indexInfoIterate(iColl(M),F,S,P) is _ixiterate(M,pathFun,S) using {
+      pathFun(Ky,El,St) is indexInfoIterate(El,F,St,list of {P..;kString(Ky)});
+    };
+    indexInfoIterate(iSeq(L),F,S,P) is _ixiterate(L,pathFun,S) using {
+      pathFun(Ix,El,St) is indexInfoIterate(El,F,St,list of {P..;kInt(Ix)});
+    }
+    indexInfoIterate(I,F,St,P) default is F(P,I,St);
+  };
+
+  implementation pPrint over json is {
+    ppDisp(iColl(M)) is ppSequence(2, cons of {ppStr("{"); ppSequence(0,dispContent(M)); ppStr("}")});
+    ppDisp(iSeq(L)) is ppSequence(0, cons of {ppStr("["); ppSequence(0,dispSeq(L)); ppStr("]")});
+    ppDisp(iText(S)) is ppStr(display(S));
+    ppDisp(iNum(I)) is ppStr(display(I));
+    ppDisp(iFlt(F)) is ppStr(display(F));
+    ppDisp(iFalse) is ppStr("false");
+    ppDisp(iTrue) is ppStr("true");
+    ppDisp(iNull) is ppStr("null");
+
+    private
+    dispContent(M) is interleave(cons of { ppSequence(0,cons of {ppStr(display(K));ppStr(":");ppDisp(V)}) where K->V in M },ppStr(","));
+    
+    private
+    dispSeq(L) is interleave(cons of { ppDisp(E) where E in L},ppStr(","));
+
+    private
+    interleave(nil,_) is nil;
+    interleave(L matching cons(H,nil),_) is L;
+    interleave(cons(E1,L),S) is cons(E1,cons(S,interleave(L,S)));
+  }
+  
+  implementation coercion over (string,json) is {
+    coerce(S) is valof{
+      (J,_) is jParse(explode(S))
+      valis J
+    }
+  }
+  
+  implementation coercion over (json,string) is {
+    coerce(I) is display(I);
+  }
+  
+  private jParse(L) is jP(skipBlanks(L));
+  
+  private skipBlanks(list of {' ';..L}) is skipBlanks(L);
+  skipBlanks(list of {'\t';..L}) is skipBlanks(L);
+  skipBlanks(list of {'\n';..L}) is skipBlanks(L);
+  skipBlanks(list of {'\r';..L}) is skipBlanks(L);
+  skipBlanks(L) default is L;
+
+  private jP(sequence of {'t';'r';'u';'e';..L}) is (iTrue,L);
+  jP(list of {'f';'a';'l';'s';'e';..L}) is (iFalse,L);
+  jP(list of {'n';'u';'l';'l';..L}) is (iNull,L);
+  jP(L matching (list of {'-';.._})) is parseNumber(L);
+  jP(L matching (list of {D;.._})) where isDigit(D) is parseNumber(L);
+  jP(list of {'"';..L}) is parseStr(L,nil);
+  jP(list of {'[';..L}) is parseSeq(L);
+  jP(list of {'{';..L}) is parseMap(L);
+  jP(L) default is raise "cannot parse "++implode(L)++" as json";
+  
+  private
+  parseSeq(list of {']';..L}) is (iSeq(list of {}),L);
+  parseSeq(L) is valof{
+    (El,L0) is jParse(L);
+    var SoFar := list of {El};
+    var LL := skipBlanks(L0);
+    
+    while LL matches list of {',';..Lx} do {
+      (Elx,LLx) is jParse(Lx);
+      SoFar := list of {SoFar..;Elx};
+      LL := skipBlanks(LLx);
+    };
+    
+    if LL matches list of {']';..Lx} then
+      valis (iSeq(SoFar),Lx)
+    else
+      raise "missing ']'";
+  }
+  
+  private parseMap(list of {'}';..L}) is (iColl(map of {}),L);
+  parseMap(L) is valof{
+    (K1,V1,L0) is parsePair(L);
+    var SoFar := map of {K1->V1};
+    var LL := skipBlanks(L0);
+    
+    while LL matches list of {',';..Lx} do {
+      (Ky,Vl,LLx) is parsePair(Lx);
+      SoFar[Ky] := Vl;
+      LL := skipBlanks(LLx);
+    }
+    
+    if LL matches list of {'}';..Lx} then
+      valis (iColl(SoFar),Lx)
+    else
+      raise "missing '}'";
+  }
+  
+  private parsePair(L0) is valof{
+    (iText(K),L1) is jParse(L0);
+    if skipBlanks(L1) matches list of {':';..L2} then{
+      (V,L3) is jParse(L2);
+      valis (K,V,L3);
+    }
+    else raise "expecting a ':'";
+  }
+    
+  private
+  parseStr(list of {'"';..L},SoFar) is (iText(revImplode(SoFar)),L);
+  parseStr(list of {'\\';'u';H1;H2;H3;H4;..L},SoFar) is parseStr(L,cons of {grabHex(list of {H1;H2;H3;H4},0);..SoFar});
+  parseStr(list of {'\\';'\\';..L},SoFar) is parseStr(L,cons of {'\\';..SoFar});
+  parseStr(list of {'\\';'b';..L},SoFar) is parseStr(L,cons of {'\b';..SoFar});
+  parseStr(list of {'\\';'f';..L},SoFar) is parseStr(L,cons of {'\f';..SoFar});
+  parseStr(list of {'\\';'n';..L},SoFar) is parseStr(L,cons of {'\n';..SoFar});
+  parseStr(list of {'\\';'r';..L},SoFar) is parseStr(L,cons of {'\r';..SoFar});
+  parseStr(list of {'\\';'t';..L},SoFar) is parseStr(L,cons of {'\t';..SoFar});
+  parseStr(list of {'\\';X;..L},SoFar) is parseStr(L,cons of {X;..SoFar});
+  parseStr(list of {X;..L},SoFar) is parseStr(L,cons of {X;..SoFar});
+     
+  private grabHex(list of {},Hx) is Hx as char;
+  grabHex(list of {X;..L},Hx) where isHexDigit(X) is 
+    grabHex(L,Hx*16+hexDigitVal(X));
+
+  private isHexDigit(X) is ('0'<=X and X<='9') or ('a'<=X and X<='f') or ('A'<=X and X<='F');
+  private revImplode(X) is string(__string_rev_implode(X));
+     
+  private hexDigitVal(X) where '0'<=X and X<='9' is X as integer-'0' as integer;
+  hexDigitVal(X) where 'a'<=X and X<='f' is X as integer-'a' as integer+10;
+  hexDigitVal(X) where 'A'<=X and X<='F' is X as integer-'A' as integer+10;
+     
+  parseNumber(Str) is let{
+    parseInt(list of {D;..L},Nm) where isDigit(D) is parseInt(L,Nm*10l+digitVal(D));
+    parseInt(L,Nm) default is (Nm,L);
+
+    parseFrac(list of {D;..L},Nm,F) where isDigit(D) is 
+	parseFrac(L,Nm+(digitVal(D)as float)*F,F/10.0);
+    parseFrac(L,Nm,_) default is (Nm,L);
+
+    parseNum(list of {'-';..L}) is valof{
+      (I,Rest) is parseNum(L);
+      valis (negate(I),Rest)
+    }
+    parseNum(L) is parseMore@parseInt(L,0l);
+
+    parseMore(Nm,list of {'.';..L}) is 
+	parseExp@parseFrac(L,Nm as float,0.1);
+    parseMore(Nm,L matching (list of {'e';.._})) is
+	parseExp(Nm as float,L);
+    parseMore(Nm,L) is (iNum(Nm),L);
+
+    parseExp(Nm,list of {E;..L}) where E='e' or E='E' is parseX(Nm,L);
+    parseExp(Nm,L) is (iFlt(Nm),L);
+
+    parseX(Nm,list of {'+';..L}) is parseX(Nm,L);
+    parseX(Nm,L) is valof{
+      (Ex,LL) is parseInt(L,0l);
+      valis (iFlt(Nm*10.0**(Ex as float)),LL)
+    }
+
+    negate(iNum(I)) is iNum(-I);
+    negate(iFlt(F)) is iFlt(-F);
+
+    private
+    digitVal('0') is 0l;
+    digitVal('1') is 1l;
+    digitVal('2') is 2l;
+    digitVal('3') is 3l;
+    digitVal('4') is 4l;
+    digitVal('5') is 5l;
+    digitVal('6') is 6l;
+    digitVal('7') is 7l;
+    digitVal('8') is 8l;
+    digitVal('9') is 9l;
+
+  } in parseNum(Str);
+
+  private
+  isDigit('0') is true;
+  isDigit('1') is true;
+  isDigit('2') is true;
+  isDigit('3') is true;
+  isDigit('4') is true;
+  isDigit('5') is true;
+  isDigit('6') is true;
+  isDigit('7') is true;
+  isDigit('8') is true;
+  isDigit('9') is true;
+  isDigit(_) default is false;
+
+  private razer(E) is raise E;
+  
+  -- Implement the json notation as a first class value, except that we allow semi-colons between elements in a record
+  
+#json{ ?B } :: expression :- B ;* jsonEntry ## {
+  ?L , ?R :: jsonEntry :- L :: jsonEntry :& R :: jsonEntry;
+  
+  string : ?V :: jsonEntry :- V :: jsonValue;
+  
+  false :: jsonValue;
+  true :: jsonValue;
+  null :: jsonValue;
+  
+  { ?E } :: jsonValue :- E;*jsonEntry;
+  [ ?E ] :: jsonValue :- E :: jsonSeq ## {
+    ?L , ?R :: jsonSeq :- L::jsonSeq :& R::jsonSeq;
+    ?L :: jsonSeq :- L::jsonValue;
+  }
+  
+  string :: jsonValue;
+  number :: jsonValue;
+}
+
+#json{?B} ==> jsonColl(B) ## {
+  #jsonColl(?E) ==> iColl(map of {jsonMapElements(E)});
+  
+  #jsonMapElements(#(?L;?R)#) ==> #(jsonMapElements(L);jsonMapElements(R))#;
+  #jsonMapElements(#(?L,?R)#) ==> #(jsonMapElements(L);jsonMapElements(R))#;
+  #jsonMapElements(?S:?E) ==> S->jsonValue(E);
+  
+  #jsonValue(true) ==> iTrue;
+  #jsonValue(false) ==> iFalse;
+  #jsonValue(null) ==> iNull;
+  #jsonValue({?E}) ==> iColl(map of {jsonMapElements(E)});
+  #jsonValue([?E]) ==> iSeq(list of { jsonSeq(E) });
+  #jsonValue(string?T) ==> iText(T);
+  #jsonValue(integer?I) ==> iNum(I as long);
+  #jsonValue(long?L) ==> iNum(L);
+  #jsonValue(float?F) ==> iFlt(F);
+  
+  #jsonSeq(#(?L;?R)#) ==> #(jsonSeq(L);jsonSeq(R))#;
+  #jsonSeq(#(?L,?R)#) ==> #(jsonSeq(L);jsonSeq(R))#;
+  #jsonSeq(?E) ==> jsonValue(E);
+}
+
