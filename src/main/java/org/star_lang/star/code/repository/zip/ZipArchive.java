@@ -240,7 +240,8 @@ public class ZipArchive implements CodeCatalog
           CodeHash cHash = new CodeHash(hash.substring(0, hashPos));
           zipDir.entries.put(name, cHash);
           return;
-        }
+        } else
+          throw new ZipException("(internal) illegal " + CodeHash.HASH + " in ZipDirectory");
       } catch (IOException e) {
         throw new RepositoryException("Could not read hash: " + e.getMessage());
       }
