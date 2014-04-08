@@ -44,6 +44,7 @@ import compute;
 import quoteable;
 import range;
 import option;
+import collections;
 
 -- used in processing ordered queries
 contract _project0 over %%c is {

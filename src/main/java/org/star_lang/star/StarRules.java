@@ -76,6 +76,7 @@ public class StarRules
       cat.addEntry("maybe", URIUtils.parseUri("std:maybe.star"));
 //      cat.addEntry("monad", URIUtils.parseUri("std:monad.star"));
       cat.addEntry("star", URIUtils.parseUri("std:star.star"));
+      cat.addEntry("collections", URIUtils.parseUri("std:collections.star"));
       cat.addEntry("sequences", URIUtils.parseUri("std:sequences.star"));
       cat.addEntry("arithmetic", URIUtils.parseUri("std:arithmetic.star"));
       cat.addEntry("iterators", URIUtils.parseUri("std:iterators.star"));

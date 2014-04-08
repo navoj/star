@@ -111,7 +111,7 @@ public class StandardNames
   public static final String POSSIBLE = "_possible";
   public static final String IMPOSSIBLE = "_impossible";
   public static final String LEFTFOLD1 = "leftFold1";
-  
+
   public static final String SOME = Some.label;
   public static final String SOMEVALUE = standard("someValue");
 
@@ -151,7 +151,7 @@ public class StandardNames
   public static final String ORDERBY = keyword("order by");
   public static final String ORDERDESCENDINBY = keyword("order descending by");
   public static final String DESCENDINGBY = keyword("descending by");
-  
+
   public static final String GROUPBY = standard("group by");
   public static final String PROJECT_0 = "__project0";
   public static final String REDUCTION = keyword("reduction");
@@ -167,6 +167,7 @@ public class StandardNames
 
   public static final String REF = keyword("ref");
   public static final String VAR = keyword("var");
+  public static final String FUN = keyword("fun");
 
   public static final String SHRIEK = graphic("!");
 
@@ -174,7 +175,7 @@ public class StandardNames
   public static final String UNQUOTE = keyword("unquote");
   public static final String LQUOTE = graphic("<|");
   public static final String RQUOTE = graphic("|>");
-  
+
   public static final String QTNAME = standard("_qtName");
   public static final String QTINTEGER = standard("_qtInteger");
   public static final String QTLONG = standard("_qtLong");
@@ -184,7 +185,7 @@ public class StandardNames
   public static final String QTSTRING = standard("_qtString");
   public static final String QTTUPLE = standard("_qtTuple");
   public static final String QTAPPLY = standard("_qtApply");
-  
+
   public static final String QTNAME_P = standard("_qtNameP");
   public static final String QTINTEGER_P = standard("_qtIntegerP");
   public static final String QTLONG_P = standard("_qtLongP");

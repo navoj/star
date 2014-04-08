@@ -112,6 +112,7 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.IMPLEMENTATION, 1300);
 
     definePrefix(StandardNames.VAR, 1300);
+    definePrefix(StandardNames.FUN, 1300);
 
     definePrefix(StandardNames.JAVA, 1300);
     definePrefix(StandardNames.OPEN, 1300);

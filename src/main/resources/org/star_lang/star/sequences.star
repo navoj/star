@@ -85,10 +85,10 @@ contract reversible over t is {
 #right((intersect),600);
 #right((complement),500);
   
-contract sets over %t is {
-  (union) has type (%t,%t)=>%t;
-  (intersect) has type (%t,%t)=>%t;
-  (complement) has type (%t,%t)=>%t;
+contract sets over t is {
+  (union) has type (t,t)=>t;
+  (intersect) has type (t,t)=>t;
+  (complement) has type (t,t)=>t;
 }
 
 contract explosion over (t,c) determines e is {
