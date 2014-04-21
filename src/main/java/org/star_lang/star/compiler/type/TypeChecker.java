@@ -1240,7 +1240,10 @@ public class TypeChecker
             String name = nonDef.getKey();
             Variable el = Variable.create(loc, supplied.getType(), name);
             body.add(new VarDeclaration(supplied.getLoc(), el, readOnly, supplied));
-            defEls.put(name, el); // We build up name=name
+            if (supplied instanceof Variable)
+              defEls.put(name, supplied); // We build up name=name
+            else
+              defEls.put(name, el);
           }
 
           // Next we put in the defaulted expressions
