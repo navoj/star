@@ -125,11 +125,6 @@ private import folding;
     
     private
     dispSeq(L) is interleave(cons of { ppDisp(E) where E in L},ppStr(","));
-
-    private
-    interleave(nil,_) is nil;
-    interleave(L matching cons(H,nil),_) is L;
-    interleave(cons(E1,L),S) is cons(E1,cons(S,interleave(L,S)));
   }
   
   implementation coercion over (string,json) is {

@@ -70,17 +70,18 @@ private look(K,T) is valof{
     case Tr in {
       trLeaf(H1,Els) where __integer_eq(H1,H) do valis _index(Els,K);
       trNode{maskLen=Ln;mask=M;left=L;right=R} do{
-	CM is commonMask(H,Ln);
+        CM is commonMask(H,Ln);
 
-	if __integer_eq(CM,M) then{
-	  if nthBit(H,Ln) then
-	  Tr := R
-	  else
-	  Tr := L;
-	} else
-	raise __display(K)++" not found"
+	    if __integer_eq(CM,M) then{
+	      if nthBit(H,Ln) then
+	        Tr := R
+	      else
+	        Tr := L;
+	    }
+	    else
+	      valis none
       };
-      _ default do raise __display(K)++" not found"
+      _ default do valis none
     }
   }
 };

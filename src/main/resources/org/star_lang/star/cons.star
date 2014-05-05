@@ -237,3 +237,7 @@ implementation mappable over cons is {
   _map(nil,_) is nil;
   _map(cons(H,T),F) is cons(F(H),_map(T,F))
 }
+
+interleave(nil,_) is nil;
+interleave(L matching cons(H,nil),_) is L;
+interleave(cons(E1,L),S) is cons(E1,cons(S,interleave(L,S)));
