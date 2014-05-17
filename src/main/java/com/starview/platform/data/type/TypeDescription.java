@@ -26,7 +26,6 @@ import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-import org.star_lang.star.compiler.util.StringUtils;
 
 /**
  * A straightforward implementation of the ITypeDescription specification
@@ -229,10 +228,11 @@ public class TypeDescription implements IAlgebraicType
   }
 
   @Override
-  public void verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException
+  public IType verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException
   {
-    if (!this.type.kind().checkKind(type.kind()))
-      throw new TypeConstraintException(StringUtils.msg(type, "not consistent with ", this.type), loc);
+    IType proto = Freshen.freshenForUse(getType());
+    Subsume.subsume(proto, type, loc, dict, true);
+    return type;
   }
 
   @Override

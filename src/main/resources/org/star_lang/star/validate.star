@@ -31,7 +31,7 @@ private import macrosupport;
 # ?Pk is package {} ==> {};
 # ?Pk is package{ } :: statement :- Pk::id ;
 
-# private ?S :: statement :- S :: statement;
+# private #( ?S )# :: statement :- S :: statement;
 
 -- import statement
 # import ?Pkg :: statement :- Pkg::packageName;

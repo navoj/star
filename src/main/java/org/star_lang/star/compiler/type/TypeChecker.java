@@ -5414,7 +5414,7 @@ public class TypeChecker
           TypeParser.declareType(dict, outer, tpStmt, errors);
         } else if (CompilerUtils.isTypeWitness(tpStmt)) {
           IType witness = TypeParser.parseType(CompilerUtils.typeWitness(tpStmt), dict, errors, readWrite);
-          String witnessedType = Abstract.getId(CompilerUtils.witnessedType(tpStmt));
+          String witnessedType = CompilerUtils.typeLabel(CompilerUtils.witnessedType(tpStmt));
           ITypeDescription existing = dict.getTypeDescription(witnessedType);
           if (existing != null) {
             try {

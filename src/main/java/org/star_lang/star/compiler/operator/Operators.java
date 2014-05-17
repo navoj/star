@@ -736,7 +736,7 @@ public class Operators implements PrettyPrintable
 
     for (String token : others.specialTokens)
       defineToken(token);
-    
+
     for (Entry<String, BracketPair> entry : others.bracketPairs.entrySet()) {
       BracketPair pair = (BracketPair) entry.getValue();
       try {

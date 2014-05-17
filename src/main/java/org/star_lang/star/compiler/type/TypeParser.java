@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -364,10 +364,10 @@ public class TypeParser
       return TypeUtils.referenceType(refType);
     } else if (Abstract.isBinary(tp, StandardNames.OF)) {
       IAbstract con = Abstract.binaryLhs(tp);
-      List<IType> typeArgList = parseArgTypes(Abstract.binaryRhs(tp), dict, errors, varHandler);
+      List<IType> argTypes = parseArgTypes(Abstract.binaryRhs(tp), dict, errors, varHandler);
 
       IType tyCon = parseType(con, dict, errors, varHandler);
-      IType type = checkKind(tyCon, typeArgList, Kind.kind(typeArgList.size()), loc, errors);
+      IType type = checkConstraints(TypeUtils.typeExp(tyCon, argTypes), dict, loc, errors);
 
       try {
         type = typeAlias(dict, type, loc);
@@ -475,13 +475,13 @@ public class TypeParser
     else if (Abstract.isBinary(tp, StandardNames.DETERMINES)) {
       IAbstract lhs = Abstract.binaryLhs(tp);
       if (Abstract.isBinary(lhs, StandardNames.OF) && Abstract.isIdentifier(Abstract.binaryLhs(lhs))) {
-        List<IType> typeArgList = parseArgTypes(Abstract.binaryRhs(lhs), dict, errors, varHandler);
+        List<IType> argTypes = parseArgTypes(Abstract.binaryRhs(lhs), dict, errors, varHandler);
         IType detType = TypeUtils.typeExp(StandardNames.DETERMINES, parseArgTypes(Abstract.binaryRhs(tp), dict, errors,
             varHandler));
-        typeArgList.add(detType);
+        argTypes.add(detType);
 
         IType tyCon = parseType(Abstract.binaryLhs(lhs), dict, errors, varHandler);
-        IType type = checkKind(tyCon, typeArgList, Kind.kind(typeArgList.size()), loc, errors);
+        IType type = checkConstraints(TypeUtils.typeExp(tyCon, argTypes), dict, loc, errors);
 
         try {
           type = typeAlias(dict, type, loc);
@@ -500,26 +500,18 @@ public class TypeParser
     }
   }
 
-  private static IType checkKind(IType tyCon, List<IType> argTypes, Kind kind, Location loc, ErrorReport errors)
+  private static IType checkConstraints(IType type, Dictionary dict, Location loc, ErrorReport errors)
   {
-    tyCon = TypeUtils.deRef(tyCon);
-    if (!kind.equals(Kind.unknown)) {
-      if (tyCon instanceof Type) {
-        Type t = (Type) tyCon;
-
-        if (t.kind().equals(Kind.unknown))
-          return TypeUtils.typeExp(new Type(t.typeLabel(), kind), argTypes);
-        else if (!t.kind().checkKind(kind)) {
-          errors.reportError(StringUtils.msg("type ", tyCon, " not consistent with ", kind), loc);
-          return new TypeVar();
-        }
-      } else if (tyCon instanceof TypeVar)
-        if (!((TypeVar) tyCon).checkKind(kind)) {
-          errors.reportError(StringUtils.msg("type ", tyCon, " not consistent with ", kind), loc);
-          return new TypeVar();
-        }
+    ITypeDescription desc = dict.getTypeDescription(type.typeLabel());
+    if (desc != null) {
+      try {
+        desc.verifyType(type, loc, dict);
+      } catch (TypeConstraintException e) {
+        errors.reportError(StringUtils.msg("parsed type ", type, " not consistent with declared type ", desc.getType(),
+            "\nbecause ", e.getWords()), loc);
+      }
     }
-    return TypeUtils.typeExp(tyCon, argTypes);
+    return type;
   }
 
   private static Map<String, TypeVar> parseQuantifiers(IAbstract tArg, ErrorReport errors)

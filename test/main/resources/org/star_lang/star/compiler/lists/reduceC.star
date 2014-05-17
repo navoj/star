@@ -17,7 +17,7 @@
  * @author fgm
  *
  */
-reduce is package{
+reduceC is package{
   contract reduce over %t determines %a is {
     reducer has type for all b such that ((%a,b)=>b) => ((%t, b)=>b);
     reducel has type for all b such that ((b,%a)=>b) => ((b, %t)=>b);

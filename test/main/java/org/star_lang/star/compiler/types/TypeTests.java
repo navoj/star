@@ -199,7 +199,7 @@ public class TypeTests extends SRTest
   @Test
   public void badMapTest()
   {
-    exception.expectMessage("type map not consistent with type of type");
+    exception.expectMessage("map expects 2 type arguments");
     runStar("badmapTest.star");
   }
 
@@ -254,7 +254,7 @@ public class TypeTests extends SRTest
   @Test
   public void tplAlias()
   {
-    exception.expectMessage("type tup not consistent with type of");
+    exception.expectMessage("tup expects 1 type arguments");
     runStar("tplAlias.star");
   }
 

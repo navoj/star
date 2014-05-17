@@ -18,7 +18,7 @@
  *
  */
 fingers is package{
-  import reduce;
+  import reduceC;
   
   -- implement the 2-3 fingers tree data structure
   

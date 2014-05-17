@@ -27,7 +27,7 @@ import org.star_lang.star.compiler.util.StringUtils;
  * 02110-1301 USA
  * 
  * @author fgm
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class TypeAlias implements ITypeAlias
@@ -106,7 +106,7 @@ public class TypeAlias implements ITypeAlias
         IType[] lhsArgs = ((TypeExp) lhs).getTypeArgs();
         if (tpArgs.length == lhsArgs.length) {
           for (int ix = 0; ix < tpArgs.length; ix++)
-            Subsume.subsume(tpArgs[ix], lhsArgs[ix], loc, cxt);
+            Subsume.subsume(tpArgs[ix], lhsArgs[ix], loc, cxt, true);
           return TypeUtils.checkAlias(TypeUtils.getTypeArg(refreshed, 1), cxt, loc);
         }
       } else if (tp instanceof Type && lhs instanceof Type)
@@ -123,8 +123,9 @@ public class TypeAlias implements ITypeAlias
   }
 
   @Override
-  public void verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException
+  public IType verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException
   {
+    return apply(type, loc, dict);
   }
 
   @Override

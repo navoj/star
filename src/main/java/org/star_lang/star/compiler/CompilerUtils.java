@@ -3181,8 +3181,7 @@ public class CompilerUtils
   public static boolean isTypeWitness(IAbstract stmt)
   {
     if (Abstract.isUnary(stmt, AbstractType.TYPE))
-      return Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.COUNTS_AS)
-          && Abstract.isIdentifier(Abstract.binaryRhs(Abstract.unaryArg(stmt)));
+      return Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.COUNTS_AS);
     else
       return false;
   }

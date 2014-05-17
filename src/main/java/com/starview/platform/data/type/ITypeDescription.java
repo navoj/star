@@ -72,5 +72,5 @@ public interface ITypeDescription extends PrettyPrintable
    * @param loc
    * @param dict
    */
-  void verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException;
+  IType verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException;
 }

@@ -93,7 +93,7 @@ public class TypeExists implements ITypeDescription
   }
 
   @Override
-  public void verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException
+  public IType verifyType(IType type, Location loc, Dictionary dict) throws TypeConstraintException
   {
     Kind kind = this.type.kind();
 
@@ -107,5 +107,6 @@ public class TypeExists implements ITypeDescription
       } else
         throw new TypeConstraintException(StringUtils.msg(type, "not consistent with ", this.type), loc);
     }
+    return type;
   }
 }

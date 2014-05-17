@@ -20,7 +20,7 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
  * 02110-1301 USA
  * 
  * @author fgm
- *
+ * 
  */
 @SuppressWarnings("serial")
 public abstract class Operator implements PrettyPrintable

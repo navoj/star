@@ -561,7 +561,7 @@ public class Dependencies
           errors.reportError("multiple definitions of type: " + tpName + " earlier definition at " + tpDef.getLoc(),
               loc, tpDef.getLoc());
       } else if (CompilerUtils.isTypeWitness(term)) {
-        String tpName = Abstract.getId(CompilerUtils.witnessedType(term));
+        String tpName = CompilerUtils.typeLabel(CompilerUtils.witnessedType(term));
         makeDefinition(loc, tpName, term, visibility, DefinitionKind.type);
       } else if (CompilerUtils.isPatternRule(term)) {
         IAbstract lhs = Abstract.deParen(CompilerUtils.patternRuleHead(term));
