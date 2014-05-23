@@ -1889,7 +1889,7 @@ public class TypeChecker
     }
   }
 
-  private Map<String, ContractConstraint> constraintMap(TypeInterfaceType face)
+  private static Map<String, ContractConstraint> constraintMap(TypeInterfaceType face)
   {
     Map<String, ContractConstraint> conMap = new HashMap<>();
     Map<IType, IType> txMap = new HashMap<>();

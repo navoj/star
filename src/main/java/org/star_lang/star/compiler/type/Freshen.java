@@ -13,6 +13,8 @@ import org.star_lang.star.compiler.type.FindTypeVars.VarHandler;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.HistoricalMap;
+import org.star_lang.star.compiler.util.Lambda;
+import org.star_lang.star.compiler.util.Lambda2;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.data.indextree.IndexSet;
 
@@ -446,21 +448,62 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   @Override
   public IType transformExistentialType(ExistentialType t, IndexSet<String> exclusions)
   {
-    IType bndType = t.getBoundType().transform(this, exclusions.add(t.getBoundVar().getVarName()));
-    if (bndType != t.getBoundType())
-      return new ExistentialType(t.getBoundVar(), bndType);
-    else
-      return t;
+    return transformQuantified(t, exclusions, new Lambda<TypeVar, Quantifier>() {
+      @Override
+      public Quantifier apply(TypeVar v)
+      {
+        return new Existential(v);
+      }
+    }, new Lambda2<TypeVar, IType, IType>() {
+      @Override
+      public IType apply(TypeVar v, IType bndType)
+      {
+        return new ExistentialType(v, bndType);
+      }
+    });
   }
 
   @Override
   public IType transformUniversalType(UniversalType t, IndexSet<String> exclusions)
   {
-    IType bndType = t.getBoundType().transform(this, exclusions.add(t.getBoundVar().getVarName()));
-    if (bndType != t.getBoundType())
-      return new UniversalType(t.getBoundVar(), bndType);
-    else
-      return t;
+    return transformQuantified(t, exclusions, new Lambda<TypeVar, Quantifier>() {
+      @Override
+      public Quantifier apply(TypeVar v)
+      {
+        return new Universal(v);
+      }
+    }, new Lambda2<TypeVar, IType, IType>() {
+      @Override
+      public IType apply(TypeVar v, IType bndType)
+      {
+        return new UniversalType(v, bndType);
+      }
+    });
+  }
+
+  private IType transformQuantified(QuantifiedType t, IndexSet<String> exclusions, Lambda<TypeVar, Quantifier> quant,
+      Lambda2<TypeVar, IType, IType> quantifier)
+  {
+    TypeVar v = t.getBoundVar();
+    String varName = v.getVarName();
+    if (v.hasConstraints()) {
+      TypeVar clone = new TypeVar(varName, v.getOriginalName(), v.getAccess());
+      Quantifier old = bound.put(varName, quant.apply(clone));
+      for (ITypeConstraint con : v)
+        clone.setConstraint(con.transform(this, exclusions));
+      IType bndType = t.getBoundType().transform(this, exclusions);
+      if (old != null)
+        bound.put(varName, old);
+      else
+        bound.remove(varName);
+      return quantifier.apply(clone, bndType);
+    } else {
+      IType bndType = t.getBoundType().transform(this, exclusions);
+      if (bndType != t.getBoundType())
+        return quantifier.apply(v, bndType);
+      else
+        return t;
+    }
   }
 
   @Override

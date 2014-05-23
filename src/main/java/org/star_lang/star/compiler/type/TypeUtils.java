@@ -104,6 +104,12 @@ public class TypeUtils
     }
     return false;
   }
+  
+  public static boolean isTypeExp(IType type)
+  {
+    type = deRef(type);
+    return type instanceof TypeExp;
+  }
 
   public static IType getTypeArg(IType type, int ix)
   {

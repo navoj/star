@@ -684,6 +684,8 @@ public class TypeParser
         for (IType tp : argTypes)
           if (TypeUtils.isTypeVar(tp))
             ((TypeVar) TypeUtils.deRef(tp)).setConstraint(con);
+          else if(TypeUtils.isTypeExp(tp) && TypeUtils.isTypeVar(TypeUtils.getTypeCon(tp)))
+            ((TypeVar)TypeUtils.deRef(TypeUtils.getTypeCon(tp))).setConstraint(con);
       } else {
         List<IType> argTypes = parseArgTypes(Abstract.binaryRhs(cons), cxt, errors, varHandler);
         TypeExp contractType = (TypeExp) TypeUtils.typeExp(contractName, argTypes);

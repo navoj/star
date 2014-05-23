@@ -301,4 +301,10 @@ public class TypeTests extends SRTest
   {
     runStar("graphing.star");
   }
+
+  @Test
+  public void testModuleContract()
+  {
+    runStar("moduleContracts.star");
+  }
 }
