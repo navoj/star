@@ -22,7 +22,8 @@ modules is package{
     ff is f;
   }
   
-  main() do {
-    assert M.ff(M.c)=1
-  }
+  main() do let{
+    open M;
+  } in 
+    { assert f(c)=1 };
 }
