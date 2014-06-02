@@ -29,7 +29,7 @@ iterquery is package{
   Od has type list of integer;
   Od is iota(1,Size,2);
     
-  show(M,X) is valof{
+  sho(M,X) is valof{
     logMsg(info,M);
     valis X;
   };

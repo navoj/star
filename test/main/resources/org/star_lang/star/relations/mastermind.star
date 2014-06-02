@@ -54,11 +54,6 @@ mastermind is package{
         valis Guess
     }
   }
- 
-  private show(M,E) is valof{
-    logMsg(info,M);
-    valis E;
-  }
   
   main() do {    
     Secret is choices[random(size(choices))];

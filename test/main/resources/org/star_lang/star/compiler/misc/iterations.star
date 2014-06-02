@@ -62,7 +62,7 @@ iterations is package{
   alpha is cons of { (1,"alpha"); (2,"beta"); (3,"gamma") };
   beta is cons of { ("omega",-1); ("iota",0); ("gamma",3) };
   
-  show(E,St) is valof{
+  sho(E,St) is valof{
     logMsg(info,"$E in $St");
     valis St;
   }
@@ -73,7 +73,7 @@ iterations is package{
     logMsg(info,"Parents are $P");
     logMsg(info,"Genders are $gender");
     
-    XX is iterates(parent,show,NoneFound);
+    XX is iterates(parent,sho,NoneFound);
     
     -- Emulate: all X where (X,Peter) in parent
     X0 is iterates(parent,

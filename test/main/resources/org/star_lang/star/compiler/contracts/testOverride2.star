@@ -20,19 +20,19 @@
 testOverride2 is package{
 
   contract PPrintable over %a is {
-    show has type (%a) => string;
+    sho has type (%a) => string;
   };
 
   implementation PPrintable over list of %a where PPrintable over %a is {
-    show(l) is "[]";
+    sho(l) is "[]";
   };
 
   type HashTrie of (%k, %v) is Trie(integer, list of (HashTrie of (%k, %v)));
 
   showHashTrie has type (HashTrie of (%k, %v)) => string where PPrintable over %k 'n PPrintable over %v; -- '
-  showHashTrie(Trie(bitmap, entries)) is show(entries);
+  showHashTrie(Trie(bitmap, entries)) is sho(entries);
 
   implementation PPrintable over HashTrie of (%k, %v) where PPrintable over %k 'n PPrintable over %v is { -- '
-    show = showHashTrie;
+    sho = showHashTrie;
   };
 }

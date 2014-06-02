@@ -36,7 +36,7 @@ binaryTrees is package{
   buildTree(I,0) is tree(nilTree,I,nilTree);
   buildTree(I,D) is tree(buildTree((2*I)-1,D-1),I,buildTree(2*I,D-1));
   
-  show(X,Y) is valof{
+  sho(X,Y) is valof{
     logMsg(info,X);
     valis Y
   };

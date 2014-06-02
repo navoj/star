@@ -31,7 +31,7 @@ persons is package{
 	dob is today();
   };
 	
-  show(P) is
+  sho(P) is
 	"$name:$(age())" using P()'s name 'n age;
 	
   disp(P) do
@@ -39,7 +39,7 @@ persons is package{
 	
   main() do
   {
-	logMsg(info,show(fn() => john));
+	logMsg(info,sho(fn() => john));
 	disp(john);
 	assert john.name="john";
   }

@@ -95,7 +95,7 @@ __macro_tupleize(Loc,Els) is __macro_tuple(Loc,liftEls(Els,array of {})) using {
   liftEls(El,Args) is array of {El;..Args};
 };
 
-private show(M,V) is valof{
+private sho(M,V) is valof{
   logMsg(info,M);
   valis V;
 }

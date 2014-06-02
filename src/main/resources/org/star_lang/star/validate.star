@@ -245,6 +245,7 @@ private import macrosupport;
 # let{ ?B } in ?E  :: action :- B;*statement :& E:: action;
 # ?A using ?S :: action :- A:: action :& S::expression;
 
+# open ?E :: action :- E::expression;
 
 -- This is complex because we cannot re-use an identifier. So we have to synthesize new ones.
 
