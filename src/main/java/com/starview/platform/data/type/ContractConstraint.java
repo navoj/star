@@ -149,7 +149,8 @@ public class ContractConstraint implements ITypeConstraint
         IType instanceType = dict.getVarType(instanceName);
         if (instanceType == null) {
           if (fallbackType == null)
-            throw new TypeConstraintException(FixedList.create(contract.toString(), " not known to be implemented"));
+            throw new TypeConstraintException(FixedList.create(DisplayType.showContract(contract),
+                " not known to be implemented"));
           else {
             if (TypeUtils.isOverloadedType(fallbackType)) {
               IType instType = TypeUtils.refreshOverloaded(fallbackType);

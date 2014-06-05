@@ -138,6 +138,16 @@ public class DisplayType implements ITypeVisitor<Integer>
     display.displayContract((TypeExp) type);
     display.showConstraints(type);
   }
+  
+  public static String showContract(TypeExp tp)
+  {
+    PrettyPrintDisplay disp = new PrettyPrintDisplay();
+    DisplayType display = new DisplayType(disp);
+
+    display.displayContract(tp);
+    display.showConstraints(tp);
+    return disp.toString();
+  }
 
   public static String toString(IType type)
   {
