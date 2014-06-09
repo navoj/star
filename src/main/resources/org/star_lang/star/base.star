@@ -149,13 +149,13 @@ implementation comparable over () is {
   ()>=() is true;
 };
 
-implementation equality over ((%l,%r) where equality over %l 'n equality over %r) is {
+implementation equality over ((%l,%r) where equality over %l and equality over %r) is {
   (=) = pairEq;
 } using {
   pairEq((L1,R1),(L2,R2)) is L1=L2 and R1=R2;
 }
 
-implementation comparable over ((%l,%r) where comparable over %l 'n equality over %l 'n comparable over %r 'n equality over %r) is {
+implementation comparable over ((%l,%r) where comparable over %l and equality over %l and comparable over %r and equality over %r) is {
   (<) = pairLt;
   (<=) = pairLe;
   (>) = pairGt;
@@ -174,16 +174,16 @@ implementation comparable over ((%l,%r) where comparable over %l 'n equality ove
   pairGe(X,Y) is pairLe(Y,X);
 };
 
-implementation equality over ((%l,%m,%r) where equality over %l 'n
- equality over %m 'n equality over %r) is {
+implementation equality over ((%l,%m,%r) where equality over %l and
+ equality over %m and equality over %r) is {
   (=) = tripleEq;
 } using {
   tripleEq((L1,M1,R1),(L2,M2,R2)) is L1=L2 and M1=M2 and R1=R2;
 }
 
-implementation comparable over ((%l,%m,%r) where comparable over %l 'n equality over %l 
-                                              'n comparable over %m 'n equality over %m
-                                              'n comparable over %r 'n equality over %r) is {
+implementation comparable over ((%l,%m,%r) where comparable over %l and equality over %l 
+                                              and comparable over %m and equality over %m
+                                              and comparable over %r and equality over %r) is {
   (<) = tripleLt;
   (<=) = tripleLe;
   (>) = tripleGt;

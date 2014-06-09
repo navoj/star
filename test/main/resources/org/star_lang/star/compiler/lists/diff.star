@@ -33,7 +33,7 @@ diff is package{
     intDiff(X1,X2) default is K(X2)
   };
 
-  implementation hasDiff over (list of %t where hasDiff over %t 'n equality over %t) is{
+  implementation hasDiff over (list of %t where hasDiff over %t and equality over %t) is{
     diff=listDiff
   } using {
     listDiff(X,X) is id; 

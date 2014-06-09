@@ -574,7 +574,7 @@ public class TypeParser
 
     if (Abstract.isParenTerm(cons))
       parseConstraints(Abstract.deParen(cons), cxt, errors, varHandler);
-    else if (Abstract.isBinary(cons, StandardNames.ALSO)) {
+    else if (Abstract.isBinary(cons, StandardNames.AND)) {
       parseConstraints(Abstract.binaryLhs(cons), cxt, errors, varHandler);
       parseConstraints(Abstract.binaryRhs(cons), cxt, errors, varHandler);
     } else if (Abstract.isBinary(cons, StandardNames.IMPLEMENTS)

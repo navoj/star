@@ -150,7 +150,7 @@ private import macrosupport;
 # ?Tp :: typeVars :- Tp::typeVar;
  
 -- Type constraints
-# ?L 'n ?R :: typeConstraint :- L :: typeConstraint :& R :: typeConstraint;
+# ?L and ?R :: typeConstraint :- L :: typeConstraint :& R :: typeConstraint;
 # ?N over ?T determines ?D :: typeConstraint :- N::id :& T::typeExpression :& D::typeExpression;
 # ?N over ?T :: typeConstraint :- N::id :& T::typeExpression;
 # (?C) :: typeConstraint :- C :: typeConstraint;

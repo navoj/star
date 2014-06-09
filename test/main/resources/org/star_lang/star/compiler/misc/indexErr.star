@@ -37,7 +37,7 @@ type HashTrieEntry of (%k, %v) is
   or HashTrieKeyValue(%k, %v)
   or HashCollision(cons of ((%k, %v)));
 
-hashTrieEntryRemoveByPattern has type (HashTrieEntry of (%k, %v), ()<=((%k, %v))) => (HashTrieEntry of (%k, %v), integer) where equality over %k 'n equality over %v; -- ';
+hashTrieEntryRemoveByPattern has type (HashTrieEntry of (%k, %v), ()<=((%k, %v))) => (HashTrieEntry of (%k, %v), integer) where equality over %k and equality over %v; -- ';
 hashTrieEntryRemoveByPattern(entry matching HashCollision(entries), P) is
   iterateState((entries, 0, nil), next) using {
     next((nil, removed, nil)) is Left((EmptyHashTrieEntry, removed));

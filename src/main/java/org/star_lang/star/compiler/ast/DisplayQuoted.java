@@ -3,10 +3,8 @@ package org.star_lang.star.compiler.ast;
 import java.util.List;
 
 import org.star_lang.star.compiler.CompilerUtils;
-import org.star_lang.star.compiler.operator.InfixOperator;
+import org.star_lang.star.compiler.operator.Operator;
 import org.star_lang.star.compiler.operator.Operators;
-import org.star_lang.star.compiler.operator.PostfixOperator;
-import org.star_lang.star.compiler.operator.PrefixOperator;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
@@ -19,10 +17,10 @@ import com.starview.platform.data.IList;
 import com.starview.platform.data.IValue;
 import com.starview.platform.data.type.IType;
 import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.StringWrap;
 import com.starview.platform.data.value.BoolWrap.FalseValue;
 import com.starview.platform.data.value.BoolWrap.TrueValue;
+import com.starview.platform.data.value.Factory;
+import com.starview.platform.data.value.StringWrap;
 
 /**
  * 
@@ -114,7 +112,7 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
       display(app.getArgs(), " (", ", ", ")");
     else if (Abstract.isBinary(app) && app.getOperator() instanceof Name) {
       String op = Abstract.roundTermName(app);
-      InfixOperator infix = operators.isInfixOperator(op, priority);
+      Operator infix = operators.isInfixOperator(op, priority);
       if (infix != null) {
         paren(infix.getPriority(), "#(");
         int priority = this.priority;
@@ -131,8 +129,8 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
     } else if (Abstract.isUnary(app) && ((Apply) app).getOperator() instanceof Name) {
       String op = Abstract.roundTermName(app);
 
-      PrefixOperator prefix = operators.isPrefixOperator(op, priority);
-      PostfixOperator postfix = operators.isPostfixOperator(op, priority);
+      Operator prefix = operators.isPrefixOperator(op, priority);
+      Operator postfix = operators.isPostfixOperator(op, priority);
 
       if (prefix != null) {
         if (postfix != null) {

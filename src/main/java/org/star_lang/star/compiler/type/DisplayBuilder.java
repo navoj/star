@@ -184,7 +184,7 @@ public class DisplayBuilder
         if (constraint == null)
           constraint = contract;
         else
-          constraint = Abstract.binary(loc, StandardNames.ALSO, constraint, contract);
+          constraint = Abstract.binary(loc, StandardNames.AND, constraint, contract);
         IAbstract fieldTp = CompilerUtils.typeAnnotationStmt(loc, field, tV);
         fieldTypes.add(fieldTp);
       }
@@ -221,7 +221,7 @@ public class DisplayBuilder
       if (constraint == null)
         constraint = contract;
       else
-        constraint = Abstract.binary(loc, StandardNames.ALSO, constraint, contract);
+        constraint = Abstract.binary(loc, StandardNames.AND, constraint, contract);
 
       fieldTypes.add(tV);
     }
@@ -273,7 +273,7 @@ public class DisplayBuilder
 
   private static boolean checkConstraint(IAbstract cons, String lbl)
   {
-    for (IAbstract con : CompilerUtils.unWrap(cons, StandardNames.ALSO)) {
+    for (IAbstract con : CompilerUtils.unWrap(cons, StandardNames.AND)) {
       if (CompilerUtils.isContractSpec(con)) {
         IAbstract c = CompilerUtils.contractSpecName(con);
         if (Abstract.isIdentifier(c, StandardNames.PPRINT)

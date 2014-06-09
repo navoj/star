@@ -24,7 +24,7 @@ MyMap is package {
   };
 
 /* measure in definitions of other measures */
-  measure_a has type (%a) => %v where Measured over %a determines %v 'n Monoid over %v; -- '
+  measure_a has type (%a) => %v where Measured over %a determines %v and Monoid over %v; -- '
   measure_a(a) is measure(a);
 
   contract Monoid over %v is {
@@ -41,7 +41,7 @@ MyMap is package {
   fingerTreeMeasure(Single(x)) is measure_a(x);
   fingerTreeMeasure(Deep(v, _, _, _)) is v;
 
-  implementation Measured over FingerTree of (%v, %a) determines %v where Measured over %a determines %v 'n Monoid over %v is { -- '
+  implementation Measured over FingerTree of (%v, %a) determines %v where Measured over %a determines %v and Monoid over %v is { -- '
     measure = fingerTreeMeasure;
   };
 
@@ -58,9 +58,9 @@ MyMap is package {
   };
 
 /** smart constructors */
-  node02 has type (%a,%a) => Node of (%v, %a) where Measured over %a determines %v 'n Monoid over (%v); -- '
+  node02 has type (%a,%a) => Node of (%v, %a) where Measured over %a determines %v and Monoid over (%v); -- '
   node02(a01,a02) is Node02(mappend(measure_a(a01), measure_a(a02)), a01,a02);
-  node03 has type (%a,%a,%a) => Node of (%v, %a) where Measured over %a determines %v 'n Monoid over (%v); -- '
+  node03 has type (%a,%a,%a) => Node of (%v, %a) where Measured over %a determines %v and Monoid over (%v); -- '
   node03(a01,a02,a03) is Node03(mappend(measure_a(a01), mappend(measure_a(a02), measure_a(a03))), a01,a02,a03);
 
   type Digit of %a is
@@ -76,7 +76,7 @@ MyMap is package {
   digitMeasure(Digit02(a01,a02)) is mappend(measure_a(a01), measure_a(a02));
   digitMeasure(Digit03(a01,a02,a03)) is mappend(measure_a(a01), mappend(measure_a(a02), measure_a(a03)));
   digitMeasure(Digit04(a01,a02,a03,a04)) is mappend(measure_a(a01), mappend(measure_a(a02), mappend(measure_a(a03), measure_a(a04))));
-  implementation Measured over Digit of %a determines %v where Measured over %a determines %v 'n Monoid over %v is { -- '
+  implementation Measured over Digit of %a determines %v where Measured over %a determines %v and Monoid over %v is { -- '
     measure = digitMeasure;
   };
 
@@ -89,14 +89,14 @@ MyMap is package {
   digitMap(f, Digit04(a01, a02, a03, a04)) is Digit04(f(a01), f(a02), f(a03), f(a04));
 
 /* smart constructor */
-  deep has type (Digit of %a, FingerTree of (%v, Node of (%v, %a)), Digit of %a) => FingerTree of (%v, %a) where Measured over %a determines %v 'n Monoid over %v; -- '
+  deep has type (Digit of %a, FingerTree of (%v, Node of (%v, %a)), Digit of %a) => FingerTree of (%v, %a) where Measured over %a determines %v and Monoid over %v; -- '
   deep(pr, m, sf) is Deep(mappend(measure(pr), mappend(measure(m), measure(sf))), pr, m, sf);
 
-  fingerTreeMap has type (((%a) => %b), (FingerTree of (%v, %a))) => FingerTree of (%u, %b) where Measured over %a determines %v 'n Measured over %b determines %u 'n Monoid over %v 'n Monoid over %u; -- '
+  fingerTreeMap has type (((%a) => %b), (FingerTree of (%v, %a))) => FingerTree of (%u, %b) where Measured over %a determines %v and Measured over %b determines %u and Monoid over %v and Monoid over %u; -- '
   fingerTreeMap(f, FingerTreeEmpty) is FingerTreeEmpty;
   fingerTreeMap(f, Single(a)) is Single(f(a));
   fingerTreeMap(f, Deep(_, l, m, r)) is let {
-    -- node_f has type (Node of (%v, %a)) => Node of (%u, %b) where Measured over %a determines %v 'n Measured over %b determines %u 'n Monoid over %v 'n Monoid over %u; -- '
+    -- node_f has type (Node of (%v, %a)) => Node of (%u, %b) where Measured over %a determines %v and Measured over %b determines %u and Monoid over %v and Monoid over %u; -- '
     node_f(Node02(_, a01, a02)) is node02( f(a01), f(a02));
     node_f(Node03(_, a01, a02, a03)) is node03(f(a01), f(a02), f(a03));
   } in valof {

@@ -1,8 +1,7 @@
 package org.star_lang.star.compiler.operator;
 
 /**
- * The OperatorForm indicates the kind of operator something is: whether it is
- * infix, etc.
+ * The OperatorForm indicates the kind of operator something is: whether it is infix, etc.
  * 
  * Copyright (C) 2013 Starview Inc
  * 
@@ -19,9 +18,8 @@ package org.star_lang.star.compiler.operator;
  * 02110-1301 USA
  * 
  * @author fgm
- *
+ * 
  */
-public enum OperatorForm
-{
-  prefix, prefixAssociative, left, infix, right, postfix, postfixAssociative, none
+public enum OperatorForm {
+  prefix, infix, postfix, none
 }

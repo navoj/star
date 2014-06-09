@@ -20,7 +20,7 @@
 splay is package{
   import priority;
   
-  splayHeap has type for all t such that (ordering of t)=>priorityQ of t where pPrint over t 'n equality over t;
+  splayHeap has type for all t such that (ordering of t)=>priorityQ of t where pPrint over t and equality over t;
   splayHeap(Element) is priorityQ{
     type heap is E or T(heap,t,heap);
     

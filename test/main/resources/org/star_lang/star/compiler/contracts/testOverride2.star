@@ -29,10 +29,10 @@ testOverride2 is package{
 
   type HashTrie of (%k, %v) is Trie(integer, list of (HashTrie of (%k, %v)));
 
-  showHashTrie has type (HashTrie of (%k, %v)) => string where PPrintable over %k 'n PPrintable over %v; -- '
+  showHashTrie has type (HashTrie of (%k, %v)) => string where PPrintable over %k and PPrintable over %v; -- '
   showHashTrie(Trie(bitmap, entries)) is sho(entries);
 
-  implementation PPrintable over HashTrie of (%k, %v) where PPrintable over %k 'n PPrintable over %v is { -- '
+  implementation PPrintable over HashTrie of (%k, %v) where PPrintable over %k and PPrintable over %v is { -- '
     sho = showHashTrie;
   };
 }

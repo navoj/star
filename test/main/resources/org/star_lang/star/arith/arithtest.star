@@ -18,7 +18,7 @@
  *
  */
 arithtest is package{
-  square has type (%t) => %t where arithmetic over %t 'n comparable over %t;
+  square has type (%t) => %t where arithmetic over %t and comparable over %t;
   square(X) is times(X,X);
   
   times(X,Y) where X>=Y is X*Y;

@@ -65,7 +65,7 @@ public class ContractImplementation implements PrettyPrintable
       String sep = StandardNames.WHERE;
       for (IType req : requirements) {
         disp.appendWord(sep);
-        sep = StandardNames.ALSO;
+        sep = StandardNames.AND;
         DisplayType.displayContract(disp, req);
       }
     } else

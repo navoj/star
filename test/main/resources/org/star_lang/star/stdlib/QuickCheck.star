@@ -146,7 +146,7 @@ implementation Arbitrary over float is {
 
 /* Star drops the ball:
 
-implementation Arbitrary over ((%a,%b) where Arbitrary over %a 'n Arbitrary over %b) {
+implementation Arbitrary over ((%a,%b) where Arbitrary over %a and Arbitrary over %b) {
 	arb = pairArb;
 	coarb = pairCoarb;
 } using {
@@ -179,7 +179,7 @@ implementation Arbitrary over (list of %a where Arbitrary over %a) is {
 }
 
 /* Star drops the ball:
-implementation Arbitrary over ((%a) => %b where Arbiotrary over %a 'n Arbitrary over %b) {
+implementation Arbitrary over ((%a) => %b where Arbiotrary over %a and Arbitrary over %b) {
 	arb = fArb;
 	coarb = fCoarb;
 } using {

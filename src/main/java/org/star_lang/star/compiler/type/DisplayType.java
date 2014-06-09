@@ -110,7 +110,7 @@ public class DisplayType implements ITypeVisitor<Integer>
             continue;
         }
         disp.appendWord(sep);
-        sep = StandardNames.ALSO;
+        sep = StandardNames.AND;
         constraint.showConstraint(this);
       }
     }
@@ -125,7 +125,7 @@ public class DisplayType implements ITypeVisitor<Integer>
         if (constraint instanceof HasKind && ((HasKind) constraint).getKind().equals(Kind.type))
           continue;
         display.disp.appendWord(sep);
-        sep = StandardNames.ALSO;
+        sep = StandardNames.AND;
         constraint.showConstraint(display);
       }
     }

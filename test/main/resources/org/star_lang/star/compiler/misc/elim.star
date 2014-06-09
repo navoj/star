@@ -19,7 +19,7 @@
  */
 elim is package{
     
-  elim has type (%t)=>%t where equality over %e 'n sequence over %t determines %e;
+  elim has type (%t)=>%t where equality over %e and sequence over %t determines %e;
 
   elim(sequence of {}) is sequence of {};
   elim(sequence of {H;H;..T}) is elim(sequence of {H;..T});

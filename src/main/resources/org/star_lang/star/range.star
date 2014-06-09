@@ -25,7 +25,7 @@ private import sequences;
 private import strings;
 private import casting;
 
-type range of t where arithmetic over t 'n comparable over t is range(t,t,t);
+type range of t where arithmetic over t and comparable over t is range(t,t,t);
 
 implementation sizeable over range of %t where coercion over (%t,integer) is {
   isEmpty(range(F,T,_)) is F>=T;

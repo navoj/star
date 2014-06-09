@@ -49,7 +49,7 @@ validTree(trNode{maskLen=Ln;left=L;right=R},D) where __integer_ge(Ln,D) and __in
     validTree(L,Ln) and validTree(R,Ln);
 validTree(T,Ln) default is false;
 
-implementation pPrint over treemap of (%k,%v) where pPrint over %k 'n pPrint over %v is {
+implementation pPrint over treemap of (%k,%v) where pPrint over %k and pPrint over %v is {
   ppDisp(H) is ppSequence(2,cons of {ppStr("treemap of {"); dispHash(H); ppStr("}")});
 } using {
   dispHash(trNode{left=L; right=R}) is ppSequence(0,cons of {dispHash(L); dispHash(R)});

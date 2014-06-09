@@ -23,7 +23,7 @@
   type c2 of t is c2(integer,t);
   
   type encap is encap{
-    el has kind type where pPrint over el 'n equality over el;
+    el has kind type where pPrint over el and equality over el;
     c has type for all t such that (integer,t)<=>el
   }
   

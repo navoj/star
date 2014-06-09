@@ -25,6 +25,6 @@ tupleContracts is package {
 
   type set of %s is Set(redBlackTree of ((%s, ())))
 
-  setInsert has type (set of %i, %i) => set of %i where comparable over %i 'n equality over %i;
+  setInsert has type (set of %i, %i) => set of %i where comparable over %i and equality over %i;
   setInsert(Set(t),a) is Set(rbInsert(t,(a,())));
 }

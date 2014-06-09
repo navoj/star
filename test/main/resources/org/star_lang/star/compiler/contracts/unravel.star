@@ -20,8 +20,8 @@
 unravel is package{
 
   unravel has type (%coll)=>(%left,%right) where
-    sequence over %coll determines ((%l,%r)) 'n
-    sequence over %left determines %l 'n
+    sequence over %coll determines ((%l,%r)) and
+    sequence over %left determines %l and
     sequence over %right determines %r;
 
   unravel(LL) is let{

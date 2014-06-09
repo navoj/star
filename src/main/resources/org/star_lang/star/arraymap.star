@@ -91,7 +91,7 @@ private arrayIxIter(array of {},_,St) is St;
 arrayIxIter(_,_,NoMore(X)) is NoMore(X);
 arrayIxIter(array of {(K,V);..T},F,St) is arrayIxIter(T,F,F(K,V,St));
 
-implementation pPrint over seqmap of (%k,%v) where pPrint over %k 'n pPrint over %v is {
+implementation pPrint over seqmap of (%k,%v) where pPrint over %k and pPrint over %v is {
   ppDisp(Els) is ppSequence(2,cons of {ppStr("arraymap of {"); ppSeqMap(Els); ppStr("}")});
 };
 

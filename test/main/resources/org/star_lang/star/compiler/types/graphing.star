@@ -2,7 +2,7 @@ graphing is package{
   type triple of (c,p) is triple(c,p,c);
 
   type graph of (c,p) is graph{
-    gr has kind type where pPrint over gr 'n equality over gr;
+    gr has kind type where pPrint over gr and equality over gr;
     
     ar has kind type where arithmetic over ar;
 

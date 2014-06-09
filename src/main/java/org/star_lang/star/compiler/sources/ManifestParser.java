@@ -164,7 +164,7 @@ public class ManifestParser implements CodeParser
           final IAbstract conTerm;
           TypeNameHandler varHandler = new RegularTypeName(iCxt, tVars, AccessMode.readWrite, true, errors);
           if (Abstract.isBinary(stmt, StandardNames.WHERE)) {
-            for (IAbstract arg : CompilerUtils.unWrap(Abstract.binaryRhs(stmt), StandardNames.ALSO)) {
+            for (IAbstract arg : CompilerUtils.unWrap(Abstract.binaryRhs(stmt), StandardNames.AND)) {
               required.add(TypeParser.parseContractType(arg, iCxt, errors, varHandler));
             }
             conTerm = Abstract.binaryLhs(stmt);

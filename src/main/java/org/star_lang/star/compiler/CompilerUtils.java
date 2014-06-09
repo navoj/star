@@ -1475,35 +1475,6 @@ public class CompilerUtils
     return CompilerUtils.blockContent(term);
   }
 
-  public static boolean isExportExp(IAbstract term)
-  {
-    return Abstract.isBinary(term, StandardNames.EXPORTS);
-  }
-
-  public static IAbstract exportRecord(IAbstract term)
-  {
-    assert isExportExp(term);
-
-    return Abstract.binaryLhs(term);
-  }
-
-  public static List<IAbstract> exportExported(IAbstract term)
-  {
-    assert isExportExp(term);
-
-    List<IAbstract> exports = new ArrayList<IAbstract>();
-    term = Abstract.binaryRhs(term);
-
-    for (IAbstract el : unWrap(term, StandardNames.ALSO))
-      exports.add(el);
-    return exports;
-  }
-
-  public static IAbstract exportExpression(Location loc, IAbstract rec, IAbstract exports)
-  {
-    return Abstract.binary(loc, StandardNames.EXPORTS, rec, exports);
-  }
-
   public static boolean isLambdaExp(IAbstract term)
   {
     return Abstract.isBinary(term, StandardNames.FUN_ARROW)

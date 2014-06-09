@@ -29,7 +29,7 @@ import com.starview.platform.data.IValue;
  * 02110-1301 USA
  * 
  * @author fgm
- *
+ * 
  */
 public class Display implements IAbstractVisitor
 {
@@ -92,8 +92,6 @@ public class Display implements IAbstractVisitor
       OpFormAttribute opForm = (OpFormAttribute) app.getAttribute(OpFormAttribute.name);
       switch (opForm.getForm()) {
       case infix:
-      case left:
-      case right:
         assert Abstract.isBinary(app);
         Abstract.binaryLhs(app).accept(this);
         appendWord(Abstract.getOp(app));
@@ -105,13 +103,11 @@ public class Display implements IAbstractVisitor
         display(app.getArgs(), "(", ", ", ")");
         return;
       case prefix:
-      case prefixAssociative:
         assert Abstract.isUnary(app);
         appendWord(Abstract.getOp(app));
         Abstract.unaryArg(app).accept(this);
         return;
       case postfix:
-      case postfixAssociative:
         assert Abstract.isUnary(app);
         Abstract.unaryArg(app).accept(this);
         appendWord(Abstract.getOp(app));

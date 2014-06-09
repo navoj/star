@@ -94,7 +94,7 @@ delta is package {
    valis (tm);
   }
 
-  implementation diffable over (map of (%k,%v) where diffable over %k 'n diffable over %v) is {
+  implementation diffable over (map of (%k,%v) where diffable over %k and diffable over %v) is {
    diff = hashDiff();
   } using {
     hashDiff() is (function(X1, X2, Loc) is hashDiffer(X1, X2, Loc));

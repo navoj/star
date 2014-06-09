@@ -89,7 +89,7 @@ implementation sorting over cons of %t determines %t is {
   } in qsort(In)
 };
 
-implementation comparable over cons of %t where comparable over %t 'n equality over %t is {
+implementation comparable over cons of %t where comparable over %t and equality over %t is {
     X < Y is consLess(X,Y);
     X <= Y is consLessEq(X,Y);
     X > Y is consLess(Y,X);

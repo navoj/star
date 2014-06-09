@@ -146,7 +146,7 @@ public class EqualityBuilder
   {
     Location loc = tp.getLoc();
 
-    return Abstract.binary(loc, StandardNames.WHERE, tp, CompilerUtils.tupleUp(loc, StandardNames.ALSO, constraints,
+    return Abstract.binary(loc, StandardNames.WHERE, tp, CompilerUtils.tupleUp(loc, StandardNames.AND, constraints,
         req));
   }
 
@@ -155,7 +155,7 @@ public class EqualityBuilder
     Location loc = tp.getLoc();
 
     if (!constraints.isEmpty())
-      return Abstract.binary(loc, StandardNames.WHERE, tp, CompilerUtils.tupleUp(loc, StandardNames.ALSO, constraints));
+      return Abstract.binary(loc, StandardNames.WHERE, tp, CompilerUtils.tupleUp(loc, StandardNames.AND, constraints));
     else
       return tp;
   }
@@ -174,7 +174,7 @@ public class EqualityBuilder
         if (req == null)
           req = contTerm;
         else
-          req = Abstract.binary(loc, StandardNames.ALSO, contTerm, req);
+          req = Abstract.binary(loc, StandardNames.AND, contTerm, req);
       }
       return req;
     } else
@@ -222,12 +222,12 @@ public class EqualityBuilder
     List<IAbstract> cons = new ArrayList<>();
 
     if (Abstract.isBinary(tp, StandardNames.WHERE))
-      for (IAbstract con : CompilerUtils.unWrap(Abstract.binaryRhs(tp), StandardNames.ALSO))
+      for (IAbstract con : CompilerUtils.unWrap(Abstract.binaryRhs(tp), StandardNames.AND))
         cons.add(con);
 
     for (IAbstract con : CompilerUtils.unWrap(CompilerUtils.typeDefnConstructors(stmt)))
       if (Abstract.isBinary(con, StandardNames.WHERE))
-        for (IAbstract c : CompilerUtils.unWrap(Abstract.binaryRhs(con), StandardNames.ALSO))
+        for (IAbstract c : CompilerUtils.unWrap(Abstract.binaryRhs(con), StandardNames.AND))
           cons.add(c);
     return cons;
   }

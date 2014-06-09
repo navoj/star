@@ -157,7 +157,7 @@ shortestPath is package {
 	for all coll, el such that
 	  (coll) => relation of el
 		where iterable over coll determines el 
-           'n reversible over coll ; -- '
+           and reversible over coll ; -- '
 
   implementation reversible over relation of %t is {
 	reverse(s) is s;
@@ -169,7 +169,7 @@ shortestPath is package {
 	for all coll, el such that
 	  (coll) => cons of el
 		where iterable over coll determines el 
-           'n reversible over coll ; -- '
+           and reversible over coll ; -- '
   consFromIterable(it) is itMap((function (x) is x), it);
 
   nThings(n, make) is

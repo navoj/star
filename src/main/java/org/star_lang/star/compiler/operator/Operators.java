@@ -335,12 +335,12 @@ public class Operators implements PrettyPrintable
     return false;
   }
 
-  public PrefixOperator isPrefixOperator(String operator, int priority)
+  public Operator isPrefixOperator(String operator, int priority)
   {
     if (operators.containsKey(operator)) {
       for (Operator op : operators.get(operator)) {
-        if (op instanceof PrefixOperator && op.getMinPriority() <= priority)
-          return (PrefixOperator) op;
+        if (op.getForm() == OperatorForm.prefix && op.getMinPriority() <= priority)
+          return op;
       }
     }
 
@@ -352,12 +352,12 @@ public class Operators implements PrettyPrintable
     return operatorRoot().isPrefixOperator(op, 0);
   }
 
-  public PostfixOperator isPostfixOperator(String operator, int priority)
+  public Operator isPostfixOperator(String operator, int priority)
   {
     if (operators.containsKey(operator)) {
       for (Operator op : operators.get(operator)) {
-        if (op instanceof PostfixOperator && op.getMinPriority() <= priority)
-          return (PostfixOperator) op;
+        if (op.getForm() == OperatorForm.postfix && op.getMinPriority() <= priority)
+          return op;
       }
     }
 
@@ -369,12 +369,12 @@ public class Operators implements PrettyPrintable
     return operatorRoot().isPostfixOperator(op, 0);
   }
 
-  public InfixOperator isInfixOperator(String operator, int priority)
+  public Operator isInfixOperator(String operator, int priority)
   {
     if (operators.containsKey(operator)) {
       for (Operator op : operators.get(operator)) {
-        if (op instanceof InfixOperator && op.getMinPriority() <= priority)
-          return (InfixOperator) op;
+        if (op.getForm() == OperatorForm.infix && op.getMinPriority() <= priority)
+          return op;
       }
     }
 
@@ -407,17 +407,10 @@ public class Operators implements PrettyPrintable
     } else {
       for (Iterator<Operator> it = ops.iterator(); it.hasNext();) {
         Operator op = it.next();
-        if (spec instanceof InfixOperator && op instanceof InfixOperator) {
+        if (spec.getForm() == op.getForm()) {
           if (!force && spec.getPriority() != op.getPriority())
-            errors.reportError(operator + " already an infix operator of priority " + op.getPriority(), loc);
-          it.remove();
-        } else if (spec instanceof PrefixOperator && op instanceof PrefixOperator) {
-          if (!force && spec.getPriority() != op.getPriority())
-            errors.reportError(operator + " already a prefix operator of priority " + op.getPriority(), loc);
-          it.remove();
-        } else if (spec instanceof PostfixOperator && op instanceof PostfixOperator) {
-          if (!force && spec.getPriority() != op.getPriority())
-            errors.reportError(operator + " already a postfix operator of priority " + op.getPriority(), loc);
+            errors.reportError(operator + " already an " + op.getForm() + " operator of priority " + op.getPriority(),
+                loc);
           it.remove();
         }
       }
@@ -437,50 +430,55 @@ public class Operators implements PrettyPrintable
 
   public void definePrefixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
   {
-    defineOperator(operator, new PrefixOperator(operator, priority), force, errors, loc);
+    definePrefixOperator(operator, priority, 0, force, errors, loc);
   }
 
   public void definePrefixOperator(String operator, int priority, int minPriority, boolean force, ErrorReport errors,
       Location loc)
   {
-    defineOperator(operator, new PrefixOperator(operator, priority, minPriority, OperatorForm.prefix), force, errors,
-        loc);
+    defineOperator(operator, new Operator(operator, OperatorForm.prefix, -1, priority, priority - 1, minPriority),
+        force, errors, loc);
   }
 
   public void definePrefixAssocOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
   {
-    defineOperator(operator, new PrefixAssocOperator(operator, priority), force, errors, loc);
+    defineOperator(operator, new Operator(operator, -1, priority, priority, OperatorForm.prefix), force, errors, loc);
   }
 
   public void definePostfixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
   {
-    defineOperator(operator, new PostfixOperator(operator, priority), force, errors, loc);
+    defineOperator(operator, new Operator(operator, priority - 1, priority, -1, OperatorForm.postfix), force, errors,
+        loc);
   }
 
   public void definePostfixAssocOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
   {
-    defineOperator(operator, new PostfixAssocOperator(operator, priority), force, errors, loc);
+    defineOperator(operator, new Operator(operator, priority, priority, -1, OperatorForm.postfix), force, errors, loc);
   }
 
   public void defineInfixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
   {
-    defineOperator(operator, new InfixOperator(operator, priority), force, errors, loc);
+    defineOperator(operator, new Operator(operator, priority - 1, priority, priority - 1, OperatorForm.infix), force,
+        errors, loc);
   }
 
   public void defineInfixOperator(String operator, int priority, int minPriority, boolean force, ErrorReport errors,
       Location loc)
   {
-    defineOperator(operator, new InfixOperator(operator, priority, minPriority, OperatorForm.infix), force, errors, loc);
+    defineOperator(operator, new Operator(operator, OperatorForm.infix, priority - 1, priority, priority - 1,
+        minPriority), force, errors, loc);
   }
 
   public void defineLeftOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
   {
-    defineOperator(operator, new LeftAssocOperator(operator, priority), force, errors, loc);
+    defineOperator(operator, new Operator(operator, priority, priority, priority - 1, OperatorForm.infix), force,
+        errors, loc);
   }
 
   public void defineRightOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
   {
-    defineOperator(operator, new RightAssocOperator(operator, priority), force, errors, loc);
+    defineOperator(operator, new Operator(operator, priority - 1, priority, priority, OperatorForm.infix), force,
+        errors, loc);
   }
 
   public BracketPair getBracketPair(String left)
@@ -770,7 +768,7 @@ public class Operators implements PrettyPrintable
       System.out.println(entry.getValue().toString());
     }
 
-    // Generate table for emacs moe
+    // Generate table for emacs mode
     for (int ix = 2000; ix > 0; ix--) {
       for (Entry<String, Collection<Operator>> entry : root.operators.entrySet()) {
         // We use an artificial ordering between styles: nonassoc, left, right
@@ -784,18 +782,27 @@ public class Operators implements PrettyPrintable
                 System.out.print("(");
                 switch (form) {
                 case prefix:
-                case postfix:
+                  if (op.isRightAssoc())
+                    System.out.print("right");
+                  else
+                    System.out.print("nonassoc");
+                  break;
                 case infix:
+                  if (op.isLeftAssoc())
+                    System.out.print("left");
+                  else if (op.isRightAssoc())
+                    System.out.print("right");
+                  else
+                    System.out.print("nonassoc");
+                  break;
+                case postfix:
+                  if (op.isLeftAssoc())
+                    System.out.print("left");
+                  else
+                    System.out.print("nonassoc");
+                  break;
                 case none:
                   System.out.print("nonassoc");
-                  break;
-                case postfixAssociative:
-                case left:
-                  System.out.print("left");
-                  break;
-                case right:
-                case prefixAssociative:
-                  System.out.print("right");
                   break;
                 }
               }

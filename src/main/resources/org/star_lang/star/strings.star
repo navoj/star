@@ -184,13 +184,13 @@ implementation pPrint over char is {
   ppDisp(nonChar) is ppStr("nonChar");
 }
 
-implementation pPrint over ((%s,%t)) where pPrint over %s 'n pPrint over %t is {
+implementation pPrint over ((%s,%t)) where pPrint over %s and pPrint over %t is {
   ppDisp(E) is dispTuple(E)
 } using {
   dispTuple((E1,E2)) is ppSequence(0,cons(ppStr("("),cons(ppDisp(E1),cons(ppStr(", "), cons(ppDisp(E2),cons(ppStr(")"),nil))))))
 }
 
-implementation pPrint over ((%s,%t,%u)) where pPrint over %s 'n pPrint over %t 'n pPrint over %u is {
+implementation pPrint over ((%s,%t,%u)) where pPrint over %s and pPrint over %t and pPrint over %u is {
   ppDisp(E) is dispTuple(E)
 } using {
   dispTuple((E1,E2,E3)) is ppSequence(0,cons(ppStr("("),cons(ppDisp(E1),cons(ppStr(", "), cons(ppDisp(E2), cons(ppStr(", "), cons(ppDisp(E3), cons(ppStr(")"),nil))))))))
@@ -239,7 +239,7 @@ implementation pPrint over exception is {
 }
   
 
-sequenceDisplay has type (string,%t)=>pP where sequence over %t determines %e 'n pPrint over %e;
+sequenceDisplay has type (string,%t)=>pP where sequence over %t determines %e and pPrint over %e;
 sequenceDisplay(lbl,L) is ppSequence(0,cons(ppStr(lbl),cons(ppStr(" of {"),cons(ppSequence(2,dispSeq(L,ppStr(""))),cons(ppStr("}"),nil)))))
 using {
   inter is ppStr(";");

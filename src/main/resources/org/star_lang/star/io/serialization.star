@@ -622,7 +622,7 @@ serialization is package {
   };
 
 /* serialize pairs */
-  implementation serializable over ((%a, %b)) where serializable over %a 'n serializable over %b is { -- '
+  implementation serializable over ((%a, %b)) where serializable over %a and serializable over %b is { -- '
     shove(p) is shovePair(p);
     yank is yankPair;
   } using {
@@ -638,7 +638,7 @@ serialization is package {
   };
   
 /* serialize triples */
-  implementation serializable over ((%a, %b, %c)) where serializable over %a 'n serializable over %b 'n serializable over %c is {
+  implementation serializable over ((%a, %b, %c)) where serializable over %a and serializable over %b and serializable over %c is {
     shove(p) is shove0(p);
     yank is yank0;
   } using {
@@ -747,7 +747,7 @@ serialization is package {
   }
 
 /* serialize maps (aka hash) */
-  implementation serializable over hash of (%k, %v) where serializable over %k 'n serializable over %v is { -- '
+  implementation serializable over hash of (%k, %v) where serializable over %k and serializable over %v is { -- '
     shove(m) is shoveHash(m);
     yank is yankHash;
   } using {

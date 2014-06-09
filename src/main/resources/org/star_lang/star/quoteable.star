@@ -77,13 +77,13 @@ implementation coercion over (quoted,((%t))) where coercion over (quoted,%t) is 
   xCoerce(X) is X as %t;
 }
 
-implementation coercion over ((%l,%r),quoted) where coercion over (%l,quoted) 'n coercion over (%r,quoted) is {
+implementation coercion over ((%l,%r),quoted) where coercion over (%l,quoted) and coercion over (%r,quoted) is {
   coerce((L,R)) is <| (?xCoerce(L), ?xCoerce(R)) |>;
 } using {
   xCoerce(X) is X as quoted;
 }
 
-implementation coercion over (quoted, (%l,%r)) where coercion over (quoted,%l) 'n coercion over (quoted, %r) is {
+implementation coercion over (quoted, (%l,%r)) where coercion over (quoted,%l) and coercion over (quoted, %r) is {
   coerce(<|(?L,?R)|>) is (lCoerce(L),rCoerce(R))
 } using {
   lCoerce(X) is X as %l;
@@ -116,7 +116,7 @@ implementation coercion over (list of %t,quoted) where coercion over (%t,quoted)
   quoteList(R) is <| list of { ?quoteSeq(R) } |>;
 };
 
-quoteSeq has type (%s)=>quoted where iterable over %s determines %t 'n coercion over (%t,quoted);
+quoteSeq has type (%s)=>quoted where iterable over %s determines %t and coercion over (%t,quoted);
 quoteSeq(S) is valof{
   var El := <| () |>;
   for E in S do{
@@ -133,7 +133,7 @@ quoteSeq(S) is valof{
 
 # type ?N is ?Algebraic implementing ?Specs :: statement :- N::typeSpec :& Algebraic :: valueSpecifier :& Specs :: names;
 # type ?Ptn is ?Algebraic implementing ?Specs ==> #(type Ptn is Algebraic; generate(Specs) )# ## {
-	#generate(?L 'n ?R) ==> #(generate(L) ; generate(R) )#;
+	#generate(?L and ?R) ==> #(generate(L) ; generate(R) )#;
 	#generate((?Id)) ==> generateSpecs(Id);
 	#generate(identifier?Id) ==> #(implement_#+Id)#(Ptn,Algebraic)
 }
@@ -214,7 +214,7 @@ quoteSeq(S) is valof{
     #findReqs((?L,?R)) ==> (coercion over Fn(L),findReqs(R));
 
     #composeConstraints((?C,())) ==> C;
-    #composeConstraints((?L,?R)) ==> #( L 'n composeConstraints(R) )#;
+    #composeConstraints((?L,?R)) ==> #( L and composeConstraints(R) )#;
   }
   
   #quoteTemplate(?Tp) ==> qtTemplate(Tp,QQ) ## {

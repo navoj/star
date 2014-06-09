@@ -216,7 +216,7 @@ public class QuoteBuilder
     Location loc = tp.getLoc();
 
     if (constraint != null)
-      return Abstract.binary(loc, StandardNames.WHERE, tp, Abstract.binary(loc, StandardNames.ALSO, constraint, req));
+      return Abstract.binary(loc, StandardNames.WHERE, tp, Abstract.binary(loc, StandardNames.AND, constraint, req));
     else
       return Abstract.binary(loc, StandardNames.WHERE, tp, req);
   }
@@ -245,7 +245,7 @@ public class QuoteBuilder
         if (req == null)
           req = contTerm;
         else
-          req = Abstract.binary(loc, StandardNames.ALSO, contTerm, req);
+          req = Abstract.binary(loc, StandardNames.AND, contTerm, req);
       }
       return req;
     } else
@@ -266,7 +266,7 @@ public class QuoteBuilder
         if (req == null)
           req = contTerm;
         else
-          req = Abstract.binary(loc, StandardNames.ALSO, contTerm, req);
+          req = Abstract.binary(loc, StandardNames.AND, contTerm, req);
       }
       return req;
     } else

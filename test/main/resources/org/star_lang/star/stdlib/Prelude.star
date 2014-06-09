@@ -184,7 +184,7 @@ member(eq, y, lis) is valof {
 	valis false;
 };
 
-assoc has type ((%a, %a) => boolean, %a, List of ((%a, %b))) => Maybe of ((%a, %b)) where equality over %a 'n equality over %b;
+assoc has type ((%a, %a) => boolean, %a, List of ((%a, %b))) => Maybe of ((%a, %b)) where equality over %a and equality over %b;
 assoc(eq, y, lis) is valof {
   var r := lis;
   while r != Null do {
@@ -201,7 +201,7 @@ filter(p, lis) is
 	foldLeft((function (r, x) is p(x) ? Cons(x, r) | r), Null,
 			 reverse(lis));
 
-filterMap has type ((%a) => Maybe of %b, List of %a) => List of %b where equality over %a 'n equality over %b;
+filterMap has type ((%a) => Maybe of %b, List of %a) => List of %b where equality over %a and equality over %b;
 filterMap(p, lis) is
 	foldLeft((function (r, x) is 
 				case p(x) in {
@@ -234,7 +234,7 @@ removeAll(p, lis) is
 			 reverse(lis));
 
 -- #### type declaration triggers Star compiler bug
-zip has type (List of %a, List of %b) => List of ((%a, %b)) where equality over %a 'n equality over %b;
+zip has type (List of %a, List of %b) => List of ((%a, %b)) where equality over %a and equality over %b;
 zip(lis1, lis2) is valof {
   var r1 := lis1;
   var r2 := lis2;
@@ -249,7 +249,7 @@ zip(lis1, lis2) is valof {
   valis reverse(res);
 };
 
-zip3 has type (List of %a, List of %b, List of %c) => List of ((%a, %b, %c)) where equality over %a 'n equality over %b 'n equality over %c;
+zip3 has type (List of %a, List of %b, List of %c) => List of ((%a, %b, %c)) where equality over %a and equality over %b and equality over %c;
 zip3(lis1, lis2, lis3) is valof {
   var r1 := lis1;
   var r2 := lis2;
@@ -271,7 +271,7 @@ foldRight has type ((%a, %b) => %b, %b, List of %a) => %b;
 foldRight(f, a, Null) is a;
 foldRight(f, a, Cons(x, xs)) is f(x, foldRight(f, a, xs));
 
-foldLeft has type ((%b, %a) => %b, %b, List of %a) => %b where equality over %a 'n equality over %b;
+foldLeft has type ((%b, %a) => %b, %b, List of %a) => %b where equality over %a and equality over %b;
 foldLeft(f, a, l) is valof {
 	var res := a;
 	forEach((procedure(x) do res := f(res, x)), l);
@@ -279,13 +279,13 @@ foldLeft(f, a, l) is valof {
 }
 
 -- map is a keyword
-mapcar has type ((%a) => (%b), List of %a) => List of %b where equality over %a 'n equality over %b;
+mapcar has type ((%a) => (%b), List of %a) => List of %b where equality over %a and equality over %b;
 mapcar(f, l) is reverse(
 	foldLeft((function (r, x) is Cons(f(x), r)), Null, l)); 
  
 -- combine is supposed to be associative
 -- the idea is that all of this could be done in parallel
-mapCombine has type ((%a) => %b, List of %a, (%b, %b) => %b, %b) => %b where equality over %a 'n equality over %b;
+mapCombine has type ((%a) => %b, List of %a, (%b, %b) => %b, %b) => %b where equality over %a and equality over %b;
 mapCombine(f, lis, combine, nill) is
 	foldLeft((function (b, x) is
 				combine(b, f(x))),

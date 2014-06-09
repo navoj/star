@@ -38,7 +38,7 @@ type hash of (%k,%v) is alias of map of (%k,%v);
 #hash of {?X} ==> map of {X};
 
 
-implementation equality over (map of (%k,%v) where equality over %k 'n equality over %v) is {
+implementation equality over (map of (%k,%v) where equality over %k and equality over %v) is {
   X=Y is hash_equal(X,Y);
 } using {
   hash_equal(X,Y) is __hash_equal(X,Y,(=));
@@ -49,7 +49,7 @@ implementation sizeable over map of (%s,%t) is {
   size(R) is integer(__hash_size(R));
 }
 
-implementation pPrint over map of (%k,%v) where pPrint over %k 'n pPrint over %v is {
+implementation pPrint over map of (%k,%v) where pPrint over %k and pPrint over %v is {
   ppDisp(M) is ppSequence(0,cons(ppStr("map of {"),
 	cons(ppSequence(2,dispEntries(M)),cons(ppStr("}"),nil))))
 } using {

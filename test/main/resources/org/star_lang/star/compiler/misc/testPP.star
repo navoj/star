@@ -36,7 +36,7 @@ testPP is package{
  
   type fooPair is foo((string,integer));
   
-  implementation pPrint over ((%a,%b)) where pPrint over %a 'n pPrint over %b is {
+  implementation pPrint over ((%a,%b)) where pPrint over %a and pPrint over %b is {
     ppDisp is dispPair;
   } using {
     dispPair((L,R)) is ppSequence(2,cons of { ppStr("!("); ppDisp(L); ppStr(", "); ppDisp(R); ppStr(")")});

@@ -23,14 +23,11 @@ import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.grammar.Token.TokenType;
 import org.star_lang.star.compiler.operator.BracketPair;
-import org.star_lang.star.compiler.operator.InfixOperator;
 import org.star_lang.star.compiler.operator.OpFormAttribute;
 import org.star_lang.star.compiler.operator.Operator;
 import org.star_lang.star.compiler.operator.OperatorException;
 import org.star_lang.star.compiler.operator.OperatorForm;
 import org.star_lang.star.compiler.operator.Operators;
-import org.star_lang.star.compiler.operator.PostfixOperator;
-import org.star_lang.star.compiler.operator.PrefixOperator;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
@@ -130,7 +127,7 @@ public class OpGrammar implements PrettyPrintable
         IAbstract right = termStack.pop();
         IAbstract left = termStack.pop();
         termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-            OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.right)));
+            OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
       }
       wrapCount--;
     }
@@ -191,7 +188,7 @@ public class OpGrammar implements PrettyPrintable
       if (operators.isRightBracket(hed.getImage()))
         reportError("not expecting a `" + hed.toString() + "' here" + bracket, hed.getLoc());
 
-      PrefixOperator prefix = operators.isPrefixOperator(hed.getImage(), priority);
+      Operator prefix = operators.isPrefixOperator(hed.getImage(), priority);
       Location leftLoc = hed.getLoc();
 
       if (prefix != null) {
@@ -270,8 +267,8 @@ public class OpGrammar implements PrettyPrintable
       if (operators.isRightBracket(hed.getImage()))
         return leftPrior;
 
-      PostfixOperator postfix = operators.isPostfixOperator(hed.getImage(), leftPrior);
-      InfixOperator infix = operators.isInfixOperator(hed.getImage(), leftPrior);
+      Operator postfix = operators.isPostfixOperator(hed.getImage(), leftPrior);
+      Operator infix = operators.isInfixOperator(hed.getImage(), leftPrior);
 
       if (postfix != null && postfix.leftPriority() >= leftPrior && postfix.getPriority() <= priority) {
         Token token = tokenizer.commitToken();
@@ -301,14 +298,14 @@ public class OpGrammar implements PrettyPrintable
               treatAsPostfix = true;
               break;
             } else {
-              PrefixOperator prefix = operators.isPrefixOperator(next.getImage(), priority);
+              Operator prefix = operators.isPrefixOperator(next.getImage(), priority);
               if (prefix != null) {
                 treatAsPostfix = prefix.getPriority() > infix.rightPriority();
                 break;
               }
             }
 
-            InfixOperator nxtInfix = operators.isInfixOperator(next.getImage(), priority);
+            Operator nxtInfix = operators.isInfixOperator(next.getImage(), priority);
             if (nxtInfix != null) {
               treatAsPostfix = nxtInfix.getPriority() > infix.rightPriority();
               break;
@@ -408,7 +405,7 @@ public class OpGrammar implements PrettyPrintable
     case string: {
       boolean isRaw = hed.isRaw();
       tokenizer.commitToken();
-      
+
       return stringParse(loc, hed.getImage(), isRaw);
     }
     case blob:
@@ -530,7 +527,7 @@ public class OpGrammar implements PrettyPrintable
         termStack.push(lft);
       else {
         IAbstract join = Abstract.binary(lft.getLoc().extendWith(rgt.getLoc()), StandardNames.STRING_CATENATE, lft,
-            rgt, OpFormAttribute.name, new OpFormAttribute(Operators.CATENATE_PRIORITY, OperatorForm.right));
+            rgt, OpFormAttribute.name, new OpFormAttribute(Operators.CATENATE_PRIORITY, OperatorForm.infix));
         termStack.push(join);
       }
       fragmentCount--;
@@ -699,7 +696,7 @@ public class OpGrammar implements PrettyPrintable
               IAbstract right = termStack.pop();
               IAbstract left = termStack.pop();
               termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-                  OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.right)));
+                  OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
             }
             wrapCount--;
           }
@@ -814,7 +811,7 @@ public class OpGrammar implements PrettyPrintable
               IAbstract right = termStack.pop();
               IAbstract left = termStack.pop();
               termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-                  OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.right)));
+                  OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
             }
             wrapCount--;
           }

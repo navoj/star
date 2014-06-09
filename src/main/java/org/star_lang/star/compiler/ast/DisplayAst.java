@@ -1,11 +1,8 @@
 package org.star_lang.star.compiler.ast;
 
 import org.star_lang.star.compiler.CompilerUtils;
-import org.star_lang.star.compiler.operator.InfixOperator;
-import org.star_lang.star.compiler.operator.OperatorForm;
+import org.star_lang.star.compiler.operator.Operator;
 import org.star_lang.star.compiler.operator.Operators;
-import org.star_lang.star.compiler.operator.PostfixOperator;
-import org.star_lang.star.compiler.operator.PrefixOperator;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
@@ -18,10 +15,10 @@ import com.starview.platform.data.IList;
 import com.starview.platform.data.IValue;
 import com.starview.platform.data.type.IType;
 import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.StringWrap;
 import com.starview.platform.data.value.BoolWrap.FalseValue;
 import com.starview.platform.data.value.BoolWrap.TrueValue;
+import com.starview.platform.data.value.Factory;
+import com.starview.platform.data.value.StringWrap;
 
 /**
  * 
@@ -40,7 +37,7 @@ import com.starview.platform.data.value.BoolWrap.TrueValue;
  * 02110-1301 USA
  * 
  * @author fgm
- *
+ * 
  */
 public class DisplayAst implements IFunction
 {
@@ -143,22 +140,21 @@ public class DisplayAst implements IFunction
       display(disp, app.getArgs(), " (", ", ", ")", 0, 1000);
     else if (Abstract.arity(app) == 2 && Abstract.isIdentifier(operator)) {
       String op = Abstract.getId(operator);
-      InfixOperator infix = operators.isInfixOperator(op, priority);
+      Operator infix = operators.isInfixOperator(op, priority);
       if (infix != null) {
-        OperatorForm form = infix.getForm();
         int infixPriority = infix.getPriority();
         paren(disp, infixPriority, priority, "(");
 
-        display(disp, Abstract.binaryLhs(app), leftPrior(form, infixPriority));
+        display(disp, Abstract.binaryLhs(app), infix.leftPriority());
         disp.appendWord(Abstract.getOp(app));
-        display(disp, Abstract.binaryRhs(app), rightPrior(form, infixPriority));
+        display(disp, Abstract.binaryRhs(app), infix.rightPriority());
         paren(disp, infixPriority, priority, ")");
       } else
         display0(disp, app);
     } else if (Abstract.arity(app) == 1 && Abstract.isIdentifier(operator)) {
       String op = Abstract.getId(operator);
-      PrefixOperator prefix = operators.isPrefixOperator(op, priority);
-      PostfixOperator postfix = operators.isPostfixOperator(op, priority);
+      Operator prefix = operators.isPrefixOperator(op, priority);
+      Operator postfix = operators.isPostfixOperator(op, priority);
       IAbstract arg = Abstract.unaryArg(app);
 
       if (prefix != null) {
@@ -170,25 +166,25 @@ public class DisplayAst implements IFunction
           if (prefixPriority <= postfixPriority) {
             paren(disp, prefixPriority, priority, "(");
             disp.appendWord(op);
-            display(disp, arg, rightPrior(prefix.getForm(), prefixPriority));
+            display(disp, arg, prefix.rightPriority());
             paren(disp, prefixPriority, priority, ")");
           } else {
             paren(disp, postfixPriority, priority, "(");
-            display(disp, arg, leftPrior(postfix.getForm(), postfixPriority));
+            display(disp, arg, postfix.leftPriority());
             disp.appendWord(op);
             paren(disp, postfixPriority, priority, ")");
           }
         } else {
           paren(disp, prefixPriority, priority, "(");
           disp.appendWord(op);
-          display(disp, arg, rightPrior(prefix.getForm(), prefixPriority));
+          display(disp, arg, prefix.rightPriority());
           paren(disp, prefixPriority, priority, ")");
         }
       } else if (postfix != null) {
         int postfixPriority = postfix.getPriority();
 
         paren(disp, postfixPriority, priority, "(");
-        display(disp, arg, leftPrior(postfix.getForm(), postfixPriority));
+        display(disp, arg, postfix.leftPriority());
         disp.appendWord(op);
         paren(disp, postfixPriority, priority, ")");
       } else
@@ -201,40 +197,6 @@ public class DisplayAst implements IFunction
   {
     display(disp, app.getOperator(), 0);
     display(disp, app.getArgs(), "(", ", ", ")", 0, 1000);
-  }
-
-  private static int leftPrior(OperatorForm form, int priority)
-  {
-    switch (form) {
-    case infix:
-    case right:
-      return priority - 1;
-    case left:
-      return priority;
-    case postfix:
-      return priority - 1;
-    case postfixAssociative:
-      return priority;
-    default:
-      return 0;
-    }
-  }
-
-  private static int rightPrior(OperatorForm form, int priority)
-  {
-    switch (form) {
-    case infix:
-    case left:
-      return priority - 1;
-    case right:
-      return priority;
-    case prefix:
-      return priority - 1;
-    case prefixAssociative:
-      return priority;
-    default:
-      return 0;
-    }
   }
 
   private static void paren(PrettyPrintDisplay disp, int priority, int limit, String paren)
