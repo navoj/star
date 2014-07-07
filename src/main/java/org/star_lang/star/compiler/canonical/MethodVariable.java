@@ -1,6 +1,6 @@
 package org.star_lang.star.compiler.canonical;
 
-import static com.starview.platform.data.type.Location.merge;
+import static org.star_lang.star.data.type.Location.merge;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,15 +17,14 @@ import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.ContractConstraint;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeConstraint;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Quantifier;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.ContractConstraint;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Quantifier;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * The core type expression in a MethodVariable is an overload type expression:

@@ -11,19 +11,18 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.type.AbstractType;
-import com.starview.platform.data.type.ExistentialType;
-import com.starview.platform.data.type.HasKind;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeConstraint;
-import com.starview.platform.data.type.ITypeVisitor;
-import com.starview.platform.data.type.Kind;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
+import org.star_lang.star.data.type.AbstractType;
+import org.star_lang.star.data.type.ExistentialType;
+import org.star_lang.star.data.type.HasKind;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.ITypeVisitor;
+import org.star_lang.star.data.type.Kind;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

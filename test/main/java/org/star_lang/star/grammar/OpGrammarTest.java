@@ -11,8 +11,7 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.grammar.OpGrammar;
 import org.star_lang.star.compiler.operator.Operators;
-
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * 

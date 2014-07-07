@@ -13,14 +13,13 @@ import org.star_lang.star.compiler.cafe.compile.Utils;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeDescription;
 import org.star_lang.star.operators.Intrinsics;
-
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeDescription;
 
 /**
  * 

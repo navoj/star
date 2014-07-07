@@ -19,14 +19,14 @@
  */
 badList is package{
   -- should not compile
-  test(list{a;..x;b}) is x;
+  test(list of [a,..x,b]) is x;
   
   -- another bad list
-  XX is list of {a1;a2..;m;b1;b2;..t};
+  XX is list of [a1,a2..,m,b1,b2,..t];
     
-  c is test(list{1;2;3;4;5});
+  c is test(list of [1,2,3,4,5]);
   
-  foo is sequence of {1;2;..3;4};
+  foo is sequence of [1,2,..3,4];
 
   main() do {
     logMsg(info, "c is $c");

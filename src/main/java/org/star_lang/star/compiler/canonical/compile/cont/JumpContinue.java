@@ -9,8 +9,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.compiler.canonical.compile.CompileContext;
 import org.star_lang.star.compiler.canonical.compile.Continue;
 import org.star_lang.star.compiler.canonical.compile.FrameState;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

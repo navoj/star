@@ -41,20 +41,19 @@ import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.StringUtils;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeDescription;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.string.RegexpOps;
 import org.star_lang.star.operators.string.runtime.Regexp;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeDescription;
 
 /**
  * 

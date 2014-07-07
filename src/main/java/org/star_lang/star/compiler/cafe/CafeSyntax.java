@@ -14,11 +14,10 @@ import org.star_lang.star.compiler.cafe.compile.Utils;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.GenSym;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * 

@@ -34,7 +34,7 @@ peoplesort is package{
     
   main has type action();
   main() do {
-    people is list{someone{name="peter"}; someone{name="john"; spouse=noone}; someone{name="fred"}; someone{name="fred"};someone{name="andy"}};
+    people is list of[someone{name="peter"}, someone{name="john"; spouse=noone}, someone{name="fred"}, someone{name="fred"},someone{name="andy"}];
     
     logMsg(info,"The list of people is $people");
     logMsg(info,"The sorted list of people is $(quick(people, peopleComp))");
@@ -42,8 +42,8 @@ peoplesort is package{
     assert inOrder(quick(people,peopleComp),peopleComp);
   }
   
-  inOrder(list{},_) is true;
-  inOrder(list{X},_) is true;
-  inOrder(list{X;Y;..R},C) where not C(Y,X) is inOrder(list{Y;..R},C);
+  inOrder(list of [],_) is true;
+  inOrder(list of[X],_) is true;
+  inOrder(list of [X,Y,..R],C) where not C(Y,X) is inOrder(list of [Y,..R],C);
   inOrder(_,_) default is false;
 }

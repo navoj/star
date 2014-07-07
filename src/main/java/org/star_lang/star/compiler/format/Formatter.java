@@ -30,14 +30,13 @@ import org.star_lang.star.compiler.util.ApplicationProperties;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.wff.WffEngine;
 import org.star_lang.star.compiler.wff.WffProgram;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.Resources;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.CatalogException;
-import com.starview.platform.resource.catalog.URIBasedCatalog;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Resources;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.CatalogException;
+import org.star_lang.star.resource.catalog.URIBasedCatalog;
 
 /**
  * Implement source-code formatting of StarRules text based on rules

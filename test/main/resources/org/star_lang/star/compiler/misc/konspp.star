@@ -35,7 +35,7 @@ konspp is package{
   }
   
   main() do {
-    logMsg(info,"try printing a sequence: $(kk of {1;2;3;4})");
-    assert display(kk of {1;2;3;4}) = "kk of {1;2;3;4}";
+    logMsg(info,"try printing a sequence: $(kk of [1,2,3,4])");
+    assert display(kk of [1,2,3,4]) = "kk of [1, 2, 3, 4]";
   }
 }

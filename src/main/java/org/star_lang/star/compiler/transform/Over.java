@@ -52,19 +52,18 @@ import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.util.UndoableHash;
 import org.star_lang.star.compiler.util.UndoableMap;
-
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.ContractConstraint;
-import com.starview.platform.data.type.FieldConstraint;
-import com.starview.platform.data.type.FieldTypeConstraint;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeConstraint;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.ContractConstraint;
+import org.star_lang.star.data.type.FieldConstraint;
+import org.star_lang.star.data.type.FieldTypeConstraint;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 
 /**
  * Refactored overloader using the transformation pattern

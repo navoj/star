@@ -8,6 +8,20 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.IValueVisitor;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
+import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.assignment.AssignmentOps.Assignment;
 import org.star_lang.star.operators.assignment.AssignmentOps.RawBoolAssignment;
@@ -22,21 +36,6 @@ import org.star_lang.star.operators.assignment.ReferenceOps.GetRawIntegerReferen
 import org.star_lang.star.operators.assignment.ReferenceOps.GetRawLongReference;
 import org.star_lang.star.operators.assignment.ReferenceOps.GetReference;
 import org.star_lang.star.operators.string.runtime.ValueDisplay;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.IValueVisitor;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
-import com.starview.platform.data.value.Factory;
 
 /**
  * A RefCell holds the value of a re-assignable variable

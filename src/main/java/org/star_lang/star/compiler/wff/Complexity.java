@@ -11,8 +11,7 @@ import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.LongLiteral;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
-
-import com.starview.platform.data.IValue;
+import org.star_lang.star.data.IValue;
 
 /**
  * 

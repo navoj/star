@@ -5,12 +5,11 @@ import java.util.Map;
 import java.util.Random;
 
 import org.junit.Test;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.indextree.IndexTree;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IMap;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.Factory;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.Factory;
 
 /**
  * 

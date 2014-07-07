@@ -23,7 +23,7 @@ mapeq is package{
     M1 has type map of (string,integer);
     M1 is map of{"alpha"->1; "beta"->2; "gamma"->3};
     
-    L1 is list{"alpha"; "beta"; "gamma"};
+    L1 is list of ["alpha", "beta", "gamma"];
     
     M2 is valof{
       var M := map of{};

@@ -1,15 +1,14 @@
 package org.star_lang.star.compiler.ast;
 
 import org.star_lang.star.compiler.type.TypeUtils;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.Factory;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.Factory;
 
 /**
  * 

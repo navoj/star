@@ -48,12 +48,12 @@ displayId(i) is "Id(" ++ i.prettyName ++ "/" ++ i.uniqueName ++ ")"
 showId has type (Id) => Doc;
 showId(i) is docText(displayId(i));
 
-idUniqueChars is list{"$"; "%"; "&"; "/";
-		"A"; "B"; "C"; "D"; "E"; "F"; "G"; "H"; "I"; "J"; "K";
-		"L"; "M"; "N"; "O"; "P"; "Q"; "R"; "S"; "T"; "U"; "V";
-		"W"; "X"; "Y"; "Z"; "a"; "b"; "c"; "d"; "e"; "f"; "g";
-		"h"; "i"; "j"; "k"; "l"; "m"; "n"; "o"; "p"; "q"; "r";
-		"s"; "t"; "u"; "v"; "w"; "x"; "y"; "z"}; 
+idUniqueChars is list of ["$", "%", "&", "/",
+		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+		"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+		"W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g",
+		"h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
+		"s", "t", "u", "v", "w", "x", "y", "z"]; 
 idUniqueCharsCount is size(idUniqueChars);
 
 makeUniqueString has type (integer) => string;
@@ -76,14 +76,14 @@ makeId(pretty) is
 		prettyName = pretty;
 		uniqueName = makeUniqueString(idUniqueNameSize);
 		-- yes, I do know it's a hack
-		numbers = list { random(idRandomRange);
-						 random(idRandomRange);
-						 random(idRandomRange);
-						 random(idRandomRange);
-						 random(idRandomRange);
-						 random(idRandomRange);
-						 random(idRandomRange);
-						 random(idRandomRange) };
+		numbers = list of[ random(idRandomRange),
+						 random(idRandomRange),
+						 random(idRandomRange),
+						 random(idRandomRange),
+						 random(idRandomRange),
+						 random(idRandomRange),
+						 random(idRandomRange),
+						 random(idRandomRange) ];
 	};
 
 idEqual(id1, id2) is id1.uniqueName = id2.uniqueName;

@@ -14,13 +14,12 @@ import org.star_lang.star.code.repository.DirectoryRepository;
 import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.SRTest;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 public class DirectoryRepoTest extends SRTest
 {

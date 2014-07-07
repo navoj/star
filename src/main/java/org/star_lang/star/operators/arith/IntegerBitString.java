@@ -10,6 +10,9 @@ import org.star_lang.star.compiler.cafe.compile.Expressions;
 import org.star_lang.star.compiler.cafe.compile.HWM;
 import org.star_lang.star.compiler.cafe.compile.Inliner;
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.arith.runtime.IntBitString.BitAnd;
@@ -20,10 +23,6 @@ import org.star_lang.star.operators.arith.runtime.IntBitString.BitSar;
 import org.star_lang.star.operators.arith.runtime.IntBitString.BitShl;
 import org.star_lang.star.operators.arith.runtime.IntBitString.BitShr;
 import org.star_lang.star.operators.arith.runtime.IntBitString.BitXor;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * Bitstring functions for integers

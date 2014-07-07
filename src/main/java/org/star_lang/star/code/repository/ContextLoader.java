@@ -1,7 +1,7 @@
 package org.star_lang.star.code.repository;
 
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * 

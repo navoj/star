@@ -44,21 +44,20 @@ import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.RecordSpecifier;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeDescription;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.value.Array;
-import com.starview.platform.data.value.NTuple;
-import com.starview.platform.data.value.NTuple.NTpl;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.RecordSpecifier;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeDescription;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.value.Array;
+import org.star_lang.star.data.value.NTuple;
+import org.star_lang.star.data.value.NTuple.NTpl;
 
 /**
  * Handle the compilation of constructors Copyright (C) 2013 Starview Inc

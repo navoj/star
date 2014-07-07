@@ -3,9 +3,8 @@ package org.star_lang.star.compiler.generate;
 import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.type.BindingKind;
 import org.star_lang.star.compiler.util.AccessMode;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

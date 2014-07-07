@@ -1,19 +1,18 @@
 package org.star_lang.star.operators.system.runtime;
 
-import static com.starview.platform.data.type.StandardTypes.rawStringType;
+import static org.star_lang.star.data.type.StandardTypes.rawStringType;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.NTuple.NTpl;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.NTuple.NTpl;
 
 /**
  * 

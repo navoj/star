@@ -14,18 +14,17 @@ import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.TemplateString;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IArray;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IRecord;
-import com.starview.platform.data.IRelation;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IArray;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IRecord;
+import org.star_lang.star.data.IRelation;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.CatalogException;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

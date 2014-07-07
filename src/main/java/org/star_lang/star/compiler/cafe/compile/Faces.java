@@ -30,12 +30,11 @@ import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
 import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.value.AnonRecord;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.value.AnonRecord;
 
 public class Faces
 {

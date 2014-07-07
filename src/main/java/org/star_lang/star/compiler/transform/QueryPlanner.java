@@ -37,10 +37,9 @@ import org.star_lang.star.compiler.type.TypeChecker;
 import org.star_lang.star.compiler.type.TypeContracts;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.Wrapper;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 
 /**
  * Implement query transformation into nested for-loops Based on Keith's set macros from the glory

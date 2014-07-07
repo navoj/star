@@ -8,8 +8,7 @@ import org.star_lang.star.compiler.ast.IAttribute;
 import org.star_lang.star.compiler.format.FormatRanges;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

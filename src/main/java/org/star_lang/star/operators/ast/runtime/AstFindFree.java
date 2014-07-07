@@ -9,13 +9,12 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IAbstractVisitor;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
 
 /**
  * 

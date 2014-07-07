@@ -31,8 +31,7 @@ import org.star_lang.star.compiler.canonical.VarDeclaration;
 import org.star_lang.star.compiler.canonical.WhileAction;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.util.Pair;
-
-import com.starview.platform.data.type.IType;
+import org.star_lang.star.data.type.IType;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

@@ -9,8 +9,7 @@ import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
 import org.star_lang.star.compiler.cafe.compile.SrcSpec;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

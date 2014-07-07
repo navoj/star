@@ -14,10 +14,9 @@ import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.sources.JavaImport;
 import org.star_lang.star.compiler.sources.JavaInfo;
 import org.star_lang.star.compiler.standard.StandardNames;
-
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.URIUtils;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.URIUtils;
 
 /**
  * 

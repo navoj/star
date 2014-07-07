@@ -17,11 +17,10 @@ import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.Validate;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
 
 /**
  * 

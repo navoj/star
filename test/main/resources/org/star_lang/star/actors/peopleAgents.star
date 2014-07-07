@@ -50,10 +50,10 @@ peopleAgents is package{
     logMsg(info,"Q parents of S are $(query repo's parent with all X where (X,"S") in parent order by X)");
     logMsg(info,"parents of S are $(parentOf(repo,"S"))");
     assert "J" in parentOf(repo,"S");
-    assert parentOf(repo,"S")=list{"J";"P"};
+    assert parentOf(repo,"S")=list of ["J","P"];
     
     logMsg(info,"parents of J are $(parentOf(repo,"J"))");
-    assert parentOf(repo,"J")=list{};
+    assert parentOf(repo,"J")=list of [];
     
     logMsg(info,"qA is $(qActor(repo))");
     
@@ -63,7 +63,7 @@ peopleAgents is package{
     request repo's addChild to addChild("MM","J");
     request repo's addChild to addChild("KK","J");
     
-    assert parentOf(repo,"J") = list{"KK";"MM"};
+    assert parentOf(repo,"J") = list of ["KK","MM"];
     logMsg(info,"parents of J are $(parentOf(repo,"J"))");
   }
 }

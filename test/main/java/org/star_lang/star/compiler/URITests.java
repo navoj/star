@@ -2,11 +2,10 @@ package org.star_lang.star.compiler;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.data.value.URIAuthority;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.data.value.URIAuthority;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
 
 /**
  * 

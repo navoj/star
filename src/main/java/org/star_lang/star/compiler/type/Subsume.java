@@ -9,19 +9,18 @@ import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.ExistentialType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeExists;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterface;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
+import org.star_lang.star.data.type.ExistentialType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeExists;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterface;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 
 /*
  * Type subsumption algorithm

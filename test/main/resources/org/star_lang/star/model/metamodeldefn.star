@@ -73,7 +73,7 @@ type mType is mvType {
 } or mvTypeExpression {
   typeLabel has type string;
   typeArguments has type list of mType;
-  typeArguments default is list{};
+  typeArguments default is list of [];
 } or mvTypeInterfaceType {
   typeLabel has type string;
   schema has type mSchema;
@@ -81,14 +81,14 @@ type mType is mvType {
 } or mvTypeVar {
   typeLabel has type string;
   contractDependencies has type list of (string);
-  contractDependencies default is list{};
+  contractDependencies default is list of [];
 } or mvUniversalType {         -- mQuantifiedType
   typeLabel has type string;
   typeLabel default is "~";
   boundVar has type mType;
   bound has type mType;
   contractDependencies has type list of (string);
-  contractDependencies default is list{};
+  contractDependencies default is list of [];
 };
 
 -- TBD...
@@ -114,7 +114,7 @@ type mValueSpecifier is mvPositionalVSP {
   tp has type mType;
   -- constraint has type mExpression;
   argTypes has type list of (mType);
-  argTypes default is list{};
+  argTypes default is list of [];
   -- funType has type mType --??
 } or mvAggregateVSP {
   label has type string;
@@ -122,7 +122,7 @@ type mValueSpecifier is mvPositionalVSP {
   memberIndex has type map of (string, integer);
   memberIndex default is map of {};
   memberTypes has type list of mType;
-  memberTypes default is list{};
+  memberTypes default is list of [];
   defaults has type map of (string, mExpression);
   defaults default is map of {};
   implClass has type string;
@@ -134,11 +134,11 @@ type mSchema is mvSchema{
   memberTypes has type map of (string, mType);
   memberTypes default is map of {};
   memberReferences has type list of (string); -- maintains a list of attributes which are references.
-  memberReferences default is list{};
+  memberReferences default is list of [];
   defaults has type map of (string, mExpression);
   defaults default is map of{};
   constraints has type list of mCondition;
-  constraints default is list{};
+  constraints default is list of [];
 } or noneSchema;
 
 
@@ -336,7 +336,7 @@ type mModel is mvModelElement {
   description default is " Application model for ...";
   root has type mModel;
   resources has type list of ((mVisibility, mResource));  -- depricated... do not use it...
-  resources default is list{(mvPrivate, noneResource)};
+  resources default is list of [(mvPrivate, noneResource)];
   lastModifiedDate has type long;
   lastModifiedDate default is 0L;
 } -- where isEmpty(all X where X in root.inputPorts and X.name!="iConfig" and X.name!="iManage") and isEmpty(root.outputPorts)
@@ -361,7 +361,7 @@ type mModel is mvModelElement {
     outputPorts default is map of {};
     -- handlers has type map of (string, mScalarLiteral); <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
-    resources default is list{(mvPrivate, noneResource)};
+    resources default is list of [(mvPrivate, noneResource)];
     notes has type map of (string, string);
     notes default is map of {};
     lastModifiedDate has type long;
@@ -388,7 +388,7 @@ type mModel is mvModelElement {
     outputPorts default is map of {};
     -- handlers has type map of (string, mScalarLiteral);   <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
-    resources default is list{(mvPrivate, noneResource)};
+    resources default is list of [(mvPrivate, noneResource)];
     notes has type map of (string, string);
     notes default is map of {};
     lastModifiedDate has type long;
@@ -414,7 +414,7 @@ type mModel is mvModelElement {
     outputPorts default is map of {};
     -- handlers has type map of (string, mScalarLiteral);     <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
-    resources default is list{(mvPrivate, noneResource)};
+    resources default is list of [(mvPrivate, noneResource)];
     connections has type relation of ((mIdType, mIdType, list of mConnectionContract));
     connections default is relation{};
     subComponents has type map of (string, mModel);

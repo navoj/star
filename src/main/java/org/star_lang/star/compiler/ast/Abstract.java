@@ -5,9 +5,8 @@ import java.util.List;
 
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.Location;
 
 /**
  * Factory class for Cafe abstract syntax generation

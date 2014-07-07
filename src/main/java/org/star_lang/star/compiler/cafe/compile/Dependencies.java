@@ -19,9 +19,8 @@ import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
 import org.star_lang.star.compiler.util.TopologySort;
 import org.star_lang.star.compiler.util.TopologySort.IDefinition;
-
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

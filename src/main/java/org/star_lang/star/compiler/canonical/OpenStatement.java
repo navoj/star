@@ -5,9 +5,8 @@ import java.util.Collection;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.Visibility;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeInterfaceType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeInterfaceType;
 
 /**
  * 

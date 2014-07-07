@@ -132,7 +132,7 @@ l docConcatSpace r default is l docConcat docText(" ") docConcat r;
 
 -- combine a list of documents
 docFold has type ((Doc, Doc) => Doc, list of Doc) => Doc;
-docFold(f, list{}) is DocNil;
+docFold(f, list of []) is DocNil;
 docFold(f, lis) default is valof {
 	var r := DocNil;
 	for d[_] down lis do {

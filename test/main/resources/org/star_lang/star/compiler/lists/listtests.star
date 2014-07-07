@@ -19,18 +19,18 @@
  */
 listtests is package{
 
-  testLists is list{1;2;3;4;5;6};
+  testLists is list of [1,2,3,4,5,6];
   
 
   dummyAction has type action(integer, list of integer);
-  dummyAction(i, list{s;..ss}) do {
+  dummyAction(i, list of [s,..ss]) do {
     logMsg(info,"dummy head $s, tail is $ss");
   };
   
   discardOdds has type (list of integer)=>list of integer;
-  discardOdds(list{}) is list{};
-  discardOdds(list{X;..L}) where odd(X) is discardOdds(L);
-  discardOdds(list{X;..L}) default is list{X;..discardOdds(L)};
+  discardOdds(list of []) is list of [];
+  discardOdds(list of [X,..L]) where odd(X) is discardOdds(L);
+  discardOdds(list of [X,..L]) default is list of [X,..discardOdds(L)];
   
   odd has type (integer)=>boolean;
   -- odd(X) is not even(X);
@@ -39,7 +39,7 @@ listtests is package{
   even has type (integer)=>boolean;
   even(X) is X%2=0;
   
-  L1 is list{1; 2; 3};
+  L1 is list of [1, 2, 3];
   var L2 := L1;
   
   filter_(_empty(),_) is _nil();
@@ -58,15 +58,15 @@ listtests is package{
     
   main has type action();
   main() do {
-    assert testLists matches list{1;..X} and X=list{2;3;4;5;6};
+    assert testLists matches list of [1,..X] and X=list of [2,3,4,5,6];
     
-    assert testLists matches list{1;2;3;..X} and X=list{4;5;6};
-    if testLists matches list{1;2;..X} and X matches list{3;4;5;6} then
+    assert testLists matches list of [1,2,3,..X] and X=list of [4,5,6];
+    if testLists matches list of[1,2,..X] and X matches list of [3,4,5,6] then
       logMsg(info,"Tail is $X");
 
-    assert testLists matches list{1;2;3;4;5;6};
+    assert testLists matches list of [1,2,3,4,5,6];
       
-    var L:=list{1;2;3;4;5};
+    var L:=list of [1,2,3,4,5];
     
     logMsg(info,"second from end $(secondToLast(L))"); 
     
@@ -74,9 +74,9 @@ listtests is package{
     
     dummyAction(23,L);
     
-    logMsg(info,"discarding odds in list{1;2;3;4;5} = $(discardOdds(list{1;2;3;4;5}))");
-    assert discardOdds(list{1;2;3;4;5})=list{2;4};
-    assert size(discardOdds(list{1;2;3;4;5}))=2;
+    logMsg(info,"discarding odds in list of [1,2,3,4,5] = $(discardOdds(list of [1,2,3,4,5]))");
+    assert discardOdds(list of [1,2,3,4,5])=list of [2,4];
+    assert size(discardOdds(list of [1,2,3,4,5]))=2;
 
 --    logMsg(info,"L2=$L2");    
     L2[1] := 19;
@@ -84,12 +84,12 @@ listtests is package{
     logMsg(info, "L1 and L2 are $L1 and $L2");
     assert L1[1]=2 and L2[1]=19;
     
-    logMsg(info,"even of list{1;2;3;4;5} = $(onlyEven(list{1;2;3;4;5}))");
-    assert onlyEven(list{1;2;3;4;5})=list{2;4};
+    logMsg(info,"even of list of [1,2,3,4,5] = $(onlyEven(list of [1,2,3,4,5]))");
+    assert onlyEven(list of [1,2,3,4,5])=list of[2,4];
     
-    logMsg(info,"even indices of list{1;2;3;4;5} = $(evenIndices(list{1;2;3;4;5}))");
-    assert evenIndices(list{1;2;3;4;5}) = array of {1;3};
+    logMsg(info,"even indices of list of [1,2,3,4,5] = $(evenIndices(list of [1,2,3,4,5]))");
+    assert evenIndices(list of [1,2,3,4,5]) = array of {1;3};
     
-    assert evens(list{1;2;3;4;5})=list{2;4};
+    assert evens(list of [1,2,3,4,5])=list of[2,4];
   }
 }

@@ -16,10 +16,9 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.util.ApplicationProperties;
 import org.star_lang.star.compiler.util.ComboIterator;
 import org.star_lang.star.compiler.util.NullIterator;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * The CompositeRepository combines multiple repositories into one. This is usually done to combine

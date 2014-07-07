@@ -1,23 +1,22 @@
 package org.star_lang.star.operators.relation.runtime;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IArray;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IPattern;
+import org.star_lang.star.data.IRelation;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
+import org.star_lang.star.data.value.Array;
+import org.star_lang.star.data.value.BoolWrap;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.NTuple;
+import org.star_lang.star.data.value.Relation;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IArray;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IPattern;
-import com.starview.platform.data.IRelation;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
-import com.starview.platform.data.value.Array;
-import com.starview.platform.data.value.BoolWrap;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.NTuple;
-import com.starview.platform.data.value.Relation;
 
 /**
  * 

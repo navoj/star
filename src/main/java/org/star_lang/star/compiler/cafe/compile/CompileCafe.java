@@ -37,14 +37,13 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.ApplicationProperties;
-
-import com.starview.platform.data.IArray;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
+import org.star_lang.star.data.IArray;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
 
 /**
  * 

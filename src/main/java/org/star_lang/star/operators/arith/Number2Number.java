@@ -7,6 +7,9 @@ import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.compiler.cafe.compile.HWM;
 import org.star_lang.star.compiler.cafe.compile.Inliner;
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.arith.runtime.Number2Number.Decimal2Float;
@@ -22,10 +25,6 @@ import org.star_lang.star.operators.arith.runtime.Number2Number.Integer2Long;
 import org.star_lang.star.operators.arith.runtime.Number2Number.Long2Decimal;
 import org.star_lang.star.operators.arith.runtime.Number2Number.Long2Float;
 import org.star_lang.star.operators.arith.runtime.Number2Number.Long2Integer;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * 

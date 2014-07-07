@@ -1,11 +1,10 @@
 package org.star_lang.star.operators.string;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.string.runtime.KeyGenerate;
-
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * 

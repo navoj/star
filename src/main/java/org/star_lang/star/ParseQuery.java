@@ -9,16 +9,15 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.util.TemplateString;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IRecord;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IRecord;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * Utility to convert a string representing a query against a schema into a function that can

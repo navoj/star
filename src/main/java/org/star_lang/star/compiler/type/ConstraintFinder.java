@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeConstraint;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * 

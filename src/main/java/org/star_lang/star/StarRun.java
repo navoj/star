@@ -4,13 +4,12 @@ import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.code.repository.RepositoryManager;
 import org.star_lang.star.compiler.util.ApplicationProperties;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * Top-level driver for running StarRules programs

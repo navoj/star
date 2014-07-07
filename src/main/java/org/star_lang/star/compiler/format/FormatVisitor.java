@@ -16,8 +16,7 @@ import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.format.rules.FmtProgram;
 import org.star_lang.star.compiler.format.rules.FmtRule;
-
-import com.starview.platform.data.IValue;
+import org.star_lang.star.data.IValue;
 
 /**
  * 

@@ -10,9 +10,8 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 
 /**
  * 
@@ -312,7 +311,7 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.MACRO_EXPLODE, 50);
 
     defineBrackets(2000, "{", "}", StandardNames.BRACES);
-    defineBrackets(1000, "[", "]", StandardNames.SQUARE);
+    defineBrackets(1100, "[", "]", StandardNames.SQUARE);
     defineBrackets(1200, "(", ")", StandardNames.PARENS);
     defineBrackets(2000, "#(", ")#", "");
     defineBrackets(2000, "#<", ">#", StandardNames.MACRO_TUPLE);

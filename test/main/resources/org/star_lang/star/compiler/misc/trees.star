@@ -27,8 +27,8 @@ trees is package{
   type weekday is monday or tuesday or wednesday or thursday or friday or saturday or sunday;
   
   leaves has type (tree of %t) => list of %t;
-  leaves(nul) is list{};
-  leaves(labeled(L,Lb,R)) is leaves(L)<>list{Lb;..leaves(R)};
+  leaves(nul) is list of [];
+  leaves(labeled(L,Lb,R)) is leaves(L)<>list of [Lb,..leaves(R)];
   
   insert has type (tree of %t, %t ) => tree of %t where comparable over %t;
   insert(nul,T) is labeled(nul,T,nul);
@@ -45,8 +45,8 @@ trees is package{
   
   find has type (list of ((%s,%t)),%s ) =>option of %t where equality over %s;
   find(_,_) default is none;
-  find(list{(K,V);.._},Ky) where K=Ky is some(V);
-  find(list{_;..R},Ky) is find(R,Ky);
+  find(list of [(K,V),.._],Ky) where K=Ky is some(V);
+  find(list of [_,..R],Ky) is find(R,Ky);
   
   main() do
   {

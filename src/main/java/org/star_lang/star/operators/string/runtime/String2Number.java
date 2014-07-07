@@ -4,15 +4,14 @@ import java.math.BigDecimal;
 
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.StringUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.BoolWrap;
+import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.BoolWrap;
-import com.starview.platform.data.value.Factory;
 
 /**
  * Runtime parts of the String2Number functions that parse strings into different kinds of numbers

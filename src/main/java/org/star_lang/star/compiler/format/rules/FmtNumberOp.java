@@ -7,8 +7,7 @@ import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.LongLiteral;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

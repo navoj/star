@@ -12,11 +12,10 @@ import org.star_lang.star.compiler.sources.PackageGrapher;
 import org.star_lang.star.compiler.sources.PkgSpec;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * Manage the compilation of a star file, together with any files that it depends on.

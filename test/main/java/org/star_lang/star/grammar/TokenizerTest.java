@@ -11,8 +11,7 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.grammar.Token;
 import org.star_lang.star.compiler.grammar.Tokenizer;
 import org.star_lang.star.compiler.grammar.Token.TokenType;
-
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * 

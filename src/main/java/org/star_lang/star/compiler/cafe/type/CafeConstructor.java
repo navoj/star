@@ -1,8 +1,8 @@
 package org.star_lang.star.compiler.cafe.type;
 
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

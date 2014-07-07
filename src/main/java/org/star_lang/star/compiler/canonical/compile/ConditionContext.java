@@ -8,8 +8,7 @@ import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.Sense;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

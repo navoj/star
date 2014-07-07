@@ -18,6 +18,13 @@
  *
  */
 
+contract collection over s determines e is {
+  _empty_collection has type ()=>s;
+  _addto_collection has type (s,e)=>s;
+  _contains_element has type (s,e)=>boolean;
+  _is_empty has type (s)=>boolean;
+}
+
 contract sequence over %t determines %e is {
   _empty has type ()<=%t;
   _pair has type (%e,%t)<=%t;
@@ -41,6 +48,54 @@ contract sliceable over %t is {
   _slice has type (%t,integer,integer)=>%t;
   _tail has type (%t,integer)=>%t;
   _splice has type (%t,integer,integer,%t)=>%t;
+}
+
+-- implement and handle sequence notation
+#infix(",..",1099);
+#infix("..,",1098);
+
+# ?I of [?C] :: expression :- I::id :& C::sequenceBody; 
+# [?C] :: expression :- C::sequenceBody; 
+
+# #( ?S , ?T )# :: sequenceBody :- S::expression :& T::sequenceBody;
+# #( ?S ,.. ?T )# :: sequenceBody :- S::sequenceBody :& T::commaCheck;  
+# #( ?S .., ?T )# :: sequenceBody :- S::commaCheck :& T::sequenceBody;  
+# ?E :: sequenceBody :- E::expression;
+
+# ?L , ?R :: commaCheck :- error("unexpected ','");
+# ?E :: commaCheck :- E::expression;
+
+# ?I of [?C] :: pattern :- I::id :& C::sequencePtnBody; 
+# [?C] :: pattern :- C::sequencePtnBody; 
+# #( ?S , ?T )# :: sequencePtnBody :- S::pattern :& T::sequencePtnBody;
+# #( ?S ,.. ?T )# :: sequencePtnBody :- S::sequencePtnBody :& T::pattern;  
+# #( ?S .., ?T )# :: sequencePtnBody :- S::pattern :& T::sequencePtnBody;  
+# ?E :: sequencePtnBody :- E::pattern;
+
+# sequence of []::expression ==> _nil();
+# []::expression ==> _nil();
+# ?Tp of []::expression ==> _nil() has type Tp of #(%)# ( #$"_" );
+# sequence of [?B]::expression ==> sequenceConvert(B,_cons,_apnd,_nil);
+# [?B]::expression ==> sequenceConvert(B,_cons,_apnd,_nil);
+# ?Tp of [?B]::expression ==> sequenceConvert(B,_cons,_apnd,_nil) has type Tp of #(%)# ( #$"_" );
+
+# sequence of []::pattern ==> _empty();
+# []::pattern ==> _empty();
+# ?Tp of []::pattern ==> _empty() has type Tp of #(%)# ( #$"_" );
+# sequence of [?B]::pattern ==> sequenceConvert(B,_pair,_back,_empty);
+# [?B]::pattern ==> sequenceConvert(B,_pair,_back,_empty);
+# ?Tp of [?B]::pattern ==> sequenceConvert(B,_pair,_back,_empty) has type Tp of #(%)# ( #$"_" );
+
+#sequenceConvert(?Sq,?Cons,?Apnd,?Nil) ==> convert(Sq) ## {  
+  #convert(<| ? Hds ,.. ?Tl |>) is convertHeads(Hds,Tl);
+  #convert(<| ?Tl.., ?Hds |>) is convertTails(Hds,Tl);
+  #convert(S) is convertHeads(S,<| #(?Nil)#() |>);
+  
+  convertHeads(<| ?F, ?T |>, Tl) is <| #(?Cons)#(?F, ?convertHeads(T,Tl)) |>;
+  convertHeads( F, Tl) is <| #(?Cons)#(?F,?Tl) |>;
+  
+  convertTails(<| ?F, ?T |>, Fr) is convertTails(T,<| #(?Apnd)#(?Fr,?F) |>);
+  convertTails(E,Fr) is <|#(?Apnd)#(?Fr,?E)|>;
 }
   
 -- The period gets in the way of the square brackets ... shuffle.

@@ -1,12 +1,12 @@
 package org.star_lang.star.compiler;
 
-import static com.starview.platform.data.type.StandardTypes.booleanType;
-import static com.starview.platform.data.type.StandardTypes.integerType;
-import static com.starview.platform.data.type.StandardTypes.longType;
-import static com.starview.platform.data.type.StandardTypes.rawIntegerType;
-import static com.starview.platform.data.type.StandardTypes.rawLongType;
-import static com.starview.platform.data.type.StandardTypes.rawStringType;
-import static com.starview.platform.data.type.StandardTypes.stringType;
+import static org.star_lang.star.data.type.StandardTypes.booleanType;
+import static org.star_lang.star.data.type.StandardTypes.integerType;
+import static org.star_lang.star.data.type.StandardTypes.longType;
+import static org.star_lang.star.data.type.StandardTypes.rawIntegerType;
+import static org.star_lang.star.data.type.StandardTypes.rawLongType;
+import static org.star_lang.star.data.type.StandardTypes.rawStringType;
+import static org.star_lang.star.data.type.StandardTypes.stringType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,14 +59,13 @@ import org.star_lang.star.compiler.type.Visibility;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Wrapper;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.AbstractType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.AbstractType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeVar;
 
 /*
  * Copyright (C) 2013 Starview Inc

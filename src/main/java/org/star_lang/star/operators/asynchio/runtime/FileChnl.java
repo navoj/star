@@ -6,14 +6,13 @@ import java.nio.channels.AsynchronousFileChannel;
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IScalar;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.IValueVisitor;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Type;
 import org.star_lang.star.operators.Intrinsics;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IScalar;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.IValueVisitor;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Type;
 
 @SuppressWarnings("serial")
 public class FileChnl implements IScalar<FileChnl>, PrettyPrintable

@@ -9,20 +9,19 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
-
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IMap;
-import com.starview.platform.data.IPattern;
-import com.starview.platform.data.IRecord;
-import com.starview.platform.data.IRelation;
-import com.starview.platform.data.IScalar;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.IValueVisitor;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IMap;
+import org.star_lang.star.data.IPattern;
+import org.star_lang.star.data.IRecord;
+import org.star_lang.star.data.IRelation;
+import org.star_lang.star.data.IScalar;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.IValueVisitor;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 
 /**
  * 

@@ -3,9 +3,8 @@ package org.star_lang.star.code.repository;
 import java.io.InputStream;
 
 import org.star_lang.star.compiler.ErrorReport;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
 
 /**
  * Implemented by parsers for specific forms of code tree.

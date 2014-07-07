@@ -5,8 +5,7 @@ import java.lang.reflect.Modifier;
 
 import org.objectweb.asm.Type;
 import org.star_lang.star.compiler.cafe.compile.Utils;
-
-import com.starview.platform.data.type.IType;
+import org.star_lang.star.data.type.IType;
 
 /**
  * 

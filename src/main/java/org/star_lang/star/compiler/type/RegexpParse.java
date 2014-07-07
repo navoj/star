@@ -11,11 +11,10 @@ import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.grammar.Tokenizer;
 import org.star_lang.star.compiler.util.Sequencer;
 import org.star_lang.star.compiler.util.StringSequence;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeConstraintException;
 
 /**
  * Convert a regexp-bound case into an NFA machine.

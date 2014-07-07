@@ -23,9 +23,8 @@ import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * 

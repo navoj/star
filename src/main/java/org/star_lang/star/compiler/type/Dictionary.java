@@ -6,11 +6,10 @@ import java.util.Set;
 
 import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.util.AccessMode;
-
-import com.starview.platform.data.type.ContractImplementation;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.ContractImplementation;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * 

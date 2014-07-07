@@ -1,7 +1,7 @@
 package org.star_lang.star.compiler.type;
 
-import static com.starview.platform.data.type.StandardTypes.astType;
-import static com.starview.platform.data.type.StandardTypes.booleanType;
+import static org.star_lang.star.data.type.StandardTypes.astType;
+import static org.star_lang.star.data.type.StandardTypes.booleanType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,16 +35,15 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.StringUtils;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps.ArrayConcatenate;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.ArrayNil;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.BinaryArray;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.TernaryArray;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.UnaryArray;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.Factory;
 
 /**
  * 

@@ -11,13 +11,12 @@ import org.star_lang.star.compiler.SRTest;
 import org.star_lang.star.compiler.util.ApplicationProperties;
 import org.star_lang.star.compiler.util.FileUtil;
 import org.star_lang.star.compiler.util.TemplateString;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.CatalogException;
-import com.starview.platform.resource.catalog.CatalogUtils;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.CatalogException;
+import org.star_lang.star.resource.catalog.CatalogUtils;
 
 /**
  * 

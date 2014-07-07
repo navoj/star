@@ -22,13 +22,13 @@
 quick is package{
 
   quick has type (list of %s,((%s,%s) =>boolean)) => list of %s;
-  quick(list{X},_) is list{X};
-  quick(list{},_) is list{};
+  quick(list of [X],_) is list of [X];
+  quick(list of [],_) is list of [];
    
   quick(L,C) where size(L)>1 is let{
-    var lftHalf := list{};
+    var lftHalf := list of [];
     rgtHalf has type ref list of %s;
-    var rgtHalf := list{};
+    var rgtHalf := list of [];
     pivot is L[0];
     
     split has type action();
@@ -38,9 +38,9 @@ quick is package{
       {
         if Ix>0 then{
           if C(el,pivot) then
-            lftHalf := lftHalf<>list{el} -- list concatenate
+            lftHalf := lftHalf<>list of [el] -- list concatenate
           else
-            rgtHalf := rgtHalf<>list{el};
+            rgtHalf := rgtHalf<>list of [el];
         };
 	    -- logMsg(info,"left half is $lftHalf");
         -- logMsg(info,"right half is $rgtHalf");
@@ -48,6 +48,6 @@ quick is package{
     };
   } in valof{
       split();
-      valis quick(lftHalf,C)<>list{pivot;..quick(rgtHalf,C)};
+      valis quick(lftHalf,C)<>list of [pivot,..quick(rgtHalf,C)];
     }
 }

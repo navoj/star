@@ -28,13 +28,13 @@ elim is package{
   
      
   main() do {
-    L1 is list{1;2;9;5;2;2};
-    L2 is list{3;3;9;9;0;1;1};
+    L1 is list of [1,2,9,5,2,2];
+    L2 is list of [3,3,9,9,0,1,1];
        
     logMsg(info,"elim(L1) is $(elim(L1) has type list of integer)");
     logMsg(info,"elim(L2) is $(elim(L2) has type list of integer)");
        
-    assert elim(L1)=list{1;2;9;5;2};
-    assert elim(L2)=list{3;9;0;1};
+    assert elim(L1)=list of [1,2,9,5,2];
+    assert elim(L2)=list of[3,9,0,1];
    }
  }

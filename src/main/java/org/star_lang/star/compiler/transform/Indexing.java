@@ -22,9 +22,8 @@ import org.star_lang.star.compiler.canonical.WherePattern;
 import org.star_lang.star.compiler.type.TypeCheckerUtils;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.Pair;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

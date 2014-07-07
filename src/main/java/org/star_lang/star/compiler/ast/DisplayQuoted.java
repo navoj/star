@@ -9,18 +9,17 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.StringWrap;
+import org.star_lang.star.data.value.BoolWrap.FalseValue;
+import org.star_lang.star.data.value.BoolWrap.TrueValue;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.BoolWrap.FalseValue;
-import com.starview.platform.data.value.BoolWrap.TrueValue;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.StringWrap;
 
 /**
  * 

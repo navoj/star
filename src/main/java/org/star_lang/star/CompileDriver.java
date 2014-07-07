@@ -38,20 +38,19 @@ import org.star_lang.star.compiler.type.TypeChecker;
 import org.star_lang.star.compiler.type.Visibility;
 import org.star_lang.star.compiler.wff.WffEngine;
 import org.star_lang.star.compiler.wff.WffProgram;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IArray;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeContract;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.Resources;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IArray;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeContract;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Resources;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /*
  * 

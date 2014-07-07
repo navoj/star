@@ -26,6 +26,14 @@ import org.star_lang.star.compiler.type.Freshen;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.StringSequence;
 import org.star_lang.star.compiler.util.Sequencer.SequenceException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapBool;
@@ -52,15 +60,6 @@ import org.star_lang.star.operators.string.runtime.StringWrappers.UnwrapChar;
 import org.star_lang.star.operators.string.runtime.StringWrappers.WrapChar;
 import org.star_lang.star.operators.system.runtime.RawWrappers.UnwrapRaw;
 import org.star_lang.star.operators.system.runtime.RawWrappers.WrapRaw;
-
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.value.ResourceURI;
 
 /**
  * 

@@ -6,10 +6,9 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.star_lang.star.compiler.SRTest;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.data.value.ResourceURI.URI;
-import com.starview.platform.resource.URIUtils;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.data.value.ResourceURI.URI;
+import org.star_lang.star.resource.URIUtils;
 
 public class TestIO extends SRTest
 {

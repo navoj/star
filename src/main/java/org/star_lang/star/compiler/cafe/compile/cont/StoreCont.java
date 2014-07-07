@@ -16,8 +16,7 @@ import org.star_lang.star.compiler.cafe.compile.HWM;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
 import org.star_lang.star.compiler.cafe.compile.SrcSpec;
 import org.star_lang.star.compiler.cafe.compile.VarInfo;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

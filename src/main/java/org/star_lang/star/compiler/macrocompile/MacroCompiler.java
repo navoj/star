@@ -42,6 +42,14 @@ import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.util.Wrapper;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeInterface;
+import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayEl;
@@ -52,6 +60,7 @@ import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.ArrayNil;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.BinaryArray;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.TernaryArray;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.UnaryArray;
+import org.star_lang.star.operators.ast.runtime.AstCategory;
 import org.star_lang.star.operators.ast.runtime.AstLocation;
 import org.star_lang.star.operators.ast.runtime.AstMacroKey;
 import org.star_lang.star.operators.ast.runtime.AstReplace;
@@ -60,19 +69,10 @@ import org.star_lang.star.operators.string.DisplayValue;
 import org.star_lang.star.operators.string.runtime.StringOps.GenerateSym;
 import org.star_lang.star.operators.string.runtime.StringOps.StringConcat;
 import org.star_lang.star.operators.system.runtime.SimpleLog;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeInterface;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * Transform a set of macro rules into a star program which is then compiled and executed.
@@ -188,8 +188,20 @@ public class MacroCompiler
     IAbstract ptn = compilePtn(ptnArg, cond, errors, ruleVars, locationVar);
 
     if (StarCompiler.TRACEMACRO) {
-      ptn = Abstract.binary(loc, StandardNames.MATCHING, matchVar, ptn);
-      vars.add(Abstract.getId(matchVar));
+      if (Abstract.isBinary(ptn, StandardNames.MATCHING)) {
+        IAbstract lhs = Abstract.binaryLhs(ptn);
+        IAbstract rhs = Abstract.binaryRhs(ptn);
+        if (Abstract.isIdentifier(lhs))
+          matchVar = lhs;
+        else if (Abstract.isIdentifier(rhs))
+          matchVar = rhs;
+        else {
+          errors.reportWarning(StringUtils.msg("Cannot trace complex pattern ", ptn), loc);
+        }
+      } else {
+        ptn = Abstract.binary(loc, StandardNames.MATCHING, matchVar, ptn);
+        vars.add(Abstract.getId(matchVar));
+      }
     }
 
     Wrapper<IAbstract> counterVar = Wrapper.create(null);
@@ -692,8 +704,21 @@ public class MacroCompiler
     } else if (Abstract.isBinary(ptn, StandardNames.DOTSLASH))
       return dotSlashPttrn(loc, ptn, cond, errors, vars, locationVar);
     else if (Abstract.isBinary(ptn, StandardNames.WFF_DEFINES)) {
-      errors.reportWarning(StringUtils.msg(ptn, " not supported by macro compiler"), loc);
-      return compilePtn(Abstract.binaryLhs(ptn), cond, errors, vars, locationVar);
+      IAbstract lhs = compilePtn(Abstract.binaryLhs(ptn), cond, errors, vars, locationVar);
+      IAbstract lvar = lhs;
+      IAbstract rhs = Abstract.binaryRhs(ptn);
+      if (Abstract.isIdentifier(rhs)) {
+        if (!Abstract.isIdentifier(lhs)) {
+          IAbstract nv = new Name(loc, GenSym.genSym("_"));
+          lhs = Abstract.binary(loc, StandardNames.MATCHING, lhs, nv);
+          lvar = nv;
+        } else
+          lvar = lhs;
+        CompilerUtils.extendCondition(cond, Abstract.binary(loc, AstCategory.name, lvar, new StringLiteral(loc,
+            Abstract.getId(rhs))));
+      } else
+        errors.reportWarning(StringUtils.msg(ptn, " not supported by macro compiler"), loc);
+      return lhs;
     } else if (ptn instanceof Apply) {
       Apply apply = (Apply) ptn;
       IAbstract opPtn = compilePtn(apply.getOperator(), cond, errors, vars, locationVar);
@@ -708,8 +733,8 @@ public class MacroCompiler
       for (int ix = 0; ix < arity; ix++) {
         Wrapper<IAbstract> subCond = Wrapper.create(null);
         IAbstract argPtn = compilePtn((IAbstract) argArray.getCell(ix), subCond, errors, vars, locationVar);
-        IAbstract arg = Abstract.binary(loc, ArrayEl.name, argsVar, CompilerUtils.rawLiteral(loc,
-            new IntegerLiteral(loc, ix)));
+        IAbstract arg = Abstract.binary(loc, ArrayEl.name, argsVar, CompilerUtils.rawLiteral(loc, new IntegerLiteral(
+            loc, ix)));
         CompilerUtils.extendCondition(cond, CompilerUtils.boundTo(loc, argPtn, arg));
         CompilerUtils.appendCondition(cond, subCond);
       }

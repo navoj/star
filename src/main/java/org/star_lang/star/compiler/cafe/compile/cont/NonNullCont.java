@@ -8,8 +8,7 @@ import org.star_lang.star.compiler.cafe.compile.Constructors;
 import org.star_lang.star.compiler.cafe.compile.HWM;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
 import org.star_lang.star.compiler.type.TypeUtils;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

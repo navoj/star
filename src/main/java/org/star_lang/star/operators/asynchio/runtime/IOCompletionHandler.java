@@ -2,10 +2,10 @@ package org.star_lang.star.operators.asynchio.runtime;
 
 import java.nio.channels.CompletionHandler;
 
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.Result;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.Result;
 
 class IOCompletionHandler implements CompletionHandler<Integer, IFunction>
 {

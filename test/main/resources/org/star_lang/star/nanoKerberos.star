@@ -94,7 +94,7 @@ nanoKerberos is package {
   }
   
   userAgent(Name,Pass,Files) is actor{
-    var foundFiles := list{};
+    var foundFiles := list of [];
     
     fire() do {
       Session is anyof Id where (request login(Name,Pass)) matches allowed(Id);
@@ -102,7 +102,7 @@ nanoKerberos is package {
       for F in Files do
       {
         if (request provide(Session,F)) matches allowed(possible(Text)) then
-          foundFiles[$:] := list{(F,Text)};
+          foundFiles[$:] := list of [(F,Text)];
       }
     }
     
@@ -110,15 +110,15 @@ nanoKerberos is package {
   }
   
   main() do {
-    fred is userAgent("fred","FRED",list{"alpha";"beta";"omega";"eta"});
+    fred is userAgent("fred","FRED",list of ["alpha","beta","omega","eta"]);
     volunteer request login(N,P) from fred as request login(N,P) to login;
     volunteer request provide(I,K) from fred as request provide(I,K) to filer;
     
-    drWho is userAgent("drWho","Who",list{"alpha"});
+    drWho is userAgent("drWho","Who",list of ["alpha"]);
     volunteer request login(N,P) from drWho as request login(N,P) to login;
     volunteer request provide(I,K) from drWho as request provide(I,K) to filer;
     
-    root is userAgent("root","OPEN",list{"alpha";"beta";"omega";"eta"});
+    root is userAgent("root","OPEN",list of ["alpha","beta","omega","eta"]);
     volunteer request login(N,P) from root as request login(N,P) to login;
     volunteer request provide(I,K) from root as request provide(I,K) to filer;
     

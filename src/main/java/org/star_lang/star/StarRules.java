@@ -9,14 +9,13 @@ import org.star_lang.star.compiler.format.Formatter;
 import org.star_lang.star.compiler.grammar.OpGrammar;
 import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.standard.StandardNames;
-
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.CatalogException;
-import com.starview.platform.resource.catalog.MemoryCatalog;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.CatalogException;
+import org.star_lang.star.resource.catalog.MemoryCatalog;
 
 /**
  * Master access class for compiling and running StarRules programs

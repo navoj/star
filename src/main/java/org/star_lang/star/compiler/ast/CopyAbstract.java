@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
 
 /**
  * Copy an astTerm

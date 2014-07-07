@@ -68,6 +68,6 @@ ppCondTest is TestLabel("cond",
 	));
 
 ppTest is TestLabel("PPrint",
-	TestList(list_to_List(list{ppCondTest})));
+	TestList(list_to_List(list of [ppCondTest])));
 			
 }

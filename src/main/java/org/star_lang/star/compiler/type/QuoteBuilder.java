@@ -15,14 +15,13 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Wrapper;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.Location.NoWhere;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayEl;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Location.NoWhere;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * This class implements coercion from quoted form to the defined type.

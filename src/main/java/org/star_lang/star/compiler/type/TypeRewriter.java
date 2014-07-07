@@ -2,11 +2,11 @@ package org.star_lang.star.compiler.type;
 
 import java.util.Stack;
 
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeExp;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeExp;
 
 /**
  * 

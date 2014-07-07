@@ -4,9 +4,8 @@ import java.util.Collection;
 
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.catalog.Catalog;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.catalog.Catalog;
 
 /**
  * 

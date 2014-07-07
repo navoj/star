@@ -10,6 +10,9 @@ import org.star_lang.star.compiler.cafe.compile.Inliner;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.transform.PrimitiveOverloader;
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.arith.runtime.FloatBinary.Bits2Float;
@@ -22,10 +25,6 @@ import org.star_lang.star.operators.arith.runtime.FloatBinary.FloatPlus;
 import org.star_lang.star.operators.arith.runtime.FloatBinary.FloatPwr;
 import org.star_lang.star.operators.arith.runtime.FloatBinary.FloatRemainder;
 import org.star_lang.star.operators.arith.runtime.FloatBinary.FloatTimes;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * Binary arithmetic functions

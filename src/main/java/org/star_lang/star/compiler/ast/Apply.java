@@ -5,16 +5,15 @@ import java.util.Map;
 
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.ListUtils;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IArray;
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.Array;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IArray;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.Array;
 
 /**
  * 

@@ -1,9 +1,8 @@
 package org.star_lang.star.code.repository;
 
 import org.star_lang.star.compiler.sources.JavaInfo;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * A CodeRepository should contain all the code of a project. It is not set up as a singleton; but

@@ -10,16 +10,15 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.FixedList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.arith.FloatCompare.FltEQ;
 import org.star_lang.star.operators.arith.LongCompare.LngEQ;
 import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumEQ;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntEQ;
 import org.star_lang.star.operators.general.runtime.GeneralEq;
 import org.star_lang.star.operators.string.StringCompare;
-
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * This class is focused on implementing the equality contract -- if possible -- for a given type

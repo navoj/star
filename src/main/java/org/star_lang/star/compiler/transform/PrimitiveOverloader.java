@@ -5,9 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.type.TypeUtils;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.TypeExp;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.TypeExp;
 
 /**
  * 

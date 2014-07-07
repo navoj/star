@@ -44,7 +44,6 @@ import compute;
 import quoteable;
 import range;
 import option;
-import collections;
 import worksheet;
 
 -- used in processing ordered queries

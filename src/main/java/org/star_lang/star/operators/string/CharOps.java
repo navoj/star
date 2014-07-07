@@ -10,6 +10,8 @@ import org.star_lang.star.compiler.cafe.compile.InlinePredicate;
 import org.star_lang.star.compiler.cafe.compile.Sense;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.transform.PrimitiveOverloader;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.string.runtime.Char2Number.Char2Int;
@@ -21,9 +23,6 @@ import org.star_lang.star.operators.string.runtime.CharUtils.IsIdentifierStart;
 import org.star_lang.star.operators.string.runtime.CharUtils.IsLowerCase;
 import org.star_lang.star.operators.string.runtime.CharUtils.IsUnicodeIdentifier;
 import org.star_lang.star.operators.string.runtime.CharUtils.IsUpperCase;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * 

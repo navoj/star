@@ -14,14 +14,13 @@ import org.star_lang.star.compiler.cafe.compile.CafeManifest;
 import org.star_lang.star.compiler.cafe.compile.ClassRoot;
 import org.star_lang.star.compiler.sources.MetaRules;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.Resources;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.CatalogException;
-import com.starview.platform.resource.catalog.CatalogUtils;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Resources;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.CatalogException;
+import org.star_lang.star.resource.catalog.CatalogUtils;
 
 /**
  * The RepositoryManager helps the Star compiler to figure out the details of compiling and

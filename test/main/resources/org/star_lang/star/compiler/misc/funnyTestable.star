@@ -29,7 +29,7 @@ funnyTestable is package {
 
   main() do { 
 
-    t1 is toTest("Hello",list{1;2;3});
+    t1 is toTest("Hello",list of [1,2,3]);
     logMsg(info, "t1 is $t1"); 
 
     -- the next line got a type error saying 

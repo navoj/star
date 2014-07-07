@@ -8,10 +8,9 @@ import java.util.Arrays;
 import org.star_lang.star.code.repository.CodeParser;
 import org.star_lang.star.code.repository.CodeTree;
 import org.star_lang.star.compiler.ErrorReport;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.Resources;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Resources;
 
 /**
  * 

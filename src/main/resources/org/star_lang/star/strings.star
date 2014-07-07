@@ -240,9 +240,9 @@ implementation pPrint over exception is {
   
 
 sequenceDisplay has type (string,%t)=>pP where sequence over %t determines %e and pPrint over %e;
-sequenceDisplay(lbl,L) is ppSequence(0,cons(ppStr(lbl),cons(ppStr(" of {"),cons(ppSequence(2,dispSeq(L,ppStr(""))),cons(ppStr("}"),nil)))))
+sequenceDisplay(lbl,L) is ppSequence(0,cons(ppStr(lbl),cons(ppStr(" of ["),cons(ppSequence(2,dispSeq(L,ppStr(""))),cons(ppStr("]"),nil)))))
 using {
-  inter is ppStr(";");
+  inter is ppStr(", ");
   dispSeq(_empty(),_) is nil;
   dispSeq(_pair(H,T),Sep) is cons(Sep,cons(ppDisp(H),dispSeq(T,inter)));
 }

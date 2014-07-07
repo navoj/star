@@ -12,19 +12,18 @@ import java.util.Set;
 import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.ContractImplementation;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeContract;
+import org.star_lang.star.data.type.TypeExists;
+import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.operators.Intrinsics;
-
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.ContractImplementation;
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeContract;
-import com.starview.platform.data.type.TypeExists;
-import com.starview.platform.data.type.TypeVar;
 
 /**
  * 

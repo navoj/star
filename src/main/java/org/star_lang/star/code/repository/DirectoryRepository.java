@@ -11,11 +11,10 @@ import java.util.Map;
 import org.star_lang.star.StarCompiler;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.util.FileUtil;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /*
  * A directory based repository that looks after a single directory

@@ -6,8 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.star_lang.star.compiler.type.DisplayType;
-
-import com.starview.platform.data.type.IType;
+import org.star_lang.star.data.type.IType;
 
 /**
  * String utility functions

@@ -35,8 +35,7 @@ import org.star_lang.star.compiler.canonical.VarDeclaration;
 import org.star_lang.star.compiler.canonical.WhileAction;
 import org.star_lang.star.compiler.canonical.Yield;
 import org.star_lang.star.compiler.canonical.compile.cont.PttrnCont;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

@@ -28,15 +28,15 @@ assignments is package{
   type family is family{
     parents has type list of person;
     children has type ref list of person;
-    children default := list of {};
+    children default := list of [];
   };
   
-  var LL := list of {1; 2; 3; 4};
+  var LL := list of [1, 2, 3, 4];
   
-  var PP := list of { someone{name:="a"}; someone{name:="b"}; someone{name:="c"}};
+  var PP := list of [ someone{name:="a"}, someone{name:="b"}, someone{name:="c"}];
   
   main() do {
-    var F := family{ parents=list{someone{name:="p"}; someone{name:="m"}} };
+    var F := family{ parents=list of [someone{name:="p"}, someone{name:="m"}] };
     
     var X := 0;
     
@@ -55,7 +55,7 @@ assignments is package{
     logMsg(info,"PP[1].spouse.name = $(PP[1].spouse.name)");
     assert PP[1].spouse.name="e";
     
-    F.children:=list{someone{name:="cc"}};
+    F.children:=list of [someone{name:="cc"}];
     logMsg(info,"F=$F");
   }
 }

@@ -18,24 +18,24 @@
  *
  */
 sequencePtns is package{
-  -- test out the use of <lbl> of {<el> ; .. ; <el>} patterns
+  -- test out the use of <lbl> of [<el> , .. , <el>] patterns
   
-  find(sequence of {},_) is false;
-  find(sequence of {X;..Y},X) is true;
-  find(sequence of {_;..Y},X) is find(Y,X);
+  find([],_) is false;
+  find([X,..Y],X) is true;
+  find([_,..Y],X) is find(Y,X);
   
-  atEnd(sequence of {},_) is false;
-  atEnd(sequence of {X},X) is true;
-  atEnd(sequence of {_;..Y},X) is atEnd(Y,X);
+  atEnd(cons of [],_) is false;
+  atEnd(cons of [X],X) is true;
+  atEnd(cons of [_,..Y],X) is atEnd(Y,X);
   
-  L is cons of {"alpha"; "beta"; "gamma" };
+  L is cons of ["alpha", "beta", "gamma" ];
   
-  walk(sequence of {X;..Y}) do
+  walk(cons of [X,..Y]) do
     {
       logMsg(info,"got $X");
       walk(Y);
     }
-  walk(sequence of {}) do {};
+  walk(cons of []) do {};
   
   main() do {
     assert find(L,"alpha");

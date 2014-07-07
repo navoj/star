@@ -3,10 +3,10 @@ package org.star_lang.star.compiler.type;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * 

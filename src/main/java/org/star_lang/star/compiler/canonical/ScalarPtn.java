@@ -1,12 +1,11 @@
 package org.star_lang.star.compiler.canonical;
 
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.QuoteDisplay;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.QuoteDisplay;
 
 /**
  * 

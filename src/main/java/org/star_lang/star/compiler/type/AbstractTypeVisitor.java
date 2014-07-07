@@ -3,14 +3,14 @@ package org.star_lang.star.compiler.type;
 import java.util.Map.Entry;
 import java.util.Stack;
 
-import com.starview.platform.data.type.ExistentialType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeVisitor;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
+import org.star_lang.star.data.type.ExistentialType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeVisitor;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 
 /**
  * 

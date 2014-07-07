@@ -9,6 +9,7 @@ import org.star_lang.star.compiler.cafe.compile.HWM;
 import org.star_lang.star.compiler.cafe.compile.Inliner;
 import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.cafe.compile.Utils;
+import org.star_lang.star.data.type.Location;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.assignment.runtime.RefCell;
 import org.star_lang.star.operators.assignment.runtime.Assignments.Assign;
@@ -23,8 +24,6 @@ import org.star_lang.star.operators.assignment.runtime.RefCell.CharCell;
 import org.star_lang.star.operators.assignment.runtime.RefCell.FloatCell;
 import org.star_lang.star.operators.assignment.runtime.RefCell.IntegerCell;
 import org.star_lang.star.operators.assignment.runtime.RefCell.LongCell;
-
-import com.starview.platform.data.type.Location;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

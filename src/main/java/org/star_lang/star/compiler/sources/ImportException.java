@@ -1,6 +1,6 @@
 package org.star_lang.star.compiler.sources;
 
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

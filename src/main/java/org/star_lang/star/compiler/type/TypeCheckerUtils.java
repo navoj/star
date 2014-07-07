@@ -7,9 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.canonical.*;
-
-import com.starview.platform.data.type.*;
-import com.starview.platform.data.value.Factory;
+import org.star_lang.star.data.type.*;
+import org.star_lang.star.data.value.Factory;
 
 /**
  * 

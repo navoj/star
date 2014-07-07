@@ -51,20 +51,19 @@ import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.util.Triple;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.RecordSpecifier;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterface;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.value.Factory;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.RecordSpecifier;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterface;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.value.Factory;
 
 /**
  * The Match Compiler replaces sets of equations with case expressions
@@ -833,7 +832,7 @@ public class MatchCompiler
 
   private static IContentExpression pttrnLabel(IContentPattern ptn)
   {
-    if (ptn instanceof MatchingPattern)
+    while (ptn instanceof MatchingPattern)
       ptn = ((MatchingPattern) ptn).getPtn();
     return (ptn instanceof ConstructorPtn ? ((ConstructorPtn) ptn).getFun() : ((RecordPtn) ptn).getFun());
   }

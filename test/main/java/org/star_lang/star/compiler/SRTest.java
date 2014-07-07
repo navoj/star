@@ -18,16 +18,15 @@ import org.star_lang.star.compiler.util.ApplicationProperties;
 import org.star_lang.star.compiler.util.FileUtil;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.Resources;
-import com.starview.platform.resource.Resources.JarTransducer;
-import com.starview.platform.resource.URIUtils;
-import com.starview.platform.resource.catalog.Catalog;
-import com.starview.platform.resource.catalog.URIBasedCatalog;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.Resources;
+import org.star_lang.star.resource.URIUtils;
+import org.star_lang.star.resource.Resources.JarTransducer;
+import org.star_lang.star.resource.catalog.Catalog;
+import org.star_lang.star.resource.catalog.URIBasedCatalog;
 
 /**
  * 

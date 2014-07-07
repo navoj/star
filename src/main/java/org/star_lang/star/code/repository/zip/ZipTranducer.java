@@ -12,10 +12,9 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.star_lang.star.compiler.util.FileUtil;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.Transducer;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Transducer;
 
 /**
  * A zip uri is a file uri with a fragment that encodes the particular sub-element to extract. E.g.,

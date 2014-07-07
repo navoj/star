@@ -1,7 +1,7 @@
 package org.star_lang.star.compiler.util;
 
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
 
 /**
  * 

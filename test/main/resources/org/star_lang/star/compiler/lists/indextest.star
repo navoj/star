@@ -19,17 +19,17 @@
  */
 -- test the list indexing functions
 indextest is package{
-  LL is list{"a";"b";"c";"d";"e";"f"};
+  LL is list of ["a","b","c","d","e","f"];
   
   Ag is agg{
-    LL = list{"a";"b";"c";"d";"e";"f"};
+    LL = list of ["a","b","c","d","e","f"];
   };
   
   type Agg is agg{
     LL has type list of string;
   };
   
-  CC is cons of {"a";"b";"c";"d"};
+  CC is cons of ["a","b","c","d"];
   
   MM is map of {"a"->1;"b"->2;"c"->3};
   

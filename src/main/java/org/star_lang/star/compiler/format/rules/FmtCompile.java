@@ -16,10 +16,9 @@ import org.star_lang.star.compiler.format.NumericAttribute;
 import org.star_lang.star.compiler.format.StringAttribute;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 
 /**
  * Compile a formatting rule

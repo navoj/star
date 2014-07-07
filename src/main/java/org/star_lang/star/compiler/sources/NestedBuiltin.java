@@ -1,10 +1,9 @@
 package org.star_lang.star.compiler.sources;
 
 import org.star_lang.star.compiler.cafe.compile.Utils;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.type.IType;
 import org.star_lang.star.operators.ICafeBuiltin;
-
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.type.IType;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

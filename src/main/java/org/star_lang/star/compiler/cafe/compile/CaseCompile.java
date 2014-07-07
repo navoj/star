@@ -41,11 +41,10 @@ import org.star_lang.star.compiler.cafe.type.ICafeConstructorSpecifier;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.Pair;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeDescription;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeDescription;
 
 /**
  * 

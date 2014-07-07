@@ -5,12 +5,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.star_lang.star.compiler.SRTest;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.string.runtime.ValueDisplay;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.Factory;
 
 /**
  * 

@@ -11,6 +11,8 @@ import org.star_lang.star.compiler.cafe.compile.Sense;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.transform.PrimitiveOverloader;
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntEQ;
@@ -19,9 +21,6 @@ import org.star_lang.star.operators.arith.runtime.IntCompare.IntGT;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntLE;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntLT;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntNE;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

@@ -9,13 +9,12 @@ import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.transform.Computations;
+import org.star_lang.star.data.type.AbstractType;
+import org.star_lang.star.data.value.Relation;
+import org.star_lang.star.data.value.BoolWrap.FalseValue;
+import org.star_lang.star.data.value.BoolWrap.TrueValue;
+import org.star_lang.star.data.value.Option.Some;
 import org.star_lang.star.operators.ast.runtime.AstMacroKey;
-
-import com.starview.platform.data.type.AbstractType;
-import com.starview.platform.data.value.Option.Some;
-import com.starview.platform.data.value.Relation;
-import com.starview.platform.data.value.BoolWrap.FalseValue;
-import com.starview.platform.data.value.BoolWrap.TrueValue;
 
 /*
  * 

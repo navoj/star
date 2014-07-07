@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeConstraint;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * An implementation of the @{link ITypeVisitor} that verifies the so-called occurs-check (that a

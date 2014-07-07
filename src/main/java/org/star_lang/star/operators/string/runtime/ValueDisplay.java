@@ -7,17 +7,16 @@ import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
-
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IMap;
-import com.starview.platform.data.IPattern;
-import com.starview.platform.data.IRecord;
-import com.starview.platform.data.IRelation;
-import com.starview.platform.data.IScalar;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.IValueVisitor;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IMap;
+import org.star_lang.star.data.IPattern;
+import org.star_lang.star.data.IRecord;
+import org.star_lang.star.data.IRelation;
+import org.star_lang.star.data.IScalar;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.IValueVisitor;
 
 /**
  * 
@@ -70,16 +69,16 @@ public class ValueDisplay implements IValueVisitor
   @Override
   public void visitList(IList list)
   {
-    disp.appendWord("array of {");
+    disp.appendWord("array of [");
     int mark = disp.markIndent(2);
     String sep = "";
     for (IValue el : list) {
       disp.append(sep);
-      sep = ";\n";
+      sep = ", ";
       el.accept(this);
     }
     disp.popIndent(mark);
-    disp.append("}");
+    disp.append("]");
   }
 
   @Override

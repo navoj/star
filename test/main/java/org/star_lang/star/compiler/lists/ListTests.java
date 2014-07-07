@@ -103,7 +103,7 @@ public class ListTests extends SRTest
   @Test
   public void badListSyntax()
   {
-    exception.expectMessage("not expecting elements after");
+    exception.expectMessage("unexpected ','");
 
     runStar("badList.star");
   }

@@ -112,6 +112,20 @@ import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.util.Wrapper;
+import org.star_lang.star.data.IArray;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.RecordSpecifier;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterface;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.value.Array;
+import org.star_lang.star.data.value.NTuple;
+import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.operators.assignment.runtime.Assignments.Assign;
 import org.star_lang.star.operators.assignment.runtime.Assignments.AssignRawBool;
 import org.star_lang.star.operators.assignment.runtime.Assignments.AssignRawChar;
@@ -126,21 +140,6 @@ import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRawLongRef
 import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRef;
 import org.star_lang.star.operators.spawn.runtime.NotifyWait.Notify;
 import org.star_lang.star.operators.spawn.runtime.NotifyWait.Wait;
-
-import com.starview.platform.data.IArray;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.RecordSpecifier;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterface;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.value.Array;
-import com.starview.platform.data.value.NTuple;
-import com.starview.platform.data.value.ResourceURI;
 
 /**
  * 

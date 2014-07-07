@@ -5,9 +5,8 @@ import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

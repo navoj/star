@@ -122,7 +122,7 @@ implementation Arbitrary over Unit is {
 }
 
 implementation Arbitrary over boolean is {
-	arb = (function () is listElements(list{true; false}));
+	arb = (function () is listElements(list of [true, false]));
 	coarb = (function (b, g) is b ? variant(0, g) | variant(1, g));
 }
 

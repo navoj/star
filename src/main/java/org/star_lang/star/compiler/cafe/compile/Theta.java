@@ -51,15 +51,14 @@ import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.Triple;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.CafeEnter;
 import org.star_lang.star.operators.ICafeBuiltin;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * 

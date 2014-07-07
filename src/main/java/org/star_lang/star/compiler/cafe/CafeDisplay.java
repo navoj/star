@@ -9,8 +9,7 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintFormatProperties;
-
-import com.starview.platform.data.IArray;
+import org.star_lang.star.data.IArray;
 
 /**
  * 

@@ -25,19 +25,19 @@ multivars is package{
     logMsg(info,"split of $testLists on element 3 is $((Ls,Rs))");
   };
   
-  testLists is list{1;2;3;4;5;6};
+  testLists is list of [1,2,3,4,5,6];
   
   (Ls,Rs) is split(testLists,3);
   
   split has type (list of %t,integer) => (list of %t, list of %t);
   split(L,Count) is let{
     splitter has type (list of %t, list of %t, integer) => (list of %t, list of %t);
-    splitter(Ll,R,0) is (reverse(R,list{}), Ll);
-    splitter(list{E;..Ll},R,Cx) is splitter(Ll,list{E;..R},Cx-1);
-  } in splitter(L,list{},Count);
+    splitter(Ll,R,0) is (reverse(R,list of []), Ll);
+    splitter(list of [E,..Ll],R,Cx) is splitter(Ll,list of [E,..R],Cx-1);
+  } in splitter(L,list of [],Count);
   
   reverse has type (list of %t,list of %t) => list of %t;
-  reverse(list{},R) is R;
-  reverse(list{E;..L},R) is reverse(L,list{E;..R});
+  reverse(list of [],R) is R;
+  reverse(list of [E,..L],R) is reverse(L,list of [E,..R]);
   
 }

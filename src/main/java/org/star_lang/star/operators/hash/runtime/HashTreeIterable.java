@@ -4,16 +4,15 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IMap;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 import org.star_lang.star.operators.CafeEnter;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IMap;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
 
 /**
  * 

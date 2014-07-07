@@ -3,18 +3,17 @@ package org.star_lang.star.operators.ast.runtime;
 import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.Cons;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.Cons.ConsCons;
+import org.star_lang.star.data.value.Cons.Nil;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.Cons;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.Cons.ConsCons;
-import com.starview.platform.data.value.Cons.Nil;
 
 /**
  * 

@@ -1,6 +1,6 @@
 package org.star_lang.star.compiler.canonical;
 
-import static com.starview.platform.data.type.Location.merge;
+import static org.star_lang.star.data.type.Location.merge;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,11 +21,10 @@ import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Quantifier;
-import com.starview.platform.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Quantifier;
+import org.star_lang.star.data.type.TypeConstraintException;
 
 /**
  * The Variable references a local variable. A variable that is part of a content expression. It can

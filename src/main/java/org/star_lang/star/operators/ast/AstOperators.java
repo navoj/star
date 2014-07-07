@@ -16,6 +16,9 @@ import org.star_lang.star.compiler.ast.MacroError;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.ast.runtime.AstCategory;
@@ -26,10 +29,6 @@ import org.star_lang.star.operators.ast.runtime.AstMacroKey;
 import org.star_lang.star.operators.ast.runtime.AstQuoter;
 import org.star_lang.star.operators.ast.runtime.AstReplace;
 import org.star_lang.star.operators.ast.runtime.MergeLocation;
-
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
 
 /**
  * 

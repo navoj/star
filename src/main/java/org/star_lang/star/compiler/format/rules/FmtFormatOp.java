@@ -3,8 +3,7 @@ package org.star_lang.star.compiler.format.rules;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.format.FormatRanges;
 import org.star_lang.star.compiler.util.PrettyPrintable;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

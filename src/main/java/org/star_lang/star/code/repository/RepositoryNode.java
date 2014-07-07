@@ -1,8 +1,7 @@
 package org.star_lang.star.code.repository;
 
 import org.star_lang.star.compiler.util.PrettyPrintable;
-
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * A node in a repository

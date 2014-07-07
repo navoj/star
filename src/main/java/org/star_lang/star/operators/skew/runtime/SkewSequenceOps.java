@@ -1,18 +1,17 @@
 package org.star_lang.star.operators.skew.runtime;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IPattern;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
+import org.star_lang.star.data.value.NTuple;
+import org.star_lang.star.data.value.SkewList;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IPattern;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
-import com.starview.platform.data.value.NTuple;
-import com.starview.platform.data.value.SkewList;
 
 /**
  * 

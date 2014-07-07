@@ -6,9 +6,8 @@ import java.util.Random;
 
 import org.junit.Test;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.type.Location;
 
 public class TestBasicVsCatch
 {

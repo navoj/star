@@ -11,8 +11,7 @@ import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
-
-import com.starview.platform.data.IValue;
+import org.star_lang.star.data.IValue;
 
 /**
  * 

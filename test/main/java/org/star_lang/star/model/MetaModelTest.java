@@ -7,18 +7,17 @@ import org.star_lang.star.StarRules;
 import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.SRTest;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IRecord;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.operators.string.runtime.ValueDisplay;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IRecord;
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.value.Factory;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.catalog.CatalogException;
-import com.starview.platform.resource.catalog.URIBasedCatalog;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.catalog.CatalogException;
+import org.star_lang.star.resource.catalog.URIBasedCatalog;
 
 /**
  * 

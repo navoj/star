@@ -20,21 +20,20 @@ import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeContract;
+import org.star_lang.star.data.type.TypeDescription;
+import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
-
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeContract;
-import com.starview.platform.data.type.TypeDescription;
-import com.starview.platform.data.value.ResourceURI;
 
 /*
  * 

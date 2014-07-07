@@ -3,8 +3,8 @@ package org.star_lang.star.compiler.ast;
 import java.util.List;
 import java.util.Map;
 
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

@@ -8,14 +8,13 @@ import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.transform.Over;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.ContractConstraint;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeConstraint;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeExists;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.ContractConstraint;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeExists;
+import org.star_lang.star.data.type.TypeVar;
 
 public class TypeCollector implements ITypeCollector
 {

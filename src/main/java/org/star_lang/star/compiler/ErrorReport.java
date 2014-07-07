@@ -10,8 +10,7 @@ import org.star_lang.star.StarCompiler;
 import org.star_lang.star.compiler.util.Instrument;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * An ErrorReport holds a record of what errors have occurred and where

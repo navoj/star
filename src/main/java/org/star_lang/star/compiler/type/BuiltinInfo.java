@@ -2,9 +2,8 @@ package org.star_lang.star.compiler.type;
 
 import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.util.AccessMode;
+import org.star_lang.star.data.type.Location;
 import org.star_lang.star.operators.ICafeBuiltin;
-
-import com.starview.platform.data.type.Location;
 
 /**
  * 

@@ -5,8 +5,7 @@ import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.ast.IAttribute;
 import org.star_lang.star.compiler.standard.StandardNames;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

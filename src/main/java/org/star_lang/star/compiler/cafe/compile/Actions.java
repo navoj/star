@@ -47,14 +47,13 @@ import org.star_lang.star.compiler.type.Freshen;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * 

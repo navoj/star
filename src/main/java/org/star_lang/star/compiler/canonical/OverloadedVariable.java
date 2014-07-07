@@ -1,6 +1,6 @@
 package org.star_lang.star.compiler.canonical;
 
-import static com.starview.platform.data.type.Location.merge;
+import static org.star_lang.star.data.type.Location.merge;
 
 import java.util.Map;
 
@@ -11,11 +11,10 @@ import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Quantifier;
-import com.starview.platform.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Quantifier;
+import org.star_lang.star.data.type.TypeConstraintException;
 
 /**
  * Overloaded Variables have a type that includes contract dependencies. They must be handled

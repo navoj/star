@@ -15,15 +15,14 @@ import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.GenSym;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.string.runtime.DisplayTerm;
 import org.star_lang.star.operators.string.runtime.Number2String.Decimal2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Float2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Integer2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Long2String;
-
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * This class is focused on implementing the pp contract -- if possible -- for a given type

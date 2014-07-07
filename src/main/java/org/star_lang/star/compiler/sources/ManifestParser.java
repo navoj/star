@@ -38,18 +38,17 @@ import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.compiler.util.Pair;
-
-import com.starview.platform.data.type.ContractImplementation;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeAlias;
-import com.starview.platform.data.type.TypeContract;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.Resources;
+import org.star_lang.star.data.type.ContractImplementation;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeAlias;
+import org.star_lang.star.data.type.TypeContract;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Resources;
 
 /**
  * 

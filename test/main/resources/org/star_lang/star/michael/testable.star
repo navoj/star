@@ -33,7 +33,7 @@ testable is package {
         toTest = __test_list;    
     } using {
         -- __test_list has type (list of %t) => boolean;
-        __test_list(list{}) is true;
-        __test_list(list{H;..T}) is toTest(H) and __test_list(T);
+        __test_list(list of []) is true;
+        __test_list(list of [H,..T]) is toTest(H) and __test_list(T);
     };    
 }

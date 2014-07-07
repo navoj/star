@@ -1,10 +1,10 @@
 package org.star_lang.star.compiler.type;
 
-import static com.starview.platform.data.type.StandardTypes.astType;
-import static com.starview.platform.data.type.StandardTypes.booleanType;
-import static com.starview.platform.data.type.StandardTypes.charType;
-import static com.starview.platform.data.type.StandardTypes.rawCharType;
-import static com.starview.platform.data.type.StandardTypes.rawIntegerType;
+import static org.star_lang.star.data.type.StandardTypes.astType;
+import static org.star_lang.star.data.type.StandardTypes.booleanType;
+import static org.star_lang.star.data.type.StandardTypes.charType;
+import static org.star_lang.star.data.type.StandardTypes.rawCharType;
+import static org.star_lang.star.data.type.StandardTypes.rawIntegerType;
 
 import java.util.Stack;
 
@@ -37,13 +37,12 @@ import org.star_lang.star.compiler.type.TypeChecker.PtnVarHandler;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.util.Wrapper;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayEl;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps.ArrayHasSize;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.Factory;
 
 /**
  * 

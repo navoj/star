@@ -1,6 +1,8 @@
 package org.star_lang.star.operators.arith;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatAbs;
@@ -14,9 +16,6 @@ import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatRandom;
 import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatRound;
 import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatSqrt;
 import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatUMinus;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

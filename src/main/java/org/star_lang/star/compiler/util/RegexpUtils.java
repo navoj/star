@@ -6,8 +6,7 @@ import java.util.List;
 import org.star_lang.star.LanguageException;
 import org.star_lang.star.compiler.canonical.NFA;
 import org.star_lang.star.compiler.grammar.Tokenizer;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

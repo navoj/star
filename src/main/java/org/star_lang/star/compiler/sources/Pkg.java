@@ -4,9 +4,8 @@ import java.util.Map;
 
 import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.catalog.Catalog;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.catalog.Catalog;
 
 /**
  * 

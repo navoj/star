@@ -14,8 +14,7 @@ import org.star_lang.star.compiler.canonical.EnvironmentEntry.ContractEntry;
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImplementationEntry;
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImportEntry;
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.TypeAliasEntry;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

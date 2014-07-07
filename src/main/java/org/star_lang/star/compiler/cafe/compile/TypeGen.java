@@ -25,20 +25,19 @@ import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
-
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.ExistentialType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeVisitor;
-import com.starview.platform.data.type.Kind;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeDescription;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterface;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.ExistentialType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeVisitor;
+import org.star_lang.star.data.type.Kind;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeDescription;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterface;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 
 /**
  * 

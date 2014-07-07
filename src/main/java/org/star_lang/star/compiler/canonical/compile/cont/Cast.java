@@ -11,9 +11,8 @@ import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.canonical.compile.CompileContext;
 import org.star_lang.star.compiler.canonical.compile.Continue;
 import org.star_lang.star.compiler.canonical.compile.FrameState;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

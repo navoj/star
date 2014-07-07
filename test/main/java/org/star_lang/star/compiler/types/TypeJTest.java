@@ -12,15 +12,14 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.SRTest;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.FixedList;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.TypeInterface;
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.URIUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.TypeInterface;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.URIUtils;
 
 public class TypeJTest extends SRTest
 {

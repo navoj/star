@@ -1,18 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Starview Smart Enterprise Platform Language System
+Bundle-Name: Star Language System
 Bundle-SymbolicName: com.starview.star
 Bundle-Version: 7.0.0.qualifier
 StarLib-Version: 2.2.0.build-${env.BUILD_NUMBER}-${env.MERCURIAL_REVISION}
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 DynamicImport-Package: *
-Export-Package: com.starview.platform.data,
- com.starview.platform.data.type,
- com.starview.platform.data.value,
- com.starview.platform.resource,
- com.starview.platform.resource.catalog,
- org.star_lang.star,
+Export-Package: org.star_lang.star,
  org.star_lang.star.code,
  org.star_lang.star.code.repository,
  org.star_lang.star.code.repository.zip,
@@ -36,6 +31,9 @@ Export-Package: com.starview.platform.data,
  org.star_lang.star.compiler.type,
  org.star_lang.star.compiler.util,
  org.star_lang.star.compiler.wff,
+ org.star_lang.star.data,
+ org.star_lang.star.data.type,
+ org.star_lang.star.data.value,
  org.star_lang.star.grammar,
  org.star_lang.star.operators,
  org.star_lang.star.operators.arith,
@@ -65,13 +63,11 @@ Export-Package: com.starview.platform.data,
  org.star_lang.star.operators.system,
  org.star_lang.star.operators.system.runtime,
  org.star_lang.star.operators.uri,
- org.star_lang.star.operators.uri.runtime
+ org.star_lang.star.operators.uri.runtime,
+ org.star_lang.star.resource,
+ org.star_lang.star.resource.catalog
 Bundle-ClassPath: .
 Import-Package: org.objectweb.asm,
- org.objectweb.asm.commons,
  org.objectweb.asm.signature,
- org.objectweb.asm.tree,
- org.objectweb.asm.tree.analysis,
- org.objectweb.asm.util,
- org.objectweb.asm.xml
+ org.objectweb.asm.tree
 

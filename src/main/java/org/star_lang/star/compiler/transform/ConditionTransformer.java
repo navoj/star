@@ -53,11 +53,10 @@ import org.star_lang.star.compiler.util.ListUtils;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.Triple;
 import org.star_lang.star.compiler.util.Wrapper;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * 

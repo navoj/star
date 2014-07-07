@@ -8,10 +8,9 @@ import org.star_lang.star.StarRules;
 import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.IAbstract;
-
-import com.starview.platform.data.type.Location;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * 

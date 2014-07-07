@@ -7,9 +7,8 @@ import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.code.repository.CodeCatalog;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.util.AccessMode;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

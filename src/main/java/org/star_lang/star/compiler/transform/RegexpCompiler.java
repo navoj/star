@@ -50,14 +50,13 @@ import org.star_lang.star.compiler.util.ConsList;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.IntWrap;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntEQ;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntGE;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntLE;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.value.IntWrap;
 
 /**
  * 

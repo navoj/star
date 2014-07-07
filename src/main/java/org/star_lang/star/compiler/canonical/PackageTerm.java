@@ -4,12 +4,11 @@ import java.util.List;
 
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeContract;
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeContract;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * 

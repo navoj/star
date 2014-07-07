@@ -13,22 +13,21 @@ import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.transform.Over;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
-
-import com.starview.platform.data.type.ContractConstraint;
-import com.starview.platform.data.type.ExistentialType;
-import com.starview.platform.data.type.FieldConstraint;
-import com.starview.platform.data.type.FieldTypeConstraint;
-import com.starview.platform.data.type.HasKind;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.InstanceOf;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TupleConstraint;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.type.TypeTransformer;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
+import org.star_lang.star.data.type.ContractConstraint;
+import org.star_lang.star.data.type.ExistentialType;
+import org.star_lang.star.data.type.FieldConstraint;
+import org.star_lang.star.data.type.FieldTypeConstraint;
+import org.star_lang.star.data.type.HasKind;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.InstanceOf;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TupleConstraint;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.type.TypeTransformer;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 /**
  * 
  * Copyright (C) 2013 Starview Inc

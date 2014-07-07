@@ -23,10 +23,9 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
 import org.star_lang.star.compiler.util.UndoManager;
 import org.star_lang.star.compiler.util.UpdateEntry;
 import org.star_lang.star.compiler.util.Wrapper;
-
-import com.starview.platform.data.type.IAlgebraicType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.IAlgebraicType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

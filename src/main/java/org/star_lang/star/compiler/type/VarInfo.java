@@ -12,13 +12,12 @@ import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Quantifier;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeInterface;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Quantifier;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeInterface;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * 

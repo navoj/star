@@ -1,6 +1,8 @@
 package org.star_lang.star.operators.arith;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.arith.runtime.FloatTrig.FloatACos;
@@ -12,9 +14,6 @@ import org.star_lang.star.operators.arith.runtime.FloatTrig.FloatSin;
 import org.star_lang.star.operators.arith.runtime.FloatTrig.FloatSinh;
 import org.star_lang.star.operators.arith.runtime.FloatTrig.FloatTan;
 import org.star_lang.star.operators.arith.runtime.FloatTrig.FloatTanh;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * 

@@ -3,9 +3,8 @@ package org.star_lang.star.compiler.sources;
 import java.util.List;
 import java.util.Map;
 
+import org.star_lang.star.data.type.ITypeDescription;
 import org.star_lang.star.operators.ICafeBuiltin;
-
-import com.starview.platform.data.type.ITypeDescription;
 
 /**
  * A Java import is managed by a JavaInfo class.

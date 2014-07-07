@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.SortedMap;
 
 import org.star_lang.star.compiler.cafe.compile.ISpec;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.TypeConstraintException;
 
 /**
  * 

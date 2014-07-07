@@ -10,9 +10,8 @@ import java.util.Map.Entry;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.catalog.CatalogException;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.catalog.CatalogException;
 
 /*
  * A CodeRepository should contain all the code of a project. It is not set up as a singleton; but

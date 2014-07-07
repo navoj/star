@@ -19,10 +19,9 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.DefinitionKind;
 import org.star_lang.star.compiler.type.Visibility;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.Location;
 
 /**
  * Dependency analysis module. Sort out functions and other kinds of rules into groups of mutually

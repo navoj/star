@@ -1,13 +1,12 @@
 package org.star_lang.star.operators.system;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.system.runtime.Clock.Nanos;
 import org.star_lang.star.operators.system.runtime.Clock.Now;
 import org.star_lang.star.operators.system.runtime.Clock.Today;
-
-import com.starview.platform.data.type.StandardTypes;
 
 /**
  * 

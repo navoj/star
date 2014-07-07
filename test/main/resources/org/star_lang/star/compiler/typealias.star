@@ -33,13 +33,13 @@ typealias is package{
   F2(foo(_,X)) is X;
 
   XX has type jar of integer;
-  XX is foo("hi",list{1;2;3});
+  XX is foo("hi",list of [1,2,3]);
 
   FF has type (jar of %s) =>%s;
-  FF(foo(_,list{X})) is X;
+  FF(foo(_,list of [X])) is X;
 
   main has type action();
   main() do {
-    logMsg(info,"$(FF(foo("",list{2})))");
+    logMsg(info,"$(FF(foo("",list of [2])))");
   };
 }

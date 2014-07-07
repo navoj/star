@@ -556,18 +556,18 @@ serialization is package {
  yank is yankList;
  } using {
  -- shoveList has type (list of %a) => shoverM of list of %a where serializable over %a;
- shoveList(list{}) is shoveWord8(word8(0));
- shoveList(list{a;..rest}) is bind(shoveWord8(word8(1)),
+ shoveList(list of []) is shoveWord8(word8(0));
+ shoveList(list of [a,..rest]) is bind(shoveWord8(word8(1)),
  (function (_) is bind(shove(a),
  (function(_) is shoveList(rest)))
  ));
 
  yankList is bind(yankWord8, yankList2);
 
- yankList2(word8(0)) is return(list{});
+ yankList2(word8(0)) is return(list of []);
  yankList2(word8(1)) is bind(yank,
  (function (a) is bind(yankList,
- (function(rest) is return(list{a;.. rest})))
+ (function(rest) is return(list of [a,.. rest])))
  ));
  };
  */

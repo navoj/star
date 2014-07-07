@@ -10,8 +10,7 @@ import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.util.FileUtil;
 import org.star_lang.star.compiler.util.StringUtils;
-
-import com.starview.platform.resource.catalog.MemoryCatalog;
+import org.star_lang.star.resource.catalog.MemoryCatalog;
 
 /**
  * 

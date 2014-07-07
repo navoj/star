@@ -13,12 +13,11 @@ import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringSequence;
 import org.star_lang.star.compiler.util.Sequencer.SequenceException;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeVar;
 
 /**
  * 

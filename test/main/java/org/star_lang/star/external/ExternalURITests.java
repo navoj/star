@@ -5,9 +5,8 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.star_lang.star.compiler.SRTest;
-
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.URIUtils;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.URIUtils;
 
 /**
  * 

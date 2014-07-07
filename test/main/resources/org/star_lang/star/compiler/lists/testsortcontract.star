@@ -21,19 +21,19 @@ testsortcontract is package{
   import sorting;
   import person;
   
-  people is list{someone{name="peter"};
-     someone{name="john"};
-     someone{name="fred"};
-     someone{name="fred"};
-     someone{name="andy"};
-     noone};
+  people is list of [someone{name="peter"},
+     someone{name="john"},
+     someone{name="fred"},
+     someone{name="fred"},
+     someone{name="andy"},
+     noone];
      
-  ints is list{1;3;-2;45;10};
+  ints is list of [1,3,-2,45,10];
   
   main() do {
     logMsg(info,"sorted $people is\n$(msort(people))");
     logMsg(info,"sorted $ints is\n$(msort(ints))");
-    assert msort(ints)=list{-2;1;3;10;45};
+    assert msort(ints)=list of [-2,1,3,10,45];
   }
 }
   

@@ -12,10 +12,9 @@ import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.StandardTypes;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 
 /**
  * Compile a macro rule into a sequence of operations

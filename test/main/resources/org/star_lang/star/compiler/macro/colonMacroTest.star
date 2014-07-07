@@ -43,7 +43,7 @@ colonMacroTest is package{
     valis XX;
   }
 
-  Buffer is list{1;3;4;2;-1;0;-4;10};
+  Buffer is list of [1,3,4,2,-1,0,-4,10];
   
   XX is parseColon(A:Average(3h) <B:(3*StdDev(3h)));
   

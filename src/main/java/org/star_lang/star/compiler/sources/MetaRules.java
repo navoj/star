@@ -15,10 +15,9 @@ import org.star_lang.star.compiler.format.rules.FmtProgram;
 import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.wff.WffProgram;
-
-import com.starview.platform.data.value.ResourceURI;
-import com.starview.platform.resource.ResourceException;
-import com.starview.platform.resource.Resources;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Resources;
 
 /**
  * Collect together the meta rules from a Star source package

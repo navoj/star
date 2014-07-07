@@ -6,12 +6,11 @@ import java.util.Map.Entry;
 import org.star_lang.star.compiler.transform.Over;
 import org.star_lang.star.compiler.type.ITypeCollector;
 import org.star_lang.star.compiler.util.AccessMode;
-
-import com.starview.platform.data.type.ContractConstraint;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeConstraint;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.TypeVar;
+import org.star_lang.star.data.type.ContractConstraint;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TypeVar;
 
 /*
  * 

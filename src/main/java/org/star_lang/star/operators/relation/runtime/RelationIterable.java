@@ -2,17 +2,16 @@ package org.star_lang.star.operators.relation.runtime;
 
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IConstructor;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IRelation;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 import org.star_lang.star.operators.CafeEnter;
-
-import com.starview.platform.data.EvaluationException;
-import com.starview.platform.data.IConstructor;
-import com.starview.platform.data.IFunction;
-import com.starview.platform.data.IRelation;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.StandardTypes;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
 
 /**
  * 

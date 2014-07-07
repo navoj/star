@@ -33,9 +33,9 @@ delta is package {
 
   -- Utility function to visualize the result of 'diff'
   showChanges has type (list of delta, %t) => boolean;
-  showChanges(list{}, X) is true;
-  showChanges(list{noChange;..D}, X) is showChanges(D, X);
-  showChanges(list{delta(Loc, Opr, F, V);..D}, X) is valof {
+  showChanges(list of [], X) is true;
+  showChanges(list of [noChange,..D], X) is showChanges(D, X);
+  showChanges(list of [delta(Loc, Opr, F, V),..D], X) is valof {
   	-- logMsg(info, "DELTA:=> Apply Operation: $Opr at Location: $(Loc) :: Change:-> $(F(X))");
   	logMsg(info, "DELTA:=> Apply Operation: $Opr at Location: $(Loc) :: Change:-> $(V)");
   	valis showChanges(D, X);
@@ -43,8 +43,8 @@ delta is package {
   
   -- Utility function to apply all delta's to Old Model
   apply has type (list of delta, %t) => %t;
-  apply(list{},X) is X;
-  apply(list{delta(Loc, Opr, F, V);..D},X) is 
+  apply(list of [],X) is X;
+  apply(list of [delta(Loc, Opr, F, V),..D],X) is 
     valof{
 	  D1 is F(X);
 	  -- logMsg(info,"applying delta at $Loc is $D1");
@@ -72,13 +72,13 @@ delta is package {
   } using {
 	listDiff(Ix) is (function(X1,X2,Loc) is listDiffer(X1,X2,Ix,Loc));
 		
-	listDiffer(X,X,_,_) is list{noChange};
-	listDiffer(list{H1;..T1},list{H2;..T2},Ix,Loc) is let {
+	listDiffer(X,X,_,_) is list of [noChange];
+	listDiffer(list of [H1,..T1],list of [H2,..T2],Ix,Loc) is let {
 	  HD is diff(H1, H2, listElLoc(Loc, Ix))
 	  HT is listDiffer(T1,T2,Ix+1,Loc);
     } in HD<>HT;
-    listDiffer(list{},L2,Ix,Loc) is list{delta(listElLoc(Loc, Ix), dOprUpsert, (function(L) is L2), L2)};
-    listDiffer(L1,list{},Ix,Loc) is list{delta(listElLoc(Loc, Ix), dOprTruncatelistAt, (function(L) is front(L,Ix)), front(L1, Ix))};
+    listDiffer(list of [],L2,Ix,Loc) is list of [delta(listElLoc(Loc, Ix), dOprUpsert, (function(L) is L2), L2)];
+    listDiffer(L1,list of [],Ix,Loc) is list of [delta(listElLoc(Loc, Ix), dOprTruncatelistAt, (function(L) is front(L,Ix)), front(L1, Ix))];
 
     front(A, Ix) is A[0:Ix];
     listElLoc(Loc,Ix) is "$Loc[$Ix]";
@@ -163,94 +163,94 @@ delta is package {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
   
   implementation diffable over void is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   } 
     
   implementation diffable over fixed is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
   
   implementation diffable over integer is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
     
   implementation diffable over float is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
   
   implementation diffable over long is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
   
   implementation diffable over decimal is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
   
   implementation diffable over char is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
 
   implementation diffable over string is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
   
   implementation diffable over boolean is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
 
   implementation diffable over timestamp is {
     diff = scalarDiff();
   } using {
     scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list{};
-    scalarDiffer(I1,I2,Loc) is list{delta(Loc, dOprUpdate, KFunc(I2), I2)}
+    scalarDiffer(I,I,_) is list of [];
+    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
   
   main() do {  
 	-- diff for lists
-	s1 is list{"a"; "b"; "c"; "d"};
-	s2 is list{"x"; "Y" };
+	s1 is list of ["a", "b", "c", "d"];
+	s2 is list of ["x", "Y"];
 	dltaL is diff(s2, s1, "MyList");
 	
 	logMsg(info, "\n\nDelta of given Lists is ==> $dltaL");

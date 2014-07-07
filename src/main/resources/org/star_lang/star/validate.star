@@ -349,11 +349,6 @@ private import macrosupport;
 # ?X :: attributeExpression :- X :: statement;
 
 -- List expressions
-# list{} :: expression;
-# list{?C} :: expression :- C::listBody;
-
-# list{} ==> list of {};
-# list{?B} ==> list of {B};
 
 # #( ?S ; ?T )# :: listBody :- S::expression :& T::listBody;
 # #( ?S ;.. ?T )# :: listBody :- S::expression :& T::expression;  
@@ -432,8 +427,9 @@ private import macrosupport;
 };
 
  -- List patterns
-# list{} :: pattern;
-# list{?C} :: pattern :- C::sequencePtnBody;
+
+# ?I of {} :: pattern :- I::id;
+# ?I of {?C} :: pattern :- I::id :& C::sequencePtnBody; 
 
 -- sequence patterns
 # #( ?S ; ?T )# :: sequencePtnBody :- S::pattern :& T::sequencePtnBody;
@@ -441,10 +437,6 @@ private import macrosupport;
 # #( ?S ..; ?T )# :: sequencePtnBody :- S::pattern :& T::pattern;
 # #( ?S ;)#::sequencePtnBody :- S::pattern;
 # ?E :: sequencePtnBody :- E::pattern;
-
-# ?I of {} :: pattern :- I::id;
-# ?I of {?C} :: pattern :- I::id :& C::sequencePtnBody; 
-
 -- Special hack to detect an anonymous record pattern
 # { identifier = ?Ptn; ?Rest} :: pattern :- Ptn::pattern :& Rest;*attributePattern;
 # { identifier = ?Ptn} :: pattern :- Ptn::pattern;

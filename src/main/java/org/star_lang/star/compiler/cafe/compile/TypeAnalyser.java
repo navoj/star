@@ -23,23 +23,22 @@ import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
-
-import com.starview.platform.data.IList;
-import com.starview.platform.data.IValue;
-import com.starview.platform.data.type.ConstructorSpecifier;
-import com.starview.platform.data.type.ExistentialType;
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeContext;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.IValueSpecifier;
-import com.starview.platform.data.type.Location;
-import com.starview.platform.data.type.Type;
-import com.starview.platform.data.type.TypeConstraintException;
-import com.starview.platform.data.type.TypeContract;
-import com.starview.platform.data.type.TypeExp;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.type.TypeVar;
-import com.starview.platform.data.type.UniversalType;
+import org.star_lang.star.data.IList;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.type.ConstructorSpecifier;
+import org.star_lang.star.data.type.ExistentialType;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeContext;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.IValueSpecifier;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.Type;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeContract;
+import org.star_lang.star.data.type.TypeExp;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.UniversalType;
 
 /**
  * 

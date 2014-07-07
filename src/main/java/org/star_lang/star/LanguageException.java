@@ -1,8 +1,7 @@
 package org.star_lang.star;
 
 import org.star_lang.star.compiler.ErrorReport;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * LanguageException is used when reporting something wrong with a StarRules compilation

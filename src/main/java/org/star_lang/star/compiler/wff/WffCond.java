@@ -3,8 +3,7 @@ package org.star_lang.star.compiler.wff;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.util.PrettyPrintable;
 import org.star_lang.star.compiler.wff.WffOp.applyMode;
-
-import com.starview.platform.data.type.Location;
+import org.star_lang.star.data.type.Location;
 
 /**
  * 

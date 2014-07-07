@@ -20,7 +20,7 @@
 assertions is package{
   import person;
   
-  people is list{someone{name="peter"}; someone{name="john"; spouse=noone}; someone{name="fred"}; someone{name="fred"};someone{name="andy"}};
+  people is list of [someone{name="peter"}, someone{name="john"; spouse=noone}, someone{name="fred"}, someone{name="fred"},someone{name="andy"}];
 
   main() do
   {

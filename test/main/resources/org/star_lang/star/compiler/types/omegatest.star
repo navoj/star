@@ -20,11 +20,11 @@
 omegatest is package{
   -- test out some of the features of omega types
   
-  contract collection over %%c is {
+  contract coll over %%c is {
     transform  has type for all e, f such that (%%c of e, (e)=>f) => %%c of f
   }
   
-  implementation collection over cons is {
+  implementation coll over cons is {
     transform (nil,_) is nil;
     transform (cons(A,L),F) is cons(F(A),transform (L,F));
   }

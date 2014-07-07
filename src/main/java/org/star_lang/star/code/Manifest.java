@@ -14,13 +14,12 @@ import org.star_lang.star.code.repository.CodeTree;
 import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-
-import com.starview.platform.data.type.IType;
-import com.starview.platform.data.type.ITypeAlias;
-import com.starview.platform.data.type.ITypeDescription;
-import com.starview.platform.data.type.TypeContract;
-import com.starview.platform.data.type.TypeInterfaceType;
-import com.starview.platform.data.value.ResourceURI;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.TypeContract;
+import org.star_lang.star.data.type.TypeInterfaceType;
+import org.star_lang.star.data.value.ResourceURI;
 
 /**
  * Collect together the code and type pieces from a Star source package
