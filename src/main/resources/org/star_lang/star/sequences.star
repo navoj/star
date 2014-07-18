@@ -18,13 +18,6 @@
  *
  */
 
-contract collection over s determines e is {
-  _empty_collection has type ()=>s;
-  _addto_collection has type (s,e)=>s;
-  _contains_element has type (s,e)=>boolean;
-  _is_empty has type (s)=>boolean;
-}
-
 contract sequence over %t determines %e is {
   _empty has type ()<=%t;
   _pair has type (%e,%t)<=%t;
@@ -74,17 +67,17 @@ contract sliceable over %t is {
 
 # sequence of []::expression ==> _nil();
 # []::expression ==> _nil();
-# ?Tp of []::expression ==> _nil() has type Tp of #(%)# ( #$"_" );
+# ?Tp of []::expression ==> _nil() has type Tp of %_;
 # sequence of [?B]::expression ==> sequenceConvert(B,_cons,_apnd,_nil);
 # [?B]::expression ==> sequenceConvert(B,_cons,_apnd,_nil);
-# ?Tp of [?B]::expression ==> sequenceConvert(B,_cons,_apnd,_nil) has type Tp of #(%)# ( #$"_" );
+# ?Tp of [?B]::expression ==> sequenceConvert(B,_cons,_apnd,_nil) has type Tp of %_;
 
 # sequence of []::pattern ==> _empty();
 # []::pattern ==> _empty();
-# ?Tp of []::pattern ==> _empty() has type Tp of #(%)# ( #$"_" );
+# ?Tp of []::pattern ==> _empty() has type Tp of %_;
 # sequence of [?B]::pattern ==> sequenceConvert(B,_pair,_back,_empty);
 # [?B]::pattern ==> sequenceConvert(B,_pair,_back,_empty);
-# ?Tp of [?B]::pattern ==> sequenceConvert(B,_pair,_back,_empty) has type Tp of #(%)# ( #$"_" );
+# ?Tp of [?B]::pattern ==> sequenceConvert(B,_pair,_back,_empty) has type Tp of %_;
 
 #sequenceConvert(?Sq,?Cons,?Apnd,?Nil) ==> convert(Sq) ## {  
   #convert(<| ? Hds ,.. ?Tl |>) is convertHeads(Hds,Tl);

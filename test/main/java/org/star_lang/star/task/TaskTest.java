@@ -88,4 +88,10 @@ public class TaskTest extends SRTest
   {
     runStar("ring.star");
   }
+  
+  @Test
+  public void testActionExp()
+  {
+    runStar("actiontest.star");
+  }
 }

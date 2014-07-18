@@ -525,4 +525,12 @@ public class TypeVar implements IType, Iterable<ITypeConstraint>
       var.setConstraint(new HasKind(var, kind));
     return var;
   }
+
+  public static TypeVar var(Kind kind, AccessMode access)
+  {
+    TypeVar var = new TypeVar(GenSym.genSym("_"), access);
+    if (kind != Kind.unknown)
+      var.setConstraint(new HasKind(var, kind));
+    return var;
+  }
 }

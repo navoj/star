@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.operator.OpFormAttribute;
+import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.IList;
@@ -84,6 +85,10 @@ public class Display implements IAbstractVisitor
       IAbstract content = CompilerUtils.squareArg(app);
       if (content != null)
         content.accept(this);
+      append("]");
+    } else if (CompilerUtils.isSquareSeqTerm(app)) {
+      append("[");
+      CompilerUtils.squareContent(app).accept(this);
       append("]");
     } else if (Abstract.isTupleTerm(app))
       display(app.getArgs(), " (", ", ", ")");
@@ -231,7 +236,9 @@ public class Display implements IAbstractVisitor
 
   protected void appendName(String str)
   {
-    if (!Pattern.matches("[a-zA-Z_#$.@][a-zA-Z_#$.@0-9]*", str)) {
+    if (StandardNames.SQUARE.equals(str) || StandardNames.BRACES.equals(str))
+      appendWord(str);
+    else if (!Pattern.matches("[a-zA-Z_#$.@][a-zA-Z_#$.@0-9]*", str)) {
       disp.append("'");
       disp.append(str);
       disp.append("'");

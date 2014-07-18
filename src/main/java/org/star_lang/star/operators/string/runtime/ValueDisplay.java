@@ -69,7 +69,7 @@ public class ValueDisplay implements IValueVisitor
   @Override
   public void visitList(IList list)
   {
-    disp.appendWord("array of [");
+    disp.appendWord("list of [");
     int mark = disp.markIndent(2);
     String sep = "";
     for (IValue el : list) {

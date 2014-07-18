@@ -463,7 +463,7 @@ public class Array implements IArray, PrettyPrintable
   public void prettyPrint(PrettyPrintDisplay disp)
   {
     int mark = disp.markIndent(2);
-    disp.append("array of [");
+    disp.append("list of [");
     String sep = "";
 
     for (IValue arg : this) {

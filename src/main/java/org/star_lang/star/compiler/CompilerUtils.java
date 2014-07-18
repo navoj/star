@@ -1097,6 +1097,17 @@ public class CompilerUtils
     return Abstract.binary(loc, StandardNames.SQUARE, label, index);
   }
 
+  public static boolean isSquareSeqTerm(IAbstract term)
+  {
+    return Abstract.isUnary(term, StandardNames.SQUARE);
+  }
+
+  public static IAbstract squareContent(IAbstract term)
+  {
+    assert isSquareSeqTerm(term);
+    return Abstract.unaryArg(term);
+  }
+
   // This is specially crafted to work with the replacement of P[Ix] in L to _index(P,Ix) in L
 
   public static boolean isIndexPattern(IAbstract term)

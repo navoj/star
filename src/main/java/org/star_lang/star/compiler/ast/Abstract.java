@@ -54,6 +54,11 @@ public abstract class Abstract
     return new Name(loc, id);
   }
 
+  public static boolean isAnon(IAbstract a)
+  {
+    return isName(a, StandardNames.ANONYMOUS);
+  }
+
   public static IAbstract anon(Location loc)
   {
     return new Name(loc, StandardNames.ANONYMOUS);

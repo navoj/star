@@ -41,12 +41,7 @@ implementation sizeable over array of %t is {
 }
 
 implementation pPrint over array of %t where pPrint over %t is {
-  ppDisp(L) is ppArray(L);
-} using {
-  ppArray(L) is ppSequence(0,cons(ppStr("array of {"),cons(ppSequence(2,dispList(L,ppStr(""))),cons(ppStr("}"),nil))));
-  inter is ppStr(";");
-  dispList(array of{},_) is nil;
-  dispList(array of{H;..T},Sep) is cons(Sep,cons(ppDisp(H),dispList(T,inter)));
+  ppDisp(L) is sequenceDisplay("list",L);
 }
 
 implementation sequence over array of %e determines %e is {

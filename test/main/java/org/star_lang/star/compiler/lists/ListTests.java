@@ -176,4 +176,10 @@ public class ListTests extends SRTest
   {
     runStar("dependency.star");
   }
+
+  @Test
+  public void testDoubleConc()
+  {
+    runStar("doubleconc.star");
+  }
 }
