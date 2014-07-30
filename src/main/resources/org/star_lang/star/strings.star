@@ -55,7 +55,7 @@ implementation indexable over string determines (integer,char) is {
   _delete_indexed(string(S),integer(Ix)) is string(__delete_char(S,Ix));
 }
  
-implementation sliceable over string is {
+implementation sliceable over string determines integer is {
   _slice(string(S),integer(Fr),integer(To)) is string(__string_slice(S,Fr,To));
   _tail(string(S),integer(Fr)) is string(__string_slice(S,Fr,__str_length(S)));
   _splice(string(S),integer(Fr),integer(To),string(Rp)) is string(__string_splice(S,Fr,To,Rp));

@@ -106,4 +106,10 @@ public class ArithTests extends SRTest
   {
     runStar("fixedSqrt.star");
   }
+
+  @Test
+  public void loopTest()
+  {
+    runStar("loopTest.star");
+  }
 }

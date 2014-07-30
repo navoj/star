@@ -37,10 +37,10 @@ contract indexable over s determines (k,v) is {
   _delete_indexed has type (s,k)=>s;
 }
   
-contract sliceable over %t is {
-  _slice has type (%t,integer,integer)=>%t;
-  _tail has type (%t,integer)=>%t;
-  _splice has type (%t,integer,integer,%t)=>%t;
+contract sliceable over s determines k is {
+  _slice has type (s,k,k)=>s;
+  _tail has type (s,k)=>s;
+  _splice has type (s,k,k,s)=>s;
 }
 
 -- implement and handle sequence notation

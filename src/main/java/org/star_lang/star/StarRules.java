@@ -81,7 +81,7 @@ public class StarRules
       cat.addEntry("iterators", URIUtils.parseUri("std:iterators.star"));
       cat.addEntry("casting", URIUtils.parseUri("std:casting.star"));
       cat.addEntry("bitstring", URIUtils.parseUri("std:bitstring.star"));
-      cat.addEntry("treemap", URIUtils.parseUri("std:treemap.star"));
+      cat.addEntry("dictionary", URIUtils.parseUri("std:dictionary.star"));
       cat.addEntry("arraymap", URIUtils.parseUri("std:arraymap.star"));
       cat.addEntry("arrays", URIUtils.parseUri("std:arrays.star"));
       cat.addEntry("altarrays", URIUtils.parseUri("std:altarrays.star"));

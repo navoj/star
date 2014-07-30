@@ -18,7 +18,7 @@
  *
  */
 matchingQuery is package{
-  import treemap;
+  import dictionary;
   
   type employee is empl{
     name has type string;

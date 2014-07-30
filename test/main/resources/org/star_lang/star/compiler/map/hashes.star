@@ -18,11 +18,11 @@
  *
  */
 hashes is package{
-  import treemap;
+  import dictionary;
   
   -- trial data
   
-  M is treemap of {("a",1); ("b",2); ("c",3)};
+  M is dictionary of {("a",1); ("b",2); ("c",3)};
   
   main() do {
     logMsg(info,"M=$M");

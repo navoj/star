@@ -244,7 +244,7 @@ public class MiscTests extends SRTest
   {
     IValue list = Factory.newArray(StandardTypes.stringType, Factory.newString("one"), Factory.newString("two"),
         Factory.newString("three"));
-    Assert.assertEquals("array of {\"one\";\n  \"two\";\n  \"three\"}", ValueDisplay.display(list));
+    Assert.assertEquals("list of [\"one\", \"two\", \"three\"]", ValueDisplay.display(list));
   }
 
   @Test
@@ -379,7 +379,7 @@ public class MiscTests extends SRTest
   @Test
   public void testHashCodeVerify()
   {
-    exception.expectMessage("cannot use raw type _integer");
+    exception.expectMessage("cannot use raw type integer_");
     runStar("hashCodeVerify.star");
   }
 

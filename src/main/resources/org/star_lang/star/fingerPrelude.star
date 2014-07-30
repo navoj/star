@@ -51,7 +51,7 @@ array_foldLeft(f, a, arr) is valof {
   valis res;
 };
 
-array_int_foldLeft has type ((_integer,%a)=>_integer,_integer,array of %a)=>_integer;
+array_int_foldLeft has type ((integer_,%a)=>integer_,integer_,array of %a)=>integer_;
 array_int_foldLeft(f, a, arr) is valof {
   var res := a;
   var r := arr;

@@ -55,7 +55,7 @@ cont_throw_val(k, v) do { cont_throw_task(k, taskReturn(v)); }
 -- The most primitive CML functions and types
 
 -- private
-type rv_status is alias of _integer
+type rv_status is alias of integer_
 
 private WAITING is 0_
 private CLAIMED is 1_
@@ -77,7 +77,7 @@ type brv of %a is brv {
 -- A primitive rendezvous
 type prv of %a is
   BRV(brv of %a)  or
-  CHOOSE(prv of %a, _integer, prv of %a, _integer) 
+  CHOOSE(prv of %a, integer_, prv of %a, integer_) 
 
 choosePrv has type (prv of %a, prv of %a) => prv of %a
 
@@ -177,7 +177,7 @@ poll(prv) is let {
 */
 
 private
-randomFirst_ has type ((brv of %a) => Maybe of %c, prv of %a, prv of %a, _integer) => Maybe of %c
+randomFirst_ has type ((brv of %a) => Maybe of %c, prv of %a, prv of %a, integer_) => Maybe of %c
 
 /* To choose a random element, we first find a fair random path to a leaf, try to enable that (doFn()), but
    if that does not work, we start over with the rest tree we constructed on the way down, which contains
@@ -314,7 +314,7 @@ wrapPrv(CHOOSE(rv1, sz1, rv2, sz2), f) is
   CHOOSE(wrapPrv(rv1, f), sz1, wrapPrv(rv2, f), sz2)
   
 private
-_size has type (prv of %a) => _integer
+_size has type (prv of %a) => integer_
 _size(BRV(b1)) is 1_
 _size(CHOOSE(c1, sz1, c2, sz2)) is __integer_plus(sz1, sz2)
 

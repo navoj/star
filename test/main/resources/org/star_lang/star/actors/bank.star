@@ -18,14 +18,14 @@
  *
  */
 bank is package{
-  import treemap;
+  import dictionary;
   import account;
   import counter;
   
   type custTx is newAccount(string) or removeAccount(string);
   
   AllAccounts is actor{
-    private var allActs := treemap of {}; 
+    private var allActs := dictionary of {}; 
     
     on newAccount(Nm) on cust do
       allActs[Nm] := account(Nm);

@@ -29,9 +29,9 @@ import org.star_lang.star.data.type.StandardTypes;
  * 
  * This is a hand-implemented version of the regular Star definition:
  * 
- * type integer is integer(_integer) or nonInteger;
+ * type integer is integer(integer_) or nonInteger;
  * 
- * where _integer is the 'raw' type of integer. Raw types are not generally accessible to Star or
+ * where integer_ is the 'raw' type of integer. Raw types are not generally accessible to Star or
  * platform programmers.
  * 
  * We hand-implement it to ease platform-related issues since scalars are ubiquitous in the

@@ -20,7 +20,7 @@
 workedex is package{
   import account;
   import counter;
-  import treemap;
+  import dictionary;
   import bitstring;
   
   #infix("bound to",900);
@@ -66,16 +66,16 @@ workedex is package{
     valis (LO,RO);
   }
   
-  var transactions := treemap of {};
-  var transactionIndex := treemap of {};
-  var transFollow := treemap of {}; -- what depends on transaction entries
+  var transactions := dictionary of {};
+  var transactionIndex := dictionary of {};
+  var transFollow := dictionary of {}; -- what depends on transaction entries
 
-  var accounts := treemap of {};
-  var accountIndex := treemap of {};
-  var accntFollow := treemap of {}; -- what depends on account entries
+  var accounts := dictionary of {};
+  var accountIndex := dictionary of {};
+  var accntFollow := dictionary of {}; -- what depends on account entries
   
-  var full := treemap of {};
-  var fullDeps := treemap of {};
+  var full := dictionary of {};
+  var fullDeps := dictionary of {};
   
   genIndex(R,key,ref index) is valof{
     H is key(R);
@@ -93,7 +93,7 @@ workedex is package{
   addAccount(Act) do {
     Id is genAccountIndex(Act); -- pick up a unique id for the new tuple
     accounts[Id] := Act;
-    SnglAc is treemap of {(Id,Act)};
+    SnglAc is dictionary of {(Id,Act)};
     for (F,D) in fullAcGen(transactions,SnglAc) do{
       FId is nextId();
       full[FId] := F;
@@ -222,7 +222,7 @@ workedex is package{
       D is fullDeps[Ix];
       Acts is getDepAccount(D);
       
-      Txs is treemap of {(IxT,Tx);..getDepTxs(D)};
+      Txs is dictionary of {(IxT,Tx);..getDepTxs(D)};
 
       for (NF,ND) in fullAcGen(Txs,Acts) do{
         full[Ix] := NF;
@@ -255,13 +255,13 @@ workedex is package{
     logMsg(info,"full after tx update: $full");
   }
   
-  getDepAccount(dep("accounts",Id)) is treemap of {(Id,accounts[Id])};
+  getDepAccount(dep("accounts",Id)) is dictionary of {(Id,accounts[Id])};
   getDepAccount(allDep("accounts")) is accounts;
-  getDepAccount(multiDep(L)) is treemap of {all (Id,accounts[Id]) where dep("accounts",Id) in L };
+  getDepAccount(multiDep(L)) is dictionary of {all (Id,accounts[Id]) where dep("accounts",Id) in L };
   
-  getDepTxs(dep("transactions",Id)) is treemap of {(Id,transactions[Id])};
+  getDepTxs(dep("transactions",Id)) is dictionary of {(Id,transactions[Id])};
   getDepTxs(allDep("transactions")) is transactions;
-  getDepTxs(multiDep(L)) is treemap of {all (Id,transactions[Id]) where dep("transactions",Id) in L};
+  getDepTxs(multiDep(L)) is dictionary of {all (Id,transactions[Id]) where dep("transactions",Id) in L};
   
   -- update a follows table based on the new set up dependencies
   /*@

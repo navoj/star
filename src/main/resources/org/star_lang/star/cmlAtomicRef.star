@@ -20,7 +20,7 @@
 private import base;
 
 -- compare and swap
-atomic_int_cas has type (atomic_int, _integer, _integer) => _integer
+atomic_int_cas has type (atomic_int, integer_, integer_) => integer_
 atomic_int_cas(ar, expected, upd) is valof {
   while (true) do {
     var curr := __atomic_int_reference(ar);

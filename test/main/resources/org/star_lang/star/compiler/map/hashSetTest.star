@@ -18,10 +18,10 @@
  *
  */
 hashSetTest is package{
-  import treemap;
+  import dictionary;
   
   buildTree(Count) is valof{
-    var H := treemap of {};
+    var H := dictionary of {};
     
     var C := 1;
     while C<Count do{
@@ -54,7 +54,7 @@ hashSetTest is package{
     
     B2Secs is B2 as float/1.0e9;
     logMsg(info,"build time is $(B2Secs), build factor is $(B2 as float/B1 as float)");
-    logMsg(info,"treemap depth is $(tree_depth(T))");
+    logMsg(info,"dictionary depth is $(tree_depth(T))");
  
     var S0 := nanos();
     for ix2 in range(1,Count,1) do
@@ -74,7 +74,7 @@ hashSetTest is package{
     
     S2 := nanos()-S2;
     
-    logMsg(info,"time for treemap is $((S2-S0) as float/1.0e9) secs");
+    logMsg(info,"time for dictionary is $((S2-S0) as float/1.0e9) secs");
     logMsg(info,"search factor is $((S2-S0)as float/(S1-S0) as float)");
     
     var TT := T;

@@ -123,7 +123,7 @@ implementation indexable over cons of %e determines (integer,%e) is {
   consRemove(cons(H,T),Ix) where Ix>0 is cons(H,consRemove(T,Ix-1));
 }
 
-implementation sliceable over cons of %e is {
+implementation sliceable over cons of %e determines integer is {
   _slice(L,Fr,To) is consSlice(L,0,Fr,To);
   _tail(L,Fr) is drop(L,0,Fr);
   _splice(L,Fr,To,Rp) is consSplice(L,0,Fr,To,Rp);

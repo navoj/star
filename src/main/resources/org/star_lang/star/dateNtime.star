@@ -23,7 +23,7 @@ private import strings;
 
 -- dates and time
 
-type date is date(_long) or never;
+type date is date(long_) or never;
 
 implementation coercion over (date,string) is {
   coerce(date(D)) is string(__date_string(D));

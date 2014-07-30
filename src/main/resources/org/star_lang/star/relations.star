@@ -90,7 +90,7 @@ implementation sets over relation of %e where equality over %e is {
   L complement R is __relation_complement(L,R,(=));
 }
 
-implementation sliceable over relation of %e is {
+implementation sliceable over relation of %e determines integer is {
   _slice(L,integer(Fr),integer(To)) is __relation_slice(L,Fr,To);
   _tail(L,integer(Fr)) is __relation_slice(L,Fr,__relation_size(L));
   _splice(L,integer(Fr),integer(To),R) is __relation_splice(L,Fr,To,R);

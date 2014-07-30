@@ -43,7 +43,7 @@ private _FINGER_LIST_NODE_WIDTH is unwrapInt(FINGER_LIST_NODE_WIDTH);
 type FingerList of %a is
      FLEmpty
   or FLSingle(%a)
-  or FLDeep(_integer, FLDigit of %a, FingerList of (FLNode of (%a)), FLDigit of %a); -- _integer arg is amount of stored elements; used for indexing
+  or FLDeep(integer_, FLDigit of %a, FingerList of (FLNode of (%a)), FLDigit of %a); -- integer_ arg is amount of stored elements; used for indexing
 
 /**
 * FingerLists have a special recursive structure: not only does a
@@ -58,8 +58,8 @@ type FingerList of %a is
 * case (from which on, all %a are FLNode of %a).
 */
 
--- _integer: cumulative size of all elements in array
-type FLNode of %a is FLNode(_integer, array of %a);
+-- integer_: cumulative size of all elements in array
+type FLNode of %a is FLNode(integer_, array of %a);
 
 type FLDigit of %a is alias of array of %a;
 
@@ -83,21 +83,21 @@ digitLast(__array_tail_match(_, E)) is E;
 private digitFront has type (FLDigit of %a) => FLDigit of %a;
 digitFront(__array_tail_match(F, _)) is F;
 
-private digitToNodeNode has type (_integer, FLDigit of %a) => FLNode of %a;
+private digitToNodeNode has type (integer_, FLDigit of %a) => FLNode of %a;
 digitToNodeNode(newSize, flDigit) is valof {
   -- (assert (size(flDigit)>1 and size(flDigit) < FINGER_LIST_NODE_WIDTH));
   valis FLNode(newSize, flDigit);
 }
 
 /* shallow version, does not work for FLDigit of FLNode */
-private digitSizeElem has type (FLDigit of %a) => _integer;
+private digitSizeElem has type (FLDigit of %a) => integer_;
 digitSizeElem(flDigit) is __array_size(flDigit);
 
-private digitSizeNode has type (FLDigit of FLNode of (%a)) => _integer;
+private digitSizeNode has type (FLDigit of FLNode of (%a)) => integer_;
 digitSizeNode(flDigit) is array_int_foldLeft((function(s, fln) is __integer_plus(s, nodeSize(fln))), ZERO, flDigit);
 
 /* FLNode */
-private nodeSize has type (FLNode of %a) => _integer;
+private nodeSize has type (FLNode of %a) => integer_;
 nodeSize(FLNode(v, _)) is v;
 
 /** smart constructors */
@@ -143,7 +143,7 @@ private flSizeElem(FLEmpty) is ZERO;
 flSizeElem(FLSingle(x)) is ONE;
 flSizeElem(FLDeep(v, _, _, _)) is v;
 
-private flSizeNode has type (FingerList of (FLNode of (%a))) => _integer;
+private flSizeNode has type (FingerList of (FLNode of (%a))) => integer_;
 flSizeNode(FLEmpty) is ZERO;
 flSizeNode(FLSingle(FLNode(v, _))) is v;
 flSizeNode(FLDeep((v), _, _, _)) is v;
@@ -157,14 +157,14 @@ flIsEmpty(_) default is false;
 private flNodeToDigit has type (FLNode of (%a)) => FLDigit of %a;
 flNodeToDigit(FLNode(_, arr)) is arr;
 
-private flDigitToLeftistTree has type (_integer, FLDigit of %a) => FingerList of (%a);
+private flDigitToLeftistTree has type (integer_, FLDigit of %a) => FingerList of (%a);
 flDigitToLeftistTree(_, __array_empty_match()) is FLEmpty;
 flDigitToLeftistTree(v, __array_tail_match(F, E)) default is
     (__integer_eq(__array_size(F), ZERO)
      ? FLSingle(E)
      | FLDeep(v, F, FLEmpty, __array_cons(E, __array_nil())));
 
-private flDigitToRightistTree has type (_integer, FLDigit of %a) => FingerList of (%a);
+private flDigitToRightistTree has type (integer_, FLDigit of %a) => FingerList of (%a);
 flDigitToRightistTree(_, __array_empty_match()) is FLEmpty;
 flDigitToRightistTree(v, __array_head_match(H, T)) default is
     (__integer_eq(__array_size(T), ZERO)
@@ -239,7 +239,7 @@ flViewFromLeftNode(FLDeep(v, l,m,r)) is let {
   } in
   ConsFLViewFromLeft(first, deepL(__integer_minus(v,nodeSize(first)), digitRear(l), m, r));
 
-private deepL has type (_integer, FLDigit of %a, FingerList of (FLNode of (%a)), FLDigit of %a) => Promise of FingerList of (%a);
+private deepL has type (integer_, FLDigit of %a, FingerList of (FLNode of (%a)), FLDigit of %a) => Promise of FingerList of (%a);
 deepL(newSize, l, m, r) is valof {
   sz is __array_size(l);
   if __integer_eq(sz, ZERO) then {
@@ -285,7 +285,7 @@ flViewFromRightNode(FLDeep(v, l,m,r)) is let {
   last is digitLast(r);
 } in SnocFLViewFromRight(deepR(__integer_minus(v, nodeSize(last)), l, m, digitFront(r)), last);
 
-private deepR has type (_integer, FLDigit of %a, FingerList of (FLNode of (%a)), FLDigit of %a) => Promise of FingerList of (%a);
+private deepR has type (integer_, FLDigit of %a, FingerList of (FLNode of (%a)), FLDigit of %a) => Promise of FingerList of (%a);
 deepR(newSize, l, m, r) is valof {
   sz is __array_size(r);
   if __integer_eq(sz, ZERO) then {
@@ -332,7 +332,7 @@ flAppend(xs, ys) is app3Elem(xs, __array_nil(), ys) using {
   app3Node(FLDeep(v1, pr1, m1, sf1), ts, FLDeep(v2, pr2, m2, sf2)) is
     FLDeep(__integer_plus(v1, __integer_plus(v2, sumNodeSize(ts))), pr1, app3Node(m1, (nodesFromListNode(__array_concatenate((sf1), __array_concatenate(ts, (pr2))))), m2), sf2);
 
-  sumNodeSize has type (array of (FLNode of %c)) => _integer;
+  sumNodeSize has type (array of (FLNode of %c)) => integer_;
   sumNodeSize(s) is array_int_foldLeft((function(a,b) is __integer_plus(a,nodeSize(b))), ZERO, s);
 }
 
@@ -413,7 +413,7 @@ flAdjoinNode(FLDeep((v), l, m, r), a) is valof {
 };
 
 /** splitting */
-private flSplitElem has type (FingerList of (%a), _integer) => %a;
+private flSplitElem has type (FingerList of (%a), integer_) => %a;
 flSplitElem(FLSingle(x), idx) is x;
 flSplitElem(FLDeep(_, pr, m, sf), idx) is valof {
   vpr is digitSizeElem(pr);
@@ -428,10 +428,10 @@ flSplitElem(FLDeep(_, pr, m, sf), idx) is valof {
   valis flSplitDigitElem(idx, vm, sf);
   };
 
-private flSplitDigitElem has type (_integer, _integer, FLDigit of %a) => %a;
+private flSplitDigitElem has type (integer_, integer_, FLDigit of %a) => %a;
 flSplitDigitElem(idx, i, digit) is __array_el(digit, __integer_minus(idx, i));
 
-private flSplitNode has type (_integer, _integer, FingerList of (FLNode of (%a))) => (integer, FLNode of (%a)); -- work around starbug #8331 returning integer
+private flSplitNode has type (integer_, integer_, FingerList of (FLNode of (%a))) => (integer, FLNode of (%a)); -- work around starbug #8331 returning integer
 flSplitNode(idx, i, FLSingle(x)) is (integer(ZERO), x); -- work around starbug #8331 returning integer
 flSplitNode(idx, i, FLDeep(_, pr, m, sf)) is valof {
   spr is digitSizeNode(pr);
@@ -451,7 +451,7 @@ flSplitNode(idx, i, FLDeep(_, pr, m, sf)) is valof {
   valis (integer(__integer_plus(spr, __integer_plus(sm, sl))), x) -- work around starbug #8331 returning integer
   };
 
-private flSplitDigitNode has type (_integer, _integer, FLDigit of FLNode of (%a)) => (integer, FLNode of (%a)); -- work around starbug #8331 returning integer
+private flSplitDigitNode has type (integer_, integer_, FLDigit of FLNode of (%a)) => (integer, FLNode of (%a)); -- work around starbug #8331 returning integer
 private flSplitDigitNode(idx, i00, flDigit) is valof {
   var i := ZERO;
   var consumed := ZERO;
@@ -470,7 +470,7 @@ private flSplitDigitNode(idx, i00, flDigit) is valof {
   valis (integer(consumed), __array_el(flDigit, i));
 };
 
-private flSubstituteElem has type (FingerList of %a, _integer, %a) => FingerList of %a;
+private flSubstituteElem has type (FingerList of %a, integer_, %a) => FingerList of %a;
 flSubstituteElem(FLSingle(x), idx, newElem) is FLSingle(newElem);
 flSubstituteElem(FLDeep(v, pr, m, sf), idx, newElem) is valof {
   vpr is digitSizeElem(pr);
@@ -488,11 +488,11 @@ flSubstituteElem(FLDeep(v, pr, m, sf), idx, newElem) is valof {
         FLNode(sz, flSubstituteDigitElem(idx_, i_, els, newElem));
 };
 
-private flSubstituteDigitElem has type (_integer, _integer, FLDigit of %a, %a) => FLDigit of %a;
+private flSubstituteDigitElem has type (integer_, integer_, FLDigit of %a, %a) => FLDigit of %a;
 flSubstituteDigitElem(idx, i, flDigit, newElem) is __array_set_element(flDigit, __integer_minus(idx,i), newElem);
 
-private flSubstituteNode has type (_integer, _integer, FingerList of FLNode of %a,
- (_integer, _integer, FLNode of %a) => FLNode of %a) => FingerList of FLNode of %a;
+private flSubstituteNode has type (integer_, integer_, FingerList of FLNode of %a,
+ (integer_, integer_, FLNode of %a) => FLNode of %a) => FingerList of FLNode of %a;
 flSubstituteNode(idx, i, FLSingle(x), subs) is FLSingle(subs(idx, i, x));
 flSubstituteNode(idx, i, FLDeep(v, pr, m, sf), subs) is valof {
   spr is digitSizeNode(pr);
@@ -514,8 +514,8 @@ flSubstituteNode(idx, i, FLDeep(v, pr, m, sf), subs) is valof {
       FLNode(sz, flSubstituteDigitNode(idx_, i_, els, subs));
   };
 
-private flSubstituteDigitNode has type (_integer, _integer, FLDigit of FLNode of %a,
-  (_integer, _integer, FLNode of %a) => FLNode of %a) => FLDigit of FLNode of %a;
+private flSubstituteDigitNode has type (integer_, integer_, FLDigit of FLNode of %a,
+  (integer_, integer_, FLNode of %a) => FLNode of %a) => FLDigit of FLNode of %a;
 flSubstituteDigitNode(idx, i00, flDigit, subs) is valof {
   var i := ZERO;
   var consumed := i00;
@@ -537,7 +537,7 @@ flSubstituteDigitNode(idx, i00, flDigit, subs) is valof {
 /** splits **/
 private type Split of (%f, %a) is Split(%f, %a, %f);
 
-private flFullSplitDigitElem has type (_integer, _integer, FLDigit of %a) => Split of (FLDigit of %a, %a);
+private flFullSplitDigitElem has type (integer_, integer_, FLDigit of %a) => Split of (FLDigit of %a, %a);
 private flFullSplitDigitElem(idx, i, flDigit) is
   Split(__array_slice(flDigit, ZERO, pos),
         __array_el(flDigit, pos),
@@ -548,7 +548,7 @@ private flFullSplitDigitElem(idx, i, flDigit) is
   };
 
 
-private flFullSplitDigitNode has type (_integer, _integer, FLDigit of FLNode of %a) => Split of (FLDigit of FLNode of %a, FLNode of %a);
+private flFullSplitDigitNode has type (integer_, integer_, FLDigit of FLNode of %a) => Split of (FLDigit of FLNode of %a, FLNode of %a);
 private flFullSplitDigitNode(idx, i00, flDigit) is valof {
   var i := ZERO;
   var i2 := __integer_plus(i00, nodeSize(__array_el(flDigit,i)));
@@ -570,7 +570,7 @@ flSplit(fl, integer(pos)) is valof {
   Split(l,x,r) is flSplitTreeElem(pos, ZERO, fl);
   valis (l, x, r)};
 
-private flSplitTreeElem has type (_integer, _integer, FingerList of (%a)) => Split of (FingerList of (%a), %a);
+private flSplitTreeElem has type (integer_, integer_, FingerList of (%a)) => Split of (FingerList of (%a), %a);
 private flSplitTreeElem(idx, i, FLSingle(x)) is Split(FLEmpty, x, FLEmpty);
 flSplitTreeElem(idx, i, FLDeep(v, pr, m, sf)) is valof {
   vpr is (__integer_plus(i, digitSizeElem(pr)));
@@ -593,7 +593,7 @@ flSplitTreeElem(idx, i, FLDeep(v, pr, m, sf)) is valof {
   valis Split((deepR(__integer_minus(__integer_minus(v, ONE), rSize), pr, m, l)()), x, flDigitToRightistTree(rSize, r))
 };
 
-private flSplitTreeNode has type (_integer, _integer, FingerList of (FLNode of %a)) => Split of (FingerList of (FLNode of %a), FLNode of %a);
+private flSplitTreeNode has type (integer_, integer_, FingerList of (FLNode of %a)) => Split of (FingerList of (FLNode of %a), FLNode of %a);
 private flSplitTreeNode(idx, i, FLSingle(x)) is Split(FLEmpty, x, FLEmpty);
 flSplitTreeNode(idx, i, FLDeep(v, pr, m, sf)) is valof {
   vpr is (__integer_plus(i, digitSizeNode(pr)));
@@ -618,13 +618,13 @@ flSplitTreeNode(idx, i, FLDeep(v, pr, m, sf)) is valof {
 
 /** remove **/
 
-private flRemoveElem has type (FingerList of %a, _integer) => FingerList of %a;
+private flRemoveElem has type (FingerList of %a, integer_) => FingerList of %a;
 private flRemoveElem(fl, idx) is valof {
   Split(l, _, r) is flSplitTreeElem(idx, ZERO, fl);
   valis flAppend(l, r);
 }
 
-private flSize has type (FingerList of %a) => _integer;
+private flSize has type (FingerList of %a) => integer_;
 flSize(xs) is flSizeElem(xs);
 
 private flCons has type (%a, FingerList of %a) => FingerList of %a;
@@ -819,7 +819,7 @@ implementation comparable over FingerList of %a where comparable over %a is {
     };
 };
 
-implementation sliceable over FingerList of %a is {
+implementation sliceable over FingerList of %a determines integer is {
   _slice(L,integer(Fr),integer(To)) is valof {
     Split(_,m1,r1) is flSplitTreeElem(Fr, ZERO, L)
     Split(l2,m2,_) is flSplitTreeElem(__integer_minus(To, Fr),ZERO,flCons(m1, r1));

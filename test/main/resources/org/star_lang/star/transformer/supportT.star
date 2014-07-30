@@ -19,10 +19,10 @@
  */
 support is package{
   -- the data structure that enables recording of updates
-  private import treemap;
+  private import dictionary;
   
   type support of %v is support{
-    content has type treemap of (%v,integer);
+    content has type dictionary of (%v,integer);
     content default is trEmpty;
     
     onInsert has type action(integer,%v);

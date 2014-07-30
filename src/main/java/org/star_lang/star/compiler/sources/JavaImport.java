@@ -255,7 +255,7 @@ public class JavaImport
    * <p/>
    * 
    * <pre>
-   * _string __Fun(_integer)
+   * string_ __Fun(integer_)
    * </pre>
    * <p/>
    * -->

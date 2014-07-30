@@ -63,7 +63,7 @@ implementation indexable over array of %e determines (integer,%e) is {
   _delete_indexed(L,integer(Ix)) is __array_delete_element(L,Ix);
 }
 
-implementation sliceable over array of %e is {
+implementation sliceable over array of %e determines integer is {
   _slice(L,integer(Fr),integer(To)) is __array_slice(L,Fr,To);
   _tail(L,integer(Fr)) is __array_slice(L,Fr,__array_size(L));
   _splice(L,integer(Fr),integer(To),R) is __array_splice(L,Fr,To,R);

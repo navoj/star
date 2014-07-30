@@ -103,15 +103,15 @@ public class Names
   public static final String FALSE = keyword("false");
 
   public static final String RAW_BOOL_TYPE = keyword("_bool");
-  public static final String RAW_CHAR_TYPE = keyword("_char");
-  public static final String RAW_INT_TYPE = keyword("_integer");
-  public static final String RAW_LONG_TYPE = keyword("_long");
-  public static final String RAW_FLOAT_TYPE = keyword("_float");
-  public static final String RAW_DECIMAL_TYPE = keyword("_decimal");
-  public static final String RAW_BINARY_TYPE = keyword("_binary");
-  public static final String RAW_STRING_TYPE = keyword("_string");
+  public static final String RAW_CHAR_TYPE = keyword("char_");
+  public static final String RAW_INT_TYPE = keyword("integer_");
+  public static final String RAW_LONG_TYPE = keyword("long_");
+  public static final String RAW_FLOAT_TYPE = keyword("float_");
+  public static final String RAW_DECIMAL_TYPE = keyword("decimal_");
+  public static final String RAW_BINARY_TYPE = keyword("binary_");
+  public static final String RAW_STRING_TYPE = keyword("string_");
   public static final String STRING_TYPE = keyword("string");
-  public static final String RAW_FILE_TYPE = keyword("_file");
+  public static final String RAW_FILE_TYPE = keyword("file_");
 
   public static final String BOOLEAN = "boolean";
 

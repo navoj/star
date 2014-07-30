@@ -18,7 +18,7 @@
  *
  */
 basictreetest is package{
-  import treemap;
+  import dictionary;
   
   main() do {
     var M := trEmpty;

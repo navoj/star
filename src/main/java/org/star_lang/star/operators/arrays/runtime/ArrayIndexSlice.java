@@ -66,7 +66,7 @@ public class ArrayIndexSlice
 
     public static IType type()
     {
-      // %e~(array of %e,_integer)=> %e
+      // %e~(array of %e,integer_)=> %e
       TypeVar e = new TypeVar();
 
       IType funType = TypeUtils.functionType(TypeUtils.arrayType(e), StandardTypes.rawIntegerType, e);
@@ -101,7 +101,7 @@ public class ArrayIndexSlice
 
     public static IType type()
     {
-      // %e~(array of %e,_integer)=>option of %e
+      // %e~(array of %e,integer_)=>option of %e
       TypeVar e = new TypeVar();
 
       IType funType = TypeUtils.functionType(TypeUtils.arrayType(e), StandardTypes.rawIntegerType, TypeUtils
@@ -196,7 +196,7 @@ public class ArrayIndexSlice
 
     public static IType type()
     {
-      // %e~(array of %e,_integer)=> array of %e
+      // %e~(array of %e,integer_)=> array of %e
       TypeVar e = new TypeVar();
       IType arrayType = TypeUtils.arrayType(e);
 
@@ -234,7 +234,7 @@ public class ArrayIndexSlice
 
     public static IType type()
     {
-      // for all e such that e <= (array of e,_integer)
+      // for all e such that e <= (array of e,integer_)
       TypeVar e = new TypeVar();
 
       IType funType = TypeUtils.patternType(TypeUtils.tupleType(e), TypeUtils.tupleType(TypeUtils.arrayType(e),

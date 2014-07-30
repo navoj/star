@@ -34,8 +34,8 @@ private _cmlQueue_config_k1 is 10_;
 
 type cml_queue of %a is _CMLQueue {
   q has type queue of %a;
-  size has type _integer;
-  cleanup_threshold has type _integer;
+  size has type integer_;
+  cleanup_threshold has type integer_;
   isAlive has type (%a) => boolean;
 }
 
@@ -80,7 +80,7 @@ queuePair(E,queue{front=B;back=nil}) from queue{front=nil; back=Bk} where revers
 type Maybe of %a is Just(%a) or Nothing
 
 -- Filter elements out, and return new size
-_filter_size has type (((%a) => boolean), queue of %a) => (_integer, queue of %a)
+_filter_size has type (((%a) => boolean), queue of %a) => (integer_, queue of %a)
 _filter_size(pred, que) is
   queueFoldLeft(
     (function ((sz, res), e) is

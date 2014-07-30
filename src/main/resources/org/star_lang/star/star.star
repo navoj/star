@@ -31,6 +31,7 @@ import casting;
 import iterable;
 import actors;
 import arrays;
+import dictionary;
 import relations;
 import queue;
 import cons;

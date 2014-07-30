@@ -17,9 +17,7 @@
  * @author fgm
  *
  */
-mapmerge is package {
-  import treemap;
-  
+mapmerge is package {  
   main() do {
     var t := trEmpty;
     for x in iota(1, 10, 1) do {

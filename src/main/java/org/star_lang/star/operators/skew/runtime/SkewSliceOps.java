@@ -66,7 +66,7 @@ public class SkewSliceOps
 
     public static IType type()
     {
-      // %e~(skew of %e,_integer)=>%e
+      // %e~(skew of %e,integer_)=>%e
       TypeVar tv = new TypeVar();
 
       IType funType = TypeUtils.functionType(TypeUtils.skewType(tv), StandardTypes.rawIntegerType, TypeUtils
@@ -161,7 +161,7 @@ public class SkewSliceOps
 
     public static IType type()
     {
-      // %e~(skew of %e,_integer)=> skew of %e
+      // %e~(skew of %e,integer_)=> skew of %e
       TypeVar tv = new TypeVar();
       IType skewType = TypeUtils.skewType(tv);
 
@@ -199,7 +199,7 @@ public class SkewSliceOps
 
     public static IType type()
     {
-      // for all e such that e <= (skew of e,_integer)
+      // for all e such that e <= (skew of e,integer_)
       TypeVar tv = new TypeVar();
 
       return new UniversalType(tv, TypeUtils.patternType(TypeUtils.tupleType(tv), TypeUtils.tupleType(TypeUtils

@@ -18,13 +18,13 @@
  *
  */
 foldingtest is package{
-  import treemap;
+  import dictionary;
   -- test the folding stuff
   
   main() do {
     L is cons of {1;2;3;4};
     
-    T is treemap of {1 -> "one"; 2->"two"; 3->"three"};
+    T is dictionary of {1 -> "one"; 2->"two"; 3->"three"};
     
     assert rightFold((+),0,L) = leftFold((+),0,L)
     

@@ -27,6 +27,7 @@ private import casting;
 private import cons;
 private import folding;
 private import option;
+private import dictionary;
 
 type hash of (%k,%v) is alias of map of (%k,%v);
 
