@@ -21,8 +21,8 @@ badmapTest is package{
   fooPattern has type () <= string;
   fooPattern is (pattern () from (S matching `.*foo.*`));
 
-  Y has type map of ((string, () <= string));
-  Y is map of {
+  Y has type dictionary of ((string, () <= string));
+  Y is dictionary of {
         "foo" -> fooPattern;
   };
 

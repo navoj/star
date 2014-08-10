@@ -249,7 +249,7 @@ private import macrosupport;
 
 -- This is complex because we cannot re-use an identifier. So we have to synthesize new ones.
 
-# ?Exp using #(identifier?SS)# 's ?E ==> unwrapLet(defs(SS,E,Exp,())) ## {
+# ?Exp using #(identifier?SS)# 's ?E ==> #*unwrapLet(#*defs(SS,E,Exp,())) ## {
   #defs(?S,?L 'n ?R,?A,?D) ==> defs(S,R, A./L->#$L, glue((#(#$L is S.L)#,D)));
   #defs(?S,?L,?A,?D) ==> (A./L->#$L, glue((#(#$L is S.L)#,D)));
   
@@ -260,7 +260,7 @@ private import macrosupport;
   #unwrapLet((?A, ?D)) ==> let { D } in A;
 };
 
-# ?Exp using ?SS 's ?E ==> unwrapLet(#$Id, defs(#$Id,E,Exp,())) ## {
+# ?Exp using ?SS 's ?E ==> #*unwrapLet(#$Id, #*defs(#$Id,E,Exp,())) ## {
   #defs(?S,?L 'n ?R,?A,?D) ==> defs(S,R, A./L->#$L, glue((#(#$L is S.L)#,D)));
   #defs(?S,?L,?A,?D) ==> (A./L->#$L, glue((#(#$L is S.L)#,D)));
   
@@ -461,12 +461,6 @@ private import macrosupport;
 # identifier @ identifier :: pattern;
 
 # #(?A)# #@ ?E :: pattern :- A::expression :& E:*pattern;
-
--- Tables and relations
-# indexed {} :: expression;
-# indexed {?Content} :: expression :- Content ;* expression;
-# relation{} :: expression;
-# relation{?Content} :: expression :- Content ;* expression;
 
 # {} :: expression;
 -- Special hack to detect an anonymous record

@@ -57,15 +57,15 @@ actorqueries is package{
   
   repo has type repoActorType;
   var repo is actor{
-    var children := relation of{
-       { parent = fred; child = sue};
-       { parent = fred; child = john};
-       { parent = jane; child = john};
-     };
-     var married := relation of{
-       { husband = fred; wife = jane};
+    var children := list of[
+       { parent = fred; child = sue},
+       { parent = fred; child = john},
+       { parent = jane; child = john}
+     ];
+     var married := list of [
+       { husband = fred; wife = jane},
        { husband = john; wife = sally}
-     };
+     ];
      
      recordBirth(P,C) do {
        extend children with {parent=P;child=C};
@@ -73,8 +73,8 @@ actorqueries is package{
    };
    
  type repoActorType is alias of actor of{
-    children has type ref relation of { parent has type person; child has type person};
-    married has type ref relation of {husband has type person; wife has type person};
+    children has type ref list of { parent has type person; child has type person};
+    married has type ref list of {husband has type person; wife has type person};
     recordBirth has type action(person,person);
   };
   
@@ -87,7 +87,7 @@ actorqueries is package{
     findUnmarried(P) do {
       logMsg(info,"finding unmarried children of $P");
       QQ is query R's children'n married with 
-         relation of {
+         list of {
            all S where {parent=PP;child=S} in children and PP=P and not ({husband=S} in married or {wife=S} in married)
          };
       logMsg(info,"QQ is $QQ");

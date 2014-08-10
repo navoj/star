@@ -39,7 +39,7 @@ modeltypes is package {
   
   type MODEL_OUT is MODEL_OUT{
     DEFAULT has type stream of mModel;
-    DEFAULT_RELATION has type relation of mModel
+    DEFAULT_RELATION has type list of mModel
   };
   
   createIn(notifyFunc, requestFunc) is { 

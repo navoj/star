@@ -17,7 +17,6 @@ import org.star_lang.star.data.type.UniversalType;
 import org.star_lang.star.data.value.Array;
 import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.CafeEnter;
-import org.star_lang.star.operators.relation.runtime.ValueSort;
 
 /**
  * 

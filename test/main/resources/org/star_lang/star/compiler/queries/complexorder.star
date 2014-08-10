@@ -25,15 +25,15 @@ complexorder is package {
   };
   
 --  AA is actor{
-    LocalizedActualEventItems has type relation of {containerId has type string;
+    LocalizedActualEventItems has type list of {containerId has type string;
       event has type EventItem;
       locale has type string;
     };
     
-    LocalizedActualEventItems is relation{
-      { containerId = "first"; event=event{createdTimestamp=0L}; locale="somewhere"};
+    LocalizedActualEventItems is list of [
+      { containerId = "first"; event=event{createdTimestamp=0L}; locale="somewhere"},
       { containerId = "second"; event=event{createdTimestamp=1L}; locale="nowhere"}
-    };
+    ];
 --  };
     
   main() do {

@@ -20,20 +20,20 @@
 arraysets is package{
   -- test set operations over arrays
   
-  A is array of {"alpha"; "beta"; "gamma"};
+  A is list of ["alpha", "beta", "gamma"];
   
-  B is array of {"alpha"; "gamma"; "delta"};
+  B is list of ["alpha", "gamma", "delta"];
   
   main() do {
     assert A union A=A;
     
     assert B intersect B=B;
     
-    assert A complement A = array of {};
+    assert A complement A = list of [];
     
     assert size(A union B)=4;
     assert size(A intersect B)=2;
     
-    assert A complement B=array of {"beta"};
+    assert A complement B=list of ["beta"];
   }
 }

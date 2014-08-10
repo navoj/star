@@ -18,9 +18,9 @@
  *
  */
 nestedMap is package{
-  MM has type map of (string,map of (string,integer));
-  MM is map of {"alpha" -> map of {"beta"->2; "gamma"->3};
-                "delta" -> map of {}};
+  MM has type dictionary of (string,dictionary of (string,integer));
+  MM is dictionary of {"alpha" -> dictionary of {"beta"->2; "gamma"->3};
+                "delta" -> dictionary of {}};
   
   main() do {
     assert size(MM)=2;

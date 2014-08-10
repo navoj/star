@@ -19,9 +19,9 @@
  */
 disjunctives is package{
 
-  people is relation{ ("john",23); ("peter", 24); ("alice", 22); ("jane", 27) };
+  people is list of [ ("john",23), ("peter", 24), ("alice", 22), ("jane", 27) ];
   
-  males is relation{ "john"; "peter"};
+  males is list of [ "john", "peter"];
   
   females is all W where (W,_) in people and not W in males;
   
@@ -29,7 +29,7 @@ disjunctives is package{
   
   main() do {
     logMsg(info,"QQ = $QQ");
-    assert QQ=array of{ ("jane",27);("john",23)};
+    assert QQ=list of [ ("jane",27),("john",23)];
     
     logMsg(info,"F = $females");
     

@@ -18,7 +18,7 @@
  *
  */
 arrayIterate is package{
-  II has type array of integer;
+  II has type list of integer;
   II is iota(100,1,-1);
   
   main() do {

@@ -88,7 +88,7 @@ listtests is package{
     assert onlyEven(list of [1,2,3,4,5])=list of[2,4];
     
     logMsg(info,"even indices of list of [1,2,3,4,5] = $(evenIndices(list of [1,2,3,4,5]))");
-    assert evenIndices(list of [1,2,3,4,5]) = array of {1;3};
+    assert evenIndices(list of [1,2,3,4,5]) = list of [1,3];
     
     assert evens(list of [1,2,3,4,5])=list of[2,4];
   }

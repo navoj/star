@@ -56,9 +56,9 @@ public class HashTree implements IMap, PrettyPrintable
   public IType getType()
   {
     for (Entry<IValue, IValue> entry : this) {
-      return TypeUtils.mapType(entry.getKey().getType(), entry.getValue().getType());
+      return TypeUtils.dictionaryType(entry.getKey().getType(), entry.getValue().getType());
     }
-    return TypeUtils.mapType(new TypeVar(), new TypeVar());
+    return TypeUtils.dictionaryType(new TypeVar(), new TypeVar());
   }
 
   @Override
@@ -177,7 +177,7 @@ public class HashTree implements IMap, PrettyPrintable
   @Override
   public void prettyPrint(PrettyPrintDisplay disp)
   {
-    disp.appendWord(StandardNames.MAP);
+    disp.appendWord(StandardNames.DICTIONARY);
     disp.appendWord(StandardNames.OF);
     disp.append("{");
     int m1 = disp.markIndent(2);

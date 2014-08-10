@@ -37,7 +37,6 @@ import org.star_lang.star.data.value.LongWrap;
 import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.data.value.Option;
 import org.star_lang.star.data.value.Reason;
-import org.star_lang.star.data.value.Relation;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.data.value.Result;
 import org.star_lang.star.data.value.StringWrap;
@@ -70,8 +69,6 @@ import org.star_lang.star.operators.binary.BinaryEquality;
 import org.star_lang.star.operators.general.General;
 import org.star_lang.star.operators.hash.HashTreeOps;
 import org.star_lang.star.operators.misc.MiscOps;
-import org.star_lang.star.operators.relation.RelationIterOps;
-import org.star_lang.star.operators.relation.RelationOps;
 import org.star_lang.star.operators.resource.ResourceOps;
 import org.star_lang.star.operators.spawn.SpawnOps;
 import org.star_lang.star.operators.string.CharOps;
@@ -130,9 +127,7 @@ public class Intrinsics extends Dict
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.voidType, Object.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.anyType, IValue.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils
-        .mapType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
-    intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils.relationType(new TypeVar())),
-        Relation.class.getCanonicalName()));
+        .dictionaryType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
 
     // Define standard types
     VoidWrap.declare(intrinsics);
@@ -188,8 +183,6 @@ public class Intrinsics extends Dict
     BinaryEquality.declare(intrinsics);
     BinaryCoercion.declare(intrinsics);
     RegexpOps.declare(intrinsics);
-    RelationOps.declare(intrinsics);
-    RelationIterOps.declare(intrinsics);
     AsynchIo.declare(intrinsics);
     SpawnOps.declare(intrinsics);
     BoolCompare.declare(intrinsics);

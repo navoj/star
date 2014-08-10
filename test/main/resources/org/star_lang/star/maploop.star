@@ -19,7 +19,7 @@
  */
 maploop is package{
 
-  var H := map of {
+  var H := dictionary of {
     "p"->indexed{ ("j",23); ("s",34)};
     "q"->indexed{ ("t",12) }
   };

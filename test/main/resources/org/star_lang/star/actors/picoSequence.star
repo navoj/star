@@ -21,7 +21,7 @@ picoSequence is package{
   
   listener has type actor of {
     msg has type stream of ((string,integer));
-    history has type ()=>relation of ((string,integer));
+    history has type ()=>list of ((string,integer));
     clearHistory has type action();
   }
   listener is actor{
@@ -31,13 +31,13 @@ picoSequence is package{
     history() is txs;
     clearHistory() do clear();
   } using {
-    var txs := relation{};
+    var txs := list of [];
     
     append(Ev) do extend txs with Ev;
-    clear() do txs := relation{};
+    clear() do txs :=list of [];
   };
   
-  events is relation of {all ("event number $Ix",Ix) where Ix in range(1,10,1)}; 
+  events is list of {all ("event number $Ix",Ix) where Ix in range(1,10,1)}; 
  
   showHistory() do {
     H is query listener's history with history();

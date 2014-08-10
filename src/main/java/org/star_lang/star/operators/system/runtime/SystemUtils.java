@@ -1,7 +1,6 @@
 package org.star_lang.star.operators.system.runtime;
 
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.EvaluationException;
@@ -64,131 +63,6 @@ public class SystemUtils
     {
       return TypeUtils.procedureType(integerType);
     }
-  }
-
-  public static class GetProperty implements IFunction
-  {
-    public static final String name = "getProperty";
-
-    @CafeEnter
-    public static IValue enter(IValue key, IValue deflt) throws EvaluationException
-    {
-      return Factory.newString(System.getProperty(Factory.stringValue(key), Factory.stringValue(deflt)));
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return enter(args[0], args[1]);
-    }
-
-    @Override
-    public IType getType()
-    {
-      return type();
-    }
-
-    public static IType type()
-    {
-      return TypeUtils.functionType(stringType, stringType, stringType);
-    }
-  }
-
-  public static class SetProperty implements IFunction
-  {
-    public static final String name = "setProperty";
-
-    @CafeEnter
-    public static IValue enter(IValue key, IValue value) throws EvaluationException
-    {
-      System.setProperty(Factory.stringValue(key), Factory.stringValue(value));
-      return StandardTypes.unit;
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return enter(args[0], args[1]);
-    }
-
-    @Override
-    public IType getType()
-    {
-      return type();
-    }
-
-    public static IType type()
-    {
-      return TypeUtils.procedureType(stringType, stringType);
-    }
-  }
-
-  public static class ClearProperty implements IFunction
-  {
-    public static final String name = "clearProperty";
-
-    @CafeEnter
-    public static IValue enter(IValue key) throws EvaluationException
-    {
-      System.clearProperty(Factory.stringValue(key));
-      return StandardTypes.unit;
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return enter(args[0]);
-    }
-
-    @Override
-    public IType getType()
-    {
-      return type();
-    }
-
-    public static IType type()
-    {
-      return TypeUtils.procedureType(stringType);
-    }
-  }
-
-  public static class GetProperties implements IFunction
-  {
-    public static final String name = "getProperties";
-
-    @CafeEnter
-    public static IValue enter() throws EvaluationException
-    {
-      Properties appProperties = System.getProperties();
-      IMap encapsulated = Factory.newMap(stringType, stringType);
-
-      for (Entry<Object, Object> entry : appProperties.entrySet()) {
-        Object key = entry.getKey();
-        Object val = entry.getValue();
-
-        if (key instanceof String && val instanceof String)
-          encapsulated = encapsulated.setMember(Factory.newString((String) key), Factory.newString((String) val));
-      }
-      return encapsulated;
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return enter();
-    }
-
-    @Override
-    public IType getType()
-    {
-      return type();
-    }
-
-    public static IType type()
-    {
-      return TypeUtils.functionType(TypeUtils.mapType(stringType, stringType));
-    }
-
   }
 
   public static class GetEnv implements IFunction
@@ -263,7 +137,7 @@ public class SystemUtils
 
     public static IType type()
     {
-      return TypeUtils.functionType(stringType, TypeUtils.mapType(stringType, stringType), StandardTypes.integerType);
+      return TypeUtils.functionType(stringType, TypeUtils.dictionaryType(stringType, stringType), StandardTypes.integerType);
     }
   }
 

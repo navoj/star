@@ -23,12 +23,12 @@ import user;
 
 voltestrels is connections {
   originate(Port_Out,{DEFAULT has type stream of user;
-    Users has type ref relation of user;
+    Users has type ref list of user;
     calcTotal has type action();
     addUser has type action(user);
     getBalance has type(string) => integer});
   respond(Port_In,{DEFAULT has type stream of user;
-    Users has type ref relation of user;
+    Users has type ref list of user;
     calcTotal has type action();
     addUser has type action(user);
     getBalance has type(string) => integer});

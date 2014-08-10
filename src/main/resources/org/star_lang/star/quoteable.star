@@ -22,26 +22,11 @@ private import sequences;
 private import strings;
 private import casting;
 private import macrosupport;
-private import relations;
 private import folding;
 private import iterable;
 private import arrays;
 
 private type possible of %t is impossible or exactly(%t);
-
-implementation coercion over (quoted, relation of %t) where coercion over (quoted,%t) is{
-  coerce(R) is dequoteRel(R)
-} using {
-  dequoteRel has type (quoted) => relation of %t where coercion over (quoted,%t);
-  dequoteRel(<| relation of { ?Q } |>) is let{
-    dequoteSemi(<| ?L ; ?R |>) is dequoteSemi(L)++dequoteSemi(R);
-    dequoteSemi(El) is relation of {El as %t}
-  } in dequoteSemi(Q);
-  dequoteRel(Q) is valof{
-    logMsg(info,"Cannot dequote $Q");
-    valis relation of {}
-  }
-}
 
 implementation coercion over (quoted, list of %t) where coercion over (quoted,%t) is{
   coerce(R) is dequoteRel(R)
@@ -100,14 +85,6 @@ dequoteField(Q,Name) is let{
   unpack(impossible) is raise "$Name is not present";
 } in unpack(findQF(Q,impossible));
 
-implementation coercion over (relation of %t,quoted) where coercion over (%t,quoted) is{
-  coerce(R) is quoteRel(R)
-} using {
-  quoteRel has type (relation of %t) => quoted where coercion over (t,%quoted);
-  quoteRel(R) where isEmpty(R) is <| relation of {} |>;
-  quoteRel(R) is <| relation of { ?quoteSeq(R) } |>;
-};
-
 implementation coercion over (list of %t,quoted) where coercion over (%t,quoted) is{
   coerce(R) is quoteList(R)
 } using {
@@ -132,43 +109,43 @@ quoteSeq(S) is valof{
 #infix("implementing",1300);
 
 # type ?N is ?Algebraic implementing ?Specs :: statement :- N::typeSpec :& Algebraic :: valueSpecifier :& Specs :: names;
-# type ?Ptn is ?Algebraic implementing ?Specs ==> #(type Ptn is Algebraic; generate(Specs) )# ## {
+# type ?Ptn is ?Algebraic implementing ?Specs ==> #(type Ptn is Algebraic; #*generate(Specs) )# ## {
 	#generate(?L and ?R) ==> #(generate(L) ; generate(R) )#;
 	#generate((?Id)) ==> generateSpecs(Id);
 	#generate(identifier?Id) ==> #(implement_#+Id)#(Ptn,Algebraic)
 }
 
 #implement_quotable(?Ptn,?Spec) ==> #(
- implementation dequoteTemplate(Ptn) is {
+ implementation #*dequoteTemplate(Ptn) is {
    coerce(X) is dequote(X)
  } using {
-   genDequote(Spec)
+   #*genDequote(Spec)
  };
- implementation quoteTemplate(Ptn) is {
+ implementation #*quoteTemplate(Ptn) is {
    coerce(Q) is quoted(Q)
  } using {
-   genQuote(Spec)
+   #*genQuote(Spec)
  }
  )# ## {
   # genQuote(?L or ?R) ==> #( genQuote(L) ; genQuote(R) )#;
   # genQuote(?ConSpec) ==> genQuoteCon(ConSpec);
 
   # genQuoteCon(#(?H)#{?A}) ==>
-      #( quoted(H{ first(#*gendFields) }) is q(#* H{ second(#*gendFields) } ) )# ## {     
+      #( quoted(H{ #*first(gendFields) }) is q(#* H{ #*second(gendFields) } ) )# ## {     
 	#genFields( #( ?F has type ?Tp )# ) ==> (#(F = #$F)#, #(F = #(?)#(#$F as quoted) )#);
 	#genFields( #( ?L ; ?R )# ) ==>
-	    distribute( genFields(L) , genFields(R) );
+	    distribute( #*genFields(L) , #*genFields(R) );
 	#genFields( #( ?F default is ?E )#) ==> (); -- cannot be the only entry
 	#genFields( #( assert ?C )#) ==> ();
-	#gendFields ==> genFields(A);
+	#gendFields ==> #*genFields(A);
   };
   # genQuoteCon(identifier ? I) ==> #( quoted(I) is <|I|> )#;
   # genQuoteCon( #(?O #@ ?A)#) ==> #( quoted(Con) is q(Term))# ##{
     #gnArgs((?A1,?R1)) ==> ((#$A,first(Rgs)), (#(?)#(#$A as quoted),second(Rgs))) ## {
-      #Rgs ==> gnArgs(R1);
+      #Rgs ==> #*gnArgs(R1);
     }
     #gnArgs(()) ==> ((),());
-    #genArgs ==> gnArgs(#:A);
+    #genArgs ==> #*gnArgs(#:A);
     #Con ==> O #@ #<first(genArgs) >#;
     #Term ==> O #@ #<second(genArgs) >#;
   };
@@ -183,19 +160,19 @@ quoteSeq(S) is valof{
       #genFields( #( ?F has type ?Tp )#,?Arg ) ==>
         #( F = dequoteField( Arg, $$F) as Tp )#;
       #genFields( #( ?L ; ?R )#,?Arg ) ==>
-        glom( genFields(L,Arg) , genFields(R,Arg) );
+        glom( #*genFields(L,Arg) , #*genFields(R,Arg) );
       #genFields( #( ?F default is ?E)#, ?Arg ) ==> ();
       #genFields( #( assert ?C)# ,?Arg) ==> ();
     };
   # genDequoteCon(identifier ? I) ==> #( dequote(<| I |>) is I )#;
   # genDequoteCon( #(?O #@ ?A)#) ==> #( dequote(<| Con |>) is Term; dequote(XX) is raise "cannot dequote $XX" )# ##{
      #gnArgs((?A1,?R1)) ==> ((#(?)#(#$A),first(Rgs)), ((#$A as A1),second(Rgs))) ## {
-       #Rgs ==> gnArgs(R1);
+       #Rgs ==> #*gnArgs(R1);
      }
      #gnArgs(()) ==> ((),());
-     #genArgs ==> gnArgs(#:A);
-     #Con ==> O #@ #<first(genArgs) >#;
-     #Term ==> O #@ #<second(genArgs) >#;
+     #genArgs ==> #*gnArgs(#:A);
+     #Con ==> O #@ #<#*first(genArgs) >#;
+     #Term ==> O #@ #<#*second(genArgs) >#;
     };
 
   # first((?F,?S)) ==> F;
@@ -207,8 +184,8 @@ quoteSeq(S) is valof{
   
   # qtTemplate(identifier?Tp,?Fn) ==> coercion over Fn(Tp);
   # qtTemplate(?Tp of ?Args,?Fn) ==> #( coercion over Fn(Tp of Args) where findRequirements(Args) )# ## {
-    #findRequirements(tuple?T) ==> composeConstraints(findReqs(#:T));
-    #findRequirements(?T) ==> composeConstraints(findReqs((T,())));
+    #findRequirements(tuple?T) ==> composeConstraints(#*findReqs(#:T));
+    #findRequirements(?T) ==> composeConstraints(#*findReqs((T,())));
 
     #findReqs(()) ==> ();
     #findReqs((?L,?R)) ==> (coercion over Fn(L),findReqs(R));
@@ -217,10 +194,10 @@ quoteSeq(S) is valof{
     #composeConstraints((?L,?R)) ==> #( L and composeConstraints(R) )#;
   }
   
-  #quoteTemplate(?Tp) ==> qtTemplate(Tp,QQ) ## {
+  #quoteTemplate(?Tp) ==> #*qtTemplate(Tp,QQ) ## {
     # QQ(?T) ==> (T,quoted)
   }
-  #dequoteTemplate(?Tp) ==> qtTemplate(Tp,DeQ) ## {
+  #dequoteTemplate(?Tp) ==> #*qtTemplate(Tp,DeQ) ## {
     # DeQ(?T) ==> (quoted,T)
   }
   

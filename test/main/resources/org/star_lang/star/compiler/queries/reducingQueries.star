@@ -18,23 +18,23 @@
  *
  */
 reducingQueries is package{
-  N is relation of{
-    (1,2);
-    (2,1);
-    (1,3);
-    (2,3);
-    (3,2);
+  N is list of[
+    (1,2),
+    (2,1),
+    (1,3),
+    (2,3),
+    (3,2),
     (3,1)
-  };
+  ];
   
-  C is list of{
-    (1,2);
-    (2,1);
-    (1,3);
-    (2,3);
-    (4,4);
+  C is list of[
+    (1,2),
+    (2,1),
+    (1,3),
+    (2,3),
+    (4,4),
     (3,1)
-  };
+  ];
   
   plus(X,Y) is valof{
     logMsg(info,"Add $X to $Y");
@@ -48,13 +48,13 @@ reducingQueries is package{
   	
   	assert reduction plus of { unique X where (X,_) in C } = 10;
   	
-  	logMsg(info,"Q0=$(array of {3 of X where (X,Y) in C order by Y })");
+  	logMsg(info,"Q0=$(list of {3 of X where (X,Y) in C order by Y })");
   	
   	logMsg(info,"O=$(reduction plus of { 3 of X where (X,Y) in C order by Y })");
   	
   	assert reduction plus of { 3 of X where (X,Y) in C order by Y } = 6;
   	
-  	logMsg(info,display(array of { unique 4 of X where (X,Y) in C }));
+  	logMsg(info,display(list of { unique 4 of X where (X,Y) in C }));
 
   	logMsg(info,display(reduction plus of { unique 4 of X where (X,Y) in C }));
   	

@@ -23,7 +23,7 @@ shortestPath is package {
 
   type vertex is alias of integer;
   type weight is alias of integer;
-  type intmap of t is alias of map of (integer, t);
+  type intmap of t is alias of dictionary of (integer, t);
   type graph is alias of intmap of intmap of weight;
 
   implementation (computation) over option is {
@@ -66,7 +66,7 @@ shortestPath is package {
 		  valis
 			let {
 			  shortmap has type (vertex, intmap of weight) => intmap of weight;
-			  shortmap(i, jmap) is rightFold(shortest, hash{}, vs)
+			  shortmap(i, jmap) is rightFold(shortest, dictionary of {}, vs)
 				using {
 				  shortest(j, m) is 
 					(case (old, new) in {
@@ -108,7 +108,7 @@ shortestPath is package {
 		ContinueWith(l) is reverse(l);
 	  });
 
-  implementation coercion over (map of (%k, %v), cons of ((%k, %v))) is {
+  implementation coercion over (dictionary of (%k, %v), cons of ((%k, %v))) is {
 	coerce(mp) is
 	  let {
 		step(k, v, ContinueWith(l)) is ContinueWith(_cons((k, v), l));
@@ -118,7 +118,7 @@ shortestPath is package {
 		});
   };
 
-  alistToMap(l) is leftFold((function (m, (k, v)) is m[k->v]), hash{}, l);
+  alistToMap(l) is leftFold((function (m, (k, v)) is m[k->v]),dictionary of {}, l);
 
 
   mapUnion has type for all a such that (intmap of a, intmap of a) => intmap of a;
@@ -155,11 +155,11 @@ shortestPath is package {
 
   setFromIterable has type
 	for all coll, el such that
-	  (coll) => relation of el
+	  (coll) => list of el
 		where iterable over coll determines el 
            and reversible over coll ; -- '
 
-  implementation reversible over relation of %t is {
+  implementation reversible over list of %t is {
 	reverse(s) is s;
   };
 

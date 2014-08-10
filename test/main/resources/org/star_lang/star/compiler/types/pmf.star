@@ -12,7 +12,7 @@ worksheet{
   }
 
   type discrete of (k,v) where arithmetic over v is discrete{
-    data has type map of (k,v);
+    data has type dictionary of (k,v);
     total has type v;
     total default is leftFold1((+),data);
   }
@@ -24,7 +24,7 @@ worksheet{
     _prob(D,K) is (D.data[K] as float)/(D.total as float);
   }
 
-  var cookies := discrete{data = map of { "Bowl 1" -> 0.5; "Bowl 2" -> 0.5 }}
+  var cookies := discrete{data = dictionary of { "Bowl 1" -> 0.5; "Bowl 2" -> 0.5 }}
 
   show cookies;
   

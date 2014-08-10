@@ -27,6 +27,6 @@ selections is package{
   main() do {
     logMsg(info,"selected is $selected");
 
-    assert selected=array of [1,2,3]
+    assert selected=list of [1,2,3]
   };
 }

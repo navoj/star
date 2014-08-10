@@ -49,12 +49,12 @@ demo is package{
  
   append has type (list of %t,list of %t) =>list of %t;
   append([],X) is X;
-  append([A]<>X,T) is [A]<>append(X,T);
+  append([A,..X],T) is [A,..append(X,T)];
 
   pick has type [list of %t,integer] => %t;
-  pick([X]<>_,0) is X;
-  pick([_,X]<>_,1) is X;
-  pick([_,_,X]<>_,2) is X;
-  pick([_,_,_]<>R,N) is pick(R,N-3);
+  pick([X,.._],0) is X;
+  pick([_,X,.._],1) is X;
+  pick([_,_,X,.._],2) is X;
+  pick([_,_,_,..R],N) is pick(R,N-3);
   
 } 

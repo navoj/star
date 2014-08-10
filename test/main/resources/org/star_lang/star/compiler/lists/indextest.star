@@ -31,7 +31,7 @@ indextest is package{
   
   CC is cons of ["a","b","c","d"];
   
-  MM is map of {"a"->1;"b"->2;"c"->3};
+  MM is dictionary of {"a"->1;"b"->2;"c"->3};
   
   main has type action();
   main() do {

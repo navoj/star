@@ -31,8 +31,6 @@ import casting;
 import iterable;
 import actors;
 import arrays;
-import dictionary;
-import relations;
 import queue;
 import cons;
 import dateNtime;
@@ -53,29 +51,24 @@ contract _project0 over %%c is {
   __unique has type for all e such that (%%c of e,(e,e)=>boolean) => %%c of e;
 }
 
-implementation _project0 over array is {
+implementation _project0 over list is {
   __project0(A) is __array_project_0(A);
   __unique(A,E) is __array_unique(A,E);
-}
-
-implementation _project0 over relation is {
-  __project0(A) is __relation_project_0(A);
-  __unique(R,E) is __relation_unique(R,E);
 }
 
 contract iotaC over (%%r,%t) is {
   iota has type (%t,%t,%t) => %%r of %t
 };
 
-implementation iotaC over (array,integer) is {
+implementation iotaC over (list,integer) is {
   iota(integer(F),integer(T),integer(S)) is __integer_array_iota(F,T,S);
 }
 
-implementation iotaC over (array,long) is {
+implementation iotaC over (list,long) is {
   iota(long(F),long(T),long(S)) is __long_array_iota(F,T,S);
 }
 
-implementation iotaC over (array,float) is {
+implementation iotaC over (list,float) is {
   iota(float(F),float(T),float(S)) is __float_array_iota(F,T,S);
 }
 

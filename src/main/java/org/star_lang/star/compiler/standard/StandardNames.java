@@ -10,7 +10,6 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.transform.Computations;
 import org.star_lang.star.data.type.AbstractType;
-import org.star_lang.star.data.value.Relation;
 import org.star_lang.star.data.value.BoolWrap.FalseValue;
 import org.star_lang.star.data.value.BoolWrap.TrueValue;
 import org.star_lang.star.data.value.Option.Some;
@@ -86,7 +85,7 @@ public class StandardNames
   public static final String FALSE = standard(FalseValue.name);
 
   public static final String HASH = standard("hash");
-  public static final String MAP = standard("map");
+  public static final String DICTIONARY = standard("dictionary");
   public static final String LIST = standard("list");
   public static final String CONS = graphic(";..");
   public static final String ENDCONS = graphic("..;");
@@ -135,7 +134,6 @@ public class StandardNames
   public static final String S_T = keyword(AbstractType.S_T);
   public static final String EXISTS = keyword(AbstractType.EXISTS);
 
-  public static final String RELATION = standard(Relation.label);
   public static final String EXTEND = keyword("extend");
   public static final String MERGE = keyword("merge");
   public static final String UPDATE = keyword("update");
@@ -272,6 +270,8 @@ public class StandardNames
   public static final String JAVA = keyword("java");
 
   public static final String COMMA = graphic(",");
+  public static final String SCONS = graphic(",..");
+  public static final String ENDSCONS = graphic("..,");
   public static final String PARENS = "()";
   public static final String PARENS_LABEL = "$1";
   public static final String TUPLE_LABEL = "$";
@@ -316,9 +316,6 @@ public class StandardNames
   public static final String PACKAGE = keyword("package");
   public static final String EXPORTS = keyword("'s");
   public static final String ALSO = keyword("'n");
-
-  public static final String CONCATENATE = graphic("<>");
-  public static final String CONC = standard("_concat");
 
   public static final String SEQUENCE = standard("sequence");
 

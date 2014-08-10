@@ -26,8 +26,8 @@ queryRelationsPorts is package{
   Port_In is p0rt{
     on U on DEFAULT do addUser(U);
     
-    Users has type ref relation of user;
-    var Users := relation{};
+    Users has type ref list of user;
+    var Users := list of [];
     
 --    addUser has type action(user);
     addUser(U) do{
@@ -60,11 +60,11 @@ queryRelationsPorts is package{
     request P1 to extend Users with U;
 
     logMsg(info,"$(query P1's Users with Users)");
-    assert (query P1's Users with Users) = relation{ user{name="alpha";balance=1};
-        user{name="beta";balance=2};
-        user{name="gamma";balance=3};
-        user{name="delta";balance=4};
-        user{name="fred"; balance=5} };
+    assert (query P1's Users with Users) = list of[ user{name="alpha";balance=1},
+        user{name="beta";balance=2},
+        user{name="gamma";balance=3},
+        user{name="delta";balance=4},
+        user{name="fred"; balance=5} ];
         
     assert (query P1's Users with any of U where U in Users and U.name="fred") = user{name="fred";balance=5}
     

@@ -36,6 +36,8 @@ import org.star_lang.star.data.type.Kind;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.QuantifiedType;
 import org.star_lang.star.data.type.Quantifier;
+import org.star_lang.star.data.type.Quantifier.Existential;
+import org.star_lang.star.data.type.Quantifier.Universal;
 import org.star_lang.star.data.type.RecordSpecifier;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.type.Type;
@@ -46,13 +48,10 @@ import org.star_lang.star.data.type.TypeInterface;
 import org.star_lang.star.data.type.TypeInterfaceType;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
-import org.star_lang.star.data.type.Quantifier.Existential;
-import org.star_lang.star.data.type.Quantifier.Universal;
 import org.star_lang.star.data.value.Array;
 import org.star_lang.star.data.value.Cons;
 import org.star_lang.star.data.value.Option;
 import org.star_lang.star.data.value.Result;
-import org.star_lang.star.data.value.SkewList;
 import org.star_lang.star.operators.Intrinsics;
 
 /**
@@ -103,7 +102,7 @@ public class TypeUtils
     }
     return false;
   }
-  
+
   public static boolean isTypeExp(IType type)
   {
     type = deRef(type);
@@ -780,14 +779,9 @@ public class TypeUtils
     return type;
   }
 
-  public static IType relationType(IType elTypes)
+  public static IType dictionaryType(IType ky, IType vl)
   {
-    return typeExp(StandardNames.RELATION, elTypes);
-  }
-
-  public static IType mapType(IType ky, IType vl)
-  {
-    return typeExp(StandardNames.MAP, ky, vl);
+    return typeExp(StandardNames.DICTIONARY, ky, vl);
   }
 
   public static IType optionType(IType vl)
@@ -818,11 +812,6 @@ public class TypeUtils
   public static IType consType(IType elType)
   {
     return typeExp(Cons.typeLabel, elType);
-  }
-
-  public static IType skewType(IType elType)
-  {
-    return typeExp(SkewList.label, elType);
   }
 
   public static IType tupleType(IType... elTypes)

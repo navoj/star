@@ -18,16 +18,16 @@
  *
  */
 peopleAgents is package{
-  type repoType is alias of actor of {parent has type ref relation of ((string,string));
-                               males has type ref relation of (string);
+  type repoType is alias of actor of {parent has type ref list of ((string,string));
+                               males has type ref list of (string);
                                addSon has type action(string,string);
                                addChild has type action(string,string);
                               };
   repo is actor{
-    parent has type ref relation of ((string,string));
+    parent has type ref list of ((string,string));
     
-    var parent := relation of {("J","S"); ("P","S"); ("J","T"); ("P","T")};
-    var males := relation of{ "J"; "T"};
+    var parent := list of [("J","S"), ("P","S"), ("J","T"), ("P","T")];
+    var males := list of [ "J", "T"];
     
     addSon(P,C) do {
       extend parent with (P,C);    
@@ -41,9 +41,9 @@ peopleAgents is package{
   parentOf has type (repoType,string) => list of string;
   parentOf(Ac,P) is query Ac's parent with all X where (X,P) in parent order by X;
   
-  qActor has type (repoType)=>actor of{ parentOf has type (string)=>relation of string};
+  qActor has type (repoType)=>actor of{ parentOf has type (string)=>list of string};
   qActor(O) is actor{
-     parentOf(P) is query O's parent with relation of { all X where (X,P) in parent };
+     parentOf(P) is query O's parent with list of { all X where (X,P) in parent };
   };
   
   main() do {
@@ -58,7 +58,7 @@ peopleAgents is package{
     logMsg(info,"qA is $(qActor(repo))");
     
     logMsg(info,"parents of qActor S are $(query qActor(repo)'s parentOf with parentOf("S"))");
-    assert (query qActor(repo)'s parentOf with parentOf("S"))=relation{"P";"J"};
+    assert (query qActor(repo)'s parentOf with parentOf("S"))=list of ["J","P"];
     
     request repo's addChild to addChild("MM","J");
     request repo's addChild to addChild("KK","J");

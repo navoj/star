@@ -114,7 +114,7 @@ implementation updateable over binmap of (%k,%v) determines ((%k,%v)) where equa
   
   private
   applyUpdates(Tr,cons of {}) is Tr;
-  applyUpdates(Tr,cons of {(K,V);..Rest}) is applyUpdates(insertNode(Tr,K,V),Rest);
+  applyUpdates(Tr,cons of [(K,V),..Rest]) is applyUpdates(insertNode(Tr,K,V),Rest);
       
   private iterDelete(P) is let{
     deleter((K,V),ContinueWith(M)) where (K,V) matches P() is ContinueWith(removeElement(K,M));

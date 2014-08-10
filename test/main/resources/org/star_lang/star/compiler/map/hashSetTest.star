@@ -18,10 +18,10 @@
  *
  */
 hashSetTest is package{
-  import dictionary;
+  import treemap;
   
   buildTree(Count) is valof{
-    var H := dictionary of {};
+    var H := treemap of {};
     
     var C := 1;
     while C<Count do{
@@ -38,7 +38,7 @@ hashSetTest is package{
     Count is 100000;
     
     var B1 := nanos();
-    var M := map of {};
+    var M := dictionary of {};
     
     for ix in range(1,Count,1) do 
     {
@@ -46,7 +46,7 @@ hashSetTest is package{
     }
     
     B1 := nanos()-B1;
-    logMsg(info,"hash map: M has $(size(M)) elements");
+    logMsg(info,"dictionary: M has $(size(M)) elements");
     
     var B2 := nanos();
     T is buildTree(Count);
@@ -102,7 +102,7 @@ hashSetTest is package{
     };
     DM := nanos()-DM;
     assert size(M)=0;
-    logMsg(info,"time for clearing hash map is $(DM as float/1.0e9) secs");
+    logMsg(info,"time for clearing hash dictionary is $(DM as float/1.0e9) secs");
     logMsg(info,"delete time factor is $(DS as float/DM as float)");
   }
 }

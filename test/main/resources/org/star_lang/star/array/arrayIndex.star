@@ -21,8 +21,8 @@ arrayIndex is package{
   -- test indexing into arrays
   
   main() do {
-    II has type ref array of string;
-    var II := array of {"alpha"; "beta"; "gamma"; "delta"};
+    II has type ref list of string;
+    var II := list of ["alpha", "beta", "gamma", "delta"];
     
     assert II[0]="alpha";
     assert II[1]="beta";
@@ -32,9 +32,9 @@ arrayIndex is package{
     assert (II[4] default nonString)=nonString;
     assert (II[-1] default nonString)=nonString;
     
-    var C := array of {0;1;2};
+    var C := list of [0,1,2];
     
     C[1] := 4;
-    assert C=array of {0;4;2};
+    assert C=list of [0,4,2];
   }
 }

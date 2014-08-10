@@ -18,7 +18,7 @@
  *
  */
 complexconditional is package{
-  R is relation {1;2;3};
+  R is list of [1,2,3];
   
   main() do {
     FF is (X where X>2) in R ? X | nonInteger;

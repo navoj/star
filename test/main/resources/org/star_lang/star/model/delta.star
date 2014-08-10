@@ -76,7 +76,7 @@ delta is package {
 	listDiffer(list of [H1,..T1],list of [H2,..T2],Ix,Loc) is let {
 	  HD is diff(H1, H2, listElLoc(Loc, Ix))
 	  HT is listDiffer(T1,T2,Ix+1,Loc);
-    } in HD<>HT;
+    } in HD++HT;
     listDiffer(list of [],L2,Ix,Loc) is list of [delta(listElLoc(Loc, Ix), dOprUpsert, (function(L) is L2), L2)];
     listDiffer(L1,list of [],Ix,Loc) is list of [delta(listElLoc(Loc, Ix), dOprTruncatelistAt, (function(L) is front(L,Ix)), front(L1, Ix))];
 
@@ -115,7 +115,7 @@ delta is package {
 	  	    elemis(hashUpsert(M1, K2, V2, Loc));
 	  	}
 	  }
-	  valis(D1<>D2);
+	  valis(D1++D2);
 	}   
 
    hashRemove(M, KK, Loc) is delta(hashElLoc(Loc, KK), dOprDelete, (function(MM) is hashRemoveFn(MM, KK)), hashRemoveFn(M, KK));
@@ -126,7 +126,7 @@ delta is package {
 
 
   -- For Relations...
-  relRemoveFn(R, El) is relation{};
+  relRemoveFn(R, El) is list of [];
   relUpsertFn(R, El) is relation{El};
     
   implementation diffable over relation of %t is {
@@ -148,7 +148,7 @@ delta is package {
             elemis(relUpsert(R1, X, Loc));
         }
       }
-      valis(D1<>D2);
+      valis(D1++D2);
     }
     relRemove(R, E, Loc) is delta(relElLoc(Loc, E), dOprDelete, (function(RR) is relRemoveFn(RR, E)), relRemoveFn(R, E));
     relUpsert(R, E, Loc) is delta(relElLoc(Loc, E), dOprUpsert, (function(RR) is relUpsertFn(RR, E)), relUpsertFn(R, E));

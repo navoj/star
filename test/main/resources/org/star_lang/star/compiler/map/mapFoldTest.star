@@ -18,7 +18,7 @@
  *
  */
 mapFoldTest is package{
-  var H is map of { "A"->1; "B"->2; "C"->3; "D"->4 };
+  var H is dictionary of { "A"->1; "B"->2; "C"->3; "D"->4 };
   
   L is leftFold((+),0,H);
   R is rightFold((*),1,H);

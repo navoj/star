@@ -18,7 +18,7 @@
  *
  */
 castTest is package{
-  intervalRel is relation{1.2; 1.3; 3.0; 4.0};
+  intervalRel is list of [1.2, 1.3, 3.0, 4.0];
   
   result is ((FSUM(intervalRel) cast double)/size(intervalRel));
             
@@ -27,7 +27,7 @@ castTest is package{
 
   FSUM_HELPER has type (list of float, float) => float
   FSUM_HELPER([], sum) is sum;
-  FSUM_HELPER([qty]<>qtys, sum) is FSUM_HELPER(qtys, (sum+qty));
+  FSUM_HELPER([qty]++qtys, sum) is FSUM_HELPER(qtys, (sum+qty));
   
   main() do {
     logMsg(info,"result = $result");

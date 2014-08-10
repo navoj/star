@@ -21,7 +21,7 @@ sequencePtns is package{
   -- test out the use of <lbl> of [<el> , .. , <el>] patterns
   
   find([],_) is false;
-  find([X,..Y],X) is true;
+  find([X,.._],X) is true;
   find([_,..Y],X) is find(Y,X);
   
   atEnd(cons of [],_) is false;
@@ -38,6 +38,7 @@ sequencePtns is package{
   walk(cons of []) do {};
   
   main() do {
+    logMsg(info,"L=$L");
     assert find(L,"alpha");
     assert find(L,"beta");
     assert find(L,"gamma");

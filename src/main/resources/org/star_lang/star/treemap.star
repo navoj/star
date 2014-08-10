@@ -30,11 +30,11 @@ private import arithmetic;
 private import folding;
 private import iterable;
 
-type dictionary of (%k,%v) is trNode{
+type treemap of (%k,%v) is trNode{
   maskLen has type integer_;
   mask has type integer_;
-  left has type dictionary of (%k,%v);
-  right has type dictionary of (%k,%v);
+  left has type treemap of (%k,%v);
+  right has type treemap of (%k,%v);
 } or trEmpty or trLeaf(integer_,seqmap of (%k,%v));
 
 private treeOk(T) where validTree(T,zero) is true;
@@ -49,15 +49,15 @@ validTree(trNode{maskLen=Ln;left=L;right=R},D) where __integer_ge(Ln,D) and __in
     validTree(L,Ln) and validTree(R,Ln);
 validTree(T,Ln) default is false;
 
-implementation pPrint over dictionary of (%k,%v) where pPrint over %k and pPrint over %v is {
-  ppDisp(H) is ppSequence(2,cons of {ppStr("dictionary of {"); dispHash(H); ppStr("}")});
+implementation pPrint over treemap of (%k,%v) where pPrint over %k and pPrint over %v is {
+  ppDisp(H) is ppSequence(2,cons of {ppStr("treemap of {"); dispHash(H); ppStr("}")});
 } using {
   dispHash(trNode{left=L; right=R}) is ppSequence(0,cons of {dispHash(L); dispHash(R)});
   dispHash(trEmpty) is ppStr("");
   dispHash(trLeaf(_,Els)) is ppSeqMap(Els);
 }
 
-implementation indexable over dictionary of (%k,%v) determines (%k,%v) where equality over %k is {
+implementation indexable over treemap of (%k,%v) determines (%k,%v) where equality over %k is {
   _index(M,K) is look(K,M);
   _set_indexed(M,K,V) is insrt(K,V,M);
   _delete_indexed(M,K) is remve(__hashCode(K),K,M);
@@ -86,8 +86,8 @@ private look(K,T) is valof{
   }
 };
 
-private insrt(K,V,S) is mergeTree(S,trLeaf(__hashCode(K), seqmap(array of {(K,V)})));
--- checkTest(treeOk,mergeTree(S,trLeaf(__hashCode(K), seqmap(array of {(K,V)}))));
+private insrt(K,V,S) is mergeTree(S,trLeaf(__hashCode(K), seqmap(list of {(K,V)})));
+-- checkTest(treeOk,mergeTree(S,trLeaf(__hashCode(K), seqmap(list of {(K,V)}))));
 
 private mOne is -1_;
 
@@ -157,7 +157,7 @@ mergeLeafs(T1 matching trLeaf(H1,L1),T2 matching trLeaf(H2,L2)) is valof{
 | trNode{mask=CM;maskLen=CML;left=T1;right=T2};
 };
 
-mergeNodes has type (dictionary of (%k,%v), dictionary of (%k,%v)) => dictionary of (%k,%v) where equality over %k;
+mergeNodes has type (treemap of (%k,%v), treemap of (%k,%v)) => treemap of (%k,%v) where equality over %k;
 mergeNodes(T1 matching trLeaf(_,_),T2 matching trLeaf(_,_)) is mergeLeafs(T1,T2);
 mergeNodes(T1 matching trNode{maskLen=Ln1;mask=M1;left=L1;right=R1}, T2 matching trLeaf(M2,_)) is valof{            
   CML is rawMin(commonMaskLen(M1,M2),Ln1);
@@ -237,7 +237,7 @@ remve(H,K,T matching trNode{mask=M;maskLen=Ln;left=L;right=R}) is valof{
 
 private removeElement(K,S) is remve(__hashCode(K),K,S);
 
-private removeLeaf(_,seqmap(array of {})) is trEmpty;
+private removeLeaf(_,seqmap(_empty())) is trEmpty;
 removeLeaf(H,L) is trLeaf(H,L);
 
 private sze(trEmpty) is 0;
@@ -248,7 +248,7 @@ tree_depth(trEmpty) is 0;
 tree_depth(trLeaf(_,_)) is 1;
 tree_depth(trNode{left=L;right=R}) is max(tree_depth(L),tree_depth(R))+1;
 
-implementation sequence over dictionary of (%k,%v) determines ((%k,%v)) where equality over %k is {
+implementation sequence over treemap of (%k,%v) determines ((%k,%v)) where equality over %k is {
   _cons((K,V),M) is insrt(K,V,M);
   _apnd(M,(K,V)) is insrt(K,V,M);
   _nil() is trEmpty;
@@ -257,14 +257,14 @@ implementation sequence over dictionary of (%k,%v) determines ((%k,%v)) where eq
   _back((raise "not implemented a"),(raise "not implemented b")) from X; 
 }
 
-implementation sizeable over dictionary of (%k,%v) is {
+implementation sizeable over treemap of (%k,%v) is {
   isEmpty(trEmpty) is true;
   isEmpty(_) default is false;
   
   size(T) is sze(T);
 }
 
-private iter(trLeaf(H,Els),F,S) is arrayMapIter(Els,F,S);
+private iter(trLeaf(H,Els),F,S) is listMapIter(Els,F,S);
 iter(trEmpty,F,S) is S;
 iter(trNode{left=L;right=R},F,S) is case iter(L,F,S) in {
   ContinueWith(X) is iter(R,F,ContinueWith(X));
@@ -272,16 +272,16 @@ iter(trNode{left=L;right=R},F,S) is case iter(L,F,S) in {
   NoMore(X) is NoMore(X);
 }
 
-implementation iterable over dictionary of (%k,%v) determines %v is {
+implementation iterable over treemap of (%k,%v) determines %v is {
   _iterate(M,F,S) is iter(M,F,S);
 }
 
-implementation indexed_iterable over dictionary of (%k,%v) determines (%k,%v) is {
+implementation indexed_iterable over treemap of (%k,%v) determines (%k,%v) is {
   _ixiterate(M,F,S) is ixIter(M,F,S);
 }
 
 private
-ixIter(trLeaf(H,Els),F,S) is arraymapIxIter(Els,F,S);
+ixIter(trLeaf(H,Els),F,S) is listmapIxIter(Els,F,S);
 ixIter(trEmpty,F,S) is S;
 ixIter(trNode{left=L;right=R},F,S) is case ixIter(L,F,S) in {
   ContinueWith(X) is ixIter(R,F,ContinueWith(X));
@@ -289,30 +289,30 @@ ixIter(trNode{left=L;right=R},F,S) is case ixIter(L,F,S) in {
   NoMore(X) is NoMore(X);
 }
 
-implementation updateable over dictionary of (%k,%v) determines ((%k,%v)) where equality over %k is {
+implementation updateable over treemap of (%k,%v) determines ((%k,%v)) where equality over %k is {
   _extend(TM,(K,V)) is insrt(K,V,TM);
   _merge(TM, S) is mergeTree(TM,S);
   _delete(TM, P) is _checkIterState(ixIter(TM,iterDelete(P),ContinueWith(TM)),razer);
   _update(TM, M, U) is let{
     collectUpdates(trEmpty,Ups) is (trEmpty,Ups);
-    collectUpdates(trLeaf(H,seqmap(Els)),Ups) is newLeaf(H,collectEls(Els,Ups,array of {}));
+    collectUpdates(trLeaf(H,seqmap(Els)),Ups) is newLeaf(H,collectEls(Els,Ups,list of []));
     collectUpdates(trNode{left=L;right=R},Ups) is valof{
       (LL,Lu) is collectUpdates(L,Ups);
       (RR,Ru) is collectUpdates(R,Lu);
       valis (mergeTree(LL,RR),Ru);
     };
 
-    collectEls(array of {},Ups,Rem) is (Ups,Rem);
-    collectEls(array of {E;..Rest},Ups,Rem) where E matches M() is collectEls(Rest,cons of {U(E);..Ups},Rem);
-    collectEls(array of {E;..Rest},Ups,Rem) is collectEls(Rest,Ups,array of {E;..Rem});
+    collectEls(_empty(),Ups,Rem) is (Ups,Rem);
+    collectEls(_pair(E,Rest),Ups,Rem) where E matches M() is collectEls(Rest,cons of [U(E),..Ups],Rem);
+    collectEls(_pair(E,Rest),Ups,Rem) is collectEls(Rest,Ups,list of [E,..Rem]);
     
-    newLeaf(_,(Ups,array of {})) is (trEmpty,Ups);
+    newLeaf(_,(Ups,_empty())) is (trEmpty,Ups);
     newLeaf(H,(Ups,L)) is (trLeaf(H,seqmap(L)),Ups);
   } in applyUpdates @ collectUpdates(TM,cons of {});
   
   private
-  applyUpdates(Tr,cons of {}) is Tr;
-  applyUpdates(Tr,cons of {(K,V);..Rest}) is applyUpdates(insrt(K,V,Tr),Rest);
+  applyUpdates(Tr,_empty()) is Tr;
+  applyUpdates(Tr,_pair((K,V),Rest)) is applyUpdates(insrt(K,V,Tr),Rest);
   
   private iterInsert((K,V),ContinueWith(M)) is ContinueWith(insrt(K,V,M));
   
@@ -324,11 +324,11 @@ implementation updateable over dictionary of (%k,%v) determines ((%k,%v)) where 
   private razer() is raise "problem";
 } 
 
-implementation concatenate over dictionary of (%k,%v) where equality over %k is {
-  _concat = _merge;
+implementation concatenate over treemap of (%k,%v) where equality over %k is {
+  (++) = _merge;
 };
 
-implementation foldable over dictionary of (%k,%v) determines %v is {
+implementation foldable over treemap of (%k,%v) determines %v is {
   leftFold(F,I,T) is lftFold(F,I,T);
   rightFold(F,I,T) is rgtFold(F,I,T);
 } using {

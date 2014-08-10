@@ -30,7 +30,7 @@ sorting is package{
     split(list of [E,..more],Lf,R) default is split(more,Lf,list of [E,..R]);
     
     (LL,RR) is split(L,list of [],list of []);
-   } in msort(LL)<>list of [pivot,..msort(RR)];
+   } in msort(LL)++list of [pivot,..msort(RR)];
    
   ordered has type (list of %t) => boolean where comparable over %t;
   ordered(list of []) is true;

@@ -19,39 +19,26 @@
  */
 forLoops is package{
   -- test out various for loops
-  
-  A is array of {1;2;3;4;5};
-  
+    
   L is list of {1;2;3;4;5};
   
   C is cons of {1;2;3;4;5};
-  
-  R is relation {1;2;3;4;5};
-  
-  M is map of {1->"1"; 2->"2"; 3->"3"; 4->"4"; 5->"5"};
+    
+  M is dictionary of {1->"1"; 2->"2"; 3->"3"; 4->"4"; 5->"5"};
   
   main() do {
     -- basic loops
-    for a in A do
-      logMsg(info,"a=$a");
-      
+ 
     for l in L do
       logMsg(info,"l=$l");
  
     for c in C do
       logMsg(info,"c=$c");
  
-    for r in R do
-      logMsg(info,"r=$r");
- 
     for k->v in M do
       logMsg(info,"k=$k,v=$v");
       
     -- index loops
-    for Ix->a in A do{
-      logMsg(info,"a=$a, Ix=$Ix");
-      assert a=Ix+1
-    };
     
     for Ix->l in L do{
       logMsg(info,"l=$l, Ix=$Ix");

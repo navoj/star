@@ -30,11 +30,11 @@ unravel is package{
   } in unravl(LL,sequence of {},sequence of {});
     
   main() do {
-    Lin is array of {(1,"alpha"); (2,"beta"); (3,"gamma")};
+    Lin is list of [(1,"alpha"), (2,"beta"), (3,"gamma")];
     
     var (Lf,Rg) is unravel(Lin);
     
-    assert Lf = array of {1;2;3};
-    assert Rg = array of {"alpha";"beta";"gamma"};
+    assert Lf = list of [1,2,3];
+    assert Rg = list of ["alpha","beta","gamma"];
   }
 } 

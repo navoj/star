@@ -42,7 +42,7 @@ actorbank is package{
   }
   
   bank(Nm) is actor{
-    var accounts := relation{};
+    var accounts := list of [];
     
     custBals() is all (Nm,Bal) where A in accounts and (query A's name 'n balance with (name,balance())) matches (Nm,Bal);
   } 

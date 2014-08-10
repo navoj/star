@@ -13,13 +13,13 @@ graphing is package{
   type concept is idea(string) or text(string);
 
   relGraph is graph{
-    type relation of triple of (concept,concept) counts as gr;
+    type list of triple of (concept,concept) counts as gr;
     
     type integer counts as ar;
 
-    empty() is relation of {};
+    empty() is list of [];
 
-    addTriple(R,T) is R union (relation of {T});
+    addTriple(R,T) is R union (list of [T]);
   }
 
   main() do {

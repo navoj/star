@@ -18,9 +18,9 @@
  *
  */
 arrayUpdates is package{
-  -- test array updating
+  -- test list updating
   
-  AA has type ref array of integer;
+  AA has type ref list of integer;
   var AA := iota(1,10,1);
   
   main() do {
@@ -28,20 +28,20 @@ arrayUpdates is package{
     
     logMsg(info,"AA=$AA");
     
-    assert AA=array of {1;-1;3;-1;5;-1;7;-1;9;-1};
+    assert AA=list of [1,-1,3,-1,5,-1,7,-1,9,-1];
     
     delete (X where X<0) in AA;
     
     logMsg(info,"AA is $AA");
     
-    assert AA=array of {1;3;5;7;9};
+    assert AA=list of [1,3,5,7,9];
     
     extend AA with -1;
     
-    merge AA with array of {-2;-3};
+    merge AA with list of [-2,-3];
     
     logMsg(info,"AA is now $AA");
     
-    assert AA = array of {1;3;5;7;9;-1;-2;-3};
+    assert AA = list of [1,3,5,7,9,-1,-2,-3];
   }
 }

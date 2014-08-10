@@ -20,21 +20,21 @@
 dotacc is package{
   import person;
   
-  var people := relation {
-    someone{ name="fred" };
-    someone{ name="peter"};
+  var people := list of [
+    someone{ name="fred" },
+    someone{ name="peter"},
     someone{ name="jane" }
-  };
+  ];
   
   A is actor{
     Ap is people;
   };
   
   main() do {
-    F is relation of { all P where P in people and P.name="fred" };
+    F is list of { all P where P in people and P.name="fred" };
     logMsg(info,"F=$F");
     
-    G is query A with relation of { all P where P in people and P.name="fred" };
+    G is query A with list of { all P where P in people and P.name="fred" };
     logMsg(info,"G=$G");
   }
 } 

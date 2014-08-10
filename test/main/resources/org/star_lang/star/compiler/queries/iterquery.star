@@ -18,9 +18,9 @@
  *
  */
 iterquery is package{  
-  S is list of {("alpha",1); ("beta",2); ("gamma",3) };
-  T is list of {("aleph",1); ("delta",5); ("eta",7)};
-  O is relation of {1; 3; 5};
+  S is list of [("alpha",1), ("beta",2), ("gamma",3) ];
+  T is list of [("aleph",1), ("delta",5), ("eta",7)];
+  O is list of [1, 3, 5];
   
   Size is 20000;
   
@@ -38,19 +38,19 @@ iterquery is package{
     logMsg(info,"O=$O");
     XX is all X where ("beta",X) in S;
     logMsg(info,"$XX");
-    assert XX=array of {2};
+    assert XX=list of [2];
     
     YY is 3 of X where ("alpha",X) in S;
     logMsg(info,"$YY");
-    assert YY=array of{1};
+    assert YY=list of [1];
     
-    ZZ is relation of {all N where (N,X) in S and X in O};
+    ZZ is list of {all N where (N,X) in S and X in O};
     logMsg(info,"$ZZ");
-    assert ZZ=relation of{"alpha";"gamma"};
+    assert ZZ=list of ["alpha", "gamma"];
     
     UU is all N where (N,X) in S and not X in O;
     logMsg(info,"UU=$UU");
-    assert UU = array of{"beta"};
+    assert UU = list of ["beta"];
 
     VV is all N where o in O and ((N,o) in S otherwise (N,o) in T);
     logMsg(info,"$VV");

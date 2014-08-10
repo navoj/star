@@ -18,31 +18,31 @@
  *
  */
 simpleArrayTests is package{
-  -- base test of array functions.
+  -- base test of list functions.
   
   main() do {
-    -- create an array using the sequence notation:
-    A is array of {"alpha"; "beta"; "gamma"};
+    -- create an list using the sequence notation:
+    A is list of ["alpha", "beta", "gamma"];
     
     assert size(A)=3;
-    assert A=array of {"alpha"; "beta"; "gamma"};
+    assert A=list of ["alpha", "beta", "gamma"];
     
-    assert A!=array of {};
-    assert A!=array of {"alpha"; "better"; "gammer"};
+    assert A!=list of {};
+    assert A!=list of ["alpha", "better", "gammer"];
     
     logMsg(info,"A is $A");
-    -- assert display(A)="array of {\"alpha\";\"beta\";\"gamma\"}"; -- cancel this until overloading bug wrt default implementation is resolved.
+    assert display(A)="list of [\"alpha\", \"beta\", \"gamma\"]"; -- cancel this until overloading bug wrt default implementation is resolved.
     
     walkOver(A);
     walkBack(A);
     
-    L has type array of long;
+    L has type list of long;
     L is iota(1L,10L,1L);
-    assert L=array of {1L; 2L; 3L; 4L; 5L; 6L; 7L; 8L; 9L; 10L};
+    assert L=list of [1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L];
     
-    F has type array of float;
+    F has type list of float;
     F is iota(5.0,1.0,-1.0);
-    assert F=array of {5.0; 4.0; 3.0; 2.0; 1.0};
+    assert F=list of [5.0, 4.0, 3.0, 2.0, 1.0];
   }
   
   walkOver(sequence of {}) do nothing;

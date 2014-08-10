@@ -30,7 +30,7 @@ sorting is package{
     split(list of [E,..more],Lf,R) default is split(more,Lf,list of [E,..R]);
     
     (LL,RR) is split(L,list of [],list of []);
-   } in msort(LL)<>list of [pivot,..msort(RR)]
+   } in msort(LL)++list of [pivot,..msort(RR)]
    
   L1 is list of [1,5,2,0];
   L1S is list of [0,1,2,5];

@@ -38,9 +38,9 @@ quick is package{
       {
         if Ix>0 then{
           if C(el,pivot) then
-            lftHalf := lftHalf<>list of [el] -- list concatenate
+            lftHalf := lftHalf++list of [el] -- list concatenate
           else
-            rgtHalf := rgtHalf<>list of [el];
+            rgtHalf := rgtHalf++list of [el];
         };
 	    -- logMsg(info,"left half is $lftHalf");
         -- logMsg(info,"right half is $rgtHalf");
@@ -48,6 +48,6 @@ quick is package{
     };
   } in valof{
       split();
-      valis quick(lftHalf,C)<>list of [pivot,..quick(rgtHalf,C)];
+      valis quick(lftHalf,C)++list of [pivot,..quick(rgtHalf,C)];
     }
 }

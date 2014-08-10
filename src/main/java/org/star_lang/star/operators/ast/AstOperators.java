@@ -28,6 +28,7 @@ import org.star_lang.star.operators.ast.runtime.AstLocation;
 import org.star_lang.star.operators.ast.runtime.AstMacroKey;
 import org.star_lang.star.operators.ast.runtime.AstQuoter;
 import org.star_lang.star.operators.ast.runtime.AstReplace;
+import org.star_lang.star.operators.ast.runtime.AstWithCategory;
 import org.star_lang.star.operators.ast.runtime.MergeLocation;
 
 /**
@@ -73,6 +74,7 @@ public class AstOperators
     cxt.declareBuiltin(new Builtin(AstLocation.name, AstLocation.funType(), AstLocation.class));
     cxt.declareBuiltin(new Builtin(AstMacroKey.name, AstMacroKey.funType(), AstMacroKey.class));
     cxt.declareBuiltin(new Builtin(AstCategory.name, AstCategory.type(), AstCategory.class));
+    cxt.declareBuiltin(new Builtin(AstWithCategory.name, AstWithCategory.type(), AstWithCategory.class));
     cxt.declareBuiltin(new Builtin(AstReplace.name, AstReplace.type(), AstReplace.class));
     cxt.declareBuiltin(new Builtin(MacroError.name, MacroError.type(), MacroError.class));
     cxt.declareBuiltin(new Builtin(AstFindFree.name, AstFindFree.type(), AstFindFree.class));

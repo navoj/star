@@ -23,8 +23,8 @@ defvalues is package{
 type lvl2Fun is lvl2Fun {
   lhs has type lvl2Exp;
   rhs has type lvl2Exp;
-  bindings has type map of (string, lvl2Exp);
-  bindings default is map of {};
+  bindings has type dictionary of (string, lvl2Exp);
+  bindings default is dictionary of {};
   rhs default is l2Integer(0);
   };
  
@@ -33,8 +33,8 @@ type lvl2Exp is l2Integer(integer)
                   or l2String(string)
                   or l2Bool(boolean)
                   or l2Tuple(list of lvl2Exp)
-                  or l2Agg(string, map of (string, lvl2Exp))
-                  or l2Map(map of (lvl2Exp, lvl2Exp))
+                  or l2Agg(string, dictionary of (string, lvl2Exp))
+                  or l2Map(dictionary of (lvl2Exp, lvl2Exp))
                   or l2Table(list of lvl2Exp)
                   or l2Fluent(lvl2Exp, lvl2Exp)
                   or l2Ident(string)

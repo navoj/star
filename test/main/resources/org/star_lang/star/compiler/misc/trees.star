@@ -28,7 +28,7 @@ trees is package{
   
   leaves has type (tree of %t) => list of %t;
   leaves(nul) is list of [];
-  leaves(labeled(L,Lb,R)) is leaves(L)<>list of [Lb,..leaves(R)];
+  leaves(labeled(L,Lb,R)) is leaves(L)++list of [Lb,..leaves(R)];
   
   insert has type (tree of %t, %t ) => tree of %t where comparable over %t;
   insert(nul,T) is labeled(nul,T,nul);

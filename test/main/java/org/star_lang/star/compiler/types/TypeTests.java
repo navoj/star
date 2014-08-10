@@ -199,7 +199,7 @@ public class TypeTests extends SRTest
   @Test
   public void badMapTest()
   {
-    exception.expectMessage("map expects 2 type arguments");
+    exception.expectMessage("dictionary expects 2 type arguments");
     runStar("badmapTest.star");
   }
 

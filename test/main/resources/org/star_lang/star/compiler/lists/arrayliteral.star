@@ -20,7 +20,7 @@
 arrayliteral is package{
   -- simple test to observe re-use of variable slots
   main() do {
-    L is array of {"alpha"; "beta"; "gamma"; "delta"; "eta"};
+    L is list of ["alpha", "beta", "gamma", "delta", "eta"];
     
     assert L[0]="alpha";
   }

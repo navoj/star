@@ -52,7 +52,7 @@ implementation sequence over cons of %e determines %e is {
 }
 
 implementation concatenate over cons of %e is {
-  _concat(L,R) is consConc(L,R);
+  L++R is consConc(L,R);
 };
 
 implementation updateable over cons of %t determines %t is {

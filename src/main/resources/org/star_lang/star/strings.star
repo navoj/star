@@ -45,7 +45,7 @@ implementation sequence over string determines char is {
 }
 
 implementation concatenate over string is {
-  _concat(string(S1),string(S2)) is string(__string_concatenate(S1,S2));
+  string(S1)++string(S2) is string(__string_concatenate(S1,S2));
 }
 
 implementation indexable over string determines (integer,char) is {
@@ -147,12 +147,12 @@ implementation explosion over (string,cons) determines char is {
   implode(L) is string(__string_implode(L));
 }
 
-implementation explosion over (string,array) determines char is {
+implementation explosion over (string,list) determines char is {
   explode(string(S)) is __string_array(S);
   implode(A) is string(__string_implode(A))
 }
 
-implementation coercion over (string,array of char) is {
+implementation coercion over (string,list of char) is {
   coerce(string(S)) is __string_array(S);
 }
 

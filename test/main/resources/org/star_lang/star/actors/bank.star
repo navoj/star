@@ -18,7 +18,6 @@
  *
  */
 bank is package{
-  import dictionary;
   import account;
   import counter;
   

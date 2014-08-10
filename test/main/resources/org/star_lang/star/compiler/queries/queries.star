@@ -20,44 +20,44 @@
 queries is package{
   -- test out some of the basic tables and relations stuff
   
-  N is relation of{
-    (1,2);
-    (2,1);
-    (1,3);
-    (2,3);
-    (3,2);
+  N is list of [
+    (1,2),
+    (2,1),
+    (1,3),
+    (2,3),
+    (3,2),
     (3,1)
-  }
+  ]
 
-  R has type relation of ((string,integer));
-  R is relation of {
-    ("a",1);
-    ("b",2);
-    ("c",3);
+  R has type list of ((string,integer));
+  R is list of [
+    ("a",1),
+    ("b",2),
+    ("c",3),
     ("a",4)
-  };
+  ];
   
-  S is relation of {
-    ("a",1);
-    ("b",2);
-    ("d",3);
-    ("a",4);
-    ("b",3);
-    ("e",2);
-  };
+  S is list of [
+    ("a",1),
+    ("b",2),
+    ("d",3),
+    ("a",4),
+    ("b",3),
+    ("e",2)
+  ];
   
   type testType is item{
     pos has type integer;
   } or noItem;
 
-  testf has type (relation of testType, integer) => relation of testType;
-  testf(Is, P) is relation of {all X where (X matching item{pos=P}) in Is};
+  testf has type (list of testType, integer) => list of testType;
+  testf(Is, P) is list of {all X where (X matching item{pos=P}) in Is};
   
-  var parent := relation of {
-    {parent="fred"; child="sam"; dob=1}; {parent="fred";child="sue"; dob=2};
-    {parent="jane"; child="sam"; dob=1};
-    {parent="milo"; child="sue"; dob=2}};
-  var male := relation{ "fred"; "sam"};
+  var parent := list of [
+    {parent="fred"; child="sam"; dob=1}, {parent="fred";child="sue"; dob=2},
+    {parent="jane"; child="sam"; dob=1},
+    {parent="milo"; child="sue"; dob=2}];
+  var male := list of [ "fred", "sam"];
 	
   main has type action();
   main() do {
@@ -84,14 +84,14 @@ queries is package{
     logMsg(info,"all about parents = $(all (P,C,D) where {parent=P;child=C;dob=D} in parent)");
     
     PS is anyof P where {parent=P;child="sam"} in parent;
-    assert PS in relation{"fred"; "jane"};
+    assert PS in list of ["fred", "jane"];
     
     logMsg(info,"parent of fred = $(anyof P where {parent=P;child="fred"} in parent default "not known")"); 
     assert (anyof P where {parent=P;child="fred"} in parent default "not known") = "not known";
     
-    ns has type ref relation of ((integer));
-    var ns := relation{1;6;5;3;8;5;7;3;5;4};
-	items is relation of {all item{pos=E} where E in ns};
+    ns has type ref list of ((integer));
+    var ns := list of [1,6,5,3,8,5,7,3,5,4];
+	items is list of {all item{pos=E} where E in ns};
 	
 --	logMsg(info,"items=$items, testf=$(testf(items,3))");
 	
@@ -104,9 +104,9 @@ queries is package{
 	FFX is all X where X in male and F in FP and F.child=X
 	logMsg(info,"$FFX");
 	
-	FFF is relation of {all X where X in male and F in (all FF where FF in parent and FF.parent="fred") and F.child=X}
+	FFF is list of {all X where X in male and F in (all FF where FF in parent and FF.parent="fred") and F.child=X}
 	logMsg(info,"$FFF");
-	assert FFF = relation{"sam"};
+	assert FFF = list of ["sam"];
   };
   
   checkF(items) is valof{

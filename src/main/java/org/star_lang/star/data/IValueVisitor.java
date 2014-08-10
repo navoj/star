@@ -31,8 +31,6 @@ public interface IValueVisitor
 
   void visitList(IList list);
 
-  void visitRelation(IRelation relation);
-
   void visitFunction(IFunction fn);
 
   void visitPattern(IPattern ptn);

@@ -19,18 +19,18 @@
  */
 anonRefRecord is package{
   type socialNetworkType is alias of {
-    nodeTable has type relation of socialNetNode;
-    linkTable has type relation of socialNetLink;
+    nodeTable has type list of socialNetNode;
+    linkTable has type list of socialNetLink;
   };
 
   -- The actual (not-yet-active) model, an (initially empty) social network
   socialNetwork has type ref(socialNetworkType);
   var socialNetwork := {
-      nodeTable = relation of {}; 
-      linkTable = relation of {};
+      nodeTable = list of []; 
+      linkTable = list of [];
   };
   
   main() do {
-    assert socialNetwork.nodeTable = relation of {}
+    assert socialNetwork.nodeTable = list of []
   }
 }

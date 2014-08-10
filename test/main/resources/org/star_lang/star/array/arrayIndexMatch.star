@@ -18,9 +18,9 @@
  *
  */
 arrayIndexMatch is package{
-  A is array of { "alpha"; "beta"; "gamma"; "delta" };
+  A is list of [ "alpha", "beta", "gamma", "delta" ];
   
-  B is cons of { "alpha"; "beta"; "gamma"; "delta" };
+  B is cons of [ "alpha", "beta", "gamma", "delta" ];
   
   consIndex(L[Ix]) from (L,Ix) where Ix>=0 and Ix<size(L);
   

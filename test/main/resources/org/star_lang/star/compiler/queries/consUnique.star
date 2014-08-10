@@ -18,9 +18,7 @@
  *
  */
 consUnique is package {
-  R is relation{
-        { F="U"};
-  }
+  R is list of [{ F="U"}]
 
   constCons has type ((%a) => cons of string);
   constCons(l) is cons of {"a"};

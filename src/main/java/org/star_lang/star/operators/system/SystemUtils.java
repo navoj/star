@@ -5,15 +5,11 @@ import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.system.runtime.SimpleLog;
 import org.star_lang.star.operators.system.runtime.Sleep;
 import org.star_lang.star.operators.system.runtime.SystemUtils.AvailableProcessors;
-import org.star_lang.star.operators.system.runtime.SystemUtils.ClearProperty;
 import org.star_lang.star.operators.system.runtime.SystemUtils.Exit;
 import org.star_lang.star.operators.system.runtime.SystemUtils.FreeMemory;
 import org.star_lang.star.operators.system.runtime.SystemUtils.Gc;
 import org.star_lang.star.operators.system.runtime.SystemUtils.GetEnv;
-import org.star_lang.star.operators.system.runtime.SystemUtils.GetProperties;
-import org.star_lang.star.operators.system.runtime.SystemUtils.GetProperty;
 import org.star_lang.star.operators.system.runtime.SystemUtils.MaxMemory;
-import org.star_lang.star.operators.system.runtime.SystemUtils.SetProperty;
 import org.star_lang.star.operators.system.runtime.SystemUtils.TotalMemory;
 import org.star_lang.star.operators.system.runtime.Yield;
 
@@ -43,10 +39,6 @@ public class SystemUtils
   {
     cxt.declareBuiltin(new Builtin(Exit.name, Exit.type(), Exit.class));
     cxt.declareBuiltin(new Builtin(GetEnv.name, GetEnv.type(), GetEnv.class));
-    cxt.declareBuiltin(new Builtin(GetProperty.name, GetProperty.type(), GetProperty.class));
-    cxt.declareBuiltin(new Builtin(SetProperty.name, SetProperty.type(), SetProperty.class));
-    cxt.declareBuiltin(new Builtin(ClearProperty.name, ClearProperty.type(), ClearProperty.class));
-    cxt.declareBuiltin(new Builtin(GetProperties.name, GetProperties.type(), GetProperties.class));
 
     cxt.declareBuiltin(new Builtin(AvailableProcessors.name, AvailableProcessors.type(), AvailableProcessors.class));
 

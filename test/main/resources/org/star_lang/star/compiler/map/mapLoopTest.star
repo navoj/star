@@ -35,8 +35,8 @@ mapLoopTest is package {
   }
 
   main() do {
-    H1 is map of {"A"->"0"};
-    H2 is map of {"C"->"0";"D"->"1";"C"->"2"};
+    H1 is dictionary of {"A"->"0"};
+    H2 is dictionary of {"C"->"0";"D"->"1";"C"->"2"};
     comp(H1, H2);
   }
 }

@@ -1,13 +1,13 @@
 routeActor is package {
 
   type arouteData is arouteData{
-    routesMap has type ref map of (string, integer);
+    routesMap has type ref dictionary of (string, integer);
   }
     
   routesActor is actor {
     rD has type ref arouteData;
     private var rD := arouteData{
-      routesMap := map of {};
+      routesMap := dictionary of {};
     };
     on V on mapChannel do {
       var key is "";

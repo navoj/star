@@ -18,18 +18,18 @@
  *
  */
 tableReplace is package{
-  -- test out removing elements from a relation
+  -- test out removing elements from a list
 
-  R has type ref relation of ((string,integer));
-  var R := relation of {
-    ("a",1);
-    ("b",2);
-    ("a",2);
-    ("a",3);
-    ("b",1);
-  };
+  R has type ref list of ((string,integer));
+  var R := list of [
+    ("a",1),
+    ("b",2),
+    ("a",2),
+    ("a",3),
+    ("b",1)
+  ];
   
-  check has type (string,relation of ((string,integer))) =>boolean;
+  check has type (string,list of ((string,integer))) =>boolean;
   check(S,Rr) is ((SS,_) where SS=S) in Rr;
 
   pairCheck(A,B) is (A,B) in R;
@@ -63,6 +63,5 @@ tableReplace is package{
 	  assert pairCheck("d", 1);
 	  assert pairCheck("d", 2);
 	  assert pairCheck("d", 3);
-
   }
 }

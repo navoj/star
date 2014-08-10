@@ -20,16 +20,16 @@
 mapeq2 is package{
   type content is clSymbol(string);
   main() do {
-   h1 is map of {clSymbol("bar")-> clSymbol("baz");
+   h1 is dictionary of {clSymbol("bar")-> clSymbol("baz");
               clSymbol("foo")-> clSymbol("bar")};
-   h2 is map of {clSymbol("bar")-> clSymbol("baz");
+   h2 is dictionary of {clSymbol("bar")-> clSymbol("baz");
               clSymbol("foo")-> clSymbol("bar")};
    logMsg(info, "$h1 = $h2 => $(h1 = h2)");
    assert h1=h2;
 
-   h3 is map of {"bar"-> "baz";
+   h3 is dictionary of {"bar"-> "baz";
               "foo"-> "bar"};
-   h4 is map of {"bar"-> "baz";
+   h4 is dictionary of {"bar"-> "baz";
               "foo"-> "bar"};
    logMsg(info, "$h3 = $h4 => $(h3 = h4)");
    assert h3=h4;

@@ -72,7 +72,7 @@ private
   consIterate(cons(H,T),F,St) is consIterate(T,F,F(H,St));
   
 implementation concatenate over queue of %e is {
-  _concat(L,R) is queueConc(L,R);
+  L++R is queueConc(L,R);
 } using {
   queueConc(queue{front=F1;back=B1},queue{front=F2;back=B2}) is queue{front=F1++reverse(B1); back=B2++reverse(F2)}
 }

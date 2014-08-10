@@ -56,7 +56,7 @@ regressions is package{
   }
   
   main() do {
-    Set is relation {(1.0,2.0); (3.0,5.2); (4.0,6.8); (5.0,8.4); (9.0,14.8)};
+    Set is list of [(1.0,2.0), (3.0,5.2), (4.0,6.8), (5.0,8.4), (9.0,14.8)];
     (W1,W0) is Ws(Set);
     logMsg(info,"w1=$W1,w0=$W0")
   }

@@ -15,7 +15,6 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.IPattern;
 import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IScalar;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
@@ -660,13 +659,6 @@ public class StringOps
       }
 
       @Override
-      public void visitRelation(IRelation relation)
-      {
-        for (IValue tpl : relation)
-          tpl.accept(this);
-      }
-
-      @Override
       public void visitFunction(IFunction fn)
       {
       }
@@ -755,13 +747,6 @@ public class StringOps
       {
         for (int ix = list.size() - 1; ix >= 0; ix--)
           list.getCell(ix).accept(this);
-      }
-
-      @Override
-      public void visitRelation(IRelation relation)
-      {
-        for (IValue tpl : relation)
-          tpl.accept(this);
       }
 
       @Override

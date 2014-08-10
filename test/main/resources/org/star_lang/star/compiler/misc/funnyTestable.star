@@ -33,10 +33,10 @@ funnyTestable is package {
     logMsg(info, "t1 is $t1"); 
 
     -- the next line got a type error saying 
-    -- "map literal not valid here 
+    -- "dictionary literal not valid here 
     -- because list of integer not equal to map of(%__47213, %__47214)" 
 
-    t2 is toTest("Good Morning",map of {1->1;2->2}); -- now commented out to pass type checking
+    t2 is toTest("Good Morning",dictionary of {1->1;2->2}); -- now commented out to pass type checking
     logMsg(info, "t2 is $t2");
   }
 }

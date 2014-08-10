@@ -19,15 +19,15 @@
  */
 floatHash is package{
   main () do {
-    a is map of {17000.0 -> 1.81};
-    b is map of {17000.0 -> 1.81};
+    a is dictionary of {17000.0 -> 1.81};
+    b is dictionary of {17000.0 -> 1.81};
     assert a=b;
     assert a=a;
     assert 17000.0 = 17000.0;
     assert 1.81 = 1.81;
 
-    c is map of {170000 -> 181};
-    d is map of {170000 -> 181};
+    c is dictionary of {170000 -> 181};
+    d is dictionary of {170000 -> 181};
     assert c=d;
   }
 }

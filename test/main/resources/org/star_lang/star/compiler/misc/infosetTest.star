@@ -20,7 +20,7 @@
 jsonTest is package{
   import json;
 
-  var I1 := iColl( map of { "eventVersion"-> iText("1.0");
+  var I1 := iColl( dictionary of { "eventVersion"-> iText("1.0");
      "sourceString"->iText("::1 - - [29/Aug/2010:06:12:57 +0700] \"OPTIONS * HTTP/1.0\" 200 152 \"-\" \"Apache/2.2.12 (Ubuntu) (internal dummy connection)\"");
      "sourceName"->iText("access log");
      "Status"->iText("200");
@@ -40,19 +40,19 @@ jsonTest is package{
      "avgHostBytes"->iFlt(61668.47916666669);
      "imageBytes"->iNum(110408L);
      "pictureBytes"->iNum(396883L);
-     "statusFrequency"->iSeq(array of {
-	iColl(map of {"200"->iNum(75L)});
-	iColl(map of {"304"->iNum(60L)});
-	iColl(map of {"404"->iNum(5L)});
-	iColl(map of {"206"->iNum(2L)});
-	iColl(map of {"301"->iNum(2L)})});
+     "statusFrequency"->iSeq(list of [
+	iColl(dictionary of {"200"->iNum(75L)}),
+	iColl(dictionary of {"304"->iNum(60L)}),
+	iColl(dictionary of {"404"->iNum(5L)}),
+	iColl(dictionary of {"206"->iNum(2L)}),
+	iColl(dictionary of {"301"->iNum(2L)})]);
      "totalBytes"->iNum(2425928L);
-     "referFrequency"->iSeq(array of {
-	iColl(map of {"-"->iNum(85L)});
-	iColl(map of {"http://www.vallop.in.th/"->iNum(36L)});
-	iColl(map of {"http://www.tb1nkp.com/webboard/view.php?No=1"->iNum(6L)});
-	iColl(map of {"http://www.kpsw.ac.th/teacher/piyaporn/page3.htm"->iNum(5L)});
-	iColl(map of {"http://whois.domaintools.com/ntsdc.go.th"->iNum(4L)})})});
+     "referFrequency"->iSeq(list of [
+	iColl(dictionary of {"-"->iNum(85L)}),
+	iColl(dictionary of {"http://www.vallop.in.th/"->iNum(36L)}),
+	iColl(dictionary of {"http://www.tb1nkp.com/webboard/view.php?No=1"->iNum(6L)}),
+	iColl(dictionary of {"http://www.kpsw.ac.th/teacher/piyaporn/page3.htm"->iNum(5L)}),
+	iColl(dictionary of {"http://whois.domaintools.com/ntsdc.go.th"->iNum(4L)})])});
 
   main() do {
     logMsg(info,"Init $I1");

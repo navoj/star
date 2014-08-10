@@ -20,7 +20,6 @@
 workedex is package{
   import account;
   import counter;
-  import dictionary;
   import bitstring;
   
   #infix("bound to",900);
@@ -113,11 +112,11 @@ workedex is package{
   }
   
   updateAccount(Ptn,Updater) do let{
-    var track := array of {};
+    var track := list of [];
     
     updateAct((Ix,Act)) is valof{
       ActFoll is accntFollow[Ix];
-      track := array of {ActFoll;..track};
+      track := list of [ActFoll,..track];
       
       UpAc is Updater(Act);
 
@@ -195,11 +194,11 @@ workedex is package{
   }
   
   removeAccount(Ptn) do let{
-    var track := array of {};
+    var track := list of [];
     
     removeAct(Ix) is valof{
       ActFoll is accntFollow[Ix];
-      track := array of {ActFoll;..track};
+      track := list of [ActFoll,..track];
       valis true;
     };
     testAct() from (Ix,Ptn()) where removeAct(Ix);
@@ -235,11 +234,11 @@ workedex is package{
   }
   
   updateTrans(Ptn,Updater) do let{
-    var track := array of {};
+    var track := list of [];
     
     updateTx((Ix,Tx)) is valof{
       ActFoll is transFollow[Ix];
-      track := array of {ActFoll;..track};
+      track := list of [ActFoll,..track];
       
       valis (Ix,Updater(Tx));
     };

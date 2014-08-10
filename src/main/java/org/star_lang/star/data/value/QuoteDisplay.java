@@ -15,7 +15,6 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.IPattern;
 import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IScalar;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
@@ -117,7 +116,7 @@ public class QuoteDisplay implements IValueVisitor
   @Override
   public void visitMap(IMap map)
   {
-    disp.appendWord(StandardNames.MAP);
+    disp.appendWord(StandardNames.DICTIONARY);
     disp.appendWord(StandardNames.OF);
     disp.append("{");
     int mark = disp.markIndent(2);
@@ -150,23 +149,6 @@ public class QuoteDisplay implements IValueVisitor
     }
     disp.popIndent(mark);
     disp.append("}");
-  }
-
-  @Override
-  public void visitRelation(IRelation relation)
-  {
-    int mark = disp.markIndent(2);
-    disp.appendWord(StandardNames.RELATION);
-    disp.appendWord("{");
-    String sep = "\n";
-    for (IValue tuple : relation) {
-      disp.append(sep);
-      sep = ";\n";
-      tuple.accept(this);
-    }
-    disp.popIndent(mark);
-    disp.append("\n");
-    disp.appendWord("}");
   }
 
   @Override

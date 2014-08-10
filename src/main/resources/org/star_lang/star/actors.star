@@ -29,8 +29,8 @@ private import maps;
 private import macrosupport;
 
 contract speech over %t determines (%u,%%a) where execution over %%a is {
-  _query has type for all %s such that (%t,(%u)=>%s,()=>quoted,()=>map of (string,any))=>%%a of %s;
-  _request has type (%t,(%u)=>(),()=>quoted,()=>map of (string,any)) => %%a of ();
+  _query has type for all %s such that (%t,(%u)=>%s,()=>quoted,()=>dictionary of (string,any))=>%%a of %s;
+  _request has type (%t,(%u)=>(),()=>quoted,()=>dictionary of (string,any)) => %%a of ();
   _notify has type (%t,(%u)=>()) => %%a of ();
 };
 
@@ -61,38 +61,38 @@ type stream of %t is alias of action(%t);
 # ?A :: agentExpression :- A::expression;
 
 # freeVarMap(?Exp) ==> freeVarMap(Exp,());
-# freeVarMap(?Exp,?XX) ==> formHash(__find_free(Exp,XX,comma,())) ## {
-  #formHash(()) ==> map of {};
-  #formHash(?E) ==> map of {hashEntries(E)};
+# freeVarMap(?Exp,?XX) ==> #*formHash(__find_free(Exp,XX,comma,())) ## {
+  #formHash(()) ==> dictionary of {};
+  #formHash(?E) ==> dictionary of {hashEntries(E)};
   #hashEntries(comma(?V,())) ==> $$V->#(V cast any)#;
   #hashEntries(comma(?V,?T)) ==> #($$V->#(V cast any)#;hashEntries(T))#;
 };
 
-#fold(?L and ?R,?F,?I) ==> fold(L,F,#*fold(R,F,I));
-#fold(?L or ?R,?F,?I) ==> fold(L,F,#*fold(R,F,I));
-#fold(?L implies ?R,?F,?I)  ==> fold(L,F,#*fold(R,F,I));
-#fold(?L otherwise ?R,?F,?I) ==> fold(L,F,#*fold(R,F,I));
-#fold(not ?N,?F,?I) ==> fold(N,F,I);
-#fold(?T,?F,?I) ==> F(T,I);
+#queryFree(?Qq,?Excl) ==> freeVarMap(Qq,#*queryDefined(Qq,Excl)) ## {
+  #queryDefined(?L order by ?C,?Ex) ==> queryDefined(L,Ex);
+  #queryDefined(unique ?C of ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(unique ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(all ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(#(anyof ?E where ?Q default ?D)#,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(anyof ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(#(any of ?E where ?Q default ?D)#,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(any of ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(?C of ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(?T of ?C of {?E where ?Q},?Ex) ==> fold(Q,freePtn,Ex);
+  #queryDefined(?T of {?Q},?Ex) ==> queryDefined(Q,Ex);
+  #queryDefined(?Q,?Ex) ==> Ex;
 
-#freePtn(?P in ?C,?I) ==> __find_free(P,I,comma,I);
-#freePtn(?V matches ?P,?I) ==> __find_free(P,I,comma,I);
-#freePtn(?X,?I) ==> I;
- 
-#queryDefined(?L order by ?C,?Ex) ==> queryDefined(L,Ex);
-#queryDefined(unique ?C of ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(unique ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(all ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(#(anyof ?E where ?Q default ?D)#,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(anyof ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(#(any of ?E where ?Q default ?D)#,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(any of ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(?C of ?E where ?Q,?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(?T of ?C of {?E where ?Q},?Ex) ==> fold(Q,freePtn,Ex);
-#queryDefined(?T of {?Q},?Ex) ==> queryDefined(Q,Ex);
-#queryDefined(?Q,?Ex) ==> Ex;
+  #fold(?L and ?R,?F,?I) ==> fold(L,F,#*fold(R,F,I));
+  #fold(?L or ?R,?F,?I) ==> fold(L,F,#*fold(R,F,I));
+  #fold(?L implies ?R,?F,?I)  ==> fold(L,F,#*fold(R,F,I));
+  #fold(?L otherwise ?R,?F,?I) ==> fold(L,F,#*fold(R,F,I));
+  #fold(not ?N,?F,?I) ==> fold(N,F,I);
+  #fold(?T,?F,?I) ==> F(T,I);
 
-#queryFree(?Q,?Ex) ==> freeVarMap(Q,#*queryDefined(Q,Ex));  
+  #freePtn(?P in ?C,?I) ==> __find_free(P,I,comma,I);
+  #freePtn(?V matches ?P,?I) ==> __find_free(P,I,comma,I);
+  #freePtn(?X,?I) ==> I;
+}
 
 #query ?A's ?Ex with ?E ==> valof _query(A,(function(#$"XX") is E using #$"XX"'s Ex),(function() is quote(E)),(function() is queryFree(E,Ex)));
 #query ?A with ?E ==> valof _query(A,(function(#$"XX") is let { open #$"XX" } in E),(function() is quote(E)),(function() is queryFree(E,())));
@@ -105,7 +105,7 @@ type stream of %t is alias of action(%t);
 #request ?A to merge ?Tgt with ?Exp  ==>
         perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _merge(#(#$"XX")#.Tgt,Exp)}),(function() is <|merge ?Tgt with ?Exp|>),(function() is freeVarMap(Exp)));
 #request ?A to delete ?Ptn in ?Tgt  ==>
-        perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(pattern() from Ptn))}),(function() is <|delete ?Ptn in ?Tgt|>),(function() is map of {}));
+        perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(pattern() from Ptn))}),(function() is <|delete ?Ptn in ?Tgt|>),(function() is dictionary of {}));
 #request ?A to update ?Ptn in ?Tgt with ?Exp  ==>
         perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _update(#(#$"XX")#.Tgt,(pattern() from Ptn), (function(Ptn) is Exp))}),(function() is <|update ?Ptn in ?Tgt with ?Exp|>),(function() is freeVarMap(Exp,Ptn)));
 
@@ -128,10 +128,10 @@ type stream of %t is alias of action(%t);
   #makeActorRules(Defs) is let{
     collectRules(Rl matching <|on ?Evt do ?Act|>, (Theta, EventRules)) is (Theta,insertEventRule(EventRules,eventRule(Rl)));
     collectRules(<|?L;?R|>,Coll) is collectRules(R,collectRules(L,Coll));
-    collectRules(Stmt,(Theta,Rules)) is (array of {Theta..;Stmt},Rules);
+    collectRules(Stmt,(Theta,Rules)) is (list of {Theta..;Stmt},Rules);
 
-    insertEventRule(Rules,Rl matching (Ch,P,C,A)) where _index(Rules,Ch) matches some(chnnlRules) is _set_indexed(Rules,Ch,array of {chnnlRules..;Rl});
-    insertEventRule(Rules,Rl matching (Ch,P,C,A)) is _set_indexed(Rules,Ch,array of {Rl});
+    insertEventRule(Rules,Rl matching (Ch,P,C,A)) where _index(Rules,Ch) matches some(chnnlRules) is _set_indexed(Rules,Ch,list of {chnnlRules..;Rl});
+    insertEventRule(Rules,Rl matching (Ch,P,C,A)) is _set_indexed(Rules,Ch,list of {Rl});
 
     -- pick apart an event condition into individual pieces
     eventRule(<|on ?P on ?Ch where ?C do ?A|>) is (Ch,P,C,A);
@@ -144,9 +144,9 @@ type stream of %t is alias of action(%t);
         ecaName is _macro_gensym("eca");
       } in (<| #(?ecaName)# (?P) where ?C do ?A |>, <|#(?ecaName)# (?eVar) |>);
 
-      makeRules(array of {}) is (<|{}|>,<|{}|>);
-      makeRules(array of {Rl}) is rlProc(Rl);
-      makeRules(array of {Rl;..Ules}) is valof{
+      makeRules(_empty()) is (<|{}|>,<|{}|>);
+      makeRules(_pair(Rl,_empty())) is rlProc(Rl);
+      makeRules(_pair(Rl,Ules)) is valof{
         (Pr,Cl) is rlProc(Rl);
         (D,C) is makeRules(Ules);
         valis (semi(D,Pr),semi(C,Cl))
@@ -156,13 +156,13 @@ type stream of %t is alias of action(%t);
       
       makeEcaProc((Dfs, Calls)) is <| #(?Ch)#(?eVar) do {?Calls} using { ?Dfs } |>;
 
-      makeEca(array of {(_,P,C,A)}) is <| #(?Ch)#(?P) where ?C do ?A |>;
+      makeEca(list of {(_,P,C,A)}) is <| #(?Ch)#(?P) where ?C do ?A |>;
       makeEca(Rls) is makeEcaProc(makeRules(Rls));
     } in makeEca(Rules);
 
     makeActorTheta((Theta,EvtRules)) is let{
-      eventRules is array of { all channelProc(Ch,Rules) where Ch->Rules in EvtRules};
+      eventRules is list of { all channelProc(Ch,Rules) where Ch->Rules in EvtRules};
     } in __wrapSemi(eventRules,__wrapSemi(Theta,<|{}|>));
 
-  } in makeActorTheta(collectRules(Defs,(array of {}, map of {})));
+  } in makeActorTheta(collectRules(Defs,(list of {}, dictionary of {})));
 }

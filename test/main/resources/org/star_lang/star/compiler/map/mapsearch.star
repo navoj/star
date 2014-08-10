@@ -18,7 +18,7 @@
  *
  */
 mapsearch is package {
- m is map of {"a" -> 1; "b" -> 2};
+ m is dictionary of {"a" -> 1; "b" -> 2};
  main() do {
    bar is let {
      x is "a";

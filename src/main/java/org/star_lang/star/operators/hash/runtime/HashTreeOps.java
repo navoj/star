@@ -65,7 +65,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.mapType(k, v))));
+      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.dictionaryType(k, v))));
     }
   }
 
@@ -96,8 +96,8 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.mapType(k, v), TypeUtils
-          .mapType(k, v))));
+      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.dictionaryType(k, v), TypeUtils
+          .dictionaryType(k, v))));
     }
   }
 
@@ -127,7 +127,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.mapType(k, v), k,
+      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.dictionaryType(k, v), k,
           StandardTypes.booleanType)));
     }
   }
@@ -163,7 +163,8 @@ public class HashTreeOps
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
       IType resType = TypeUtils.optionType(v);
-      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.mapType(k, v), k, resType)));
+      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.dictionaryType(k, v), k,
+          resType)));
     }
   }
 
@@ -193,7 +194,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      IType hashType = TypeUtils.mapType(k, v);
+      IType hashType = TypeUtils.dictionaryType(k, v);
       return new UniversalType(v, new UniversalType(k, TypeUtils.functionType(hashType, k, v, hashType)));
     }
   }
@@ -226,7 +227,7 @@ public class HashTreeOps
       TypeVar k = new TypeVar("%k");
       TypeVar v = new TypeVar("%v");
 
-      IType mapType = TypeUtils.mapType(k, v);
+      IType mapType = TypeUtils.dictionaryType(k, v);
       IType boolType = StandardTypes.booleanType;
 
       IType funType = TypeUtils.functionType(mapType, mapType, TypeUtils.functionType(v, v, boolType), boolType);
@@ -262,7 +263,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      IType mapType = TypeUtils.mapType(k, v);
+      IType mapType = TypeUtils.dictionaryType(k, v);
       return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(mapType, mapType, mapType)));
     }
   }
@@ -293,7 +294,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      IType mapType = TypeUtils.mapType(k, v);
+      IType mapType = TypeUtils.dictionaryType(k, v);
       IType ptnType = TypeUtils.patternType(TypeUtils.tupleType(), TypeUtils.tupleType(k, v));
       return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(mapType, ptnType, mapType)));
     }
@@ -325,7 +326,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      IType mapType = TypeUtils.mapType(k, v);
+      IType mapType = TypeUtils.dictionaryType(k, v);
       IType twoType = TypeUtils.tupleType(k, v);
       IType ptnType = TypeUtils.patternType(TypeUtils.tupleType(), twoType);
       IType funType = TypeUtils.functionType(twoType, twoType);
@@ -359,7 +360,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      IType hashType = TypeUtils.mapType(k, v);
+      IType hashType = TypeUtils.dictionaryType(k, v);
       return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(hashType, k, hashType)));
     }
   }
@@ -390,7 +391,7 @@ public class HashTreeOps
     {
       TypeVar k = new TypeVar();
       TypeVar v = new TypeVar();
-      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.mapType(k, v),
+      return new UniversalType(k, new UniversalType(v, TypeUtils.functionType(TypeUtils.dictionaryType(k, v),
           StandardTypes.booleanType)));
     }
   }
@@ -421,7 +422,7 @@ public class HashTreeOps
     {
       TypeVar ky = new TypeVar();
       TypeVar vl = new TypeVar();
-      return new UniversalType(ky, new UniversalType(vl, TypeUtils.functionType(TypeUtils.mapType(ky, vl),
+      return new UniversalType(ky, new UniversalType(vl, TypeUtils.functionType(TypeUtils.dictionaryType(ky, vl),
           StandardTypes.rawIntegerType)));
     }
   }

@@ -74,7 +74,7 @@ import cons;
  -- Implementation 
  
  -- Standard types to support N3 notation
- type n3Graph is alias of relation of n3Triple;
+ type n3Graph is alias of list of n3Triple;
  
  type n3Triple is n3Triple(n3Concept,n3Concept,n3Concept);
  
@@ -93,18 +93,18 @@ import cons;
  }
               
  -- Macros to convert graph expressions into regular Star structures.
- # graph{} ==> relation{} has type n3Graph;
- # graph{?Graph} ==> relation of { triples(Graph) } ## {
+ # graph{} ==> list of [] has type n3Graph;
+ # graph{?Graph} ==> list of [triples(Graph) ] ## {
 
-  #triples(A) is wrapSemi(mapSemi(triple,A));     
+  #triples(A) is wrapComma(mapSemi(triple,A));     
 
-  triple(SoFar,<| ?Sub ! ?VP |>) is SoFar++tripleJoin(trNounPhrase(list of {},Sub),trVerbPhrase(list of {},VP));
+  triple(SoFar,<| ?Sub ! ?VP |>) is SoFar++tripleJoin(trNounPhrase(list of [],Sub),trVerbPhrase(list of [],VP));
  
   trVerbPhrase(SoFar,<| [ ?VPs ] |>) is SoFar++mapComma(trVerbPhrase,VPs); 
-  trVerbPhrase(SoFar,<| ?V $ ?O |>) is SoFar++pairJoin(trVerb(list of {},V),trNounPhrase(list of {},O));
+  trVerbPhrase(SoFar,<| ?V $ ?O |>) is SoFar++pairJoin(trVerb(list of [],V),trNounPhrase(list of [],O));
   
   trVerb(SoFar,<| [?Vs] |>) is SoFar++mapComma(trVerb,Vs);
-  trVerb(SoFar, C) is list of {SoFar..;trConcept(C)};
+  trVerb(SoFar, C) is list of [SoFar..,trConcept(C)];
   
   trNounPhrase(SoFar,<| [ ?NPs ] |>) is SoFar++mapComma(trNounPhrase,NPs);
   trNounPhrase(SoFar, N ) is list of {SoFar..;trConcept(N) };
@@ -117,18 +117,36 @@ import cons;
   nameString(nameAst(Lc,N)) is stringAst(Lc,N);
   
   unwrapSemi(<| ?L ; ?R |>,Lst) is unwrapSemi(R,unwrapSemi(L,Lst));
-  unwrapSemi(El,Lst) is list of {Lst..;El};
+  unwrapSemi(El,Lst) is list of [Lst..,El];
  
-  wrapSemi(list of {El}) is <| ?El |>;
-  wrapSemi(list of {El;..More}) is <| ?El ; ?wrapSemi(More) |>;
- 
-  mapSemi(F,A) is leftFold(F,list of {},unwrapSemi(A,list of {}));
+  unwrap(A) is valof{
+    var R is unwrapSemi(A,list of []);
+    logMsg(info,"","Unwrap of $(display_quoted(A)) is");
+    for E in R do
+      logMsg(info,"",display_quoted(E));
+    valis R
+  };
+
+  wrapComma(list of [El]) is <| ?El |>;
+  wrapComma(list of [El,..More]) is <| ?El , ?wrapComma(More) |>;
 
   unwrapComma(<| ?L , ?R |>,Lst) is unwrapComma(R,unwrapComma(L,Lst));
-  unwrapComma(El,Lst) is list of {Lst..;El};
-
-  mapComma(F,A) is leftFold(F,list of {},unwrapComma(A,list of {}));
+  unwrapComma(El,Lst) is list of [Lst..,El];   
   
+  mapComma(F,A) is valof{
+    var R is leftFold(F,list of [],unwrapComma(A,list of []));
+    logMsg(info,"","$R");
+    valis R
+  }
+  
+  mapSemi(F,A) is valof{
+    var R is leftFold(F,list of [],unwrapSemi(A,list of []));
+    logMsg(info,"","$R");
+    valis R
+  }
+  
+  
+
   pairJoin(L1,L2) is list of { (E1,E2) where E1 in L1 and E2 in L2 };
   
   tripleJoin(L1,L2) is list of { <| n3Triple(?S,?V,?O) |> where S in L1 and (V,O) in L2 };

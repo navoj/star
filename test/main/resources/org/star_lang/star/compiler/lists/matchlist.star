@@ -19,10 +19,10 @@
  */
 matchlist is package{
 
-  singletons(R) is relation of { all X where (X matching (list of {_})) in R};
+  singletons(R) is list of { all X where (X matching (list of [_])) in R};
   
   main() do {
-    RR is relation{ list of {1}; list of {2}; list of {3} };
+    RR is list of [ list of [1], list of [2], list of [3]];
     assert singletons(RR) = RR;
   }
 }

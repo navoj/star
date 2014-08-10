@@ -55,16 +55,16 @@ complexqueries is package{
     ("b",2);
   };
   
-  S is relation{
-    ("a",10);
-    ("b",2);
+  S is list of [
+    ("a",10),
+    ("b",2),
     ("d",3)
-  };
+  ];
   
-  T is relation{
-    10;
+  T is list of [
+    10,
     12
-   };
+   ];
    
   U is indexed{
     ("a",10);

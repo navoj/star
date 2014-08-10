@@ -1,5 +1,5 @@
 recordPattern is package{
-  R is relation of { ("alpha",1); ("beta", 2) };
+  R is list of [ ("alpha",1), ("beta", 2) ];
   
   run(F) do {
     RR is F({REL1=R;KK=23});
@@ -10,6 +10,6 @@ recordPattern is package{
   } 
   
   main() do {
-    run((function({REL1 = (REL1 has type relation of ((string,integer)))}) is (all x where x in REL1) ));
+    run((function({REL1 = (REL1 has type list of ((string,integer)))}) is (all x where x in REL1) ));
   }
 } 

@@ -18,14 +18,14 @@
  *
  */
 tableInserts is package{
-  -- test out ading elements to a relation
+  -- test out ading elements to a list
 
-  R has type ref relation of ((string,integer));
-  var R := relation of {
-    ("a",1);
-  };
+  R has type ref list of ((string,integer));
+  var R := list of [
+    ("a",1)
+  ];
   
-  check has type (string,relation of ((string,integer))) =>boolean;
+  check has type (string,list of ((string,integer))) =>boolean;
   check(S,Rl) is ((SS,_) where SS=S) in Rl;
   
   main has type action();
@@ -36,16 +36,16 @@ tableInserts is package{
     logMsg(info,"is a in $R? $(check("a",R))");
     logMsg(info,"is e in $R? $(check("e",R))");
     
-    merge R with relation{("e",5)};
+    merge R with list of [("e",5)];
     logMsg(info,"is e in $R? $(check("e",R))");
     assert ("e",5) in R;
     
-    merge R with relation{("aa",1);("bb",2);("cc",3)};
+    merge R with list of [("aa",1), ("bb",2), ("cc",3)];
     logMsg(info,"is cc in $R? $(check("cc",R))");
     assert ("aa",_) in R;
     
-    RR has type ref relation of ((string,integer));
-    var RR := relation of {};
+    RR has type ref list of ((string,integer));
+    var RR := list of [];
     for KV in (all (K,V) where (K,V) in R and V>1) do
       extend RR with KV;
     logMsg(info,"RR=$RR");

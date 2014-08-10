@@ -550,30 +550,9 @@ serialization is package {
     };
   };
 
-/* list is type alias of array, currently
- implementation serializable over list of %a where serializable over %a is {
- shove(l) is shoveList(l);
- yank is yankList;
- } using {
- -- shoveList has type (list of %a) => shoverM of list of %a where serializable over %a;
- shoveList(list of []) is shoveWord8(word8(0));
- shoveList(list of [a,..rest]) is bind(shoveWord8(word8(1)),
- (function (_) is bind(shove(a),
- (function(_) is shoveList(rest)))
- ));
-
- yankList is bind(yankWord8, yankList2);
-
- yankList2(word8(0)) is return(list of []);
- yankList2(word8(1)) is bind(yank,
- (function (a) is bind(yankList,
- (function(rest) is return(list of [a,.. rest])))
- ));
- };
- */
 
 /* serialize array by writing out its size plus its items */
-  implementation serializable over array of %a where serializable over %a is {
+  implementation serializable over list of %a where serializable over %a is {
     shove(l) is shoveArray(l);
     yank is yankArray;
   } using {
@@ -717,37 +696,8 @@ serialization is package {
     };
   }
 
-/* serialize relations */
-  implementation serializable over relation of %a where serializable over %a is {
-    shove(r) is shoverM computation {
-      sz is size(r);
-      perform shoveWord32(word32(sz));
-      valis valof shoveRelation(r);
-    }
-    yank is yankRelation;
-  } using {
-    shoveRelation has type (relation of %a) => shover where serializable over %a;
-    shoveRelation(relation of {}) is shoverM computation { valis () };
-    shoveRelation(relation of {H;..T}) is shoverM computation {
-      perform shove(H);
-      valis valof shoveRelation(T);
-    }
-
-    yankRelation has type (yanker of relation of %a) where serializable over %a;
-    yankRelation is yanker computation {
-      _word32(sz) is valof yankWord32;
-      valis valof yankRelation0(0, sz, relation of {});
-    };
-
-    yankRelation0(i, sz, r) where i >= sz is yanker computation { valis r };
-    yankRelation0(i, sz, r) is yanker computation {
-      e is valof yank;
-      valis valof yankRelation0(i+1, sz, relation of {e;..r});
-    }
-  }
-
-/* serialize maps (aka hash) */
-  implementation serializable over hash of (%k, %v) where serializable over %k and serializable over %v is { -- '
+/* serialize dictionaries */
+  implementation serializable over dictionary of (%k, %v) where serializable over %k and serializable over %v is { -- '
     shove(m) is shoveHash(m);
     yank is yankHash;
   } using {

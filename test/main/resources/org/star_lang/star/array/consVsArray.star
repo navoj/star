@@ -29,31 +29,21 @@ consVsArray is package{
     valis L
   }
   
-  buildArray(F,T) is valof{
-    var L := array of {};
-    var Ix := F;
-    while Ix<T do{
-      L := array of {Ix;..L};
-      Ix := Ix+1;
-    }
-    valis L
-  }
-  
    buildList(F,T) is valof{
-    var L := list of {};
+    var L := list of [];
     var Ix := F;
     while Ix<T do{
-      L := list of {Ix;..L};
+      L := list of [Ix,..L];
       Ix := Ix+1;
     }
     valis L
   }
   
   buildQueue(F,T) is valof{
-    var L := queue of {};
+    var L := queue of [];
     var Ix := F;
     while Ix<T do{
-      L := queue of {Ix;..L};
+      L := queue of [Ix,..L];
       Ix := Ix+1;
     }
     valis L
@@ -61,7 +51,7 @@ consVsArray is package{
 
   walkOver(S) do {
     var SS := S;
-    while SS matches sequence of {H;..T} do{
+    while SS matches sequence of [H,..T] do{
       -- logMsg(info,"got $H");
       SS := T;
     };
@@ -80,31 +70,23 @@ consVsArray is package{
     startBase is nanos();
     CL is buildCons(1,count);
     consMark is nanos();
-    
-    AL is buildArray(1,count);
-    
-    arrayMark is nanos();
-    
+        
     LL is buildList(1,count);
     listMark is nanos();
     QL is buildQueue(1,count);
     queueMark is nanos();
     
     consBuildTime is consMark-startBase;
-    arrayBuildTime is arrayMark-consMark;
-    listBuildTime is listMark-arrayMark;
+    listBuildTime is listMark-consMark;
     queueBuildTime is queueMark-listMark;
     
     logMsg(info,"cons build time is $consBuildTime");
-    logMsg(info,"array build time is $arrayBuildTime");
     logMsg(info,"list build time is $listBuildTime");
     logMsg(info,"queue build time is $queueBuildTime");
     
     mark is nanos();
     walkOver(CL);
     mark2 is nanos();
-    walkOver(AL);
-    mark3 is nanos();
     walkOver(LL);
     mark4 is nanos();
     walkOver(QL);
@@ -112,33 +94,25 @@ consVsArray is package{
     
     bmark is nanos();
     walkBack(CL);
-    bmark1 is nanos();
-    walkBack(AL);
     bmark2 is nanos();
     walkBack(QL);
     bmark3 is nanos();
     
---   walkBack(LL); -- cant walk backwards over lists
---    mark6 is nanos();
+    walkBack(LL); -- cant walk backwards over lists
+    bmark4 is nanos();
 
     
     consWalkTime is (mark2-mark) as float;
-    consWalkbackTime is (bmark1-bmark) as float;
+    consWalkbackTime is (bmark2-bmark) as float;
     
     logMsg(info,"cons walk time is $consWalkTime");
     logMsg(info,"cons walk back time is $consWalkbackTime");
     
-    arrayWalkTime is (mark3-mark2) as float;
-    arrayWalkbackTime is (bmark2-bmark1) as float;
-   
-    logMsg(info,"array walk time is $arrayWalkTime");
-    logMsg(info,"array walk back time is $arrayWalkbackTime");
-    
-    listWalkTime is (mark4-mark3) as float;
---    listWalkbackTime is (mark6-mark5) as float;
+    listWalkTime is (mark4-mark2) as float;
+    listWalkbackTime is (bmark4-bmark3) as float;
     
     logMsg(info,"list walk time is $listWalkTime");
- --   logMsg(info,"list walk back time is $listWalkbackTime");
+    logMsg(info,"list walk back time is $listWalkbackTime");
  
     queueWalkTime is (mark5-mark4) as float;
     queueWalkbackTime is (bmark3-bmark2) as float;
@@ -146,21 +120,17 @@ consVsArray is package{
     logMsg(info,"queue walk time is $queueWalkTime");
     logMsg(info,"queue walk back time is $queueWalkbackTime");
     
-    logMsg(info,"cons/array build is $(consBuildTime as float/arrayBuildTime as float)");
-    logMsg(info,"cons/array walk is $(consWalkTime/arrayWalkTime)");
-    logMsg(info,"cons/array walk back is $(consWalkbackTime/arrayWalkbackTime)");
+    logMsg(info,"cons/list build is $(consBuildTime as float/listBuildTime as float)");
+    logMsg(info,"cons/list walk is $(consWalkTime/listWalkTime)");
+    logMsg(info,"cons/list walk back is $(consWalkbackTime/listWalkbackTime)");
     
     logMsg(info,"cons/queue build is $(consBuildTime as float/queueBuildTime as float)");
     logMsg(info,"cons/queue walk is $(consWalkTime/queueWalkTime)");
     logMsg(info,"cons/queue walk back is $(consWalkbackTime/queueWalkbackTime)");
     
-    logMsg(info,"array/queue build is $(arrayBuildTime as float/queueBuildTime as float)");
-    logMsg(info,"array/queue walk is $(arrayWalkTime/queueWalkTime)");
-    logMsg(info,"array/queue walk back is $(arrayWalkbackTime/queueWalkbackTime)");
-    
-    logMsg(info,"list/array build is $(listBuildTime as float/arrayBuildTime as float)");
-    logMsg(info,"list/array walk is $(listWalkTime/arrayWalkTime)");
---    logMsg(info,"list/array walk back is $(listWalkbackTime/arrayWalkbackTime)");
+    logMsg(info,"list/queue build is $(listBuildTime as float/queueBuildTime as float)");
+    logMsg(info,"list/queue walk is $(listWalkTime/queueWalkTime)");
+    logMsg(info,"list/queue walk back is $(listWalkbackTime/queueWalkbackTime)");
   }
 }
     

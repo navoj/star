@@ -19,12 +19,12 @@
  */
 splices is package {
   main () do {
-    logMsg(info,"testing array splices");
-    var a := array of {0;1};
-    a[2:2] := array of {99};
-    assert a=array of {0;1;99};
+    logMsg(info,"testing list splices");
+    var a := list of [0,1];
+    a[2:2] := list of [99];
+    assert a=list of [0,1,99];
 
-    var b := array of {0;1};
-    b[2:1] := array of {99};
+    var b := list of [0,1];
+    b[2:1] := list of [99];
   }
 }

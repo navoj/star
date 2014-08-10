@@ -17,9 +17,7 @@
  * @author fgm
  *
  */
-matchingQuery is package{
-  import dictionary;
-  
+matchingQuery is package{  
   type employee is empl{
     name has type string;
     id has type integer;
@@ -30,7 +28,7 @@ matchingQuery is package{
   Peter is empl{ name="peter"; id=1; ssn="002-02-0002"};
   John is empl{ name="john";id=2;ssn="003-03-0003"};
   
-  E is relation of { Joe;  Peter; John };
+  E is list of [ Joe,  Peter, John ];
                   
   findEmpl(N,I,S,EE) is 
     list of { all Em where Em matching empl{ name = Nm; id = ID; ssn = SSN} in EE and (N=Nm or N=nonString) and (ID=I or I=nonInteger) and (SSN=S or S=nonString)};

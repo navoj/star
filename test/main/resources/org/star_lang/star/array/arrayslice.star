@@ -24,7 +24,7 @@ arrayslice is package {
   type Arr of %a is
        ArrEmpty
     or ArrSingle(%a)
-    or ArrDeep(array of %a, Arr of (array of %a), array of %a);
+    or ArrDeep(list of %a, Arr of (list of %a), list of %a);
 
   var debug := false;
 

@@ -15,7 +15,6 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.IPattern;
 import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IScalar;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
@@ -101,12 +100,6 @@ public class AbstractValue implements IValueVisitor
 
   @Override
   public void visitList(IList list)
-  {
-    throw new UnsupportedOperationException("not implemented");
-  }
-
-  @Override
-  public void visitRelation(IRelation relation)
   {
     throw new UnsupportedOperationException("not implemented");
   }

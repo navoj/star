@@ -36,7 +36,7 @@ private import folding;
       iFalse or
       iTrue or
       iNull or
-      iColl(map of (string,json)) or
+      iColl(dictionary of (string,json)) or
       iSeq(list of json) or
       iText(string) or
       iNum(long) or
@@ -175,10 +175,10 @@ private import folding;
       raise "missing ']'";
   }
   
-  private parseMap(list of {'}';..L}) is (iColl(map of {}),L);
+  private parseMap(list of {'}';..L}) is (iColl(dictionary of {}),L);
   parseMap(L) is valof{
     (K1,V1,L0) is parsePair(L);
-    var SoFar := map of {K1->V1};
+    var SoFar := dictionary of {K1->V1};
     var LL := skipBlanks(L0);
     
     while LL matches list of {',';..Lx} do {
@@ -308,24 +308,26 @@ private import folding;
 }
 
 #json{?B} ==> jsonColl(B) ## {
-  #jsonColl(?E) ==> iColl(map of {jsonMapElements(E)});
+  #jsonColl(E) is <|iColl(dictionary of {?jsonMapElements(E)})|>;
   
-  #jsonMapElements(#(?L;?R)#) ==> #(jsonMapElements(L);jsonMapElements(R))#;
-  #jsonMapElements(#(?L,?R)#) ==> #(jsonMapElements(L);jsonMapElements(R))#;
-  #jsonMapElements(?S:?E) ==> S->jsonValue(E);
+  jsonMapElements(<|?L;?R|>) is <|?jsonMapElements(L);?jsonMapElements(R)|>;
+  jsonMapElements(<|?L,?R|>) is <|?jsonMapElements(L);?jsonMapElements(R)|>;
+  jsonMapElements(<|?S:?E|>) is <|?S->?jsonValue(E)|>;
   
-  #jsonValue(true) ==> iTrue;
-  #jsonValue(false) ==> iFalse;
-  #jsonValue(null) ==> iNull;
-  #jsonValue({?E}) ==> iColl(map of {jsonMapElements(E)});
-  #jsonValue([?E]) ==> iSeq(list of { jsonSeq(E) });
-  #jsonValue(string?T) ==> iText(T);
-  #jsonValue(integer?I) ==> iNum(I as long);
-  #jsonValue(long?L) ==> iNum(L);
-  #jsonValue(float?F) ==> iFlt(F);
+  jsonValue(<|true|>) is <|iTrue|>;
+  jsonValue(<|false|>) is <|iFalse|>;
+  jsonValue(<|null|>) is <|iNull|>;
+  jsonValue(<|{}|>) is <|iColl(dictionary of {})|>;
+  jsonValue(<|{?E}|>) is jsonColl(E);
+  jsonValue(<|[]|>) is <|iSeq(list of [])|>;
+  jsonValue(<|[?E]|>) is <|iSeq(list of [ ?jsonSeq(E) ])|>;
+  jsonValue(<|string?T|>) is <|iText(?T)|>;
+  jsonValue(<|integer?I|>) is <|iNum(?I as long)|>;
+  jsonValue(<|long?L|>) is <|iNum(?L)|>;
+  jsonValue(<|float?F|>) is <|iFlt(?F)|>;
   
-  #jsonSeq(#(?L;?R)#) ==> #(jsonSeq(L);jsonSeq(R))#;
-  #jsonSeq(#(?L,?R)#) ==> #(jsonSeq(L);jsonSeq(R))#;
-  #jsonSeq(?E) ==> jsonValue(E);
+  jsonSeq(<|?L;?R|>) is <|?jsonSeq(L),?jsonSeq(R)|>;
+  jsonSeq(<|?L,?R|>) is <|?jsonSeq(L),?jsonSeq(R)|>;
+  jsonSeq(L) is jsonValue(L);
 }
 

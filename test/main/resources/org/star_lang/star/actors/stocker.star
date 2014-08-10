@@ -32,8 +32,8 @@ stocker is package{
 
     avePrice(Frm,To) is average(all Pr where (Pr,W) in prices and Frm<=W and W<To);
   } using {
-    prices has type ref relation of ((float,eventTime));
-    var prices := relation of {};
+    prices has type ref list of ((float,eventTime));
+    var prices := list of [];
   };
   
   average(La) is sum(La)/size(La) as float using {
@@ -48,7 +48,7 @@ stocker is package{
   main() do {
     S is stocker();
     
-    for Pr in list of { (10.0, 0L); (10.2,2L); (9.3,4L); (9.5,5L); (9.7,6L); (10.0,8L); (12.2,10L) } do
+    for Pr in list of [ (10.0, 0L), (10.2,2L), (9.3,4L), (9.5,5L), (9.7,6L), (10.0,8L), (12.2,10L) ] do
       notify S with Pr on tick;
     logMsg(info,"price average 2-10: $(query S's avePrice with avePrice(2L,10L))");
   }

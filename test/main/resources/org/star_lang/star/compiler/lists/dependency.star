@@ -59,8 +59,8 @@ dependency is package{
     
     popStack has type (stack of %t,integer)=>() where pPrint over %t;
     popStack(S,L0) do {
-      rel is S[0:(size(S)-L0)] as (relation of %t);
-      groups := list of {groups..;rel};
+      rel is S[0:(size(S)-L0)];
+      groups := list of [groups..,rel];
     }
    
     sortGraph() is valof{
@@ -80,7 +80,7 @@ dependency is package{
   indexOf(S,N) is valof{
 	var SS := S;
 	var Ix := size(S)-1;
-	while SS matches list of {E;..R} do {
+	while SS matches list of [E,..R] do {
       if E=N then
         valis Ix
       else{
@@ -94,24 +94,24 @@ dependency is package{
   type node is Nd(string);
   
   main() do {
-	G is map of{
-	  Nd("A") -> relation of {Nd("D")};
-	  Nd("B") -> relation of {Nd("C"); Nd("F")};
-	  Nd("C") -> relation of {Nd("D")};
-	  Nd("D") -> relation of {Nd("B")};
-	  Nd("E") -> relation of {Nd("F"); Nd("G")};
-	  Nd("F") -> relation of {Nd("E"); Nd("G")};
-	  Nd("G") -> relation of {}
+	G is dictionary of{
+	  Nd("A") -> list of [Nd("D")];
+	  Nd("B") -> list of [Nd("C"), Nd("F")];
+	  Nd("C") -> list of [Nd("D")];
+	  Nd("D") -> list of [Nd("B")];
+	  Nd("E") -> list of [Nd("F"), Nd("G")];
+	  Nd("F") -> list of [Nd("E"), Nd("G")];
+	  Nd("G") -> list of []
 	};
 	
 	Sorted is analyseGraph(G);
    
 	logMsg(info,"sorted graph is $Sorted");
 	
-	assert Sorted=array of { relation of {Nd("G")};
-	                         relation of {Nd("E"); Nd("F")};
-	                         relation of {Nd("B"); Nd("C"); Nd("D")};
-	                         relation of {Nd("A")}
-	                       };
+	assert Sorted=list of [ list of [Nd("G")],
+	                        list of [Nd("E"), Nd("F")],
+	                        list of [Nd("C"), Nd("B"), Nd("D")],
+	                        list of [Nd("A")]
+	                       ];
   };
 }

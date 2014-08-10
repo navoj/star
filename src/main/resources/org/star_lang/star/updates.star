@@ -27,6 +27,3 @@ contract updates over %t determines %e is {
     #$filter(#$X) default is #$X; 
   } in _replace_(Tgt, #$filter);
 
-implementation updates over relation of %e determines %e is {
-  _replace_(R,F) do __relation_update(R,F);
-}

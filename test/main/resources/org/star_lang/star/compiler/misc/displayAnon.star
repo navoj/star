@@ -18,9 +18,9 @@
  *
  */
 displayAnon is package{
-  RR has type relation of {name has type string; age has type integer}; 
+  RR has type list of {name has type string; age has type integer}; 
   
-  var RR is relation { {name="john"; age=23}; {name="peter"; age=34}};
+  var RR is list of [ {name="john"; age=23}, {name="peter"; age=34}];
   
   main() do {
     var R is {name="john"; age=23};

@@ -17,9 +17,7 @@
  * @author fgm
  *
  */
-hashes is package{
-  import dictionary;
-  
+hashes is package{  
   -- trial data
   
   M is dictionary of {("a",1); ("b",2); ("c",3)};

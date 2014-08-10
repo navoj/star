@@ -22,9 +22,9 @@ import ports;
 import person;
 
 voltest is connections{
-     originate(Ao,{DATA has type stream of Person; ACT has type action(Person); R has type relation of ((Person,string))});
+     originate(Ao,{DATA has type stream of Person; ACT has type action(Person); R has type list of ((Person,string))});
      respond(Br,{INP has type stream of Person});
-     respond(Cr,{DATA has type stream of Person; ACT has type action(Person); R has type relation of ((Person,string))});
+     respond(Cr,{DATA has type stream of Person; ACT has type action(Person); R has type list of ((Person,string))});
      connect(Ao,Br,(volunteer X on DATA as X on INP));
      connect(Ao,Cr,(volunteer X as X));
    }

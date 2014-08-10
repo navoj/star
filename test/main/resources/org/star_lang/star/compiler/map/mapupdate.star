@@ -19,7 +19,7 @@
  */
 mapupdate is package{
   type props is props{
-    values has type ref map of (string,string);
+    values has type ref dictionary of (string,string);
   };
   type person is person{
     name has type string;
@@ -28,7 +28,7 @@ mapupdate is package{
   
   main() do
   {
-    var Joe := person{name = "Joe"; atts = props{values:=map of {"alpha"->"beta"} }};
+    var Joe := person{name = "Joe"; atts = props{values:=dictionary of {"alpha"->"beta"} }};
     
     var prop := "alpha";
     

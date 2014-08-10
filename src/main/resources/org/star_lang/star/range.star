@@ -51,7 +51,7 @@ private iotaIterate(Fr,To,Stp,Fn,S) is valof{
 }
 
 implementation for all t such that concatenate over range of t where equality over t is {
-  _concat(range(F,I,St),range(I,To,St)) is range(F,To,St);
+  range(F,I,St)++range(I,To,St) is range(F,To,St);
 }
 
 -- macro out common use cases ...

@@ -22,7 +22,7 @@ dotPtn is package{
     country has type string;
   }
   
-  countries is relation of {"usa"; "uk"; "japan"};
+  countries is list of ["usa", "uk", "japan"];
   
   includeStore(X) is (X.country) in countries;
   

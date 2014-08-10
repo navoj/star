@@ -56,19 +56,19 @@ private import actors;
 #wait for ?E :: expression :- choose E :: expression;
 
 #choose ?Rendez ==> rEnder(Rendez) ## {
-  #rEnder(?L or ?R) ==> _choose2(rEnder(L),rEnder(R));
-  #rEnder((?R)) ==> rEnder(R);
-  #rEnder(always ?X) ==> alwaysRv(X);
-  #rEnder(never) ==> neverRv;
-  #rEnder(timeout ?T) ==> timeoutRv(T);
-  #rEnder(at ?T) ==> atDateRv(T);
-  #rEnder(choose ?R) ==> rEnder(R);
-  #rEnder(incoming ?Ch) ==> recvRv(Ch);
-  #rEnder(put ?M on ?Ch) ==> sendRv(Ch,M);
-  #rEnder(wrap ?R in ?P->?T) ==> wrapRv(rEnder(R),(function(P) is T));
-  #rEnder(wrap ?R in ?F) ==> wrapRv(rEnder(R),F);
-  #rEnder(guard ?R) ==> guardRv(R);
-  #rEnder(?E) ==> E;
+  #rEnder(<|?L or ?R|>) is <|_choose2(?rEnder(L),?rEnder(R))|>;
+  #rEnder(<|(?R)|>) is rEnder(R);
+  #rEnder(<|always ?X|>) is <|alwaysRv(?X)|>;
+  #rEnder(<|never|>) is <|neverRv|>;
+  #rEnder(<|timeout ?T|>) is <|timeoutRv(?T)|>;
+  #rEnder(<|at ?T|>) is <|atDateRv(?T)|>;
+  #rEnder(<|choose ?R|>) is <|rEnder(?R)|>;
+  #rEnder(<|incoming ?Ch|>) is <|recvRv(?Ch)|>;
+  #rEnder(<|put ?M on ?Ch|>) is <|sendRv(?Ch,?M)|>;
+  #rEnder(<|wrap ?R in ?P->?T|>) is <|wrapRv(?rEnder(R),(function(?P) is ?T))|>;
+  #rEnder(<|wrap ?R in ?F|>) is <|wrapRv(?rEnder(R),?F)|>;
+  #rEnder(<|guard ?R|>) is <|guardRv(?R)|>;
+  #rEnder(E) is E;
 };
 
 #wait for ?R ==> await(choose R);

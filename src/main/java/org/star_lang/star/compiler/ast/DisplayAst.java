@@ -135,6 +135,9 @@ public class DisplayAst implements IFunction
       if (content != null)
         display(disp, content, 1000);
       disp.append("]");
+    } else if (CompilerUtils.isSquareSequenceTerm(app)) {
+      display(disp, CompilerUtils.unWrap(CompilerUtils.squareContent(app), StandardNames.COMMA), "[", ", ", "]", 2,
+          1100);
     } else if (Abstract.isTupleTerm(app))
       display(disp, app.getArgs(), " (", ", ", ")", 0, 1000);
     else if (Abstract.arity(app) == 2 && Abstract.isIdentifier(operator)) {

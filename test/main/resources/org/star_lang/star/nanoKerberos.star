@@ -35,7 +35,7 @@ nanoKerberos is package {
                        { user="peter"; password="PETER"; status=user};
                        { user="root" ; password="OPEN"; status=administrator} };
                        
-    private var sessions := relation{};
+    private var sessions := list of [];
     
     login(User,Pass) where {user=User;password=Pass} in users is valof{
       SessionId is random(1000000);

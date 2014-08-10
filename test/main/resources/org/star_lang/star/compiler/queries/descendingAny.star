@@ -19,7 +19,7 @@
  */
 descendingAny is package {
   main() do {
-    q is anyof X where X in relation{30; 20; 10; 10} order descending by X;
+    q is anyof X where X in list of [30, 20, 10, 10] order descending by X;
     logMsg(info,"$q");
     assert q=30;
   }

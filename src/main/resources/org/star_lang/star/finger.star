@@ -58,10 +58,10 @@ type FingerList of %a is
 * case (from which on, all %a are FLNode of %a).
 */
 
--- integer_: cumulative size of all elements in array
-type FLNode of %a is FLNode(integer_, array of %a);
+-- integer_: cumulative size of all elements in list
+type FLNode of %a is FLNode(integer_, list of %a);
 
-type FLDigit of %a is alias of array of %a;
+type FLDigit of %a is alias of list of %a;
 
 /* FLDigit */
 
@@ -101,15 +101,15 @@ private nodeSize has type (FLNode of %a) => integer_;
 nodeSize(FLNode(v, _)) is v;
 
 /** smart constructors */
-private flNodeElem has type (array of %a) => FLNode of %a;
+private flNodeElem has type (list of %a) => FLNode of %a;
 flNodeElem(els) is FLNode(__array_size(els), els);
 
-private flNodeNode has type (array of FLNode of %a) => FLNode of FLNode of %a;
+private flNodeNode has type (list of FLNode of %a) => FLNode of FLNode of %a;
 flNodeNode(nodes) is FLNode(sz, nodes) using {
   sz is array_int_foldLeft((function(s,n) is __integer_plus(s, nodeSize(n))), ZERO, nodes);
 };
 
-private nodesFromListHelper has type ((array of %a) => %%e of %a, array of %a) => array of %%e of %a;
+private nodesFromListHelper has type ((list of %a) => %%e of %a, list of %a) => list of %%e of %a;
 private nodesFromListHelper(nodeConstr, els0) is valof {
   _FINGER_LIST_NODE_WIDTH_MINUS_ONE is __integer_minus(_FINGER_LIST_NODE_WIDTH, ONE)
   var els := els0;
@@ -129,13 +129,13 @@ private nodesFromListHelper(nodeConstr, els0) is valof {
   valis res;
 };
 
-private nodesFromListElem has type (array of %a) => array of FLNode of (%a);
+private nodesFromListElem has type (list of %a) => list of FLNode of (%a);
 nodesFromListElem(els) is nodesFromListHelper(flNodeElem, els);
 
-private nodesFromListNode has type (array of (FLNode of %a)) => array of (FLNode of (FLNode of %a));
+private nodesFromListNode has type (list of (FLNode of %a)) => list of (FLNode of (FLNode of %a));
 nodesFromListNode(nodes) is nodesFromListHelper(flNodeNode, nodes);
 
-private nodeToArray has type (FLNode of (%a)) => array of %a;
+private nodeToArray has type (FLNode of (%a)) => list of %a;
 nodeToArray(FLNode(_, arr)) is arr;
 
 /* FingerList of %a */
@@ -316,7 +316,7 @@ flFrontLast(ft) is case flViewFromRightElem(ft) in {
 
 private flAppend has type (FingerList of (%a), FingerList of (%a)) => FingerList of (%a);
 flAppend(xs, ys) is app3Elem(xs, __array_nil(), ys) using {
-  app3Elem has type (FingerList of (%a), array of %a, FingerList of (%a)) => FingerList of (%a);
+  app3Elem has type (FingerList of (%a), list of %a, FingerList of (%a)) => FingerList of (%a);
   app3Elem(FLEmpty, ts, xs_) is array_foldRight(flConsElem, xs_, ts);
   app3Elem(xs_, ts, FLEmpty) is array_foldLeft(flAdjoinElem, xs_, ts);
   app3Elem(FLSingle(x), ts, xs_) is flConsElem(x, array_foldRight(flConsElem, xs_, ts));
@@ -324,7 +324,7 @@ flAppend(xs, ys) is app3Elem(xs, __array_nil(), ys) using {
   app3Elem(FLDeep(v1, pr1, m1, sf1), ts, FLDeep(v2, pr2, m2, sf2)) is
     FLDeep(__integer_plus(v1, __integer_plus(v2, __array_size(ts))), pr1, app3Node(m1, (nodesFromListElem(__array_concatenate((sf1), __array_concatenate(ts, (pr2))))), m2), sf2);
 
-  app3Node has type (FingerList of (FLNode of %c), array of (FLNode of %c), FingerList of (FLNode of %c)) => FingerList of (FLNode of %c);
+  app3Node has type (FingerList of (FLNode of %c), list of (FLNode of %c), FingerList of (FLNode of %c)) => FingerList of (FLNode of %c);
   app3Node(FLEmpty, ts, xs_) is array_foldRight(flConsNode, xs_, ts);
   app3Node(xs_, ts, FLEmpty) is array_foldLeft(flAdjoinNode, xs_, ts);
   app3Node(FLSingle(x), ts, xs_) is flConsNode(x, array_foldRight(flConsNode, xs_, ts));
@@ -332,7 +332,7 @@ flAppend(xs, ys) is app3Elem(xs, __array_nil(), ys) using {
   app3Node(FLDeep(v1, pr1, m1, sf1), ts, FLDeep(v2, pr2, m2, sf2)) is
     FLDeep(__integer_plus(v1, __integer_plus(v2, sumNodeSize(ts))), pr1, app3Node(m1, (nodesFromListNode(__array_concatenate((sf1), __array_concatenate(ts, (pr2))))), m2), sf2);
 
-  sumNodeSize has type (array of (FLNode of %c)) => integer_;
+  sumNodeSize has type (list of (FLNode of %c)) => integer_;
   sumNodeSize(s) is array_int_foldLeft((function(a,b) is __integer_plus(a,nodeSize(b))), ZERO, s);
 }
 

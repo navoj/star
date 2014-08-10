@@ -20,18 +20,18 @@
 tables is package{
   -- test out some of the basic tables and relations stuff
 
-  R has type relation of ((string,integer));
-  R is relation {
-    ("a",1);
-    ("b",2);
-    ("c",3);
+  R has type list of ((string,integer));
+  R is list of[
+    ("a",1),
+    ("b",2),
+    ("c",3),
     ("a",4)
-  };
+  ];
   
-  P has type relation of {name has type string;age has type integer};
-  P is relation of{ {name="fred";age=24}; {name="peter";age=23}};
+  P has type list of {name has type string;age has type integer};
+  P is list of [ {name="fred";age=24}, {name="peter";age=23}];
   
-  check has type (string,relation of ((string,integer))) =>boolean;
+  check has type (string,list of ((string,integer))) =>boolean;
   check(S,Rr) is ((SS,_) where SS=S) in Rr;
     
   main has type action();
@@ -44,7 +44,7 @@ tables is package{
     
     logMsg(info,"is fred in P? $(all pp where pp in P and pp.name="fred")");
 
-    assert (all pp where pp in P and pp.name="fred")=array of {{name="fred";age=24}};
-    assert (all pp where pp in P and pp.name="peter")!=array of {{name="fred";age=24}};
+    assert (all pp where pp in P and pp.name="fred")=list of [{name="fred";age=24}];
+    assert (all pp where pp in P and pp.name="peter")!=list of [{name="fred";age=24}];
   }
 }

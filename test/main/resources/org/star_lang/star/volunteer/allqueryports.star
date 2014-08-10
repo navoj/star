@@ -22,11 +22,11 @@ allqueryports is package{
   import ports;
   
   RR is p0rt{
-    var Folder := relation{
-      ("alpha",true);
-      ("beta",false);
-      ("gamma",true);
-    };
+    var Folder := list of [
+      ("alpha",true),
+      ("beta",false),
+      ("gamma",true)
+    ];
     
     DELETE(K) where (K,_) in Folder is valof{
       delete ((Kk,_) where K=Kk) in Folder;
@@ -40,9 +40,9 @@ allqueryports is package{
   PP is connectPort_0(RR);
   
   main() do {
-    A1 is query PP's Folder with relation of {all X where (X,true) in Folder};
+    A1 is query PP's Folder with list of {all X where (X,true) in Folder};
     
     logMsg(info,"$A1");
-    assert A1=relation of {"gamma";"alpha"};
+    assert A1=list of ["alpha","gamma"];
   }
 }

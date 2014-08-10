@@ -47,6 +47,6 @@ quick is package{
 
     } in valof{
       split();
-      valis quick(lftHalf,C)<>list of [pivot,..quick(rgtHalf,C)];
+      valis quick(lftHalf,C)++list of [pivot,..quick(rgtHalf,C)];
     }
 }

@@ -19,14 +19,14 @@
  */
 mergerelation is package{
         
-  var Scores := relation{
-    {name="j"; amount=1};
-    {name="p"; amount=2};
-    {name="m"; amount=0};
-  };      
+  var Scores := list of [
+    {name="j"; amount=1},
+    {name="p"; amount=2},
+    {name="m"; amount=0}
+  ];      
   main() do {
     logMsg(info, "Test the merge relation function");
-    merge Scores with relation{{name="X"; amount=9}};
+    merge Scores with list of [{name="X"; amount=9}];
     
     assert size(Scores)=4;
     assert {name="X"} in Scores;

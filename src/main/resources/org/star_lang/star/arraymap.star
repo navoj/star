@@ -18,20 +18,20 @@
  *
  */
 private import base;
-private import arrays;
 private import cons;
 private import strings;
 private import sequences;
+private import arrays;
 private import updateable;
 private import folding;
 private import iterable;
 
--- a simple implementation of the map interfaces using arrays
+-- a simple implementation of the map interfaces using lists
 
-type seqmap of (%k,%v) is seqmap(array of ((%k,%v)));
+type seqmap of (%k,%v) is seqmap(list of ((%k,%v)));
 
 implementation sizeable over seqmap of (%s,%t) is {
-  isEmpty(seqmap(array of {})) is true;
+  isEmpty(seqmap(_empty())) is true;
   isEmpty(_) default is false;
   size(seqmap(L)) is integer(__array_size(L));
 }
@@ -43,23 +43,23 @@ implementation indexable over seqmap of (%k,%v) determines (%k,%v) where equalit
 }
 
 private
-inArray(V) from (array of {(K,V);.._},K);
-inArray(V) from (array of {_;..T},K) where (T,K) matches inArray(V); 
+inArray(V) from (_pair((K,V),_),K);
+inArray(V) from (_pair(_,T),K) where (T,K) matches inArray(V); 
 
 private 
-findEl(array of {},_) is none;
-findEl(array of {E;..L},K) where E matches (K,V) is some(V);
-findEl(array of {E;..L},K) is findEl(L,K);
+findEl(_empty(),_) is none;
+findEl(_pair(E,L),K) where E matches (K,V) is some(V);
+findEl(_pair(E,L),K) is findEl(L,K);
   
 private
-replaceEl(array of {},K,V) is array of {(K,V)};
-replaceEl(array of {E;..L},K,V) where E matches (K,_) is array of {(K,V);..L};
-replaceEl(array of {E;..L},K,V) is array of {E;..replaceEl(L,K,V)};
+replaceEl(_empty(),K,V) is list of {(K,V)};
+replaceEl(_pair(E,L),K,V) where E matches (K,_) is list of [(K,V),..L];
+replaceEl(_pair(E,L),K,V) is list of [E,..replaceEl(L,K,V)];
 
 private
-deleteEl(array of {},K) is array of {};
-deleteEl(array of {E;..L},K) where E matches (K,_) is L;
-deleteEl(array of {E;..L},K) is array of {E;..deleteEl(L,K)};
+deleteEl(_empty(),K) is list of [];
+deleteEl(_pair(E,L),K) where E matches (K,_) is L;
+deleteEl(_pair(E,L),K) is list of [E,..deleteEl(L,K)];
 
 implementation updateable over seqmap of (%k,%v) determines ((%k,%v)) where equality over %k is {
   _extend(seqmap(M),(K,V)) is seqmap(replaceEl(M,K,V));
@@ -68,31 +68,31 @@ implementation updateable over seqmap of (%k,%v) determines ((%k,%v)) where equa
   _update(seqmap(M),Ptn,Up) is seqmap(updateEls(M,Ptn,Up));
 }
 
-mergeEls(array of {},M) is M;
-mergeEls(array of {(K,V);..L},M) is mergeEls(L,replaceEl(M,K,V));
+mergeEls(_empty(),M) is M;
+mergeEls(_pair((K,V),L),M) is mergeEls(L,replaceEl(M,K,V));
 
-deleteEls has type (array of %e,()<=%e)=>array of %e;
+deleteEls has type (list of %e,()<=%e)=>list of %e;
 private deleteEls(M,P) is _delete(M,P);
 
-updateEls has type (array of %e, ()<=%e, (%e)=>%e) => array of %e;
+updateEls has type (list of %e, ()<=%e, (%e)=>%e) => list of %e;
 private updateEls(M,P,U) is _update(M,P,U);
 
 implementation iterable over seqmap of (%k,%e) determines %e is {
-  _iterate(R,F,S) is arrayMapIter(R,F,S);
+  _iterate(R,F,S) is listMapIter(R,F,S);
 }
 
-arrayMapIter(seqmap(R),F,S) is let {
+listMapIter(seqmap(R),F,S) is let {
   dropFun((_,E),St) is F(E,St);
 } in __array_iterate(R,dropFun,S);
 
-arraymapIxIter(seqmap(R),F,S) is arrayIxIter(R,F,S);
+listmapIxIter(seqmap(R),F,S) is listIxIter(R,F,S);
 
-private arrayIxIter(array of {},_,St) is St;
-arrayIxIter(_,_,NoMore(X)) is NoMore(X);
-arrayIxIter(array of {(K,V);..T},F,St) is arrayIxIter(T,F,F(K,V,St));
+private listIxIter(_empty(),_,St) is St;
+listIxIter(_,_,NoMore(X)) is NoMore(X);
+listIxIter(_pair((K,V),T),F,St) is listIxIter(T,F,F(K,V,St));
 
 implementation pPrint over seqmap of (%k,%v) where pPrint over %k and pPrint over %v is {
-  ppDisp(Els) is ppSequence(2,cons of {ppStr("arraymap of {"); ppSeqMap(Els); ppStr("}")});
+  ppDisp(Els) is ppSequence(2,cons of {ppStr("listmap of {"); ppSeqMap(Els); ppStr("}")});
 };
 
 ppSeqMap(seqmap(Els)) is ppSequence(0,cons of {ppSequence(2,cons of {ppDisp(K); ppStr("->"); ppDisp(V); ppStr(";"); ppNl})

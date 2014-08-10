@@ -19,20 +19,20 @@
  */
 siblings is package{
 
-  siblings is relation of {
-    ("john", "peter");
-    ("john", "mary");
-    ("mary", "peter");
-    ("mary","john");
-    ("peter","john");
-    ("peter","mary")};
+  siblings is list of [
+    ("john", "peter"),
+    ("john", "mary"),
+    ("mary", "peter"),
+    ("mary","john"),
+    ("peter","john"),
+    ("peter","mary")];
   
-  ages has type relation of ((string,integer));
-  ages is relation{
-    ("john",10);
-    ("peter",12);
-    ("mary",8);
-  };
+  ages has type list of ((string,integer));
+  ages is list of [
+    ("john",10),
+    ("peter",12),
+    ("mary",8)
+  ];
   
   JS is all A where ("john",S) in siblings and (S,A) in ages order by A;
   

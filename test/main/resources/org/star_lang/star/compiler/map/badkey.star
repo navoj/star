@@ -18,7 +18,7 @@
  *
  */
 badkey is package{
-  M is map of {1->"alpha"; 2->"beta"; 3->"gamma"};
+  M is dictionary of {1->"alpha"; 2->"beta"; 3->"gamma"};
   
   badKey() where V[K] in M is K;
 }

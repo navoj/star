@@ -370,7 +370,7 @@ uniqueElements(eq, lis) is valof {
 List_to_list has type ((List of %a) => list of %a) where equality over %a;
 List_to_list(l) is valof { 
     var res := list of [];
-	forEach( (procedure(x) do { res := res<>list of [x] }) , l);
+	forEach( (procedure(x) do { res := res++list of [x] }) , l);
 	valis res;
 }
 

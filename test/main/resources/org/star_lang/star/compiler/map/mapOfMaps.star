@@ -18,12 +18,12 @@
  *
  */
 mapOfMaps is package{
-  MM has type ref map of (string, ref map of (string,integer));
-  var MM := map of {};
+  MM has type ref dictionary of (string, ref dictionary of (string,integer));
+  var MM := dictionary of {};
   
   main() do {
-    MM["a"] := _cell(map of {"b"->0});
-    MM["b"] := _cell(map of {})
+    MM["a"] := _cell(dictionary of {"b"->0});
+    MM["b"] := _cell(dictionary of {})
     
     -- (!MM["a"])["b"] := 1;
     M is MM["a"];

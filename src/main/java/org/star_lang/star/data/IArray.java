@@ -1,4 +1,5 @@
 package org.star_lang.star.data;
+
 /**
  *  The IArray interface is implemented by array-like objects.
  *   Copyright (C) 2013 Starview Inc
@@ -23,7 +24,7 @@ package org.star_lang.star.data;
 
 import java.util.Collection;
 
-public interface IArray extends IRelation, IList
+public interface IArray extends IList
 {
 
   /**
@@ -100,7 +101,6 @@ public interface IArray extends IRelation, IList
    * @throws EvaluationException
    *           if there is a problem with the addition.
    */
-  @Override
   IArray addCell(IValue value) throws EvaluationException;
 
   /**
@@ -136,4 +136,47 @@ public interface IArray extends IRelation, IList
    */
   @Override
   IArray shallowCopy();
+
+  /**
+   * Apply a transform to the relation to get a new one
+   * 
+   * @param transform
+   * @return the new array
+   * @throws EvaluationException
+   */
+  IArray mapOver(IFunction transform) throws EvaluationException;
+
+  /**
+   * Apply a filter to reduce the relation
+   * 
+   * @param filter
+   *          a function that returns true for elements to keep
+   * @return the new relation
+   * @throws EvaluationException
+   */
+  IArray filter(IFunction test) throws EvaluationException;
+
+  /**
+   * Apply a left associative reducing fold to the relation
+   * 
+   * @param transform
+   * @param init
+   *          the initial value of passed into the fold function as a 'zero'
+   * @return the final result value by evaluating the transform for each element
+   * @throws EvaluationException
+   */
+  IValue leftFold(IFunction transform, IValue init) throws EvaluationException;
+
+  /**
+   * Apply a right associative reducing fold to the relation
+   * 
+   * @param transform
+   * @param init
+   *          the initial value of passed into the fold function as a 'zero'
+   * @return the final result value by evaluating the transform for each element
+   * @throws EvaluationException
+   */
+  IValue rightFold(IFunction transform, IValue init) throws EvaluationException;
+
+  
 }

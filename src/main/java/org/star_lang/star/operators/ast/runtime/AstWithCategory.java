@@ -1,16 +1,16 @@
-package org.star_lang.star.operators.arrays.runtime;
+package org.star_lang.star.operators.ast.runtime;
 
+import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IFunction;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.TypeVar;
-import org.star_lang.star.data.type.UniversalType;
-import org.star_lang.star.data.value.Array;
-import org.star_lang.star.data.value.Relation;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.StringWrap;
+import org.star_lang.star.data.value.StringWrap.StringWrapper;
 import org.star_lang.star.operators.CafeEnter;
+
 /**
  * 
  * Copyright (C) 2013 Starview Inc
@@ -30,36 +30,31 @@ import org.star_lang.star.operators.CafeEnter;
  * @author fgm
  *
  */
-
-public class Array2Other
+public class AstWithCategory implements IFunction
 {
-  public static class Array2Relation implements IFunction
+  public static final String name = "__astWithCategory";
+
+  @CafeEnter
+  public static IValue enter(ASyntax term, StringWrap category) throws EvaluationException
   {
-    public static final String name = "__array_relation";
-
-    @CafeEnter
-    public static IRelation enter(Array array) throws EvaluationException
-    {
-      return new Relation(array.getBase(), array.getFirst(), array.getLast());
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return enter((Array) args[0]);
-    }
-
-    @Override
-    public IType getType()
-    {
-      return type();
-    }
-
-    public static IType type()
-    {
-      TypeVar tv = new TypeVar();
-      return new UniversalType(tv, TypeUtils.functionType(TypeUtils.arrayType(tv), TypeUtils.relationType(tv)));
-    }
+    term.setCategory(((StringWrapper) category).getValue());
+    return term;
   }
 
+  @Override
+  public IValue enter(IValue... args) throws EvaluationException
+  {
+    return enter((ASyntax) args[0], (StringWrap) args[1]);
+  }
+
+  @Override
+  public IType getType()
+  {
+    return type();
+  }
+
+  public static IType type()
+  {
+    return TypeUtils.functionType(ASyntax.type, StandardTypes.stringType, ASyntax.type);
+  }
 }

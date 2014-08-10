@@ -47,7 +47,7 @@ multiRequestPort is package{
   main() do {
     P1._request((procedure(Schema) do { Schema.AA("P1 sends greetings",1); Schema.BB("P1 sends more greetings",2)}) ,
               (function() is quote((procedure(Schema) do Schema.testAction("P1 sends greetings")))),
-              (function() is map of {}));
+              (function() is dictionary of {}));
     assert Acount=1;
     assert Bcount=2;
   }

@@ -18,7 +18,6 @@
  *
  */
 foldingtest is package{
-  import dictionary;
   -- test the folding stuff
   
   main() do {
@@ -28,9 +27,9 @@ foldingtest is package{
     
     assert rightFold((+),0,L) = leftFold((+),0,L)
     
-    logMsg(info,"fold T= $(leftFold(_concat,"",T))");
+    logMsg(info,"fold T= $(leftFold((++),"",T))");
     
-    assert leftFold(_concat,"",T)="onetwothree";
+    assert leftFold((++),"",T)="onetwothree";
     
     logMsg(info,"sub = $(leftFold((-),0,L))");
     logMsg(info,"sub = $(rightFold((-),0,L))");

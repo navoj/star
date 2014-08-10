@@ -13,7 +13,6 @@ import org.star_lang.star.data.IArray;
 import org.star_lang.star.data.IFunction;
 import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IPattern;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
 import org.star_lang.star.data.type.IType;
@@ -44,7 +43,7 @@ import org.star_lang.star.data.type.UniversalType;
 @SuppressWarnings("serial")
 public class Array implements IArray, PrettyPrintable
 {
-  public static final String label = "array";
+  public static final String label = "list";
 
   private final ArrayBase base;
   private final int first;
@@ -248,23 +247,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public boolean equals(IRelation other, IFunction test) throws EvaluationException
-  {
-    int arity = size();
-
-    if (other instanceof IArray && other.size() == arity) {
-      IArray otherAry = (IArray) other;
-      for (int ix = 0; ix < arity; ix++) {
-        if (!Factory.boolValue(test.enter(getCell(ix), otherAry.getCell(ix))))
-          return false;
-      }
-      return true;
-    } else
-      return false;
-  }
-
-  @Override
-  public boolean equalTo(IList other, IFunction test) throws EvaluationException
+  public boolean equals(IList other, IFunction test) throws EvaluationException
   {
     int arity = size();
 
@@ -336,7 +319,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IRelation mapOver(IFunction transform) throws EvaluationException
+  public IArray mapOver(IFunction transform) throws EvaluationException
   {
     ArrayBase newBase = new ArrayBase(size());
 
@@ -345,10 +328,9 @@ public class Array implements IArray, PrettyPrintable
 
     return new Array(newBase, newBase.firstUsed(), newBase.lastUsed());
   }
-  
 
   @Override
-  public IRelation filter(IFunction test) throws EvaluationException
+  public IArray filter(IFunction test) throws EvaluationException
   {
     ArrayBase newBase = new ArrayBase(size());
 
@@ -531,7 +513,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IRelation concat(IRelation sub) throws EvaluationException
+  public IList concat(IList sub) throws EvaluationException
   {
     synchronized (base) {
       int vSize = sub.size();

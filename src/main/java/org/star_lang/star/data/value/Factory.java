@@ -1,10 +1,11 @@
 package org.star_lang.star.data.value;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
+
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.EvaluationException;
@@ -12,7 +13,6 @@ import org.star_lang.star.data.IArray;
 import org.star_lang.star.data.IConstructor;
 import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.ConstructorSpecifier;
 import org.star_lang.star.data.type.IAlgebraicType;
@@ -620,37 +620,6 @@ public class Factory
       map = map.setMember(keyValuePairs[ix], keyValuePairs[ix + 1]);
 
     return map;
-  }
-
-  /**
-   * Create a new relation. The relation has a fixed number of columns, each of which has a fixed
-   * type.
-   * 
-   * @param tupleType
-   *          type of each element of the relation.
-   * @param tuples
-   *          an initial collection of tuples for the relation.
-   * @return the indexed relation value
-   * @throws EvaluationException
-   *           if any of the supplied tuples are inconsistent with the declared type of the
-   *           relation.
-   */
-  public static IRelation newRelation(IType tupleType, IValue... tuples) throws EvaluationException
-  {
-    return Relation.create(tuples);
-  }
-
-  /**
-   * Create a new relation where the initial tuples are provided in a collection of tuples
-   * 
-   * @param tupleType
-   * @param tuples
-   * @return a new relation with an entry for each of the provided tuples
-   * @throws EvaluationException
-   */
-  public static IRelation newRelation(IType tupleType, Collection<? extends IValue> tuples) throws EvaluationException
-  {
-    return Relation.create(tuples);
   }
 
   public static IConstructor newTuple(ITypeContext typeContext, IValue... values) throws EvaluationException

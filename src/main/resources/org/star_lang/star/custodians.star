@@ -128,7 +128,7 @@ _join_resource_controllers has type action(resource, resource);
 _join_resource_controllers(res1, res2) do {
   l1 is res1.controllers.value;
   l2 is res2.controllers.value;
-  common is _concat(l1, l2); -- TODO no dups
+  common is l1++l2; -- TODO no dups
   common_ref is _mutable_list { value := common };
   res1.controllers := common_ref;
   res2.controllers := common_ref;

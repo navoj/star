@@ -19,18 +19,18 @@
  */
 typesResolutionPOC is package {
 
-  A has type relation of ((string, integer));
-  A is relation{("alpha",1); ("beta",2)};
+  A has type list of ((string, integer));
+  A is list of [("alpha",1), ("beta",2)];
   
-  B has type relation of ((integer, long));
-  B is relation{(1,1L); (2,2L)};
+  B has type list of ((integer, long));
+  B is list of [(1,1L), (2,2L)];
   
-  AA is array of {("alpha",1L); ("beta",2L)};
+  AA is list of [("alpha",1L), ("beta",2L)];
   
   main() do {
     q is all (x, z) where (x, y) in A and (y, z) in B;
    
     logMsg(info,"q=$q"); 
-    assert q complement AA=array of {};
+    assert q complement AA=list of [];
   } 
 }

@@ -23,7 +23,7 @@ letfunbug is package{
 type lvl2Fun is lvl2Fun {
   lhs has type lvl2Exp;
   rhs has type lvl2Exp;
-  bindings has type map of (string, lvl2Exp);
+  bindings has type dictionary of (string, lvl2Exp);
   -- bindings default is {};
   };
  
@@ -32,8 +32,8 @@ type lvl2Exp is l2Integer(integer)
                   or l2String(string)
                   or l2Bool(boolean)
                   or l2Tuple(list of lvl2Exp)
-                  or l2Agg(string, map of (string, lvl2Exp))
-                  or l2Map(map of (lvl2Exp, lvl2Exp))
+                  or l2Agg(string, dictionary of (string, lvl2Exp))
+                  or l2Map(dictionary of (lvl2Exp, lvl2Exp))
                   or l2Table(list of lvl2Exp)
                   or l2Fluent(lvl2Exp, lvl2Exp)
                   or l2Ident(string)
@@ -56,11 +56,11 @@ type lvl2Constraint is l2Conj(lvl2Constraint, lvl2Constraint)
 G has type gammaPortType;
  
 type gammaPortType is gt{
-      table1 has type relation of {
+      table1 has type list of {
         c1 has type string;
         c2 has type string;
       };
-      table2 has type relation of {
+      table2 has type list of {
         c1 has type string;
         c3 has type integer;
       };
@@ -82,14 +82,14 @@ AbQuery is lvl2Fun{
       lhs = l2Ident("G");
       rhs = l2All(l2Dot(l2Ident("x"), "c1"),
                         l2In("x", l2Dot(l2Ident("G"), "table1")));
-      bindings = map of{};      
+      bindings = dictionary of{};      
 };
  
 abstosql has type (lvl2Fun) => string;
  
 abstosql(lvl2Fun{lhs=l2Ident(Pn); rhs=l2All(Tx,Cx)}) is
   let{
-    Res is constraintExp(map of { Pn->"Port"},"", Cx);
+    Res is constraintExp(dictionary of { Pn->"Port"},"", Cx);
     CxEnv is first(Res);
     CxTables is second(Res);
     CxText is third(Res);
@@ -106,12 +106,12 @@ abstosql(lvl2Fun{lhs=l2Ident(Pn); rhs=l2All(Tx,Cx)}) is
   } in
     "select $(transformExp(CxEnv,Tx)) from $CxTables where $CxText";
    
-transformExp has type (map of (string,string),lvl2Exp) => string;
+transformExp has type (dictionary of (string,string),lvl2Exp) => string;
 transformExp(_,l2Dot(l2Ident(V),Att)) is "$V.$Att";
  
  
-constraintExp has type (map of (string,string),string,lvl2Constraint) =>
-     (map of (string,string),string,string);
+constraintExp has type (dictionary of (string,string),string,lvl2Constraint) =>
+     (dictionary of (string,string),string,string);
 constraintExp(Env,Tables, l2In(Nm,Exp)) is (Env, "$Tables, $(transformExp(Env,Exp)) as Nm",
                                                                   "");
  

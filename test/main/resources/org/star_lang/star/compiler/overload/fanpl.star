@@ -26,12 +26,12 @@ fanpl is package{
     pl(X,Y) is X+Y;
   }
   
-  implementation A over array of %t where A over %t is {
+  implementation A over list of %t where A over %t is {
     pl(A1,A2) is arPlus(A1,A2);
   }
   
-  arPlus(array of {},array of {}) is array of {};
-  arPlus(array of {E1;..L1}, array of {E2;..L2}) is array of {pl(E1,E2);..arPlus(L1,L2)};
+  arPlus(list of [],list of []) is list of [];
+  arPlus(list of [E1,..L1], list of [E2,..L2]) is list of [pl(E1,E2),..arPlus(L1,L2)];
   
   f(X) is pl(X,X);
   
@@ -44,6 +44,6 @@ fanpl is package{
     
     assert f(2)=4;
   
-    assert pl(array of {1;2;3}, array of {4;5;6}) = array of {5;7;9}
+    assert pl(list of [1,2,3], list of [4,5,6]) = list of [5,7,9]
   }
 }

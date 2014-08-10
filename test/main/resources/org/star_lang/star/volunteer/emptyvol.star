@@ -22,5 +22,5 @@ import ports;
 import person;
 
 emptyvol is connections{
-  originate(Ao,{DATA has type stream of Person; ACT has type action(Person); R has type relation of ((Person,string))});
+  originate(Ao,{DATA has type stream of Person; ACT has type action(Person); R has type list of ((Person,string))});
 }

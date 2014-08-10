@@ -19,10 +19,10 @@
  */
 sortrel is package{
 
-  R is relation {(1,2);(3,4);(1,2)};
+  R is list of [(1,2),(3,4),(1,2)];
   L is sort(R,<);
   
-  BigR is all (Ix,Ix+1) where Ix in (iota(1000,1,-1) has type array of integer);
+  BigR is all (Ix,Ix+1) where Ix in (iota(1000,1,-1) has type list of integer);
 
   main() do {
     logMsg(info, "L is $L");
@@ -33,6 +33,6 @@ sortrel is package{
     
 --    logMsg(info,"$SortedBigR");
     
-    assert SortedBigR = (all (Ix,Ix+1) where Ix in (iota(1,1000,1) has type array of integer));
+    assert SortedBigR = (all (Ix,Ix+1) where Ix in (iota(1,1000,1) has type list of integer));
   };
 }

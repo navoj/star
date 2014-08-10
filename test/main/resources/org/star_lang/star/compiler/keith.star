@@ -20,24 +20,24 @@
 keith is package{
   -- test out some of the basic features of starrules
 
---  age has type relation of ((string,integer));
-  age is relation{
-    ("tom",20);
-    ("amy",19);
-    ("steven",12);
-    ("freya",19);
-    ("olive",6);
+--  age has type list of ((string,integer));
+  age is list of [
+    ("tom",20),
+    ("amy",19),
+    ("steven",12),
+    ("freya",19),
+    ("olive",6),
     ("jessica",1)
-  };
+  ];
   
-  gender is relation{
-    ("tom","male");
-    ("amy","female");
-    ("steven","male");
-    ("freya","female");
-    ("olive","female");
+  gender is list of[
+    ("tom","male"),
+    ("amy","female"),
+    ("steven","male"),
+    ("freya","female"),
+    ("olive","female"),
     ("jessica","female")
-  };
+  ];
   
   adultMales is all N where (N,A) in age and not (N,"female") in gender and A >=18;
   childFemales is all N where (N,A) in age and (N,"female") in gender and A < 18;

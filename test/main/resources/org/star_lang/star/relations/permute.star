@@ -36,5 +36,5 @@ permute is package{
   private glue(E,L) is _map(L,(function(X) is list of {E;..X}));
   
   multicat has type (list of list of %t)=>list of %t;
-  multicat(L) is rightFold(_concat,list of {},L);
+  multicat(L) is rightFold((++),list of {},L);
 }

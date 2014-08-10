@@ -19,7 +19,7 @@
  */
 arraybounds is package{
   main() do {
-    logMsg(finer, "(array of {1})[2] = $((array of {1})[2])");
+    logMsg(finer, "(list of {1})[2] = $((list of [1])[2])");
   }
 }
   

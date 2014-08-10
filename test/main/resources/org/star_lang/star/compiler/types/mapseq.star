@@ -24,7 +24,7 @@ mapseq is package{
     mapseq has type for all %e,%f such that (%%s of %e,(%e)=>%f) => %%s of %f
   }
   
-  implementation mmap over array is {
+  implementation mmap over list is {
     mapseq(S, F) is valof{
       var alreadyMapped := sequence of {};
 	  var toBeMapped := S;
@@ -37,11 +37,11 @@ mapseq is package{
   }
   
   main() do {
-    XX is mapseq(list of {1;2;3}, (function(X) is X*2));
+    XX is mapseq(list of [1,2,3], (function(X) is X*2));
     
     logMsg(info,"XX=$XX");
     
-    assert XX = list of {2;4;6};
+    assert XX = list of [2,4,6];
   }
 }  
     

@@ -2,7 +2,6 @@ package org.star_lang.star.operators.arrays;
 
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.arrays.runtime.Array2Other.Array2Relation;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayDeleteElement;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayEl;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayElement;
@@ -118,7 +117,6 @@ public class ArrayOps
 
     cxt.declareBuiltin(new Builtin(ArrayProject0.name, ArrayProject0.type(), ArrayProject0.class));
     cxt.declareBuiltin(new Builtin(ArrayUnique.name, ArrayUnique.type(), ArrayUnique.class));
-    cxt.declareBuiltin(new Builtin(Array2Relation.name, Array2Relation.type(), Array2Relation.class));
 
     cxt.declareBuiltin(new Builtin(ArrayUnion.name, ArrayUnion.type(), ArrayUnion.class));
     cxt.declareBuiltin(new Builtin(ArrayIntersect.name, ArrayIntersect.type(), ArrayIntersect.class));

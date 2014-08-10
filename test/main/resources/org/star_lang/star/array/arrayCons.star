@@ -21,9 +21,9 @@ arrayCons is package{
   -- test arr consing
   
   main() do {
-    var A := array of {};
+    var A := list of [];
     for i in iota(1,100,1) do
-      A := array of {i;..A};
+      A := list of [i,..A];
     logMsg(info,"A=$A");
   }
 }

@@ -22,7 +22,7 @@ picoRequest is package{
   -- test requests with and without write back 
   listener has type actor of{
     msg has type stream of ((string,integer));
-    report has type ()=>relation of ((string,integer));
+    report has type ()=>list of ((string,integer));
     clearHistory has type action();
   }
   listener is actor{
@@ -32,12 +32,12 @@ picoRequest is package{
     
     clearHistory() do clear();
   } using {
-    var txs := relation{};
+    var txs := list of [];
     append(Ev) do extend txs with Ev;
-    clear() do txs := relation{};
+    clear() do txs := list of [];
   };
   
-  events is relation of {all ("event number $Ix",Ix) where Ix in range(1,10,1)}; 
+  events is list of {all ("event number $Ix",Ix) where Ix in range(1,10,1)}; 
  
   showHistory() do
   {

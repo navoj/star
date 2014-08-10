@@ -7,7 +7,7 @@ largeMapTest is package{
   limit is 1000000;
   
   main() do {
-    var M := map of {};
+    var M := dictionary of {};
     
     start is nanos();
     for Ix in range(0,limit,1) do{

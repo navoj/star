@@ -859,18 +859,10 @@ public class TypeChecker
       IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
           raised, location);
       return new RaiseExpression(loc, expectedType, ex);
-    } else if (CompilerUtils.isEmptyBrace(term, StandardNames.LIST))
-      return typeOfExp(Abstract.binary(loc, StandardNames.OF, Abstract.name(loc, StandardNames.LIST), CompilerUtils
-          .blockTerm(loc, new ArrayList<IAbstract>())), expectedType, dict, outer);
-    else if (CompilerUtils.isBraceTerm(term, StandardNames.LIST))
-      return typeOfExp(Abstract.binary(loc, StandardNames.OF, Abstract.name(loc, StandardNames.LIST), CompilerUtils
-          .blockTerm(loc, CompilerUtils.braceArg(term))), expectedType, dict, outer);
-    else if (CompilerUtils.isSequenceTerm(term))
+    } else if (CompilerUtils.isSequenceTerm(term))
       return sequenceExpression(term, expectedType, dict, outer);
-    else if (Abstract.isBinary(term, StandardNames.CONCATENATE)
-        || Abstract.isBinary(term, StandardNames.STRING_CATENATE))
-      return typeOfExp(Abstract.binary(term.getLoc(), StandardNames.CONC, Abstract.binaryLhs(term), Abstract
-          .binaryRhs(term)), expectedType, dict, outer);
+    else if (CompilerUtils.isSquareSequenceTerm(term) || CompilerUtils.isLabeledSequenceTerm(term))
+      return squareSequenceExpression(term, expectedType, dict, outer);
     else if (CompilerUtils.isRecordLiteral(term))
       return checkRecordLiteral(term, expectedType, dict, outer);
     else if (CompilerUtils.isBraceTerm(term))
@@ -1300,6 +1292,48 @@ public class TypeChecker
     return typeOfExp(construct, expectedType, dict, outer);
   }
 
+  private IContentPattern squareSequencePattern(IAbstract ptn, IType expectedType, Wrapper<ICondition> condition,
+      Dictionary dict, Dictionary outer, PtnVarHandler varHandler)
+  {
+    Location loc = ptn.getLoc();
+    final IAbstract content;
+
+    if (CompilerUtils.isLabeledSequenceTerm(ptn)) {
+      String label = CompilerUtils.sequenceLabel(ptn);
+      sequenceType(label, expectedType, dict, loc, errors);
+      content = CompilerUtils.labeledContent(ptn);
+    } else {
+      sequenceType(StandardNames.SEQUENCE, expectedType, dict, loc, errors);
+      content = CompilerUtils.squareContent(ptn);
+    }
+
+    IAbstract construct = squareSequence(loc, content, StandardNames.PAIR, StandardNames.BACK, StandardNames.EMPTY,
+        errors);
+
+    return typeOfPtn(construct, expectedType, condition, dict, outer, varHandler);
+  }
+
+  private IContentExpression squareSequenceExpression(IAbstract term, IType expectedType, Dictionary dict,
+      Dictionary outer)
+  {
+    Location loc = term.getLoc();
+    final IAbstract content;
+
+    if (CompilerUtils.isLabeledSequenceTerm(term)) {
+      String label = CompilerUtils.sequenceLabel(term);
+      sequenceType(label, expectedType, dict, loc, errors);
+      content = CompilerUtils.labeledContent(term);
+    } else {
+      sequenceType(StandardNames.SEQUENCE, expectedType, dict, loc, errors);
+      content = CompilerUtils.squareContent(term);
+    }
+
+    IAbstract construct = squareSequence(loc, content, StandardNames.ADD_TO_FRONT, StandardNames.APND,
+        StandardNames.NIL, errors);
+
+    return typeOfExp(construct, expectedType, dict, outer);
+  }
+
   private static IType sequenceType(String label, IType expectedType, Dictionary dict, Location loc, ErrorReport errors)
   {
     final IType collType = new TypeVar(GenSym.genSym("%s"));
@@ -1378,6 +1412,9 @@ public class TypeChecker
 
       return verifyType(type, expectedType, loc, new RecordTerm(loc, type, new TreeMap<String, IContentExpression>(),
           new TreeMap<String, IType>()), dict, errors);
+    } else if (name.equals(StandardNames.SQUARE)) {
+      IContentExpression op = typeOfName(loc, StandardNames.NIL, TypeUtils.functionType(expectedType), dict, errors);
+      return new Application(loc, expectedType, op);
     } else if (name.equals(StandardNames.MACRO_LOCATION))
       return verifyType(type, expectedType, loc, Quoter.generateLocation(loc), dict, errors);
     else if (StandardNames.isKeyword(name))
@@ -3381,6 +3418,8 @@ public class TypeChecker
         Map<String, IContentPattern> els = new HashMap<>();
         IType type = TypeUtils.typeInterface(new TreeMap<String, IType>());
         return verifyType(expectedType, loc, new RecordPtn(loc, type, els, index), cxt, errors);
+      } else if (vrName.equals(StandardNames.SQUARE)) {
+        return typeOfPtn(Abstract.zeroary(loc, StandardNames.EMPTY), expectedType, condition, cxt, outer, varHandler);
       } else if (StandardNames.isKeyword(ptn))
         errors.reportError("unexpected keyword", loc);
       else
@@ -3505,13 +3544,7 @@ public class TypeChecker
       PtnQuoter quoter = new PtnQuoter(cxt, outer, condition, varHandler, this, errors);
 
       return quoter.quoted(CompilerUtils.quotedExp(ptn));
-    } else if (CompilerUtils.isEmptyBrace(ptn, StandardNames.LIST))
-      return typeOfPtn(Abstract.binary(loc, StandardNames.OF, Abstract.name(loc, StandardNames.LIST), CompilerUtils
-          .blockTerm(loc)), expectedType, condition, cxt, outer, varHandler);
-    else if (CompilerUtils.isBraceTerm(ptn, StandardNames.LIST))
-      return typeOfPtn(Abstract.binary(loc, StandardNames.OF, Abstract.name(loc, StandardNames.LIST), CompilerUtils
-          .blockTerm(loc, CompilerUtils.braceArg(ptn))), expectedType, condition, cxt, outer, varHandler);
-    else if (CompilerUtils.isBraceTerm(ptn))
+    } else if (CompilerUtils.isBraceTerm(ptn))
       return recordPattern(ptn, expectedType, condition, cxt, outer, varHandler);
     // Special <Lbl> of { <el>; .. ; <el>} or <Lbl> of { <el>; .. ;.. <Ptn> }
     // pattern.
@@ -3525,7 +3558,9 @@ public class TypeChecker
           errors);
 
       return typeOfPtn(construct, expectedType, condition, cxt, outer, varHandler);
-    } else if (Abstract.isParenTerm(ptn)) {
+    } else if (CompilerUtils.isSquareSequenceTerm(ptn) || CompilerUtils.isLabeledSequenceTerm(ptn))
+      return squareSequencePattern(ptn, expectedType, condition, cxt, outer, varHandler);
+    else if (Abstract.isParenTerm(ptn)) {
       ptn = Abstract.unaryArg(ptn);
       if (Abstract.isTupleTerm(ptn))
         return typeOfTuplePtn(ptn, expectedType, condition, cxt, outer, varHandler);
@@ -3973,6 +4008,51 @@ public class TypeChecker
     for (int ix = front.size(); ix > 0; ix--)
       reslt = Abstract.binary(loc, cons, front.get(ix - 1), reslt);
     return reslt;
+  }
+
+  private static IAbstract squareSequence(Location loc, IAbstract term, String cons, String apnd, String empty,
+      ErrorReport errors)
+  {
+    if (term == null)
+      return Abstract.zeroary(loc, empty);
+    if (Abstract.isBinary(term, StandardNames.SCONS)) {
+      IAbstract result = Abstract.binaryRhs(term);
+
+      IAbstract front = Abstract.binaryLhs(term);
+
+      if (Abstract.isBinary(front, StandardNames.ENDSCONS)) {
+        errors.reportError(StringUtils.msg("not expecting ", front), front.getLoc(), term.getLoc());
+      } else {
+        for (IAbstract el : CompilerUtils.reverseUnwrap(front, StandardNames.COMMA)) {
+          if (Abstract.isBinary(el, StandardNames.MAP_ARROW))
+            result = Abstract.binary(loc, cons, Abstract.tupleTerm(el.getLoc(), Abstract.binaryLhs(el), Abstract
+                .binaryRhs(el)), result);
+          else
+            result = Abstract.binary(loc, cons, el, result);
+        }
+      }
+      return result;
+    } else if (Abstract.isBinary(term, StandardNames.ENDSCONS)) {
+      IAbstract result = Abstract.binaryLhs(term);
+      for (IAbstract el : CompilerUtils.unWrap(Abstract.binaryRhs(term), StandardNames.COMMA)) {
+        if (Abstract.isBinary(el, StandardNames.MAP_ARROW))
+          result = Abstract.binary(loc, apnd, result, Abstract.tupleTerm(el.getLoc(), Abstract.binaryLhs(el), Abstract
+              .binaryRhs(el)));
+        else
+          result = Abstract.binary(loc, apnd, result, el);
+      }
+      return result;
+    } else {
+      IAbstract result = Abstract.zeroary(loc, empty);
+      for (IAbstract el : CompilerUtils.reverseUnwrap(term, StandardNames.COMMA)) {
+        if (Abstract.isBinary(el, StandardNames.MAP_ARROW))
+          result = Abstract.binary(loc, cons, Abstract.tupleTerm(el.getLoc(), Abstract.binaryLhs(el), Abstract
+              .binaryRhs(el)), result);
+        else
+          result = Abstract.binary(loc, cons, el, result);
+      }
+      return result;
+    }
   }
 
   @SuppressWarnings("unused")

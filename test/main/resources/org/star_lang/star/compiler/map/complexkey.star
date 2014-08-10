@@ -21,7 +21,7 @@ complexkey is package{
   type foo of %t is nf or foo(%t);
   
   main() do {
-    var K := map of {};
+    var K := dictionary of {};
     
     K[foo(3)] := "aleph";
     assert K[foo(3)]="aleph"

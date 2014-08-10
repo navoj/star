@@ -46,7 +46,7 @@ Aggregate ::= [Name] { Name = Expression ; ... ; Name = Expression }
 Tuple ::= [Name] ( Expression ,..., Expression)
 List ::= [ Expression ,..., Expression ]
 Relation ::= { Expression ; ... ; Expression }
-Map ::= map of { Expression -> Expression; ... ;Expression -> Expression}
+Map ::= dictionary of { Expression -> Expression; ... ;Expression -> Expression}
 QueryExpression ::= (all|one|Integer of) Expression where Condition
           [group by Expression] [sort [descending] by Expression]
 Scalar ::= Expression ScalarOp Expression | UnaryOp Expression
@@ -92,7 +92,7 @@ type mType is mvType {
 };
 
 -- TBD...
--- type mCatalog of %T is map of (string, %T);
+-- type mCatalog of %T is dictionary of (string, %T);
 -- super package...
 -- type mSRPackage is mvSourcePkg(string)
 -- or mvSuperPkg(mCatalog of mSRPackage, string);
@@ -100,13 +100,13 @@ type mType is mvType {
 
 type mTypeDescription is mvTypeDescription {
   tp has type mType;
-  valueSpecifiers has type map of (string, mValueSpecifier)
-  valueSpecifiers default is map of {};
-  -- contracts has type map of (string, mContractInstance);
+  valueSpecifiers has type dictionary of (string, mValueSpecifier)
+  valueSpecifiers default is dictionary of {};
+  -- contracts has type dictionary of (string, mContractInstance);
   -- superType has type mType;
-  -- attributeKeys has type map of (string, integer);
+  -- attributeKeys has type dictionary of (string, integer);
   -- constraints has type list of (mExpression);
-  -- defltValue has type map of (string, mExpression);
+  -- defltValue has type dictionary of (string, mExpression);
 } or noneTypeDescription;
 
 type mValueSpecifier is mvPositionalVSP {
@@ -119,24 +119,24 @@ type mValueSpecifier is mvPositionalVSP {
 } or mvAggregateVSP {
   label has type string;
   tp has type mType;
-  memberIndex has type map of (string, integer);
-  memberIndex default is map of {};
+  memberIndex has type dictionary of (string, integer);
+  memberIndex default is dictionary of {};
   memberTypes has type list of mType;
   memberTypes default is list of [];
-  defaults has type map of (string, mExpression);
-  defaults default is map of {};
+  defaults has type dictionary of (string, mExpression);
+  defaults default is dictionary of {};
   implClass has type string;
   implClass default is "com.starview.platform.language.data.AggregateValue";
 } or noneVSP;
 
 
 type mSchema is mvSchema{
-  memberTypes has type map of (string, mType);
-  memberTypes default is map of {};
+  memberTypes has type dictionary of (string, mType);
+  memberTypes default is dictionary of {};
   memberReferences has type list of (string); -- maintains a list of attributes which are references.
   memberReferences default is list of [];
-  defaults has type map of (string, mExpression);
-  defaults default is map of{};
+  defaults has type dictionary of (string, mExpression);
+  defaults default is dictionary of{};
   constraints has type list of mCondition;
   constraints default is list of [];
 } or noneSchema;
@@ -144,11 +144,11 @@ type mSchema is mvSchema{
 
 -- mExpression corresponds to ContentLanguage (SA) Expression...
 
-type mExpression is mvAggregate(mType, string, map of (string, mExpression))
+type mExpression is mvAggregate(mType, string, dictionary of (string, mExpression))
   or mvTuple(mType, string, list of mExpression) -- //Default name <string> of the Tuple is "()"
   or mvRelation(mType, list of mExpression)
   or mvList(mType, list of (mExpression))
-  or mvMap(mType, map of (mExpression, mExpression))
+  or mvMap(mType, dictionary of (mExpression, mExpression))
   or mvLiteral(mScalarLiteral)
   or mvVariable(mType, string)
   or mvReference(mType, string)
@@ -169,13 +169,13 @@ type mSlice is mvSlice(mExpression)
   or mvSliceToEnd(mExpression);
 
 type mCollection is mvCollection{
-   values has type map of (string, mExpression);
-   values default is map of {};
+   values has type dictionary of (string, mExpression);
+   values default is dictionary of {};
    schema has type mSchema;
    schema default is noneSchema;
 } or mvSRCollection{
-  values has type map of (string, mExpression); -- (<attributeName>, <StarRulesString representing its value>)
-  values default is map of {};
+  values has type dictionary of (string, mExpression); -- (<attributeName>, <StarRulesString representing its value>)
+  values default is dictionary of {};
 } or noneCollection;
 
 type mScalarLiteral is mvInteger(mType, integer)
@@ -211,7 +211,7 @@ type mCondition is mvConj(mCondition, mCondition)
 type mRelOp is mvEqual or mvNotEqual or mvLess or mvGreater or mvLessEquals or mvGreaterEquals;
 
 type mPtn is mvTuplePtn(mType, string, list of mPtn)
-  or mvAggregatePtn(mType, string, map of (string, mPtn))
+  or mvAggregatePtn(mType, string, dictionary of (string, mPtn))
   or mvLiteralPtn(mScalarLiteral)
   or mvWherePtn(mType, mPtn, mCondition)
   or mvMatchingPtn(mPtn, mPtn)
@@ -232,9 +232,9 @@ type mSpeechAction is mvNotify(mExpression, string)
 
 type mAction is mvSequence(list of mAction)
   or mvSpeech(mSpeechAction)
-  or mvRelationInsertAction(mExpression, mExpression) -- relation and tuple
-  or mvRelationUpdateAction(mPtn, mCondition, mExpression, mExpression) -- pattern, condition, relation and tuple
-  or mvRelationDeleteAction(mPtn, mCondition, mExpression) -- pattern, condition and relation
+  or mvRelationInsertAction(mExpression, mExpression) -- list and tuple
+  or mvRelationUpdateAction(mPtn, mCondition, mExpression, mExpression) -- pattern, condition, list and tuple
+  or mvRelationDeleteAction(mPtn, mCondition, mExpression) -- pattern, condition and list
   or mvNamedAction(string, list of mExpression)
   or mvActionWhere(mAction, mCondition)
   or mvActionVar(string);
@@ -278,8 +278,8 @@ type mResource is mvTypeResource{
     id has type string;
     name has type string;
     description has type string;
-    resources has type map of (string, mResource); -- key is id of mResource
-    resources default is map of {};
+    resources has type dictionary of (string, mResource); -- key is id of mResource
+    resources default is dictionary of {};
   } or noneResource;
 
 type mMetadataAttribute is mvMetadataAttribute {
@@ -287,12 +287,12 @@ type mMetadataAttribute is mvMetadataAttribute {
   operation has type string;
   metaAttrName has type string;
   metaAttrType has type mType;
-  cfHandlers has type map of (string, mFunction) -- result type of mFunction=metaAttrType
-  cfHandlers default is map of {};
+  cfHandlers has type dictionary of (string, mFunction) -- result type of mFunction=metaAttrType
+  cfHandlers default is dictionary of {};
 }
 
 type mNotifyProcessor is mvStandardNotifyProcessor {
-  streamHandlers has type relation of ((string, mHandlerPurpose, mScalarLiteral));
+  streamHandlers has type list of ((string, mHandlerPurpose, mScalarLiteral));
                       -- example: {("streamName", mvRollbackHandler, mvCode(mvFunction(...)));
                       --           ("streamName", mvFailHandler, mvCode(mvFunction(...)));
                       --           ("streamName", mvDoHandler, mvCode(mvFunction(...)))};
@@ -300,7 +300,7 @@ type mNotifyProcessor is mvStandardNotifyProcessor {
   or noneNotifyProcessor;
 
 type mRequestProcessor is mvStandardRequestProcessor {
-  requestHandlers has type relation of ((string, mHandlerPurpose, mScalarLiteral));
+  requestHandlers has type list of ((string, mHandlerPurpose, mScalarLiteral));
                       -- example: {("login", mvRollbackHandler, mvCode(mvFunction(...)));
                       --           ("login", mvFailHandler, mvCode(mvFunction(...)));
                       --           ("login", mvDoHandler, mvCode(mvFunction(...)))};
@@ -308,7 +308,7 @@ type mRequestProcessor is mvStandardRequestProcessor {
   or noneRequestProcessor;
 
 type mQueryProcessor is mvStandardQueryProcessor {
-  queryHandlers has type relation of ((string, mHandlerPurpose, mScalarLiteral));
+  queryHandlers has type list of ((string, mHandlerPurpose, mScalarLiteral));
                       -- example: {("schemaMember", mvRollbackHandler, mvCode(mvFunction(...)));
                       --           ("schemaMember", mvFailHandler, mvCode(mvFunction(...)));
                       --           ("schemaMember", mvDoHandler, mvCode(mvFunction(...)))};
@@ -355,15 +355,15 @@ type mModel is mvModelElement {
     category default is "none";
     attributes has type mCollection;
     attributes default is noneCollection;
-    inputPorts has type map of (string, mPort);
-    inputPorts default is map of {};
-    outputPorts has type map of (string, mPort);
-    outputPorts default is map of {};
-    -- handlers has type map of (string, mScalarLiteral); <handlers need to be associated to a Port>...
+    inputPorts has type dictionary of (string, mPort);
+    inputPorts default is dictionary of {};
+    outputPorts has type dictionary of (string, mPort);
+    outputPorts default is dictionary of {};
+    -- handlers has type dictionary of (string, mScalarLiteral); <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
     resources default is list of [(mvPrivate, noneResource)];
-    notes has type map of (string, string);
-    notes default is map of {};
+    notes has type dictionary of (string, string);
+    notes default is dictionary of {};
     lastModifiedDate has type long;
     lastModifiedDate default is 0L;
 } or mvScriptableComponent {
@@ -380,17 +380,17 @@ type mModel is mvModelElement {
     category default is "none";
     attributes has type mCollection;
     attributes default is noneCollection;
-    daemons has type map of (string, mDaemon);
-    daemons default is map of {};
-    inputPorts has type map of (string, mPort);
-    inputPorts default is map of {};
-    outputPorts has type map of (string, mPort);
-    outputPorts default is map of {};
-    -- handlers has type map of (string, mScalarLiteral);   <handlers need to be associated to a Port>...
+    daemons has type dictionary of (string, mDaemon);
+    daemons default is dictionary of {};
+    inputPorts has type dictionary of (string, mPort);
+    inputPorts default is dictionary of {};
+    outputPorts has type dictionary of (string, mPort);
+    outputPorts default is dictionary of {};
+    -- handlers has type dictionary of (string, mScalarLiteral);   <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
     resources default is list of [(mvPrivate, noneResource)];
-    notes has type map of (string, string);
-    notes default is map of {};
+    notes has type dictionary of (string, string);
+    notes default is dictionary of {};
     lastModifiedDate has type long;
     lastModifiedDate default is 0L;
 }
@@ -408,19 +408,19 @@ type mModel is mvModelElement {
     category default is "none";
     attributes has type mCollection;
     attributes default is noneCollection;
-    inputPorts has type map of (string, mPort);
-    inputPorts default is map of {};
-    outputPorts has type map of (string, mPort);
-    outputPorts default is map of {};
-    -- handlers has type map of (string, mScalarLiteral);     <handlers need to be associated to a Port>...
+    inputPorts has type dictionary of (string, mPort);
+    inputPorts default is dictionary of {};
+    outputPorts has type dictionary of (string, mPort);
+    outputPorts default is dictionary of {};
+    -- handlers has type dictionary of (string, mScalarLiteral);     <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
     resources default is list of [(mvPrivate, noneResource)];
-    connections has type relation of ((mIdType, mIdType, list of mConnectionContract));
-    connections default is relation{};
-    subComponents has type map of (string, mModel);
-    subComponents default is map of {};
-    notes has type map of (string, string);
-    notes default is map of {};
+    connections has type list of ((mIdType, mIdType, list of mConnectionContract));
+    connections default is list of [];
+    subComponents has type dictionary of (string, mModel);
+    subComponents default is dictionary of {};
+    notes has type dictionary of (string, string);
+    notes default is dictionary of {};
     lastModifiedDate has type long;
     lastModifiedDate default is 0L;
 } or nullModel;
@@ -440,8 +440,8 @@ type mPort is mvPort {
   portSchema default is noneSchema;
   isMalleableSchema has type boolean;
   isMalleableSchema default is false;
-  handlers has type relation of ((string, mHandlerClass, mHandlerPurpose, mScalarLiteral));  -- relation[Name/Label, mvNotifyHandler, mvRollbackHandler, <handlerCode/file>]
-  handlers default is relation{};
+  handlers has type list of ((string, mHandlerClass, mHandlerPurpose, mScalarLiteral));  -- list[Name/Label, mvNotifyHandler, mvRollbackHandler, <handlerCode/file>]
+  handlers default is list of [];
   notifyProcessor has type mNotifyProcessor;
   notifyProcessor default is noneNotifyProcessor;
   requestProcessor has type mRequestProcessor;
@@ -449,15 +449,15 @@ type mPort is mvPort {
   queryProcessor has type mQueryProcessor;
   queryProcessor default is noneQueryProcessor;
 
-  notes has type map of (string, string);
-  notes default is map of {};
+  notes has type dictionary of (string, string);
+  notes default is dictionary of {};
   lastModifiedDate has type long;
   lastModifiedDate default is 0L;
  };
 
 type mAdapter is alias of mModel;
 
-type mNotes is alias of map of (string, string);
+type mNotes is alias of dictionary of (string, string);
 
 type mConnectionContract
   is mvContract(mSpeechAction, mQos, mNotes)
@@ -515,8 +515,8 @@ type mDaemon is mvTimerDaemon {
   period has type long;
   unitOfTime has type mUnitOfTime;
   stopOnError has type boolean;
-  notes has type map of (string, string);
-  notes default is map of {};
+  notes has type dictionary of (string, string);
+  notes default is dictionary of {};
   lastModifiedDate has type long;
   lastModifiedDate default is 0L;
 } or mvListenerDaemon {

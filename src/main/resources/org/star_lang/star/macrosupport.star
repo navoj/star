@@ -85,14 +85,14 @@ _macro_gensym(N) is nameAst(noWhere,gensym(N));
 
 __macro_detupleize(applyAst(Loc,Op,Args)) is detupleize(Args) using {
   
-  detupleize(array of {}) is <| () |>;
-  detupleize(array of {L;..R}) is <| (?L , ?detupleize(R) ) |>;
+  detupleize(_empty()) is <| () |>;
+  detupleize(_pair(L,R)) is <| (?L , ?detupleize(R) ) |>;
 };
 
-__macro_tupleize(Loc,Els) is __macro_tuple(Loc,liftEls(Els,array of {})) using {
+__macro_tupleize(Loc,Els) is __macro_tuple(Loc,liftEls(Els,_nil())) using {
   liftEls(<|()|>,Args) is Args;
   liftEls(<|(?L,?R)|>,Args) is liftEls(L,liftEls(R,Args));
-  liftEls(El,Args) is array of {El;..Args};
+  liftEls(El,Args) is list of {El;..Args};
 };
 
 private sho(M,V) is valof{
@@ -165,7 +165,7 @@ __macro_location(_) default is noWhere
 __display_macro(Q) is stringAst(__macro_location(Q),__macro_display(Q));
 
 implementation concatenate over quoted is {
-  _concat(X,Y) is qConcat(X,Y)
+  X++Y is qConcat(X,Y)
 } using {
   qConcat(stringAst(Lc,L),stringAst(_,R)) is stringAst(Lc,L++R);
   qConcat(stringAst(Lc,L),R) is applyAst(Lc,nameAst(Lc,"++"),list of {stringAst(Lc,L);R});

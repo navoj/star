@@ -73,7 +73,7 @@ public class StarRules
       cat.addEntry("validate", URIUtils.parseUri("std:validate.star"));
       cat.addEntry("compute", URIUtils.parseUri("std:compute.star"));
       cat.addEntry("maybe", URIUtils.parseUri("std:maybe.star"));
-//      cat.addEntry("monad", URIUtils.parseUri("std:monad.star"));
+      // cat.addEntry("monad", URIUtils.parseUri("std:monad.star"));
       cat.addEntry("star", URIUtils.parseUri("std:star.star"));
       cat.addEntry("collections", URIUtils.parseUri("std:collections.star"));
       cat.addEntry("sequences", URIUtils.parseUri("std:sequences.star"));
@@ -81,13 +81,12 @@ public class StarRules
       cat.addEntry("iterators", URIUtils.parseUri("std:iterators.star"));
       cat.addEntry("casting", URIUtils.parseUri("std:casting.star"));
       cat.addEntry("bitstring", URIUtils.parseUri("std:bitstring.star"));
-      cat.addEntry("dictionary", URIUtils.parseUri("std:dictionary.star"));
+      cat.addEntry("treemap", URIUtils.parseUri("std:treemap.star"));
       cat.addEntry("arraymap", URIUtils.parseUri("std:arraymap.star"));
       cat.addEntry("arrays", URIUtils.parseUri("std:arrays.star"));
       cat.addEntry("altarrays", URIUtils.parseUri("std:altarrays.star"));
       cat.addEntry("maps", URIUtils.parseUri("std:maps.star"));
       cat.addEntry("range", URIUtils.parseUri("std:range.star"));
-      cat.addEntry("relations", URIUtils.parseUri("std:relations.star"));
       cat.addEntry("indexed", URIUtils.parseUri("std:indexed.star"));
       cat.addEntry("queue", URIUtils.parseUri("std:queue.star"));
       cat.addEntry("cons", URIUtils.parseUri("std:cons.star"));
@@ -101,8 +100,8 @@ public class StarRules
       cat.addEntry("updateable", URIUtils.parseUri("std:updateable.star"));
       cat.addEntry("finger", URIUtils.parseUri("std:finger.star"));
       cat.addEntry("fingerPrelude", URIUtils.parseUri("std:fingerPrelude.star"));
-//      cat.addEntry("priority", URIUtils.parseUri("std:priority.star"));
-//      cat.addEntry("signatures", URIUtils.parseUri("std:signatures.star"));
+      // cat.addEntry("priority", URIUtils.parseUri("std:priority.star"));
+      // cat.addEntry("signatures", URIUtils.parseUri("std:signatures.star"));
       cat.addEntry("strings", URIUtils.parseUri("std:strings.star"));
       cat.addEntry("json", URIUtils.parseUri("std:json.star"));
       cat.addEntry("infoset", URIUtils.parseUri("std:json.star"));
@@ -116,11 +115,11 @@ public class StarRules
       cat.addEntry("cmlQueue", URIUtils.parseUri("std:cmlQueue.star"));
       cat.addEntry("fibers", URIUtils.parseUri("std:fibers.star"));
       cat.addEntry("concurrency", URIUtils.parseUri("std:concurrency.star"));
-//      cat.addEntry("custodians", URIUtils.parseUri("std:custodians.star"));
-//      cat.addEntry("buffer", URIUtils.parseUri("std:io/buffer.star"));
-//      cat.addEntry("bytebuffer", URIUtils.parseUri("std:io/bytebuffer.star"));
-//      cat.addEntry("primitiveIO", URIUtils.parseUri("std:io/primitiveIO.star"));
-//      cat.addEntry("serialization", URIUtils.parseUri("std:io/serialization.star"));
+      // cat.addEntry("custodians", URIUtils.parseUri("std:custodians.star"));
+      // cat.addEntry("buffer", URIUtils.parseUri("std:io/buffer.star"));
+      // cat.addEntry("bytebuffer", URIUtils.parseUri("std:io/bytebuffer.star"));
+      // cat.addEntry("primitiveIO", URIUtils.parseUri("std:io/primitiveIO.star"));
+      // cat.addEntry("serialization", URIUtils.parseUri("std:io/serialization.star"));
       cat.addEntry("rdf", URIUtils.parseUri("std:rdf.star"));
       cat.addEntry("worksheet", URIUtils.parseUri("std:worksheet.star"));
     } catch (Exception e) {

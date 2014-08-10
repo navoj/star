@@ -25,7 +25,7 @@ comboPtns is package{
   gt5(X) from X where X > 5;
   lt10(X) from X where X < 10;
    
-  smPrimes is relation{2; 3; 5; 7; 11};
+  smPrimes is list of [2, 3, 5, 7, 11];
 
   medPrimes() is all X where (gt5(X) matching lt10(X)) in smPrimes;
    
@@ -35,11 +35,11 @@ comboPtns is package{
   medPrimes3() is all X where med(X) in smPrimes;
    
   main() do {
-    assert medPrimes() = array of {7};
+    assert medPrimes() = list of [7];
      
-    assert medPrimes2() = array of {7};
+    assert medPrimes2() = list of [7];
      
-    assert medPrimes3() = array of{7};
+    assert medPrimes3() = list of [7];
   }
 }
 

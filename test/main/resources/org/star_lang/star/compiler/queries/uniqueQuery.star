@@ -19,20 +19,20 @@
  */
 uniqueQuery is package{
   main() do {
-    var l:=list of {12;113;8;45;113};
+    var l:=list of [12,113,8,45,113];
    
     m is 3 of X where X in l order by X;
   
    logMsg(info,"m=$m");
-   assert m = list of {8;12;45};
+   assert m = list of [8, 12, 45];
   
    q is all X where X in l;
    logMsg(info,"q=$q");
    
-   assert q as (relation of integer)=relation of {8;12;45;113;113};
+   assert q=list of [12,113,8,45,113];
   
    p is unique X where X in l;
    logMsg(info,"p=$p");
-   assert p=array of {12; 113; 8; 45};
+   assert p=list of [12, 113, 8, 45];
   }
 }

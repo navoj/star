@@ -19,8 +19,8 @@
  */
 matchingtest is package{
 
-  testRelation has type ref relation of (integer);
-  var testRelation := relation{};
+  testRelation has type ref list of (integer);
+  var testRelation := list of [];
 
   conditionalTest() do {
     var tookElse := false;

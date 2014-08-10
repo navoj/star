@@ -71,7 +71,7 @@ public class HashTreeIterable
       TypeVar v = new TypeVar();
       TypeVar s = new TypeVar();
 
-      IType mapType = TypeUtils.mapType(k, v);
+      IType mapType = TypeUtils.dictionaryType(k, v);
 
       IType funType = TypeUtils.functionType(mapType, TypeUtils.functionType(v, s, s), s, s);
       return new UniversalType(k, new UniversalType(v, new UniversalType(s, funType)));
@@ -113,7 +113,7 @@ public class HashTreeIterable
       TypeVar v = new TypeVar();
       TypeVar s = new TypeVar();
 
-      IType mapType = TypeUtils.mapType(k, v);
+      IType mapType = TypeUtils.dictionaryType(k, v);
 
       IType funType = TypeUtils.functionType(mapType, TypeUtils.functionType(k, v, s, s), s, s);
       return new UniversalType(k, new UniversalType(v, new UniversalType(s, funType)));
@@ -152,7 +152,8 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.mapType(ky, el), TypeUtils.functionType(st, el, st), st, st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(st, el, st), st,
+          st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }
@@ -194,7 +195,7 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.mapType(ky, el), TypeUtils.functionType(st, el, st), st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(st, el, st), st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }
@@ -231,7 +232,8 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.mapType(ky, el), TypeUtils.functionType(el, st, st), st, st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(el, st, st), st,
+          st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }
@@ -273,7 +275,7 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.mapType(ky, el), TypeUtils.functionType(el, st, st), st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(el, st, st), st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }

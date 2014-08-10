@@ -21,8 +21,8 @@ ports is package{
   import actors;
   
   type port of %u is port{
-    _query has type for all %s such that ((%u)=>%s,()=>quoted,()=>map of (string,any))=> %s;
-    _request has type ((%u)=>(),()=>quoted,()=>map of (string,any)) => ();
+    _query has type for all %s such that ((%u)=>%s,()=>quoted,()=>dictionary of (string,any))=> %s;
+    _request has type ((%u)=>(),()=>quoted,()=>dictionary of (string,any)) => ();
     _notify has type ((%u)=>()) => ();
   };
   

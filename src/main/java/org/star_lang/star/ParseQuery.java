@@ -118,7 +118,7 @@ public class ParseQuery
 
   private static final String queryTemplate = "$pkg is package{\n  $imprt$fn($freeVars) is (function($prt) is"
       + "  $prt.Query((function(#(v has type $schema)#) is let{ open v } in #($exp)#),\n"
-      + "             (function() is quote(#($exp)#)),\n" + "             (function() is map of {$freeHash})));"
+      + "             (function() is quote(#($exp)#)),\n" + "             (function() is dictionary of {$freeHash})));"
       + "\n}\n";
 
   public static IFunction parseQuery(String query, Map<String, IValue> free, String imprt, String face,

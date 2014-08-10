@@ -18,7 +18,7 @@
  *
  */
 treemapUpdate is package {
-  private import dictionary
+  private import treemap
 
   main () do {
     tm0 is trEmpty["b"->3]

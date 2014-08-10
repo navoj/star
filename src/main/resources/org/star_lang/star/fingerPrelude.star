@@ -25,7 +25,7 @@ private unwrapInt(integer(i)) is i;
 private ZERO is unwrapInt(0);
 private ONE is unwrapInt(1);
   
-array_foldRight has type ((%a, %b) => %b, %b, array of %a) => %b;
+array_foldRight has type ((%a, %b) => %b, %b, list of %a) => %b;
 array_foldRight(f, a, arr) is valof {
   var res := a;
   var r := arr;
@@ -38,7 +38,7 @@ array_foldRight(f, a, arr) is valof {
   valis res;
 };
 
-array_foldLeft has type ((%b, %a) => %b, %b, array of %a) => %b;
+array_foldLeft has type ((%b, %a) => %b, %b, list of %a) => %b;
 array_foldLeft(f, a, arr) is valof {
   var res := a;
   var r := arr;
@@ -51,7 +51,7 @@ array_foldLeft(f, a, arr) is valof {
   valis res;
 };
 
-array_int_foldLeft has type ((integer_,%a)=>integer_,integer_,array of %a)=>integer_;
+array_int_foldLeft has type ((integer_,%a)=>integer_,integer_,list of %a)=>integer_;
 array_int_foldLeft(f, a, arr) is valof {
   var res := a;
   var r := arr;
@@ -64,7 +64,7 @@ array_int_foldLeft(f, a, arr) is valof {
   valis res;
 };
 
-array_mapcar has type ((%a) => %b, array of %a) => array of %b;
+array_mapcar has type ((%a) => %b, list of %a) => list of %b;
 array_mapcar(f, arr) is valof {
   var res := __array_nil();
   var i := ZERO;

@@ -205,7 +205,7 @@ public class ConditionTransformer
     cDefined = ListUtils.mergeLists(cDefined, definedVars);
 
     IType ansType = tmpAnswer.getType();
-    IType tmpType = TypeUtils.relationType(ansType);
+    IType tmpType = TypeUtils.arrayType(ansType);
     IncrementState increment = new IncrementState(tmpAnswer, tmpType);
 
     IType tmpStateType = TypeUtils.iterstateType(tmpType);
@@ -230,8 +230,8 @@ public class ConditionTransformer
 
     Variable[] rhsFree = FreeVariables.findFreeVars(otherRhs, cxt);
 
-    FunctionLiteral rhsFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(null,
-        eqn, tmpStateFunType, rhsFree, rhsName, loc, cxt, outer, errors));
+    FunctionLiteral rhsFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(null, eqn,
+        tmpStateFunType, rhsFree, rhsName, loc, cxt, outer, errors));
 
     Variable rhsVar = Variable.create(loc, tmpStateFunType, rhsName);
 
@@ -260,8 +260,8 @@ public class ConditionTransformer
     extEqns.add(Triple.create(new IContentPattern[] { Variable.anonymous(loc, tmpPttrn.getType()), defVar },
         CompilerUtils.truth, (IContentExpression) defVar));
 
-    FunctionLiteral extFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(extEqns,
-        null, extType, extFree, extName, loc, cxt, outer, errors));
+    FunctionLiteral extFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(extEqns, null,
+        extType, extFree, extName, loc, cxt, outer, errors));
 
     Variable extVar = Variable.create(loc, extType, extName);
 
@@ -473,8 +473,8 @@ public class ConditionTransformer
     Variable sFvar = Variable.create(loc, stFunType, sfName);
 
     Variable[] freeVars = new Variable[] {};
-    FunctionLiteral stFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(eqns,
-        null, stFunType, freeVars, sfName, loc, cxt, outer, errors));
+    FunctionLiteral stFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(eqns, null,
+        stFunType, freeVars, sfName, loc, cxt, outer, errors));
     IStatement stDef = VarEntry.createVarEntry(loc, sFvar, stFun, AccessMode.readOnly, Visibility.priVate);
 
     IContentExpression sF = new LetTerm(loc, sFvar, stDef);
@@ -547,8 +547,8 @@ public class ConditionTransformer
     Variable sFvar = Variable.create(loc, stFunType, sfName);
 
     Variable[] freeVars = new Variable[] {};
-    FunctionLiteral stFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(eqns,
-        null, stFunType, freeVars, sfName, loc, cxt, outer, errors));
+    FunctionLiteral stFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(eqns, null,
+        stFunType, freeVars, sfName, loc, cxt, outer, errors));
     IStatement stDef = VarEntry.createVarEntry(loc, sFvar, stFun, AccessMode.readOnly, Visibility.priVate);
 
     IContentExpression sF = new LetTerm(loc, sFvar, stDef);

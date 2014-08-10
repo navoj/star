@@ -68,6 +68,16 @@ public interface IList extends IValue, Iterable<IValue>
   IList tail();
 
   /**
+   * Concatenate a list
+   * 
+   * @param sub
+   *          the list to merge with this relation
+   * @return
+   * @throws EvaluationException
+   */
+  IList concat(IList sub) throws EvaluationException;
+
+  /**
    * Apply a transform to the relation to get a new one
    * 
    * @param transform
@@ -117,6 +127,25 @@ public interface IList extends IValue, Iterable<IValue>
   IValue rightFold1(IFunction transform) throws EvaluationException;
 
   /**
+   * remove all elements from a relation that match a given pattern
+   * 
+   * @param filter
+   * @return the modified list
+   * @throws EvaluationException
+   */
+  IList deleteUsingPattern(IPattern filter) throws EvaluationException;
+
+  /**
+   * Replace elements that match a pattern with new elements
+   * 
+   * @param filter
+   * @param transform
+   * @return
+   * @throws EvaluationException
+   */
+  IList updateUsingPattern(IPattern filter, IFunction transform) throws EvaluationException;
+
+  /**
    * Test for equality using a supplied equality function
    * 
    * @param other
@@ -124,6 +153,5 @@ public interface IList extends IValue, Iterable<IValue>
    * @return true if the elements are equal, according to the equality function
    * @throws EvaluationException
    */
-  boolean equalTo(IList other, IFunction test) throws EvaluationException;
-
+  boolean equals(IList other, IFunction test) throws EvaluationException;
 }

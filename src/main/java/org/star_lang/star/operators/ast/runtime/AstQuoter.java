@@ -13,7 +13,6 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.IPattern;
 import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IScalar;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
@@ -71,7 +70,7 @@ public class AstQuoter implements IFunction
     {
       stack.push(abstractValue(Location.noWhereEnum, scalar, scalar.getType()));
     }
-    
+
     public static ASyntax abstractValue(Location loc, Object val, IType type)
     {
       if (type.equals(StandardTypes.charType))
@@ -105,13 +104,6 @@ public class AstQuoter implements IFunction
 
     @Override
     public void visitList(IList list)
-    {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void visitRelation(IRelation relation)
     {
       // TODO Auto-generated method stub
 

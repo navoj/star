@@ -65,7 +65,7 @@ tickTackToe is package{
     } in itDiags(itCols(itRows(Ste)));
   }
   
-  winMove(B,P) is relation of { all M where R->L in B and win(R,L,P) matches some(M) }
+  winMove(B,P) is list of { all M where R->L in B and win(R,L,P) matches some(M) }
   
   blockMove(B,P) is winMove(B,reverse(P));
   
@@ -78,7 +78,7 @@ tickTackToe is package{
   
   isWinState((C1,C2,C3),P) is C1=P and C2=P and C3=P; 
   
-  forkMove(B,M) is relation of { all P where P in range(0,9,1) and move(B,P,M) matches some(BB) and size(winMove(BB,M))>1 };
+  forkMove(B,M) is list of { all P where P in range(0,9,1) and move(B,P,M) matches some(BB) and size(winMove(BB,M))>1 };
   
   blockFork(B,M) is forkMove(B,reverse(M));
   
@@ -87,16 +87,16 @@ tickTackToe is package{
   
   play(board(B),Ps,P) is board(B[Ps->P]);
   
-  oppositeCorner(board(B),Plyr) is relation of { all P where P in list of {0; 2; 6; 8} and B[opposite(P)]=reverse(Plyr) and B[P]=blank };
+  oppositeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[opposite(P)]=reverse(Plyr) and B[P]=blank };
   
   opposite(0) is 8;
   opposite(8) is 0;
   opposite(2) is 6;
   opposite(6) is 2;
   
-  freeCorner(board(B),Plyr) is relation of { all P where P in list of {0; 2; 6; 8} and B[P]=blank };
+  freeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[P]=blank };
   
-  freeSide(board(B),Plyr) is relation of { all P where P in list of {1; 3; 5; 7} and B[P]=blank };
+  freeSide(board(B),Plyr) is list of { all P where P in list of {1; 3; 5; 7} and B[P]=blank };
   
   BB0 is board(list of {blank;blank;blank;blank;blank;blank;blank;blank;blank});
   BB1 is board(list of {blank;blank;circle;blank;circle;circle;blank;blank;blank});
@@ -110,27 +110,27 @@ tickTackToe is package{
   }
   
   perfectPlay(B,Plyr) is valof{
-    if winMove(B,Plyr) matches relation of {Ps;.._} then
+    if winMove(B,Plyr) matches list of [Ps,.._] then
       valis some(Ps);
 
-    if blockMove(B,Plyr) matches relation of {Ps;.._} then
+    if blockMove(B,Plyr) matches list of [Ps,.._] then
       valis some(Ps);
-    if forkMove(B,Plyr) matches relation of {Ps;.._} then
+    if forkMove(B,Plyr) matches list of [Ps,.._] then
       valis some(Ps);
-    if blockFork(B,Plyr) matches relation of {Ps;.._} then
+    if blockFork(B,Plyr) matches list of [Ps,.._] then
       valis some(Ps);
     if move(B,4,Plyr) matches some(BB) then
       valis some(4);
-    if oppositeCorner(B,Plyr) matches relation of {Ps;.._} then
+    if oppositeCorner(B,Plyr) matches list of [Ps,.._] then
       valis some(Ps);
-    if freeCorner(B,Plyr) matches relation of {Ps;.._} then
+    if freeCorner(B,Plyr) matches list of [Ps,.._] then
       valis some(Ps);
-    if freeSide(B,Plyr) matches relation of {Ps;.._} then
+    if freeSide(B,Plyr) matches list of [Ps,.._] then
       valis some(Ps)
     valis none;
   }
   
-  freePositions(board(BB)) is relation of { all Ps where Ps in range(0,9,1) and BB[Ps]=blank };
+  freePositions(board(BB)) is list of { all Ps where Ps in range(0,9,1) and BB[Ps]=blank };
   
   randomPlay(B,Plyr) is any of P where P in freePositions(B) and random(2) >1;
   
@@ -155,7 +155,7 @@ tickTackToe is package{
   main() do {
     logMsg(info,"W1=$(winMove(BB1,circle))");
     
-    assert winMove(BB1,circle) = relation of {3;6;8};
+    assert winMove(BB1,circle) = list of [3,8,6];
     assert winMove(BB1,circle) = blockMove(BB1,cross);
     
     logMsg(info,"W2=$(blockMove(BB2,cross))");

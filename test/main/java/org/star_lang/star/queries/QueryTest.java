@@ -18,13 +18,13 @@ import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IArray;
 import org.star_lang.star.data.IFunction;
 import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IRelation;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.URIUtils;
 import org.star_lang.star.resource.catalog.CatalogException;
+
 /**
  * 
  * Copyright (C) 2013 Starview Inc
@@ -47,12 +47,12 @@ import org.star_lang.star.resource.catalog.CatalogException;
 
 public class QueryTest
 {
-  private static final String SAMPLE_TYPE = "{names has type relation of string}";
-  private static final String SAMPLE_DATA = "{ names=relation{\"fred\";\"george\"}}";
+  private static final String SAMPLE_TYPE = "{names has type list of string}";
+  private static final String SAMPLE_DATA = "{ names=list of [\"fred\",\"george\"]}";
 
   private static final String PORT_DATA = "{Query(Fn,Qt,Fr) is Fn(" + SAMPLE_DATA + ")}";
   private static final String PORT_TYPE = "{Query has type ((" + SAMPLE_TYPE
-      + ")=>%t,()=>quoted,()=>hash of (string,any))=>%t}";
+      + ")=>%t,()=>quoted,()=>dictionary of (string,any))=>%t}";
 
   private static final String dataSet = "$pkg is package{\n  $imprt$var has type #($type)#;\n  $var is #($exp)#;\n}\n";
 
@@ -111,7 +111,7 @@ public class QueryTest
     CodeRepository repository = new CodeRepositoryImpl(parentLoader, true, errors);
     IValue data = parseDataSet(SAMPLE_DATA, null, SAMPLE_TYPE, repository);
     assert data instanceof IRecord;
-    assert ((IRecord) data).getMember("names") instanceof IRelation;
+    assert ((IRecord) data).getMember("names") instanceof IArray;
     System.out.println(data);
   }
 
@@ -122,13 +122,13 @@ public class QueryTest
     ErrorReport errors = new ErrorReport();
     CodeRepository repository = new CodeRepositoryImpl(loader, true, errors);
 
-    IFunction qFun = ParseQuery.parseExpression("relation of {all X where X in names}", null, SAMPLE_TYPE, repository);
+    IFunction qFun = ParseQuery.parseExpression("list of {all X where X in names}", null, SAMPLE_TYPE, repository);
     assert qFun != null;
 
     IValue data = parseDataSet(SAMPLE_DATA, null, SAMPLE_TYPE, repository);
 
     IValue result = qFun.enter(data);
-    assert result instanceof IRelation;
+    assert result instanceof IArray;
     System.out.println(result);
   }
 
@@ -151,11 +151,11 @@ public class QueryTest
     System.out.println(result);
   }
 
-  private static final String PAIR_DATA = "{ names=relation{(\"fred\",\"george\"); (\"fred\",\"alfred\")}}";
-  private static final String PAIR_TYPE = "{names has type relation of ((string,string))}";
+  private static final String PAIR_DATA = "{ names=list of [(\"fred\",\"george\"), (\"fred\",\"alfred\")]}";
+  private static final String PAIR_TYPE = "{names has type list of ((string,string))}";
   private static final String PAIR_PORT_DATA = "{Query(Fn,Qt,Fr) is Fn(" + PAIR_DATA + ")}";
   private static final String PAIR_PORT_TYPE = "{Query has type ((" + PAIR_TYPE
-      + ")=>%t,()=>quoted,()=>hash of (string,any))=>%t}";
+      + ")=>%t,()=>quoted,()=>dictionary of (string,any))=>%t}";
 
   @Test
   public void testQueryWithFree() throws EvaluationException, LanguageException

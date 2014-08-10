@@ -24,8 +24,8 @@ anydeflt is package{
     value has type float
   }
   
-  gold is relation{ toolData{name="alpha"; value=1.0};
-                    toolData{name="beta"; value = 2.0} };
+  gold is list of [ toolData{name="alpha"; value=1.0},
+                    toolData{name="beta"; value = 2.0} ];
   
   getValue(N) is anyof V where R in gold and R matches toolData{name=N; value=V} default 0.0;
 

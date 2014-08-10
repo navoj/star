@@ -1010,7 +1010,7 @@ public class CompilerUtils
 
   public static String sequenceLabel(IAbstract term)
   {
-    assert isSequenceTerm(term);
+    assert isSequenceTerm(term) || isLabeledSequenceTerm(term);
 
     return Abstract.getId(Abstract.binaryLhs(term));
   }
@@ -1097,15 +1097,30 @@ public class CompilerUtils
     return Abstract.binary(loc, StandardNames.SQUARE, label, index);
   }
 
-  public static boolean isSquareSeqTerm(IAbstract term)
+  public static boolean isSquareSequenceTerm(IAbstract term)
   {
-    return Abstract.isUnary(term, StandardNames.SQUARE);
+    return Abstract.isUnary(term, StandardNames.SQUARE) || Abstract.isIdentifier(term, StandardNames.SQUARE);
   }
 
   public static IAbstract squareContent(IAbstract term)
   {
-    assert isSquareSeqTerm(term);
-    return Abstract.unaryArg(term);
+    assert isSquareSequenceTerm(term);
+    if (Abstract.isUnary(term, StandardNames.SQUARE))
+      return Abstract.unaryArg(term);
+    else
+      return null;
+  }
+
+  public static boolean isLabeledSequenceTerm(IAbstract term)
+  {
+    return Abstract.isBinary(term, StandardNames.OF) && Abstract.isName(Abstract.binaryLhs(term))
+        && isSquareSequenceTerm(Abstract.binaryRhs(term));
+  }
+
+  public static IAbstract labeledContent(IAbstract term)
+  {
+    assert isLabeledSequenceTerm(term);
+    return squareContent(Abstract.binaryRhs(term));
   }
 
   // This is specially crafted to work with the replacement of P[Ix] in L to _index(P,Ix) in L

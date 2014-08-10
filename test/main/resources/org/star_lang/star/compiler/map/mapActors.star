@@ -20,7 +20,7 @@
 mapActors is package{
 
   type msg is msg{
-    details has type map of (string,msgContent);
+    details has type dictionary of (string,msgContent);
     count has type integer;
   }
   
@@ -55,6 +55,6 @@ mapActors is package{
   Rec is recep("receiverAgent");
   
   main() do {
-    notify portActor with msg{count=4; details=map of {"flight"->content{data="UA838"}; "rec"->content{data="24Tons"};"??"->content{data="GIGO"}}} on msgChannel
+    notify portActor with msg{count=4; details=dictionary of {"flight"->content{data="UA838"}; "rec"->content{data="24Tons"};"??"->content{data="GIGO"}}} on msgChannel
   }
 }

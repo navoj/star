@@ -80,6 +80,9 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.CONS, STATEMENT_PRIORITY - 1);
     defineInfix(StandardNames.ENDCONS, STATEMENT_PRIORITY - 2);
 
+    defineInfix(StandardNames.SCONS, 1099);
+    defineInfix(StandardNames.ENDSCONS, 1098);
+
     definePrefix(StandardNames.META_HASH, 1350);
 
     defineInfix(StandardNames.FMT_RULE, 1347);
@@ -253,7 +256,6 @@ public class Operators implements PrettyPrintable
 
     defineInfix(StandardNames.DETERMINES, DETERMINES_PRIORITY);
 
-    defineRight(StandardNames.CONCATENATE, CATENATE_PRIORITY);
     defineRight(StandardNames.STRING_CATENATE, CATENATE_PRIORITY);
 
     defineRight(StandardNames.OF, OF_PRIORITY);

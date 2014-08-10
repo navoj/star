@@ -35,7 +35,7 @@ deepRecord is package{
     assert O.name="fred";
     assert O.inner.val=10;
     
-    R is relation{ O };
+    R is list of [ O];
     
     XX is anyof X.name where X in R and X.inner.val=10;
     assert XX = "fred"

@@ -20,13 +20,13 @@
 mapeq is package{
   main() do
   {
-    M1 has type map of (string,integer);
-    M1 is map of{"alpha"->1; "beta"->2; "gamma"->3};
+    M1 has type dictionary of (string,integer);
+    M1 is dictionary of{"alpha"->1; "beta"->2; "gamma"->3};
     
     L1 is list of ["alpha", "beta", "gamma"];
     
     M2 is valof{
-      var M := map of{};
+      var M := dictionary of{};
       for Ix in iota(1,3,1) do
         M[L1[Ix-1]]:= Ix;
       valis M
@@ -36,7 +36,7 @@ mapeq is package{
     logMsg(info,"M2=$M2");
     assert M1=M2;
     
-    assert M1!=map of {"alpha"->1};
-    assert M1!=map of{"alpha"->1; "beta"->2; "gamma"->3;"delta"->4};
+    assert M1!=dictionary of {"alpha"->1};
+    assert M1!=dictionary of{"alpha"->1; "beta"->2; "gamma"->3;"delta"->4};
   }
 }

@@ -33,11 +33,11 @@ recordqueries is package{
     city has type string;
   };
   
-  persons has type ref relation of foo;
+  persons has type ref list of foo;
   
-  var persons := relation{ foo{name="alpha"; gender=male; add=street{ street="main st"; unit=1; city="my city"}};
-                                           foo{name="beta"; gender=female; add=street{street="union st"; unit=100; city="ny"}};
-                                           foo{name="gamma"; gender=male; add=street{street="water st"; unit=110; city="ny"}}};
+  var persons := list of [ foo{name="alpha"; gender=male; add=street{ street="main st"; unit=1; city="my city"}},
+                           foo{name="beta"; gender=female; add=street{street="union st"; unit=100; city="ny"}},
+                           foo{name="gamma"; gender=male; add=street{street="water st"; unit=110; city="ny"}}];
                                    
   main() do {
     assert foo{name="alpha"} in persons;

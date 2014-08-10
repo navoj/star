@@ -18,6 +18,7 @@
  *
  */
 mapmerge is package {  
+  import treemap;
   main() do {
     var t := trEmpty;
     for x in iota(1, 10, 1) do {

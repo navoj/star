@@ -19,7 +19,7 @@
  */
 ptest1 is package{
   
-  R is relation{("fred",1);("fred",3);("Bob",3)};
+  R is list of [("fred",1),("fred",3),("Bob",3)];
   TM is pattern(X) from ("fred",X);
   
   main() do {

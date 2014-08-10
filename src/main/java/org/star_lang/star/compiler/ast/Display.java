@@ -86,7 +86,7 @@ public class Display implements IAbstractVisitor
       if (content != null)
         content.accept(this);
       append("]");
-    } else if (CompilerUtils.isSquareSeqTerm(app)) {
+    } else if (CompilerUtils.isSquareSequenceTerm(app)) {
       append("[");
       CompilerUtils.squareContent(app).accept(this);
       append("]");

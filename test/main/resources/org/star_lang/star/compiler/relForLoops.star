@@ -18,13 +18,13 @@
  *
  */
 relForLoops is package{
-  -- focus on for loops across relations
+  -- focus on for loops across lists
   
-  R is relation{ (1,"one","alpha");
-                 (2,"two","beta");
-                 (3,"three","gamma");
-                 (4,"four","delta");
-                 (5,"five","eta")};
+  R is list of [ (1,"one","alpha"),
+                 (2,"two","beta"),
+                 (3,"three","gamma"),
+                 (4,"four","delta"),
+                 (5,"five","eta")];
                  
   main() do {
     logMsg(info,"R=$R");

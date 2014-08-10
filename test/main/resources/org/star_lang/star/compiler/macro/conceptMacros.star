@@ -36,25 +36,25 @@ conceptMacros is package{
     # ?C :: concept :- error("$C is not a recognized form of concept");
   };
  
-  type n3Graph is alias of relation of fact;
+  type n3Graph is alias of list of fact;
  
   type fact is triple(n3Concept,n3Concept,n3Concept);
  
   type n3Concept is n3C(string,string)
                  or n3S(string,string);
                 
-  # graph{} ==> relation{} has type n3Graph;
-  # graph{?Graph} ==> relation of { concepts(Graph) } ## {
+  # graph{} ==> list of [] has type n3Graph;
+  # graph{?Graph} ==> list of [ concepts(Graph) ] ## {
    
     #concepts(A) is  mapSemi(trConcept,A);
    
     unwrap(<| ?L ; ?R |>,Lst) is unwrap(R,unwrap(L,Lst));
     unwrap(El,Lst) is list of {Lst..;El};
    
-    wrapRv(list of {El}) is <| ?El |>;
-    wrapRv(list of {El;..More}) is <| ?El ; ?wrapRv(More) |>;
+    wrapRv(_pair(El,_empty())) is <| ?El |>;
+    wrapRv(_pair(El,More)) is <| ?El , ?wrapRv(More) |>;
    
-    mapSemi(F,A) is wrapRv(leftFold(F,list of {},unwrap(A,list of {})));
+    mapSemi(F,A) is wrapRv(leftFold(F,_nil(),unwrap(A,_nil())));
 
     trConcept(SoFar,<| #(string?S)# : #(string?Lng)# |>) is list of {SoFar..;<| n3S(?S,?Lng) |>}; 
     trConcept(SoFar,<| #(identifier?G)# : #(identifier ? C)# |>) is list of {SoFar..;<| n3C(?nameString(G), ?nameString(C)) |>};
@@ -69,10 +69,10 @@ conceptMacros is package{
    
     logMsg(info,"concepts are $G");
     
-    assert G=relation of {n3S("une string française", "fr");
-                          n3S("a string", "");
-                          n3C("gr", "concept");
-                          n3C("", "foo")};
+    assert G=list of [n3C("", "foo"),
+                      n3C("gr", "concept"),
+                      n3S("a string", ""),
+                      n3S("une string française", "fr")];
   }
 }
       

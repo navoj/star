@@ -21,15 +21,15 @@ regexpSearch is package{
 
   fooPattern is (pattern () from (S matching `.*foo.*`));
 
-  subjectPatterns has type relation of ((string, () <= string));
-  subjectPatterns is relation{
-    ("foo", fooPattern);
-  };
+  subjectPatterns has type list of ((string, () <= string));
+  subjectPatterns is list of [
+    ("foo", fooPattern)
+  ];
 
   testResult is all D where (D, _) in subjectPatterns;
   
   main() do {
     logMsg(info,"$testResult");
-    assert testResult=array of {"foo"};
+    assert testResult=list of ["foo"];
   }
 }
