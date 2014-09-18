@@ -81,6 +81,10 @@ toUpperCase(nonString) is nonString;
 toLowerCase(string(S)) is string(__lowercase(S));
 toLowerCase(nonString) is nonString;
 
+trim(`[ \t\n\r]*(.*:A)[ \t\n\r]+`) is A;
+trim(`[ \t\n\r]*(.*:A)`) is A;
+
+
 -- hex functions
 integer2hex(integer(I)) is string(__integer_hex(I));
 long2hex(long(I)) is string(__long_hex(I));
