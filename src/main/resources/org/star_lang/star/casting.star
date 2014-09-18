@@ -28,23 +28,23 @@ implementation coercion over (string,boolean) is {
 }
 
 implementation coercion over (string,char) is {
-  coerce(string(X)) is char(__string_char(X));
+  coerce(string(X)) is __string_char(X);
 }
 
 implementation coercion over (string,integer) is {
-  coerce(string(X)) is integer(__string_integer(X));
+  coerce(string(X)) is __string_integer(X);
 }
 
 implementation coercion over (string,long) is {
-  coerce(string(X)) is long(__string_long(X));
+  coerce(string(X)) is __string_long(X);
 }
 
 implementation coercion over (string,float) is {
-  coerce(string(X)) is float(__string_float(X));
+  coerce(string(X)) is __string_float(X);
 }
 
 implementation coercion over (string,decimal) is {
-  coerce(string(X)) is decimal(__string_decimal(X));
+  coerce(string(X)) is __string_decimal(X);
 }
 
 implementation coercion over (string,binary) is {

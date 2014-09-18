@@ -9,14 +9,19 @@ import org.star_lang.star.data.IFunction;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.value.BigNumWrap;
 import org.star_lang.star.data.value.BoolWrap;
+import org.star_lang.star.data.value.CharWrap;
+import org.star_lang.star.data.value.FloatWrap;
+
+import org.star_lang.star.data.value.LongWrap;
+
 import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.IntWrap;
 import org.star_lang.star.operators.CafeEnter;
 
-/**
+/*
  * Runtime parts of the String2Number functions that parse strings into different kinds of numbers
- * 
- * Copyright (C) 2013 Starview Inc
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
@@ -31,7 +36,6 @@ import org.star_lang.star.operators.CafeEnter;
  * 02110-1301 USA
  * 
  * @author fgm
- * 
  */
 
 public abstract class String2Number
@@ -73,15 +77,15 @@ public abstract class String2Number
     public static final String name = "__string_char";
 
     @CafeEnter
-    public static int __string_char(String txt) throws EvaluationException
+    public static CharWrap __string_char(String txt) throws EvaluationException
     {
-      return txt.codePointAt(0);
+      return Factory.newChar(txt.codePointAt(0));
     }
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newChar(__string_char(Factory.stringValue(args[0])));
+      return __string_char(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -92,7 +96,7 @@ public abstract class String2Number
 
     public static IType type()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawCharType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.charType);
     }
   }
 
@@ -101,19 +105,19 @@ public abstract class String2Number
     public static final String name = "__string_integer";
 
     @CafeEnter
-    public static int __string_integer(String txt) throws EvaluationException
+    public static IntWrap __string_integer(String txt) throws EvaluationException
     {
       try {
-        return Integer.parseInt(txt);
+        return Factory.newInt(Integer.parseInt(txt));
       } catch (NumberFormatException e) {
-        throw new EvaluationException(StringUtils.quoteString(txt) + " cannot be parsed as an integer");
+        return IntWrap.nonIntegerEnum;
       }
     }
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newInt(__string_integer(Factory.stringValue(args[0])));
+      return __string_integer(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -124,7 +128,7 @@ public abstract class String2Number
 
     public static IType type()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawIntegerType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.integerType);
     }
   }
 
@@ -133,23 +137,23 @@ public abstract class String2Number
     public static final String name = "__string_long";
 
     @CafeEnter
-    public static long __string_long(String txt) throws EvaluationException
+    public static LongWrap __string_long(String txt) throws EvaluationException
     {
       try {
         if (txt.endsWith("l"))
           txt = txt.substring(0, txt.indexOf('l'));
         else if (txt.endsWith("L"))
           txt = txt.substring(0, txt.indexOf('L'));
-        return Long.parseLong(txt);
+        return Factory.newLng(Long.parseLong(txt));
       } catch (NumberFormatException e) {
-        throw new EvaluationException(StringUtils.quoteString(txt) + " cannot be parsed as an integer");
+        return LongWrap.nonLongEnum;
       }
     }
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newLng(__string_long(Factory.stringValue(args[0])));
+      return __string_long(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -160,7 +164,7 @@ public abstract class String2Number
 
     public static IType type()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawLongType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.longType);
     }
   }
 
@@ -169,19 +173,19 @@ public abstract class String2Number
     public static final String name = "__hex_integer";
 
     @CafeEnter
-    public static int __hex_integer(String txt) throws EvaluationException
+    public static IntWrap __hex_integer(String txt) throws EvaluationException
     {
       try {
-        return Integer.parseInt(txt, 16);
+        return Factory.newInt(Integer.parseInt(txt, 16));
       } catch (NumberFormatException e) {
-        throw new EvaluationException(StringUtils.quoteString(txt) + " cannot be parsed as an integer");
+        return IntWrap.nonIntegerEnum;
       }
     }
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newInt(__hex_integer(Factory.stringValue(args[0])));
+      return __hex_integer(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -192,7 +196,7 @@ public abstract class String2Number
 
     public static IType type()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawIntegerType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.integerType);
     }
   }
 
@@ -201,23 +205,23 @@ public abstract class String2Number
     public static final String name = "__hex_long";
 
     @CafeEnter
-    public static long __hex_long(String txt) throws EvaluationException
+    public static LongWrap __hex_long(String txt) throws EvaluationException
     {
       try {
         if (txt.endsWith("l"))
           txt = txt.substring(0, txt.indexOf('l'));
         else if (txt.endsWith("L"))
           txt = txt.substring(0, txt.indexOf('L'));
-        return Long.parseLong(txt, 16);
+        return Factory.newLng(Long.parseLong(txt, 16));
       } catch (NumberFormatException e) {
-        throw new EvaluationException(StringUtils.quoteString(txt) + " cannot be parsed as an integer");
+        return LongWrap.nonLongEnum;
       }
     }
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newLng(__hex_long(Factory.stringValue(args[0])));
+      return __hex_long(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -228,7 +232,7 @@ public abstract class String2Number
 
     public static IType type()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawLongType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.longType);
     }
   }
 
@@ -237,19 +241,19 @@ public abstract class String2Number
     public static final String name = "__string_float";
 
     @CafeEnter
-    public static double __string_float(String txt) throws EvaluationException
+    public static FloatWrap __string_float(String txt) throws EvaluationException
     {
       try {
-        return Double.parseDouble(txt);
+        return Factory.newFlt(Double.parseDouble(txt));
       } catch (NumberFormatException e) {
-        throw new EvaluationException(StringUtils.quoteString(txt) + " cannot be parsed as a floating point number");
+        return FloatWrap.nonFloatEnum;
       }
     }
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newFlt(__string_float(Factory.stringValue(args[0])));
+      return __string_float(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -260,7 +264,7 @@ public abstract class String2Number
 
     public static IType type()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawFloatType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.floatType);
     }
   }
 
@@ -269,23 +273,23 @@ public abstract class String2Number
     public static final String name = "__string_decimal";
 
     @CafeEnter
-    public static BigDecimal __string_decimal(String txt) throws EvaluationException
+    public static BigNumWrap __string_decimal(String txt) throws EvaluationException
     {
       try {
         if (txt.endsWith("a"))
           txt = txt.substring(0, txt.indexOf('a'));
         else if (txt.endsWith("A"))
           txt = txt.substring(0, txt.indexOf('A'));
-        return new BigDecimal(txt);
+        return Factory.newDecimal(new BigDecimal(txt));
       } catch (NumberFormatException e) {
-        throw new EvaluationException(StringUtils.quoteString(txt) + " cannot be parsed as an decimal number");
+        return BigNumWrap.nonDecimalEnum;
       }
     }
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newDecimal(String2Decimal.__string_decimal(Factory.stringValue(args[0])));
+      return String2Decimal.__string_decimal(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -296,7 +300,7 @@ public abstract class String2Number
 
     public static IType type()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawDecimalType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.decimalType);
     }
   }
 }

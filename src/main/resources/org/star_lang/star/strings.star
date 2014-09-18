@@ -84,8 +84,8 @@ toLowerCase(nonString) is nonString;
 -- hex functions
 integer2hex(integer(I)) is string(__integer_hex(I));
 long2hex(long(I)) is string(__long_hex(I));
-hex2integer(string(S)) is integer(__hex_integer(S));
-hex2long(string(S)) is long(__hex_long(S));
+hex2integer(string(S)) is __hex_integer(S);
+hex2long(string(S)) is __hex_long(S);
 
 -- string formatting support
 
