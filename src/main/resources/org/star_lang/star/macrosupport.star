@@ -1,7 +1,5 @@
 /**
  * Support functions for macro processing. 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -15,7 +13,6 @@
  * 02110-1301 USA
  * 
  * @author fgm
- *
  */
 -- 
 -- These functions are invoked by so-called compiled macro rules.
@@ -95,7 +92,7 @@ __macro_tupleize(Loc,Els) is __macro_tuple(Loc,liftEls(Els,_nil())) using {
   liftEls(El,Args) is list of {El;..Args};
 };
 
-private sho(M,V) is valof{
+macroLog(M,V) is valof{
   logMsg(info,M);
   valis V;
 }
@@ -138,9 +135,9 @@ __foldSemi(Term,F,S) is F(Term,S);
 __mapSemi(<| ?L ; ?R |>,F) is <| ?__mapSemi(L,F) ; ?__mapSemi(R,F) |>
 __mapSemi(Term,F) is F(Term);
 
-__wrapSemi(list of {},X) is X;
-__wrapSemi(list of {X},<|nothing|>) is X;
-__wrapSemi(list of {X;..Y},R) is <| ?X ; ?__wrapSemi(Y,R) |>;
+__wrapSemi(list of [],X) is X;
+__wrapSemi(list of [X],<|nothing|>) is X;
+__wrapSemi(list of [X,..Y],R) is <| ?X ; ?__wrapSemi(Y,R) |>;
 
 macroString(nameAst(Lc,N)) is stringAst(Lc,N);
 
