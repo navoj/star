@@ -14,8 +14,10 @@ worksheet{
   type discrete of (k,v) where arithmetic over v is discrete{
     data has type dictionary of (k,v);
     total has type v;
-    total default is leftFold1((+),data);
+    total default is project1(leftFold1(fn((_,A),(K,V))=>(K,A+V),data));
   }
+  
+  private project1((_,X)) is X;
 
   implementation distribution over discrete of (%k,%v) determines (%k,%v) 
      where coercion over (%v,float) is {

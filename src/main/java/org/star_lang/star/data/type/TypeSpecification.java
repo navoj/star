@@ -6,8 +6,6 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
  * The specification of a type. This is used in type interfaces to determine the types defined in
  * that interface.
  * 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.

@@ -55,8 +55,6 @@ import org.star_lang.star.resource.URIUtils;
  * </pre>
  * 
  * 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -322,7 +320,7 @@ public abstract class ResourceURI implements PrettyPrintable, IConstructor, Comp
 
     private static void encodeQuery(String frag, PrettyPrintDisplay disp)
     {
-      disp.append(URIUtils.encodeURIFragment(frag, "=", ";/?:@&+,$"));
+      disp.append(URIUtils.encodeURIFragment(frag, "=&", ";/?:@+,$"));
     }
 
     @Override

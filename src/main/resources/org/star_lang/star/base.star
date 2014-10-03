@@ -1,7 +1,6 @@
 /**
  * the base types and structures for the star standard.
  * imported directly only by the standard prelude packages themselves.
- * Copyright (C) 2013 Starview Inc
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
@@ -16,7 +15,6 @@
  * 02110-1301 USA
  * 
  * @author fgm
- *
  */
 
 -- Define some standard contracts

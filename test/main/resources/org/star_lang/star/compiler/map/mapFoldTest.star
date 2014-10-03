@@ -1,7 +1,5 @@
 /**
  * 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -20,15 +18,12 @@
 mapFoldTest is package{
   var H is dictionary of { "A"->1; "B"->2; "C"->3; "D"->4 };
   
-  L is leftFold((+),0,H);
-  R is rightFold((*),1,H);
+  L is leftFold(fn(A,(K,V))=>(A+V),0,H);
+  R is rightFold(fn((K,V),A)=>(A*V),1,H);
   
   main() do {
     assert L=10;
     assert R=24;
-    
-    assert leftFold1((+),H)=10;
-    assert rightFold1((*),H)=24;
   }
 }
  

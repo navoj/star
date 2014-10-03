@@ -27,8 +27,6 @@ import org.star_lang.star.data.type.StandardTypes;
  * CharWrap value; even though the field is actually represented as an int. CharWrap is a way of
  * boxing character values.
  * 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.

@@ -201,8 +201,6 @@ import org.star_lang.star.resource.catalog.CatalogException;
 /*
  * The TypeChecker implements the type inference module for Star
  * 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -2447,7 +2445,7 @@ public class TypeChecker
         ptnTypeTpl(Abstract.tupleArgs(lhs), argTypes, args, condition, funCxt, cxt, varHandler);
       else {
         assert arity == 1;
-        args[0] = typeOfPtn(lhs, argTypes[0], condition, cxt, funCxt, varHandler);
+        args[0] = typeOfPtn(lhs, argTypes[0], condition, funCxt, cxt, varHandler);
       }
       if (cond != null) {
         Triple<ICondition, List<Variable>, List<Variable>> condInfo = typeOfCondition(cond, funCxt, cxt);

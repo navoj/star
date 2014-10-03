@@ -30,8 +30,6 @@ import org.star_lang.star.data.type.TypeConstraintException;
  * The Variable references a local variable. A variable that is part of a content expression. It can
  * denote either an expression or a pattern.
  * 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -89,7 +87,7 @@ public class Variable extends BaseExpression implements IContentPattern, Compara
     Pair<IType, Map<String, Quantifier>> f = Freshen.freshen(getType(), AccessMode.readOnly, AccessMode.readWrite);
     if (TypeUtils.isReferenceType(f.left) && !TypeUtils.isReferenceType(expectedType)) {
       try {
-        Subsume.subsume(TypeUtils.referenceType(expectedType), f.left, loc, dict);
+        Subsume.subsume(f.left, TypeUtils.referenceType(expectedType), loc, dict);
 
         if (checkForRaw)
           checkForRawBindings(loc, f.right);
@@ -101,7 +99,7 @@ public class Variable extends BaseExpression implements IContentPattern, Compara
       return new Shriek(loc, new Variable(loc, TypeUtils.referenceType(expectedType), getName()));
     } else {
       try {
-        Subsume.subsume(expectedType, f.left, loc, dict);
+        Subsume.subsume(f.left, expectedType, loc, dict);
 
         if (checkForRaw)
           checkForRawBindings(loc, f.right);

@@ -1,7 +1,5 @@
 /**
- * implement the various contracts for hash maps
- * Copyright (C) 2013 Starview Inc
- * 
+ * implement the various contracts for hash maps 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -77,7 +75,7 @@ implementation indexed_iterable over dictionary of (%k,%v) determines (%k,%v) is
   _ixiterate(M,F,S) is __hash_ix_iterate(M,F,S);
 }
 
-implementation foldable over dictionary of (%k,%v) determines %v is {
+implementation foldable over dictionary of (%k,%v) determines ((%k,%v)) is {
   leftFold(F,I,A) is __hash_left_fold(A,F,I);
   rightFold(F,I,A) is __hash_right_fold(A,F,I);
   leftFold1(F,A) is __hash_left_fold1(A,F);

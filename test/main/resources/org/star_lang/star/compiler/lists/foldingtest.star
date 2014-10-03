@@ -1,7 +1,5 @@
 /**
  * 
- * Copyright (C) 2013 Starview Inc
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -27,9 +25,9 @@ foldingtest is package{
     
     assert rightFold((+),0,L) = leftFold((+),0,L)
     
-    logMsg(info,"fold T= $(leftFold((++),"",T))");
+    logMsg(info,"fold T= $(leftFold(fn(A,(K,V))=>(A++V),"",T))");
     
-    assert leftFold((++),"",T)="onetwothree";
+    assert leftFold(fn(A,(K,V))=>(A++V),"",T)="onetwothree";
     
     logMsg(info,"sub = $(leftFold((-),0,L))");
     logMsg(info,"sub = $(rightFold((-),0,L))");

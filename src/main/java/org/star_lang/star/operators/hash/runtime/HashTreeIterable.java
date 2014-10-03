@@ -11,12 +11,11 @@ import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
+import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.operators.CafeEnter;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps;
 
 /**
- * 
- * Copyright (C) 2013 Starview Inc
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
@@ -129,7 +128,7 @@ public class HashTreeIterable
     {
       for (Iterator<Entry<IValue, IValue>> it = src.iterator(); it.hasNext();) {
         Entry<IValue, IValue> entry = it.next();
-        state = transform.enter(state, entry.getValue());
+        state = transform.enter(state, NTuple.tuple(entry.getKey(), entry.getValue()));
       }
       return state;
     }
@@ -152,8 +151,8 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(st, el, st), st,
-          st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(st, TypeUtils
+          .tupleType(ky, el), st), st, st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }
@@ -170,7 +169,7 @@ public class HashTreeIterable
       if (it.hasNext()) {
         while (it.hasNext()) {
           Entry<IValue, IValue> entry = it.next();
-          state = transform.enter(state, entry.getValue());
+          state = transform.enter(state, NTuple.tuple(entry.getKey(), entry.getValue()));
         }
         return state;
       } else
@@ -195,7 +194,8 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(st, el, st), st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(st, TypeUtils
+          .tupleType(ky, el), st), st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }
@@ -209,7 +209,7 @@ public class HashTreeIterable
     {
       for (Iterator<Entry<IValue, IValue>> it = src.reverseIterator(); it.hasNext();) {
         Entry<IValue, IValue> entry = it.next();
-        state = transform.enter(entry.getValue(), state);
+        state = transform.enter(NTuple.tuple(entry.getKey(), entry.getValue()), state);
       }
       return state;
     }
@@ -232,8 +232,8 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(el, st, st), st,
-          st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(TypeUtils
+          .tupleType(ky, el), st, st), st, st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }
@@ -250,7 +250,7 @@ public class HashTreeIterable
       if (it.hasNext()) {
         while (it.hasNext()) {
           Entry<IValue, IValue> entry = it.next();
-          state = transform.enter(entry.getValue(), state);
+          state = transform.enter(NTuple.tuple(entry.getKey(), entry.getValue()), state);
         }
         return state;
       } else
@@ -275,7 +275,8 @@ public class HashTreeIterable
       TypeVar el = new TypeVar();
       TypeVar st = new TypeVar();
 
-      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(el, st, st), st);
+      IType funType = TypeUtils.functionType(TypeUtils.dictionaryType(ky, el), TypeUtils.functionType(TypeUtils
+          .tupleType(ky, el), st, st), st);
       return new UniversalType(ky, new UniversalType(el, new UniversalType(st, funType)));
     }
   }
