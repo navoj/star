@@ -165,7 +165,8 @@ public class HashTreeIterable
     public static IValue enter(IMap src, IFunction transform) throws EvaluationException
     {
       Iterator<Entry<IValue, IValue>> it = src.iterator();
-      IValue state = it.next().getValue();
+      Entry<IValue, IValue> first = it.next();
+      IValue state = NTuple.tuple(first.getKey(), first.getValue());
       if (it.hasNext()) {
         while (it.hasNext()) {
           Entry<IValue, IValue> entry = it.next();
@@ -246,7 +247,8 @@ public class HashTreeIterable
     public static IValue enter(IMap src, IFunction transform) throws EvaluationException
     {
       Iterator<Entry<IValue, IValue>> it = src.reverseIterator();
-      IValue state = it.next().getValue();
+      Entry<IValue, IValue> first = it.next();
+      IValue state = NTuple.tuple(first.getKey(), first.getValue());
       if (it.hasNext()) {
         while (it.hasNext()) {
           Entry<IValue, IValue> entry = it.next();

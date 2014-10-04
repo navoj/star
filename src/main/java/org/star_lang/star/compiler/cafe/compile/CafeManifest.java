@@ -186,27 +186,17 @@ public class CafeManifest implements CodeTree, CodeParser
 
   public void writeText(File file) throws IOException
   {
-    PrintStream print = new PrintStream(file);
-    String manifest = toString();
-
-    try {
-      print.append(manifest);
-    } finally {
-      print.close();
+    try (PrintStream print = new PrintStream(file)) {
+      print.append(toString());
     }
   }
 
   @Override
   public void write(File file) throws IOException
   {
-    FileOutputStream fos = new FileOutputStream(file);
-    ObjectOutputStream oostream = new ObjectOutputStream(fos);
-    try {
-      oostream.writeObject(this);
-    } finally {
-      try {
-        oostream.close();
-      } catch (IOException e) {
+    try (FileOutputStream fos = new FileOutputStream(file)) {
+      try (ObjectOutputStream oostream = new ObjectOutputStream(fos)) {
+        oostream.writeObject(this);
       }
     }
   }

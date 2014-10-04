@@ -129,10 +129,11 @@ public class MetaRules implements CodeTree, CodeParser
   @Override
   public void write(File file) throws IOException
   {
-    FileOutputStream fos = new FileOutputStream(file);
-    ObjectOutputStream oostream = new ObjectOutputStream(fos);
-    oostream.writeObject(this);
-    oostream.close();
+    try (FileOutputStream fos = new FileOutputStream(file)) {
+      try (ObjectOutputStream oostream = new ObjectOutputStream(fos)) {
+        oostream.writeObject(this);
+      }
+    }
   }
 
   @Override

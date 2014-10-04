@@ -144,6 +144,7 @@ public interface IArray extends IList
    * @return the new array
    * @throws EvaluationException
    */
+  @Override
   IArray mapOver(IFunction transform) throws EvaluationException;
 
   /**
@@ -165,6 +166,7 @@ public interface IArray extends IList
    * @return the final result value by evaluating the transform for each element
    * @throws EvaluationException
    */
+  @Override
   IValue leftFold(IFunction transform, IValue init) throws EvaluationException;
 
   /**
@@ -176,6 +178,7 @@ public interface IArray extends IList
    * @return the final result value by evaluating the transform for each element
    * @throws EvaluationException
    */
+  @Override
   IValue rightFold(IFunction transform, IValue init) throws EvaluationException;
 
   

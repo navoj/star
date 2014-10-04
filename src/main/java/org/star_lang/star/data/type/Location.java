@@ -16,8 +16,8 @@ import org.star_lang.star.data.IRecord;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
 import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.IntWrap;
 import org.star_lang.star.data.value.ResourceURI;
-import org.star_lang.star.data.value.IntWrap.IntWrapper;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.resource.ResourceException;
@@ -518,25 +518,25 @@ public abstract class Location implements PrettyPrintable, IConstructor
     @Override
     public IValue getCharCount()
     {
-      return IntWrapper.nonIntegerEnum;
+      return IntWrap.nonIntegerEnum;
     }
 
     @Override
     public IValue getLineCount()
     {
-      return IntWrapper.nonIntegerEnum;
+      return IntWrap.nonIntegerEnum;
     }
 
     @Override
     public IValue getLineOffset()
     {
-      return IntWrapper.nonIntegerEnum;
+      return IntWrap.nonIntegerEnum;
     }
 
     @Override
     public IValue getLength()
     {
-      return IntWrapper.nonIntegerEnum;
+      return IntWrap.nonIntegerEnum;
     }
 
     @Override

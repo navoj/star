@@ -180,9 +180,8 @@ public abstract class SRTest
         tgt.deleteOnExit();
         try (FileOutputStream wtr = new FileOutputStream(tgt)) {
           byte[] chBuff = new byte[1024];
-          if (rdr != null)
-            for (int len = rdr.read(chBuff); len > 0; len = rdr.read(chBuff))
-              wtr.write(chBuff, 0, len);
+          for (int len = rdr.read(chBuff); len > 0; len = rdr.read(chBuff))
+            wtr.write(chBuff, 0, len);
         }
         return tgt;
       } else

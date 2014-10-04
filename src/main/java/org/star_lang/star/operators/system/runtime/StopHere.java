@@ -22,7 +22,7 @@ import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IFunction;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.value.NTuple.NTpl;
+import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.operators.CafeEnter;
 
 public class StopHere implements IFunction
@@ -38,7 +38,7 @@ public class StopHere implements IFunction
   @CafeEnter
   public static IValue stop() throws EvaluationException
   {
-    return NTpl.$0Enum;
+    return NTuple.$0Enum;
   }
 
   @Override

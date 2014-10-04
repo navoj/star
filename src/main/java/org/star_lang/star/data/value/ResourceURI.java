@@ -633,7 +633,7 @@ public abstract class ResourceURI implements PrettyPrintable, IConstructor, Comp
     IType uriType = type;
 
     ConstructorSpecifier uriSpec = new RecordSpecifier(Location.nullLoc, uri, 0, null, TypeUtils.constructorType(
-        ResourceURI.URI.face, uriType), URI.class, ResourceURI.class);
+        ResourceURI.face, uriType), URI.class, ResourceURI.class);
 
     ConstructorSpecifier nullSpec = new ConstructorSpecifier(Location.nullLoc, null, noUri, 1, TypeUtils
         .constructorType(uriType), NoUri.class, ResourceURI.class);

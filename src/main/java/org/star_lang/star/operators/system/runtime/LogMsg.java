@@ -11,7 +11,7 @@ import org.star_lang.star.data.IFunction;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.value.Factory;
-import org.star_lang.star.data.value.NTuple.NTpl;
+import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.operators.CafeEnter;
 
 /**
@@ -44,7 +44,7 @@ public class LogMsg implements IFunction
     if (logger.isLoggable(level)) {
       logger.logp(level, cat.toString(), "", msg.toString());
     }
-    return NTpl.$0Enum;
+    return NTuple.$0Enum;
   }
 
   @Override

@@ -185,11 +185,10 @@ public class ZipCodeRepository extends AbstractCodeRepository
   public static void createZarFromDir(File dir, File ret) throws IOException
   {
     assert dir.isDirectory();
-    ZipOutputStream os = new ZipOutputStream(new FileOutputStream(ret));
-    Stack<File> dirs = new Stack<File>();
-    dirs.add(dir);
-    int tmpDirNameLength = dir.getPath().length();
-    try {
+    try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(ret))) {
+      Stack<File> dirs = new Stack<File>();
+      dirs.add(dir);
+      int tmpDirNameLength = dir.getPath().length();
       while (!dirs.empty()) {
         File d = dirs.pop();
         for (File ent : d.listFiles()) {
@@ -198,15 +197,13 @@ public class ZipCodeRepository extends AbstractCodeRepository
           } else {
             ZipEntry ze = new ZipEntry(ent.getPath().substring(tmpDirNameLength + 1));
             os.putNextEntry(ze);
-            FileInputStream rdr = new FileInputStream(ent);
-            byte[] bt = FileUtil.readFileIntoBytes(rdr);
-            rdr.close();
-            os.write(bt);
+            try (FileInputStream rdr = new FileInputStream(ent)) {
+              byte[] bt = FileUtil.readFileIntoBytes(rdr);
+              os.write(bt);
+            }
           }
         }
       }
-    } finally {
-      os.close();
     }
   }
 

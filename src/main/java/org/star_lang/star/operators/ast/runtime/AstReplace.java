@@ -10,9 +10,8 @@ import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.Cons;
-import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.data.value.Cons.ConsCons;
-import org.star_lang.star.data.value.Cons.Nil;
+import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.CafeEnter;
 
 /**
@@ -39,7 +38,7 @@ public class AstReplace implements IFunction
   @CafeEnter
   public static IAbstract enter(IAbstract term, Cons path, IAbstract repl) throws EvaluationException
   {
-    if (path.equals(Nil.nilEnum))
+    if (path.equals(Cons.nilEnum))
       return repl;
     else {
       assert path instanceof ConsCons && term instanceof Apply;

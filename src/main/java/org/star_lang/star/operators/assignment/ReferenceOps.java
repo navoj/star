@@ -131,7 +131,7 @@ public class ReferenceOps
       InsnList ins = mtd.instructions;
       String javaCellName = Utils.javaInternalClassName(IntegerCell.class);
       assert ins.getLast() instanceof TypeInsnNode && ((TypeInsnNode) ins.getLast()).desc.equals(javaCellName);
-      ins.add(new FieldInsnNode(Opcodes.GETFIELD, javaCellName, IntegerCell.VALUEFIELD, Types.JAVA_INT_SIG));
+      ins.add(new FieldInsnNode(Opcodes.GETFIELD, javaCellName, RefCell.VALUEFIELD, Types.JAVA_INT_SIG));
     }
   }
 
@@ -175,7 +175,7 @@ public class ReferenceOps
       InsnList ins = mtd.instructions;
       String javaCellName = Utils.javaInternalClassName(FloatCell.class);
       assert ins.getLast() instanceof TypeInsnNode && ((TypeInsnNode) ins.getLast()).desc.equals(javaCellName);
-      ins.add(new FieldInsnNode(Opcodes.GETFIELD, javaCellName, IntegerCell.VALUEFIELD, Types.JAVA_DBL_SIG));
+      ins.add(new FieldInsnNode(Opcodes.GETFIELD, javaCellName, RefCell.VALUEFIELD, Types.JAVA_DBL_SIG));
     }
   }
 }

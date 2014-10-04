@@ -40,7 +40,8 @@ import org.star_lang.star.data.value.ResourceURI;
  *
  */
 @SuppressWarnings("serial")
-public class Manifest implements CodeTree{
+public class Manifest implements CodeTree
+{
   public static final String MANIFEST = "manifest";
   public static final String EXTENSION = "manifest";
 
@@ -192,26 +193,16 @@ public class Manifest implements CodeTree{
   @Override
   public void write(File file) throws IOException
   {
-    PrintStream print = new PrintStream(file);
-    String manifest = toString();
-
-    try {
-      print.append(manifest);
-    } finally {
-      print.close();
+    try (PrintStream print = new PrintStream(file)) {
+      print.append(toString());
     }
   }
 
   public void writeBin(File file) throws IOException
   {
-    FileOutputStream fos = new FileOutputStream(file);
-    ObjectOutputStream oostream = new ObjectOutputStream(fos);
-    try {
-      oostream.writeObject(this);
-    } finally {
-      try {
-        oostream.close();
-      } catch (IOException e) {
+    try (FileOutputStream fos = new FileOutputStream(file)) {
+      try (ObjectOutputStream oostream = new ObjectOutputStream(fos)) {
+        oostream.writeObject(this);
       }
     }
   }

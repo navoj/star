@@ -238,9 +238,9 @@ public class CompositeRepositoryTest extends SRTest
       File metaInf = new File(zipTestDir, "META-INF");
       metaInf.mkdir();
       File metaInfSub = new File(metaInf, "sub");
-      FileOutputStream str = new FileOutputStream(metaInfSub);
-      str.write(new byte[] { 1, 2, 3 });
-      str.close();
+      try (FileOutputStream str = new FileOutputStream(metaInfSub)) {
+        str.write(new byte[] { 1, 2, 3 });
+      }
       File zipTestFile = ZipCodeRepository.createZarFromDir(zipTestDir);
       ArrayList<CodeRepository> repoList = new ArrayList<CodeRepository>();
       repoList.add(new ZipCodeRepository(zipTestFile, loader, errors));

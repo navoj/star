@@ -6,7 +6,7 @@ import org.star_lang.star.data.IFunction;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.value.StringWrap.StringWrapper;
+import org.star_lang.star.data.value.StringWrap;
 import org.star_lang.star.operators.CafeEnter;
 
 /**
@@ -33,7 +33,7 @@ public class MacroError implements IFunction
   @CafeEnter
   public static IValue enter(Location loc, IValue msg) throws EvaluationException
   {
-    throw new EvaluationException(StringWrapper.nonStringEnum, msg, loc);
+    throw new EvaluationException(StringWrap.nonStringEnum, msg, loc);
   }
 
   @Override

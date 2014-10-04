@@ -195,8 +195,7 @@ public class ExpressionCompile implements
 
           jump.jumpTarget(cxt.getIns(), frame, cxt);
 
-          if (argSpecs != null)
-            checkCast(cxt, frame.tos(), argSpecs[ix].getJavaType());
+          checkCast(cxt, frame.tos(), argSpecs[ix].getJavaType());
           ix++;
         }
         return Pair.pair(frame, true);
@@ -283,8 +282,7 @@ public class ExpressionCompile implements
 
         jump.jumpTarget(cxt.getIns(), actual, cxt);
 
-        if (argSpecs != null)
-          checkCast(cxt, actual.tos(), argSpecs[ix].getJavaType());
+        checkCast(cxt, actual.tos(), argSpecs[ix].getJavaType());
         ix++;
       }
     } else {

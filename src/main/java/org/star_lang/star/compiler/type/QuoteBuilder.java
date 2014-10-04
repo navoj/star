@@ -19,7 +19,6 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
-import org.star_lang.star.data.type.Location.NoWhere;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayEl;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps;
 
@@ -43,7 +42,7 @@ import org.star_lang.star.operators.arrays.runtime.ArrayOps;
  */
 public class QuoteBuilder
 {
-  private static IAbstract nowhere = Abstract.name(Location.nullLoc, NoWhere.nowhere);
+  private static IAbstract nowhere = Abstract.name(Location.nullLoc, Location.nowhere);
   private static IAbstract quoted = Abstract.name(Location.nullLoc, StandardTypes.QUOTED);
 
   public static IAbstract checkForQuoting(IAbstract theta, Dictionary dict)
