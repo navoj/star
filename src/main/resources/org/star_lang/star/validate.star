@@ -173,13 +173,13 @@ private import macrosupport;
 # #(?N)##@#(tuple?Arg)# is ?Exp :: statement :-
     N::name :& Arg :* pattern :& Exp :: expression;
 # #(?N)#{?Arg} where ?Cnd is ?Exp :: statement :-
-    N::name :& ?Arg ;* attributePattern :&
+    N::name :& ?Arg ;* fieldPattern :&
     ?Cnd :: condition :&
     ?Exp :: expression;
 # #(?N)#{?Arg} default is ?Exp :: statement :-
-    N::name :& ?Arg ;* attributePattern :& Exp :: expression;
+    N::name :& ?Arg ;* fieldPattern :& Exp :: expression;
 # #(?N)#{?Arg} is ?Exp :: statement :-
-    N::name :& Arg ;* attributePattern :& Exp :: expression;
+    N::name :& Arg ;* fieldPattern :& Exp :: expression;
 
 -- Variable definitions
 # ?V is ?Exp :: statement :- V::pattern :& Exp::expression;
@@ -437,16 +437,17 @@ private import macrosupport;
 # #( ?S ;)#::sequencePtnBody :- S::pattern;
 # ?E :: sequencePtnBody :- E::pattern;
 -- Special hack to detect an anonymous record pattern
-# { identifier = ?Ptn; ?Rest} :: pattern :- Ptn::pattern :& Rest;*attributePattern;
+# { identifier = ?Ptn; ?Rest} :: pattern :- Ptn::pattern :& Rest;*fieldPattern;
 # { identifier = ?Ptn} :: pattern :- Ptn::pattern;
-# { (identifier) = ?Ptn; ?Rest} :: pattern :- Ptn::pattern :& Rest;*attributePattern;
+# { (identifier) = ?Ptn; ?Rest} :: pattern :- Ptn::pattern :& Rest;*fieldPattern;
 # { (identifier) = ?Ptn} :: pattern :- Ptn::pattern;
  
-# identifier{?A} :: pattern :- A;*attributePattern;
+# identifier{?A} :: pattern :- A;*fieldPattern;
 # identifier{} :: pattern;
 
-# ?I = ?P :: attributePattern :- I::id :& P::pattern;
-# type ?I = ?P :: attributePattern :- I::id :& P::typeExpression; 
+# ?I = ?P :: fieldPattern :- I::id :& P::pattern;
+# ?I := ?P :: fieldPattern :- I::id :& P::pattern;
+# type ?I = ?P :: fieldPattern :- I::id :& P::typeExpression; 
 
 # identifier#@?A::pattern :- A:*pattern;
 

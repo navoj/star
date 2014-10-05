@@ -3884,6 +3884,16 @@ public class TypeChecker
                   errors.reportError(member + " not known to be a member of aggregate " + record.getLabel(), elLoc);
               } else
                 errors.reportError("expecting an identifier on lhs of =", elLoc);
+            } else if (CompilerUtils.isAssignment(el)) {
+              if (CompilerUtils.isIdentifier(CompilerUtils.assignedVar(el))) {
+                String member = Abstract.getId(CompilerUtils.assignedVar(el));
+                IType memType = fieldType(loc, expectedType, member, TypeUtils.referenceType(new TypeVar()), cxt,
+                    errors);
+
+                IContentPattern elPtn = typeOfPtn(CompilerUtils.assignedValue(el), memType, condition, cxt, outer,
+                    varHandler);
+                els.put(member, elPtn);
+              }
             } else if (CompilerUtils.isTypeEquality(el)) {
               String name = Abstract.getId(CompilerUtils.typeEqualField(el));
               IType type = TypeParser.parseType(CompilerUtils.typeEqualType(el), cxt, errors, readWrite);
