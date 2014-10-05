@@ -89,6 +89,7 @@ private import macrosupport;
 # ?Tp where ?C :: contractType :- Tp::contractType :& C::typeConstraint;
 # ?N over ?Tp determines ?Te :: contractType :- N::id :& Tp::typeExpression :& Te::typeExpression;
 # ?N over ?Tp :: contractType :- N::id :& Tp::typeExpression;
+# for all ?Tvs such that ?Tp :: contractType :- Tvs::typeVars :& Tp::contractType;
 
 # identifier :: id;
 # (symbol) :: id;
