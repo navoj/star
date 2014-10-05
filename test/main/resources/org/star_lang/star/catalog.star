@@ -17,7 +17,7 @@
  */
 catalog is package{
 	type catalog of %t is manifest{
-		entries has type map of (string,catalogReference of %t);
+		entries has type dictionary of (string,catalogReference of %t);
 	}
 	
 	type catalogReference of %t is local(catalogEntry of %t)

@@ -232,8 +232,10 @@ implementation for all t such that foldable over cons of t determines t is {
 }
 
 implementation mappable over cons is {
-  _map(nil,_) is nil;
-  _map(cons(H,T),F) is cons(F(H),_map(T,F))
+  map=cons_map
+} using {
+  cons_map(nil,_) is nil;
+  cons_map(cons(H,T),F) is cons(F(H),cons_map(T,F))
 }
 
 interleave(nil,_) is nil;

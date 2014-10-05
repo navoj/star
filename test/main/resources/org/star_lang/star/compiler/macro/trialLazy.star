@@ -22,13 +22,13 @@ trialLazy is package{
  	semi(X,Y) is <| ?X ; ?Y |>;
  	
  	#lazyTrial is valof{
- 	  (Others,LVars) is collectLazyVars(B, (list of {},map of {}));
- 	  var subFun is fn (V,Th) => semi(macroSubstitute(V,map of {},LVars),Th);
+ 	  (Others,LVars) is collectLazyVars(B, (list of [],dictionary of {}));
+ 	  var subFun is fn (V,Th) => semi(macroSubstitute(V,dictionary of {},LVars),Th);
  	  
  	  trVars is rightFold(subFun,<|{}|>, LVars);
  	  nBody is subFun(B,trVars);
  	  
- 	  nBound is sub(Bound,map of {},LVars);
+ 	  nBound is sub(Bound,dictionary of {},LVars);
  	  valis <| let{ ?nBody } in ?nBound |>
  	}
   }

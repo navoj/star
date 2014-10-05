@@ -11,7 +11,7 @@ lazySupport is package{
     subst(A matching floatAst(_,_)) is A;
     subst(A matching decimalAst(_,_)) is A;
     subst(A matching quote(_)) is A;
-    subst(applyAst(Lc,Op,Args)) is applyAst(Lc,subst(Op),_map(Args,subst))
+    subst(applyAst(Lc,Op,Args)) is applyAst(Lc,subst(Op),map(Args,subst))
   } in subst(Term);
 }
  

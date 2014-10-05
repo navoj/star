@@ -121,7 +121,7 @@ private import macrosupport;
 # (?T) :: typeExpression :- T::typeExpression;
 # tuple?T :: typeExpression :- T:*typeExpression;
 # ref ?T :: typeExpression :- T::typeExpression;
-# hash of (?K,?V) :: typeExpression :- K::typeExpression :& V::typeExpression :& warning("hash type deprecated, use map");
+# hash of (?K,?V) :: typeExpression :- K::typeExpression :& V::typeExpression :& warning("hash type deprecated, use dictionary");
 # ?N of ?T :: typeExpression :- #(N::identifier :| N::typeVar)# :& T::typeExpression;
 # symbol :: typeExpression;
 # #(?M)#.#(?P)# :: typeExpression :- M::id :& P::path ## {

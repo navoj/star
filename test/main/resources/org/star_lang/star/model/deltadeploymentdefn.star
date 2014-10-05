@@ -24,13 +24,13 @@ DeltaDeployment is package {
 type mChangeList is mvChangeList {
   taskId has type long;
   modelName has type string;
-  componentChangeListMap has type map of(string, mComponentChangeList);
+  componentChangeListMap has type dictionary of(string, mComponentChangeList);
 };
 
 type mComponentChangeList is mvComponentChangeList {
   taskId has type long;
   componentName has type string;
-  changeListElementMap has type map of(string, mComponentChangeListElement);
+  changeListElementMap has type dictionary of(string, mComponentChangeListElement);
 };
 
 type mComponentChangeListElement is mvComponentChangeListElement {

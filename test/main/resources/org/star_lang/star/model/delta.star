@@ -84,20 +84,20 @@ delta is package {
 
 
   -- For Maps...
-  hashRemoveFn(M, K1) is map of {};
+  hashRemoveFn(M, K1) is dictionary of {};
   
   hashUpsertFn(M, K2, V) is valof{
-   var tm := map of {};
+   var tm := dictionary of {};
    set K2 in tm to V;
    valis (tm);
   }
 
-  implementation diffable over (map of (%k,%v) where diffable over %k and diffable over %v) is {
+  implementation diffable over (dictionary of (%k,%v) where diffable over %k and diffable over %v) is {
    diff = hashDiff();
   } using {
     hashDiff() is (function(X1, X2, Loc) is hashDiffer(X1, X2, Loc));
 
-    hashDiffer has type (map of (%k, %v), map of (%k, %v), string) => list of delta;
+    hashDiffer has type (dictionary of (%k, %v), dictionary of (%k, %v), string) => list of delta;
     hashDiffer(M1, M2, Loc) is valof {
 	  
 	  D1 is list of {
@@ -265,8 +265,8 @@ delta is package {
 	logMsg(info, "diff of rels: => $(showChanges(dltaR, r1))");
  	
 	-- diff for Maps...
-	var m1 := map of {1->1; 2->2; 3->3};
-    var m2 := map of {1->1; 2->2; 4->4; 5->5};
+	var m1 := dictionary of {1->1; 2->2; 3->3};
+    var m2 := dictionary of {1->1; 2->2; 4->4; 5->5};
     -- d is diff(m1, m2, "MyMap");
   	-- logMsg(info, "diff(m1, m2) ==> $d");
   	dltaM is diff(m1, m2, "MyMap");

@@ -18,7 +18,7 @@
 mastermind is package{
   import permute;
   
-  choices is multicat(_map(NofM(3,list of {1;2;3;4;5;6;7;8;9}),permute))
+  choices is multicat(map(NofM(3,list of {1;2;3;4;5;6;7;8;9}),permute))
   
   score(Test,Secret) is (countBlacks(Test,Secret),countWhites(Test,Secret)) using {
     countBlacks(list of {},list of {}) is 0;

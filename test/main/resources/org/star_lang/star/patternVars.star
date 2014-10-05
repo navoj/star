@@ -37,7 +37,7 @@ patternVars is package{
   mapper(St) where St->X in wordMap is possible(X);
   mapper(_) default is impossible;
   
-  wordMap is map of {
+  wordMap is dictionary of {
     "hello" -> "Ok"
   };
   

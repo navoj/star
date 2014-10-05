@@ -20,7 +20,7 @@ import metamodeldefn;
 modeltypes is package {
   type In is In{STR_STREAM has type stream of any};
   type MODEL_IN is MODEL_IN{
-    ATTRIBUTE_UPDATES has type stream of map of (string, any);
+    ATTRIBUTE_UPDATES has type stream of dictionary of (string, any);
     DEFAULT has type stream of mModel;
     GET_CONFIGURATION has type (string) => mModel
   };

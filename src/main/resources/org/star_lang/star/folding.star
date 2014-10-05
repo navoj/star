@@ -1,5 +1,4 @@
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -19,7 +18,7 @@ private import base;
 private import iterable;
 
 contract mappable over c is {
-  _map has type for all e,f such that (c of e,(e)=>f) => c of f;
+  map has type for all e,f such that (c of e,(e)=>f) => c of f;
 }
 
 contract filterable over t determines e is {
