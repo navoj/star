@@ -80,7 +80,7 @@ public abstract class ResourceURI implements PrettyPrintable, IConstructor, Comp
   public static final IType stringType = StandardTypes.stringType;
   public static final IType integerType = StandardTypes.integerType;
 
-  public static final ResourceURI noUriEnum = new NoUri();
+  public static final NoUri noUriEnum = new NoUri();
 
   // Field names in a uri
   public static final String SCHEME = "scheme";
