@@ -17,6 +17,7 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeConstraint;
 import org.star_lang.star.data.type.InstanceOf;
 import org.star_lang.star.data.type.TupleConstraint;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
@@ -83,6 +84,21 @@ public class TypeSubstitute implements TypeTransformer<IType, ITypeConstraint, V
       return t;
     else
       return new TypeExp(con, args);
+  }
+
+  @Override
+  public IType transformTupleType(TupleType t, Void cxt)
+  {
+    boolean clean = true;
+    IType args[] = new IType[t.arity()];
+    for (int ix = 0; ix < t.arity(); ix++) {
+      args[ix] = t.nth(ix).transform(this, cxt);
+      clean &= args[ix] == t.nth(ix);
+    }
+    if (clean)
+      return t;
+    else
+      return new TupleType(args);
   }
 
   @Override

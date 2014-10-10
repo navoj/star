@@ -407,9 +407,8 @@ public class GenerateCafe implements
         findVarsInPtn(CafeSyntax.varDeclLval(stmt), vars, args, types);
     }
 
-    IAbstract tplType = CafeSyntax.tupleType(loc, types);
-    IAbstract ptn = makeTuple(cxt, loc, tplType, args);
-    IAbstract val = makeTuple(cxt, loc, tplType, vars);
+    IAbstract ptn = makeTuple(cxt, loc, args);
+    IAbstract val = makeTuple(cxt, loc, vars);
     return Pair.pair(ptn, val);
   }
 
@@ -1457,7 +1456,7 @@ public class GenerateCafe implements
     return CafeSyntax.constructor(loc, label, elExps);
   }
 
-  private IAbstract makeTuple(CContext cxt, Location loc, IAbstract tplType, List<IAbstract> els)
+  private IAbstract makeTuple(CContext cxt, Location loc, List<IAbstract> els)
   {
     int arity = els.size();
     String label = TypeUtils.tupleLabel(arity);

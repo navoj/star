@@ -18,7 +18,7 @@ private import base;
 private import iterable;
 
 contract mappable over c is {
-  map has type for all e,f such that (c of e,(e)=>f) => c of f;
+  map has type for all e,f such that ((e)=>f,c of e) => c of f;
 }
 
 contract filterable over t determines e is {

@@ -52,6 +52,6 @@ macro is package{
   };
   unpack(Term,_) is Term;
   
-  replaceAll(L,P) is map(L,(function(A) is macroReplace(A,P)));  
+  replaceAll(L,P) is map(fn A=>macroReplace(A,P),L);  
 }
     

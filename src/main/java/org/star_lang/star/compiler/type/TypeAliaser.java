@@ -20,6 +20,7 @@ import org.star_lang.star.data.type.InstanceOf;
 import org.star_lang.star.data.type.Kind;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.TupleConstraint;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeConstraintException;
 import org.star_lang.star.data.type.TypeDescription;
@@ -142,6 +143,21 @@ public class TypeAliaser implements TypeTransformer<IType, ITypeConstraint, Void
       return typeAlias(t);
     else
       return typeAlias(new TypeExp(con, args));
+  }
+
+  @Override
+  public IType transformTupleType(TupleType t, Void cxt)
+  {
+    boolean clean = true;
+    IType args[] = new IType[t.arity()];
+    for (int ix = 0; ix < t.arity(); ix++) {
+      args[ix] = t.nth(ix).transform(this, cxt);
+      clean &= args[ix] == t.nth(ix);
+    }
+    if (clean)
+      return typeAlias(t);
+    else
+      return typeAlias(new TupleType(args));
   }
 
   @Override

@@ -15,6 +15,7 @@ import org.star_lang.star.data.type.ITypeAlias;
 import org.star_lang.star.data.type.ITypeDescription;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.QuantifiedType;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeConstraintException;
 import org.star_lang.star.data.type.TypeExp;
@@ -227,6 +228,22 @@ public class UnifyTypes
       } else
         throw new TypeConstraintException(FixedList.create("arity of ", c1TyCon, "/", arity1,
             " is different to arity of ", c2TyCon, "/", arity2));
+    } else if (tp1 instanceof TupleType && tp2 instanceof TupleType) {
+      TupleType c1 = (TupleType) tp1;
+      TupleType c2 = (TupleType) tp2;
+      int arity1 = c1.arity();
+      int arity2 = c2.arity();
+
+      if (arity1 == arity2) {
+
+        IType lArgs[] = c1.getElTypes();
+        IType rArgs[] = c2.getElTypes();
+
+        for (int ix = 0; ix < arity1; ix++)
+          unify(lArgs[ix], rArgs[ix]);
+      } else
+        throw new TypeConstraintException(FixedList.create("arity of ", tp1, "/", arity1, " is different to arity of ",
+            tp2, "/", arity2));
     } else if (tp1 instanceof TypeInterface && tp2 instanceof TypeInterface) {
       TypeInterface tI1 = (TypeInterface) tp1;
       TypeInterface tI2 = (TypeInterface) tp2;

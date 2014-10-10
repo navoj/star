@@ -19,6 +19,7 @@ import org.star_lang.star.data.type.ITypeVisitor;
 import org.star_lang.star.data.type.InstanceOf;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.QuantifiedType;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
@@ -219,6 +220,21 @@ public class Refresher implements ITypeVisitor<Void>
       newArgs[ix] = stack.pop();
 
     stack.push(TypeUtils.typeExp(tyCon, newArgs));
+  }
+
+  @Override
+  public void visitTupleType(TupleType t, Void cxt)
+  {
+    IType typeArgs[] = t.getElTypes();
+
+    for (int ix = 0; ix < typeArgs.length; ix++)
+      typeArgs[ix].accept(this, cxt);
+    assert stack.size() >= typeArgs.length;
+    IType newArgs[] = new IType[typeArgs.length];
+    for (int ix = typeArgs.length - 1; ix >= 0; ix--)
+      newArgs[ix] = stack.pop();
+
+    stack.push(new TupleType(newArgs));
   }
 
   @Override

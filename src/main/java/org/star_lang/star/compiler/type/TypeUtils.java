@@ -36,6 +36,7 @@ import org.star_lang.star.data.type.Kind;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.QuantifiedType;
 import org.star_lang.star.data.type.Quantifier;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Quantifier.Existential;
 import org.star_lang.star.data.type.Quantifier.Universal;
 import org.star_lang.star.data.type.RecordSpecifier;
@@ -54,8 +55,7 @@ import org.star_lang.star.data.value.Option;
 import org.star_lang.star.data.value.Result;
 import org.star_lang.star.operators.Intrinsics;
 
-/**
- * 
+/*
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -129,6 +129,8 @@ public class TypeUtils
       return 0;
     else if (type instanceof TypeExp)
       return ((TypeExp) type).typeArity();
+    else if (type instanceof TupleType)
+      return ((TupleType) type).arity();
     else if (type instanceof TypeInterfaceType)
       return ((TypeInterfaceType) type).arity();
     else
@@ -152,10 +154,12 @@ public class TypeUtils
     type = unwrap(type);
     if (type instanceof TypeExp)
       return ((TypeExp) type).getTypeCon();
+    else if (type instanceof TupleType)
+      return new Type(tupleLabel(tupleTypeArity(type)));
     else if (type instanceof Type)
       return type;
-    else
-      return null;
+
+    return null;
   }
 
   public static IType[] typeArgs(IType type)
@@ -164,18 +168,22 @@ public class TypeUtils
 
     if (type instanceof TypeExp)
       return ((TypeExp) type).getTypeArgs();
+    else if (type instanceof TupleType)
+      return ((TupleType) type).getElTypes();
     else
       return new IType[] {};
   }
 
-  public static IType getTypeCon(IType tp)
+  public static IType getTypeCon(IType type)
   {
-    if (tp instanceof Type)
-      return tp;
-    else if (tp instanceof TypeExp)
-      return ((TypeExp) tp).getTypeCon();
+    if (type instanceof Type)
+      return type;
+    else if (type instanceof TypeExp)
+      return ((TypeExp) type).getTypeCon();
+    else if (type instanceof TupleType)
+      return new Type(tupleLabel(tupleTypeArity(type)));
     else
-      return tp;
+      return type;
   }
 
   public static IType typeCon(String label, int arity)
@@ -185,6 +193,8 @@ public class TypeUtils
 
   public static IType typeExp(String name, IType... args)
   {
+    assert !isTupleLabel(name);
+
     if (args.length == 0)
       return new Type(name);
     else
@@ -814,20 +824,19 @@ public class TypeUtils
 
   public static IType tupleType(IType... elTypes)
   {
-    String tplLabel = tupleLabel(elTypes.length);
-    return typeExp(tplLabel, elTypes);
+    return new TupleType(elTypes);
   }
 
   public static IType tupleType(List<IType> types)
   {
-    return tupleType(types.toArray(new IType[types.size()]));
+    return new TupleType(types);
   }
 
   public static boolean isTupleType(IType type)
   {
     type = deRef(type);
 
-    return TypeUtils.isTupleLabel(type.typeLabel());
+    return type instanceof TupleType;
   }
 
   public static boolean isTupleLabel(String label)
@@ -844,7 +853,7 @@ public class TypeUtils
   public static int tupleTypeArity(IType type)
   {
     assert isTupleType(type);
-    return typeArity(type);
+    return ((TupleType) type).arity();
   }
 
   public static String tupleLabel(int arity)
@@ -861,11 +870,20 @@ public class TypeUtils
     }
   }
 
-  public static IType[] tupleTypes(IType type)
+  public static IType nthTplType(IType type, int ix)
   {
     assert isTupleType(type);
 
-    return typeArgs(type);
+    return ((TupleType) type).nth(ix);
+  }
+
+  public static IType[] tupleTypes(IType type)
+  {
+    type = deRef(type);
+
+    assert isTupleType(type);
+
+    return ((TupleType) type).getElTypes();
   }
 
   public static boolean isStdType(String type)
@@ -1251,7 +1269,7 @@ public class TypeUtils
 
     assert isOverloadedType(type) && isTupleType(getTypeArg(type, 0)) && tupleTypeArity(getTypeArg(type, 0)) == 1;
 
-    return getTypeArg(getTypeArg(type, 0), 0);
+    return nthTplType(getTypeArg(type, 0), 0);
   }
 
   public static IType refreshOverloaded(IType overload)

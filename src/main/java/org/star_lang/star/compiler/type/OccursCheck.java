@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeConstraint;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
 import org.star_lang.star.data.type.TypeVar;
@@ -107,6 +108,20 @@ public class OccursCheck extends AbstractTypeVisitor<Void>
         } else
           arg.accept(this, cxt);
       }
+    }
+  }
+
+  @Override
+  public void visitTupleType(TupleType t, Void cxt)
+  {
+    IType[] args = t.getElTypes();
+    for (int ix = 0; !found && ix < args.length; ix++) {
+      IType arg = TypeUtils.deRef(args[ix]);
+      if (TypeUtils.isDetermines(arg)) {
+        if (!occursCheck)
+          arg.accept(this, cxt);
+      } else
+        arg.accept(this, cxt);
     }
   }
 }

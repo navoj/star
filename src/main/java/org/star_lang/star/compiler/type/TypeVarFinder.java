@@ -9,6 +9,7 @@ import org.star_lang.star.data.type.ExistentialType;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeConstraint;
 import org.star_lang.star.data.type.ITypeVisitor;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
@@ -95,6 +96,13 @@ public class TypeVarFinder implements ITypeVisitor<Void>
     for (IType argType : t.getTypeArgs())
       argType.accept(this, cxt);
     t.getTypeCon().accept(this, cxt);
+  }
+
+  @Override
+  public void visitTupleType(TupleType t, Void cxt)
+  {
+    for (IType argType : t.getElTypes())
+      argType.accept(this, cxt);
   }
 
   @Override

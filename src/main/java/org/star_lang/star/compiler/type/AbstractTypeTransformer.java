@@ -14,6 +14,7 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeConstraint;
 import org.star_lang.star.data.type.InstanceOf;
 import org.star_lang.star.data.type.TupleConstraint;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
@@ -69,6 +70,22 @@ public abstract class AbstractTypeTransformer<X> implements TypeTransformer<ITyp
       return t;
     else
       return new TypeExp(tCon, tArgs);
+  }
+
+  @Override
+  public IType transformTupleType(TupleType t, X cxt)
+  {
+    boolean clean = true;
+    IType args[] = t.getElTypes();
+    IType tArgs[] = new IType[t.arity()];
+    for (int ix = 0; ix < tArgs.length; ix++) {
+      IType tA = tArgs[ix] = args[ix].transform(this, cxt);
+      clean &= tA == args[ix];
+    }
+    if (clean)
+      return t;
+    else
+      return new TupleType(tArgs);
   }
 
   @Override

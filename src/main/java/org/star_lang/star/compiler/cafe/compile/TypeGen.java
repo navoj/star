@@ -31,6 +31,7 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeVisitor;
 import org.star_lang.star.data.type.Kind;
 import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeDescription;
 import org.star_lang.star.data.type.TypeExp;
@@ -141,6 +142,35 @@ public class TypeGen implements ITypeVisitor<Void>
 
     ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, TYPE_UTILS, "typeExp", "(" + Types.ITYPE_SIG
         + ("[" + Types.ITYPE_SIG) + ")" + Types.ITYPE_SIG));
+
+    hwm.reset(mark);
+  }
+
+  @Override
+  public void visitTupleType(TupleType t, Void cxt)
+  {
+    InsnList ins = ccxt.getIns();
+    hwm.bump(1);
+    int mark = hwm.bump(4);
+
+    String javaTypeName = Utils.javaInternalClassName(TupleType.class);
+
+    ins.add(new TypeInsnNode(Opcodes.NEW, javaTypeName));
+    ins.add(new InsnNode(Opcodes.DUP));
+
+    IType typeArgs[] = t.getElTypes();
+    Expressions.genIntConst(ins, hwm, typeArgs.length);
+    ins.add(new TypeInsnNode(Opcodes.ANEWARRAY, Types.ITYPE));
+
+    for (int ix = 0; ix < typeArgs.length; ix++) {
+      int m2 = hwm.bump(1);
+      ins.add(new InsnNode(Opcodes.DUP));
+      Expressions.genIntConst(ins, hwm, ix);
+      typeArgs[ix].accept(this, cxt);
+      ins.add(new InsnNode(Opcodes.AASTORE));
+      hwm.reset(m2);
+    }
+    ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, javaTypeName, Types.INIT, "([" + Types.ITYPE_SIG + ")V"));
 
     hwm.reset(mark);
   }

@@ -169,7 +169,7 @@ flDigitToRightistTree(v, __array_head_match(H, T)) default is
      ? FLSingle(H)
      | FLDeep(v, __array_cons(H, __array_nil()), FLEmpty, T));
 
-/* map */
+/* dictionary */
 private ALL_PATTERN() from _;
 private flDigitMap has type (((%a) => %b), FLDigit of %a) => FLDigit of %b;
 flDigitMap(f, flDigit) is array_mapcar(f, flDigit);

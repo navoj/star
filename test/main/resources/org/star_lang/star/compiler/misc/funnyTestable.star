@@ -32,7 +32,7 @@ funnyTestable is package {
 
     -- the next line got a type error saying 
     -- "dictionary literal not valid here 
-    -- because list of integer not equal to map of(%__47213, %__47214)" 
+    -- because list of integer not equal to dictionary of(%__47213, %__47214)" 
 
     t2 is toTest("Good Morning",dictionary of {1->1;2->2}); -- now commented out to pass type checking
     logMsg(info, "t2 is $t2");

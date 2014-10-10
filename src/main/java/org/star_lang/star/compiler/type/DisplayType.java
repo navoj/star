@@ -18,11 +18,13 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeConstraint;
 import org.star_lang.star.data.type.ITypeVisitor;
 import org.star_lang.star.data.type.Kind;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
+
 /**
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -135,7 +137,7 @@ public class DisplayType implements ITypeVisitor<Integer>
     display.displayContract((TypeExp) type);
     display.showConstraints(type);
   }
-  
+
   public static String showContract(TypeExp tp)
   {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
@@ -183,10 +185,7 @@ public class DisplayType implements ITypeVisitor<Integer>
   @Override
   public void visitSimpleType(Type t, Integer priority)
   {
-    if (TypeUtils.isTupleType(t))
-      disp.append("()");
-    else
-      disp.appendId(t.typeLabel());
+    disp.appendId(t.typeLabel());
   }
 
   @Override
@@ -211,7 +210,7 @@ public class DisplayType implements ITypeVisitor<Integer>
       disp.appendWord(AbstractType.PTN_TYPE);
       show(TypeUtils.getPtnMatchType(t), Operators.PTN_TYPE_PRIORITY);
     } else if (TypeUtils.isTupleType(t))
-      typeArgs(typeArgs, TypeUtils.tupleTypeArity(t));
+      assert false : "should not happen (tpl 3)";
     else if (TypeUtils.isReferenceType(t)) {
       disp.appendWord(StandardNames.REF);
       show(TypeUtils.referencedType(t), Operators.REF_PRIORITY);
@@ -230,6 +229,12 @@ public class DisplayType implements ITypeVisitor<Integer>
         typeArgs(typeArgs);
       }
     }
+  }
+
+  @Override
+  public void visitTupleType(TupleType t, Integer cxt)
+  {
+    typeArgs(t.getElTypes(), t.arity());
   }
 
   @Override

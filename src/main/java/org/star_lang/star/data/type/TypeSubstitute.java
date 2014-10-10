@@ -86,6 +86,17 @@ public class TypeSubstitute implements TypeTransformer<IType, ITypeConstraint, V
   }
 
   @Override
+  public IType transformTupleType(TupleType t, Void cxt)
+  {
+    IType typeArgs[] = t.getElTypes();
+    IType newArgs[] = new IType[typeArgs.length];
+    for (int ix = 0; ix < typeArgs.length; ix++)
+      newArgs[ix] = typeArgs[ix].transform(this, null);
+
+    return new TupleType(newArgs);
+  }
+
+  @Override
   public IType transformTypeInterface(TypeInterfaceType t, Void cxt)
   {
     SortedMap<String, IType> nF = new TreeMap<String, IType>();

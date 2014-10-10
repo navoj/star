@@ -95,7 +95,7 @@ implementation sets over list of %e where equality over %e is {
 }
  
 implementation mappable over list is {
-  map(A,F) is __array_map(A,F);
+  map(F,A) is __array_map(A,F);
 }
 
 implementation filterable over list of %t determines %t is {

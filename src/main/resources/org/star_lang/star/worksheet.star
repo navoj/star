@@ -84,7 +84,7 @@ private import folding;
     
     #genWkSht(D) is valof{
       (Defs,Actions) is __foldSemi(D,collectActions,(list of {},list of {}));
-      Body is __wrapSemi(map(Actions,convertAction),<|nothing|>);
+      Body is __wrapSemi(map(convertAction,Actions),<|nothing|>);
       if Defs=list of {} then
         valis <| ?Body |>
       else

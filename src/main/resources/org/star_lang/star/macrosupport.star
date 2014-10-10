@@ -121,7 +121,7 @@ private implementation sizeable over cons of %e is {
 
 __macro_substitute(Trm,Tgt,Rep) is let{
   _subst(X) where X=Tgt is Rep;
-  _subst(applyAst(Loc,Op,Args)) is applyAst(Loc,_subst(Op),map(Args,_subst));
+  _subst(applyAst(Loc,Op,Args)) is applyAst(Loc,_subst(Op),map(_subst,Args));
   _subst(X) default is X;
 } in _subst(Trm);
 

@@ -24,7 +24,7 @@ private import updateable;
 private import folding;
 private import iterable;
 
--- a simple implementation of the map interfaces using lists
+-- a simple implementation of the dictionary interfaces using lists
 
 type seqmap of (%k,%v) is seqmap(list of ((%k,%v)));
 

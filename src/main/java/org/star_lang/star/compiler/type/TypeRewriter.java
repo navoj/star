@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeAlias;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeConstraintException;
 import org.star_lang.star.data.type.TypeExp;
@@ -60,5 +61,17 @@ public class TypeRewriter extends AbstractTypeTransformer<Void>
     } catch (TypeConstraintException e) {
     }
     return super.transformTypeExp(t, cxt);
+  }
+
+  @Override
+  public IType transformTupleType(TupleType t, Void cxt)
+  {
+    try {
+      IType reslt = rule.apply(t, rule.getLoc(), dict);
+      if (reslt != null)
+        return reslt;
+    } catch (TypeConstraintException e) {
+    }
+    return super.transformTupleType(t, cxt);
   }
 }

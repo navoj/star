@@ -31,7 +31,7 @@ permute is package{
   NofM(K,list of {E1;..Mr}) where K>0 is glue(E1,NofM(K-1,Mr))++NofM(K,Mr);
   NofM(K,list of {}) is list of {};
   
-  private glue(E,L) is map(L,(function(X) is list of {E;..X}));
+  private glue(E,L) is map(fn X=>list of [E,..X],L);
   
   multicat has type (list of list of %t)=>list of %t;
   multicat(L) is rightFold((++),list of {},L);

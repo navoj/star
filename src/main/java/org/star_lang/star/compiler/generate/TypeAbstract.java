@@ -22,12 +22,14 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.InstanceOf;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.TupleConstraint;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
 import org.star_lang.star.data.type.TypeTransformer;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
+
 /**
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -88,6 +90,16 @@ public class TypeAbstract<T> implements TypeTransformer<IAbstract, IAbstract, T>
 
       return CafeSyntax.apply(loc, tyCon, typeArgs);
     }
+  }
+
+  @Override
+  public IAbstract transformTupleType(TupleType t, T cxt)
+  {
+    List<IAbstract> typeArgs = new ArrayList<IAbstract>();
+    for (IType tA : t.getElTypes())
+      typeArgs.add(tA.transform(this, cxt));
+
+    return CafeSyntax.apply(loc, TypeUtils.tupleLabel(t.arity()), typeArgs);
   }
 
   @Override

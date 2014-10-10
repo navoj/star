@@ -1,6 +1,6 @@
 package org.star_lang.star.data.type;
 
-/**
+/*
  * A transformer interface for type expressions and constraints
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -31,6 +31,16 @@ public interface TypeTransformer<T, C, X>
    *          context
    */
   T transformTypeExp(TypeExp t, X cxt);
+
+  /**
+   * Transform a tuple type
+   * 
+   * @param t
+   *          the tuple type to transform
+   * @param cxt
+   * @return
+   */
+  T transformTupleType(TupleType t, X cxt);
 
   /**
    * Apply the transformer to an interface type;

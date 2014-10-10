@@ -5,11 +5,9 @@ import java.util.TreeSet;
 
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeVar;
 
-/**
- * 
+/*
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -34,11 +32,6 @@ public class BindingLocations extends AbstractTypeVisitor<Set<Location>>
     BindingLocations visitor = new BindingLocations();
     type.accept(visitor, visitor.bindingLocations);
     return visitor.bindingLocations;
-  }
-
-  @Override
-  public void visitSimpleType(Type t, Set<Location> cxt)
-  {
   }
 
   @Override

@@ -30,6 +30,7 @@ import org.star_lang.star.data.type.Kind;
 import org.star_lang.star.data.type.QuantifiedType;
 import org.star_lang.star.data.type.Quantifier;
 import org.star_lang.star.data.type.TupleConstraint;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
@@ -390,6 +391,22 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
       return t;
     else
       return new TypeExp(con, args);
+  }
+
+  @Override
+  public IType transformTupleType(TupleType t, IndexSet<String> cxt)
+  {
+    boolean clean = true;
+    IType[] typeArgs = t.getElTypes();
+    IType args[] = new IType[typeArgs.length];
+    for (int ix = 0; ix < typeArgs.length; ix++) {
+      args[ix] = typeArgs[ix].transform(this, cxt);
+      clean &= args[ix] == typeArgs[ix];
+    }
+    if (clean)
+      return t;
+    else
+      return new TupleType(args);
   }
 
   @Override

@@ -6,6 +6,7 @@ import java.util.Stack;
 import org.star_lang.star.data.type.ExistentialType;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeVisitor;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
@@ -51,6 +52,13 @@ public abstract class AbstractTypeVisitor<C> implements ITypeVisitor<C>
   {
     t.getTypeCon().accept(this, cxt);
     for (IType arg : t.getTypeArgs())
+      arg.accept(this, cxt);
+  }
+
+  @Override
+  public void visitTupleType(TupleType t, C cxt)
+  {
+    for (IType arg : t.getElTypes())
       arg.accept(this, cxt);
   }
 

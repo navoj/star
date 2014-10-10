@@ -39,6 +39,7 @@ import org.star_lang.star.operators.string.runtime.ValueDisplay;
 @SuppressWarnings("serial")
 public abstract class NTuple
 {
+  public static final String label = "$";
   public static final NTpl $0Enum = new NTpl(new IValue[] {});
   public static final IType unitType = $0Enum.getType();
 
@@ -136,7 +137,7 @@ public abstract class NTuple
     @Override
     public int hashCode()
     {
-      int hash = "$".hashCode() + els.length;
+      int hash = label.hashCode() + els.length;
       for (IValue el : els)
         hash = hash * 37 + el.hashCode();
 
@@ -172,7 +173,7 @@ public abstract class NTuple
     TypeVar tv = new TypeVar();
     IType tplType = TypeUtils.tupleType(tv);
     IType conType = TypeUtils.tupleConstructorType(tv, tplType);
-    ConstructorSpecifier tplSpec = new ConstructorSpecifier(Location.nullLoc, null, "$", 0, conType, NTpl.class,
+    ConstructorSpecifier tplSpec = new ConstructorSpecifier(Location.nullLoc, null, label, 0, conType, NTpl.class,
         NTuple.class);
 
     List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();

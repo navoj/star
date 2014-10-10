@@ -34,6 +34,7 @@ import org.star_lang.star.data.type.ITypeContext;
 import org.star_lang.star.data.type.ITypeVisitor;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.QuantifiedType;
+import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterface;
@@ -48,6 +49,7 @@ import org.star_lang.star.data.value.FailureException;
 import org.star_lang.star.data.value.FloatWrap;
 import org.star_lang.star.data.value.IntWrap;
 import org.star_lang.star.data.value.LongWrap;
+import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.data.value.StringWrap;
 import org.star_lang.star.data.value.NTuple.NTpl;
@@ -77,6 +79,7 @@ public class Types
   public static final String PRC_PREFIX = "procedure_";
   public static final String PTN_PREFIX = "pattern_";
   public static final String CON_PREFIX = "constructor_";
+  public static final String TPL_PREFIX = "tuple_";
 
   public static final String JAVA_BOOL_SIG = "Z";
   public static final String JAVA_INT_SIG = "I";
@@ -259,6 +262,12 @@ public class Types
     }
 
     @Override
+    public void visitTupleType(TupleType t, Void cxt)
+    {
+      blder.append(Types.TUPLE_TYPE);
+    }
+
+    @Override
     public void visitTypeVar(TypeVar var, Void cxt)
     {
       blder.append(IVALUE_SIG);
@@ -375,9 +384,15 @@ public class Types
         blder.append(')');
         argTypeSig(TypeUtils.getConstructorResultType(type));
       } else if (TypeUtils.isTupleType(type))
-        argTypesSig(type);
+        assert false : "should not happen (tpl 1)";
       else
         argTypeSig(type);
+    }
+
+    @Override
+    public void visitTupleType(TupleType t, Void cxt)
+    {
+      argTypesSig(t);
     }
 
     private void argTypeSig(IType type)
@@ -606,6 +621,12 @@ public class Types
     }
 
     @Override
+    public void visitTupleType(TupleType t, Void cxt)
+    {
+      blder.append(TUPLE_TYPE);
+    }
+
+    @Override
     public void visitSimpleType(Type t, Void cxt)
     {
       String label = t.typeLabel();
@@ -629,7 +650,7 @@ public class Types
       else if (TypeUtils.isRawBinaryType(label))
         blder.append(JAVA_OBJECT_TYPE);
       else if (TypeUtils.isTupleType(t))
-        blder.append(TUPLE_TYPE);
+        assert false : "should not happen (tpl 2)";
       else {
         CafeTypeDescription desc = (CafeTypeDescription) dict.getTypeDescription(label);
         if (desc != null)
@@ -829,6 +850,12 @@ public class Types
         str.append("_");
         tA.accept(this, cxt);
       }
+    }
+
+    @Override
+    public void visitTupleType(TupleType t, Void cxt)
+    {
+      str.append(NTuple.label);
     }
 
     private void visitFunArg(IType argType, Void cxt)

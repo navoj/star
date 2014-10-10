@@ -1055,8 +1055,7 @@ public class OpGrammar implements PrettyPrintable
       term = Abstract.getArg(term, 1);
     }
     els.add(term);
-    String label = StandardNames.TUPLE_LABEL + els.size();
-    return new Apply(loc, new Name(loc, label), els);
+    return Abstract.tupleTerm(loc, els);
   }
 
   private void extendTopLocation(Location start, Location end)

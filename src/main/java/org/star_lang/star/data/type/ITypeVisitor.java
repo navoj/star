@@ -40,6 +40,14 @@ public interface ITypeVisitor<C>
   void visitTypeExp(TypeExp t, C cxt);
 
   /**
+   * Apply visitor to a tuple type
+   * 
+   * @param t
+   * @param cxt
+   */
+  void visitTupleType(TupleType t, C cxt);
+
+  /**
    * Apply the visitor to an interface type;
    * 
    * @param t
