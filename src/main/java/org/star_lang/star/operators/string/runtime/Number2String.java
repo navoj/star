@@ -3,6 +3,7 @@ package org.star_lang.star.operators.string.runtime;
 import java.math.BigDecimal;
 
 import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IFunction;
@@ -37,7 +38,7 @@ public abstract class Number2String
   private static final IType rawLongType = StandardTypes.rawLongType;
   private static final IType rawFloatType = StandardTypes.rawFloatType;
   private static final IType rawStringType = StandardTypes.rawStringType;
-  
+
   private static final int DECIMAL = 10;
   private static final int HEX = 16;
 
@@ -76,9 +77,9 @@ public abstract class Number2String
     @CafeEnter
     public static String __char_string(int ch) throws EvaluationException
     {
-      StringBuilder blder = new StringBuilder();
-      blder.appendCodePoint(ch);
-      return blder.toString();
+      PrettyPrintDisplay disp = new PrettyPrintDisplay();
+      StringUtils.strChr(disp, ch);
+      return disp.toString();
     }
 
     @Override
@@ -210,10 +211,10 @@ public abstract class Number2String
       return TypeUtils.functionType(rawLongType, rawStringType, rawStringType);
     }
   }
-  
+
   private static int formatRadix(String format)
   {
-    if(format.contains("X"))
+    if (format.contains("X"))
       return HEX;
     else
       return DECIMAL;
@@ -228,7 +229,7 @@ public abstract class Number2String
     } else
       signed = false;
 
-    String rawStr = Long.toString(val,formatRadix(format));
+    String rawStr = Long.toString(val, formatRadix(format));
     return formatDigits(signed, rawStr, format);
   }
 
@@ -381,7 +382,7 @@ public abstract class Number2String
     String digits = dbld.toString();
 
     // adjust exp10 to reflect beforePeriod digits
-    exp10 -= beforePeriod-1;
+    exp10 -= beforePeriod - 1;
 
     // Check that we can fit the number in
     if (ePos < 0) {

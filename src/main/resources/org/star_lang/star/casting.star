@@ -87,6 +87,7 @@ implementation coercion over (float, float) is {
 
 implementation coercion over (float,string) is {
   coerce(float(F)) is string(__float_string(F));
+  coerce(nonFLoat) is "nonFloat"
 }
 
 implementation coercion over (decimal,string) is {
