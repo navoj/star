@@ -31,6 +31,8 @@ import org.star_lang.star.compiler.util.Template.VarFragment;
  */
 public class TemplateString
 {
+  public static final char META_CHAR = '$';
+
   public static String stringTemplate(String template, Map<String, String> vars)
   {
     final int length = template.length();
@@ -38,7 +40,7 @@ public class TemplateString
     StringBuilder sb = new StringBuilder();
     for (int ix = 0; ix < length;) {
       int ch = template.codePointAt(ix);
-      if (ch == '$' && ix < length) {
+      if (ch == META_CHAR && ix < length) {
         final String strVar;
         ix = template.offsetByCodePoints(ix, 1);
 
@@ -46,6 +48,16 @@ public class TemplateString
           int nx = StringUtils.countParens(template, ix, '(', ')');
           strVar = template.substring(template.offsetByCodePoints(ix, 1), nx - 1);
           ix = nx;
+        } else if (template.startsWith("//", ix)) {
+          // If the #// appears on a line of its own, remove the whole line
+          int pos = sb.length() - 1;
+          while (pos >= 0 && Character.isWhitespace(sb.charAt(pos)) && sb.charAt(pos) != '\n')
+            pos--;
+          if (pos >= 0 && sb.charAt(pos) == '\n')
+            sb.setLength(pos);
+          while (ix < length && template.charAt(ix++) != '\n')
+            ;
+          continue;
         } else {
           int nx = ix;
           while (nx < template.length() && Tokenizer.isIdentifierChar(ch)) {
@@ -128,7 +140,7 @@ public class TemplateString
 
     for (int ix = 0; ix < length;) {
       int ch = template.codePointAt(ix);
-      if (ch == '$' && ix < length) {
+      if (ch == META_CHAR && ix < length) {
 
         if (sb.length() > 0) {
           fragments.add(new LitFragment(sb.toString()));

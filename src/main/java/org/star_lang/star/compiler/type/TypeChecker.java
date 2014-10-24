@@ -5752,12 +5752,18 @@ public class TypeChecker
           }
 
           // implType = Freshen.generalizeType(implType, tmpCxt);
+          Pair<IType, Map<String, Quantifier>> evidence = Freshen.freshen(implType, readWrite, readOnly);
+
+          for (Entry<String, Quantifier> entry : evidence.right.entrySet()) {
+            Quantifier q = entry.getValue();
+            tmpCxt.defineType(new TypeExists(loc, entry.getKey(), q.getVar()));
+          }
 
           IContentExpression implementation = typeOfExp(adjustContractImplementationRecord(implTerm, conName),
-              implType, tmpCxt, outer);
+              evidence.left, tmpCxt, outer);
 
-          VarEntry instanceFun = Over.instanceFunction(loc, instanceName, implType, implementation, outer, errors, def
-              .getVisibility());
+          VarEntry instanceFun = Over.instanceFunction(loc, instanceName, evidence.left, implementation, outer, errors,
+              def.getVisibility());
 
           cxt.declareVar(instanceName, instanceFun.getVariable(), instanceFun.isReadOnly(),
               instanceFun.getVisibility(), true);

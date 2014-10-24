@@ -132,12 +132,18 @@ public class ContractTest extends SRTest
   {
     runStar("orderedTest.star");
   }
-  
+
   @Test
   public void badFour()
   {
     exception.expectMessage("four over integer not known to be implemented");
 
     runStar("badFour.star");
+  }
+
+  @Test
+  public void rangeContracts()
+  {
+    runStar("rangeTest.star");
   }
 }

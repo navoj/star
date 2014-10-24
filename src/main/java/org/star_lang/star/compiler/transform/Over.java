@@ -515,6 +515,8 @@ public class Over extends DefaultTransformer<OverContext>
 
   public static String instanceFunName(IType type)
   {
+    type = TypeUtils.unwrap(type);
+
     StringBuilder bldr = new StringBuilder();
     String sep = "";
     for (IType arg : TypeUtils.typeArgs(type)) {

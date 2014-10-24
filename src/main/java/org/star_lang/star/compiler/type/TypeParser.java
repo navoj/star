@@ -748,15 +748,18 @@ public class TypeParser
   private static IType parseContractImplType(IAbstract tp, Dictionary cxt, TypeNameHandler varHandler,
       boolean isFallback, ErrorReport errors)
   {
-    while (CompilerUtils.isUniversalType(tp)) {
-      for (IAbstract tv : CompilerUtils.unWrap(CompilerUtils.universalTypeVars(tp), StandardNames.COMMA)) {
-        if (CompilerUtils.isTypeVar(tv) || CompilerUtils.isTypeFunVar(tv))
-          tv = CompilerUtils.typeVName(tv);
-        varHandler.newTypeVar(Abstract.getId(tv), tv.getLoc(), Kind.unknown);
-      }
+    if (CompilerUtils.isUniversalType(tp)) {
+      IAbstract tArg = CompilerUtils.universalTypeVars(tp);
       tp = CompilerUtils.universalBoundType(tp);
-    }
-    if (Abstract.isBinary(tp, StandardNames.WHERE)) {
+      Map<String, TypeVar> bndTypes = parseQuantifiers(tArg, errors);
+
+      varHandler.addEntries(bndTypes);
+
+      IType boundType = parseContractImplType(tp, cxt, varHandler, isFallback, errors);
+      varHandler.removeEntries(bndTypes);
+
+      return UniversalType.universal(bndTypes.values(), boundType);
+    } else if (Abstract.isBinary(tp, StandardNames.WHERE)) {
       IType type = parseContractImplType(Abstract.binaryLhs(tp), cxt, varHandler, isFallback, errors);
       parseConstraints(Abstract.binaryRhs(tp), cxt, errors, varHandler);
       return type;

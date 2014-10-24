@@ -52,6 +52,17 @@ implementation for all t such that concatenate over range of t where equality ov
   range(F,I,St)++range(I,To,St) is range(F,To,St);
 }
 
+implementation for all t such that sequence over range of t determines t where coercion over (integer,t) and equality over t is {
+    _empty() from range(F,T,I) where F*I>=T*I
+    _pair(F,range(F+I,T,I)) from range(F,T,I) where F*I<T*I;
+    _cons(H,range(F,T,I)) where F*I>=T*I is range(H,H+I,I)
+    _cons(H,range(F,T,I)) where F-I=H is range(H,T,I);
+    _apnd(range(F,T,I),E) where F*I>=T*I is range(E,E+I,I)
+    _apnd(range(F,T,I),E) where T+I=E is range(F,E,I);
+    _back(range(F,E-I,I),E) from range(F,E,I);
+    _nil() is range(0 as t,0 as t,1 as t);
+  }
+
 -- macro out common use cases ...
 # #(for #(identifier?C)# in range(?S,?L,1) do ?A)# ==> {
   var C := S;

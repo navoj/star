@@ -46,6 +46,12 @@ public class SpawnTest extends SRTest
   }
 
   @Test
+  public void theSieve()
+  {
+    runStar("thesieve.star");
+  }
+
+  @Test
   public void testActorSieve()
   {
     runStar("actorSieve.star");

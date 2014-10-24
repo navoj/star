@@ -50,7 +50,8 @@ private import folding;
   # ignore ?E :: workStatement :- E::expression;
   # show ?E :: workStatement :- E::expression;
   # ?N := ?E :: workStatement :- ?N :: lvalue :& ?E :: expression;
-  # ?L do ?A :: workStatement :- L do A :: action;
+  # while ?L do ?A :: workStatement :- while L do A :: action;
+  # for ?C do ?A :: workStatement :- for C do A :: action;
   # { ?B } :: workStatement :- B;* action;
   # try ?B on abort ?A :: workStatement :- B::action;
   # ?S :: workStatement :- S::statement;
@@ -61,7 +62,8 @@ private import folding;
     collectActions(Rl matching <|ignore ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
     collectActions(Rl matching <|assert ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
     collectActions(Rl matching <|?L := ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+    collectActions(Rl matching <|while ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+    collectActions(Rl matching <|for ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
     collectActions(Rl matching <|{ ?L }|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
     collectActions(Rl matching <|try ?L on abort ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
     collectActions(<|?L;?R|>,Coll) is collectActions(R,collectActions(L,Coll));

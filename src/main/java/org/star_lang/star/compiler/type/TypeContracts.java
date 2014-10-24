@@ -34,10 +34,9 @@ public class TypeContracts
     return (TypeExp) TypeUtils.typeExp(contractImplTypeName(contract.typeLabel()), contract.getTypeArgs());
   }
 
-  
-
   public static String contractFallbackName(IType contract)
   {
+    contract = TypeUtils.unwrap(contract);
     assert !contract.typeLabel().startsWith("@");
     return "@" + contractImplTypeName(contract.typeLabel()) + "#@@";
   }

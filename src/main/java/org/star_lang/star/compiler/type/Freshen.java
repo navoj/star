@@ -247,25 +247,31 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   {
     Map<String, Quantifier> bounds = FindTypeVars.findTypeVars(type, new HandleVars());
 
-    for (Iterator<Entry<String, Quantifier>> it = bounds.entrySet().iterator(); it.hasNext();) {
-      if (dict.isTypeVarInScope(it.next().getValue().getVar()))
-        it.remove();
-    }
+    if (!bounds.isEmpty()) {
+      for (Iterator<Entry<String, Quantifier>> it = bounds.entrySet().iterator(); it.hasNext();) {
+        if (dict.isTypeVarInScope(it.next().getValue().getVar()))
+          it.remove();
+      }
 
-    Freshen freshen = new Freshen(bounds, new HashSet<IType>());
-    IType gen = type.transform(freshen, new IndexSet<String>());
+      Freshen freshen = new Freshen(bounds, new HashSet<IType>());
+      IType gen = type.transform(freshen, new IndexSet<String>());
 
-    return requant(gen, bounds);
+      return requant(gen, bounds);
+    } else
+      return type;
   }
 
   public static IType generalizeType(IType type)
   {
     Map<String, Quantifier> bounds = FindTypeVars.findTypeVars(type, new HandleVars());
 
-    Freshen freshen = new Freshen(bounds, new HashSet<IType>());
-    IType gen = type.transform(freshen, new IndexSet<String>());
+    if (!bounds.isEmpty()) {
+      Freshen freshen = new Freshen(bounds, new HashSet<IType>());
+      IType gen = type.transform(freshen, new IndexSet<String>());
 
-    return requant(gen, bounds);
+      return requant(gen, bounds);
+    } else
+      return type;
   }
 
   public static IType existentializeType(TypeInterfaceType face, ITypeContext dict)
@@ -480,19 +486,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   @Override
   public IType transformUniversalType(UniversalType t, IndexSet<String> exclusions)
   {
-    return transformQuantified(t, exclusions, new Lambda<TypeVar, Quantifier>() {
-      @Override
-      public Quantifier apply(TypeVar v)
-      {
-        return new Universal(v);
-      }
-    }, new Lambda2<TypeVar, IType, IType>() {
-      @Override
-      public IType apply(TypeVar v, IType bndType)
-      {
-        return new UniversalType(v, bndType);
-      }
-    });
+    return transformQuantified(t, exclusions, (v) -> new Universal(v), (v, bndType) -> new UniversalType(v, bndType));
   }
 
   private IType transformQuantified(QuantifiedType t, IndexSet<String> exclusions, Lambda<TypeVar, Quantifier> quant,
