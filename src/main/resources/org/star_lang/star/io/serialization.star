@@ -14,6 +14,7 @@ serialization is package {
 
 /* type constructor for mutually recursive types */
   type SerializationStreamWriterArgs is SSWArgs(bytebuffer, SerializationStreamWriter);
+  
 /* SerializationStreamWriter removes at least one byte from the
  * bytebuffer, that is, it returns a (possibly new, but usually the
  * same) bytebuffer with at least one byte fewer 'remaining' (in the
@@ -25,9 +26,11 @@ serialization is package {
  * bytebuffer argument.  The SerializationStreamWriter argument is
  * mainly for convenience: it allows anonymous functions to return
  * themselves. */
+ 
 /* Note: "writer" means that the serialization stream is written out;
  * of course, the "writer" has to read the shove buffer (the
  * serialization done so far) to write it out. */
+ 
   type SerializationStreamWriter is alias of ((SerializationStreamWriterArgs) => task of (SerializationStreamWriterArgs));
 
 /* The state of the shover state monad: current shover buffer and

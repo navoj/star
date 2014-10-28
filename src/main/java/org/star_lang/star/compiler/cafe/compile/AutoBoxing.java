@@ -6,7 +6,6 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.compiler.cafe.type.ICafeTypeDescription;
-import org.star_lang.star.compiler.canonical.compile.FrameState;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeContext;
@@ -80,52 +79,6 @@ public class AutoBoxing
     case builtin:
     case constructor:
     case userJava:
-      throw new IllegalArgumentException("internal: invalid value to unbox");
-    }
-  }
-
-  public static FrameState unboxValue(MethodNode mtd, FrameState frame, IType type)
-  {
-    String isvSig = Type.getDescriptor(IValue.class);
-    InsnList ins = mtd.instructions;
-
-    switch (Types.varType(type)) {
-    case rawBool:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "boolValue", "(" + isvSig + ")Z"));
-      return frame.pushStack(SrcSpec.rawBoolSrc);
-    case rawChar:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "charValue", "(" + isvSig + ")C"));
-      return frame.pushStack(SrcSpec.rawIntSrc);
-    case rawInt:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "intValue", "(" + isvSig + ")I"));
-      return frame.pushStack(SrcSpec.rawIntSrc);
-    case rawLong:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "lngValue", "(" + isvSig + ")J"));
-      return frame.pushStack(SrcSpec.rawLngSrc);
-    case rawFloat:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "fltValue", "(" + isvSig + ")D"));
-      return frame.pushStack(SrcSpec.rawDblSrc);
-    case rawDecimal:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "decimalValue", "(" + isvSig + ")"
-          + Types.JAVA_DECIMAL_SIG));
-      return frame.pushStack(SrcSpec.rawDecimalSrc);
-    case rawBinary:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "binaryValue", "(" + isvSig + ")"
-          + Types.JAVA_OBJECT_SIG));
-      return frame.pushStack(SrcSpec.generalSrc);
-    case rawString:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "stringValue", "(" + isvSig + ")L"
-          + Types.JAVA_STRING_TYPE + ";"));
-      return frame.pushStack(SrcSpec.rawStringSrc);
-    case general:
-      return frame.pushStack(SrcSpec.generalSrc);
-      // FIXME: Why is it commented out? See Constructors.genSetMember.
-      // ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Theta.javaType(dict,
-      // type, bldCat, loc, errors)));
-    case builtin:
-    case constructor:
-    case userJava:
-    default:
       throw new IllegalArgumentException("internal: invalid value to unbox");
     }
   }

@@ -1,9 +1,7 @@
-import star;
 primitiveIO is package {
   private import task;  
   
   -- Socket interface
-  
   type socket is alias of __asynchChannel;
   type serverSocket is alias of __listenSocket;
   type port is alias of integer
