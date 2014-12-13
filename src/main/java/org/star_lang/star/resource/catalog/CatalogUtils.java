@@ -74,8 +74,11 @@ public class CatalogUtils
       String version = StarCompiler.VERSION; // Pick up command-line option for version
       Map<String, ResourceURI> entries = new HashMap<>();
 
-      if (Abstract.isBinary(parse, StandardNames.IS) && CompilerUtils.isBraceTerm(Abstract.binaryRhs(parse), CATALOG)) {
-        for (IAbstract entry : CompilerUtils.unWrap(CompilerUtils.braceArg(Abstract.binaryRhs(parse)))) {
+      if (CompilerUtils.isEquals(parse))
+        parse = CompilerUtils.equalityRhs(parse);
+
+      if (CompilerUtils.isBraceTerm(parse, CATALOG)) {
+        for (IAbstract entry : CompilerUtils.unWrap(CompilerUtils.braceArg(parse))) {
           if (Abstract.isBinary(entry, StandardNames.IS) && Abstract.isIdentifier(Abstract.binaryLhs(entry), "baseURI")) {
             try {
               baseURI = ResourceURI.parseURI(Abstract.getString(Abstract.binaryRhs(entry)) + "/catalog");

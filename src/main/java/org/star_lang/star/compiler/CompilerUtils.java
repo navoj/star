@@ -3200,23 +3200,35 @@ public class CompilerUtils
 
   public static boolean isTypeEquality(IAbstract stmt)
   {
-    if (Abstract.isUnary(stmt, AbstractType.TYPE))
-      return Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.EQUAL)
-          && Abstract.isIdentifier(Abstract.binaryLhs(Abstract.unaryArg(stmt)));
-    else
+    if (Abstract.isUnary(stmt, AbstractType.TYPE)) {
+      IAbstract typeForm = Abstract.unaryArg(stmt);
+      if (Abstract.isBinary(typeForm, StandardNames.EQUAL))
+        return Abstract.isBinary(typeForm, StandardNames.EQUAL) && Abstract.isIdentifier(Abstract.binaryLhs(typeForm));
+      else
+        return Abstract.isIdentifier(typeForm) || isTypeVar(typeForm);
+    } else
       return false;
   }
 
   public static IAbstract typeEqualField(IAbstract stmt)
   {
     assert isTypeEquality(stmt);
-    return Abstract.binaryLhs(Abstract.unaryArg(stmt));
+    IAbstract typeForm = Abstract.unaryArg(stmt);
+    if (Abstract.isBinary(typeForm, StandardNames.EQUAL))
+      return Abstract.binaryLhs(Abstract.unaryArg(stmt));
+    else
+      return typeForm;
   }
 
   public static IAbstract typeEqualType(IAbstract stmt)
   {
     assert isTypeEquality(stmt);
-    return Abstract.binaryRhs(Abstract.unaryArg(stmt));
+    IAbstract typeForm = Abstract.unaryArg(stmt);
+    if (Abstract.isBinary(typeForm, StandardNames.EQUAL))
+      return Abstract.binaryRhs(typeForm);
+    else
+      return typeForm;
+
   }
 
   public static IAbstract typeEqualityStmt(Location loc, IAbstract name, IAbstract type)

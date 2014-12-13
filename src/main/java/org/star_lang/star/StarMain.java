@@ -36,7 +36,7 @@ import org.star_lang.star.resource.catalog.CatalogException;
 import org.star_lang.star.resource.catalog.URIBasedCatalog;
 
 /**
- * Top-level driver for running StarRules programs
+ * Top-level driver for running Star programs
  * 
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
