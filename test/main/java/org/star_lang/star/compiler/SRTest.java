@@ -23,8 +23,8 @@ import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.Resources;
-import org.star_lang.star.resource.URIUtils;
 import org.star_lang.star.resource.Resources.JarTransducer;
+import org.star_lang.star.resource.URIUtils;
 import org.star_lang.star.resource.catalog.Catalog;
 import org.star_lang.star.resource.catalog.URIBasedCatalog;
 

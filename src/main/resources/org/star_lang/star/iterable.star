@@ -16,10 +16,11 @@
  *
  */
 private import base;
+private import casting;
 private import strings;
 private import sequences;
 
-type IterState of %t is NoneFound or NoMore(%t) or ContinueWith(%t) or AbortIter(exception);
+type IterState of t is NoneFound or NoMore(t) or ContinueWith(t) or AbortIter(exception);
 
 -- The iterable contract is used in planning queries
 -- The iterate function takes a filter function and iterates over the collection using it while it returns a IterState state 
@@ -32,7 +33,7 @@ contract indexed_iterable over %s determines (%k,%v) is {
   _ixiterate has type for all %r such that (%s,(%k,%v,IterState of %r)=>IterState of %r,IterState of %r) => IterState of %r;
 }
 
-type _possible of %t is _impossible or _possible(%t);
+type _possible of t is _impossible or _possible(t);
 
 _checkIterState(NoMore(X),_) is X;
 _checkIterState(ContinueWith(X),_) is X;

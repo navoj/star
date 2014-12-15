@@ -1,5 +1,6 @@
 package org.star_lang.star.actors;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.star_lang.star.compiler.SRTest;
 
@@ -88,6 +89,7 @@ public class ActorTest extends SRTest
   }
 
   @Test
+  @Ignore
   public void testActorSendFun()
   {
     runStar("actorSendFun.star");

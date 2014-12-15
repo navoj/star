@@ -22,7 +22,7 @@ import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
 
 /**
- * Floating point wrapper Copyright (C) 2013 Starview Inc
+ * Floating point wrapper
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version

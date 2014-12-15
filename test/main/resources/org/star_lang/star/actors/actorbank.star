@@ -18,7 +18,7 @@
 actorbank is package{  
   type tx is deposit(float) or withdraw(float);
   
-  account((Nm has type string)) is actor {
+  account((Nm has type string), Acct) is actor {
     private var bal := 0.0;
     
     on deposit(Amnt) on Tx do
@@ -40,31 +40,41 @@ actorbank is package{
   }
   
   bank(Nm) is actor{
-    var accounts := list of [];
+    var accounts := dictionary of {};
+    var acctNo := 0;
     
-    custBals() is all (Nm,Bal) where A in accounts and (query A's name 'n balance with (name,balance())) matches (Nm,Bal);
+    custBals() is all (Nm,Bal) where K->A in accounts and (query A's name 'n balance with (name,balance())) matches (Nm,Bal);
+    
+    newAccount(Name) is valof{
+      acctNo := acctNo+1;
+      accounts[acctNo] := account(Name,acctNo);
+      valis acctNo
+    }
+    
+    custBal(acct) where accounts[acct] matches A is some((query A with balance()));
+    custBal(_) default is none;
+    
+    on (acNo,T) on Tx where accounts[acNo] matches A do
+      notify A with T on Tx;
   } 
 
   main() do {
     B is bank("Super");
     
-    JJ is account("joe");
-    
-    request B to extend accounts with JJ;
-    
+    JJ is query B with newAccount("joe");
+        
     logMsg(info,"customers of bank are $(query B's custBals with custBals())");
     
-    notify JJ with deposit(10.0) on Tx;
-    notify JJ with withdraw(5.0) on Tx;
+    notify B with (JJ,deposit(10.0)) on Tx;
+    notify B with (JJ,withdraw(5.0)) on Tx;
     
-    logMsg(info,"Joe's account has $(query JJ's balance with balance())");
-    assert (query JJ's balance with balance())=5.0;
+    logMsg(info,"Joe's account has $(query B with custBal(JJ))");
+    assert (query B with custBal(JJ))=some(5.0);
     
-    notify JJ with deposit(-1.0) on Tx;
-    
-    notify JJ with withdraw(10.0) on Tx;
-    
-    assert (query JJ's balance with balance())=5.0;
+    notify B with (JJ,deposit(-1.0)) on Tx;
+    notify B with (JJ,withdraw(10.0)) on Tx;
+
+    assert (query B with custBal(JJ))=some(5.0);
     
     logMsg(info,"customers of bank are $(query B's custBals with custBals())");
   }

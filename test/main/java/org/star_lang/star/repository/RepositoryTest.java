@@ -73,7 +73,7 @@ public class RepositoryTest extends SRTest
     vars.put("B", URIUtils.createFileURI(bFile).toString());
 
     String aCat = TemplateString.stringTemplate(
-        "test is catalog{\n  content is hash{\n    \"A\"->\"AR.star\";\n    \"B\"->\"$B\";\n  }\n}", vars);
+        "catalog{\n  content is hash{\n    \"A\"->\"AR.star\";\n    \"B\"->\"$B\";\n  }\n}", vars);
 
     File aDir = createDir();
     File aFile = copyFile(aDir, "AR.star");

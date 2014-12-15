@@ -2,6 +2,7 @@ package org.star_lang.star.compiler.type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.Abstract;
@@ -85,26 +86,27 @@ public class EqualityBuilder
     String typeLabel = CompilerUtils.typeLabel(tp);
     String label = typeLabel + "$equal";
 
-    IAbstract implTpSpec;
-    List<IAbstract> constraints = findConstraints(stmt);
-
     Location loc = tp.getLoc();
+    IAbstract equality = Abstract.name(loc, StandardNames.EQUALITY);
 
-    if (Abstract.isBinary(tp, StandardNames.WHERE)) {
+    if (Abstract.isBinary(tp, StandardNames.WHERE)) 
       tp = Abstract.binaryLhs(tp);
-    }
 
     IAbstract eqnType = CompilerUtils.functionType(loc, FixedList.create(tp, tp), Abstract.name(loc,
         StandardTypes.BOOLEAN));
+    Function<IAbstract, IAbstract> eqCon = (t) -> Abstract.binary(loc, StandardNames.OVER, equality, t);
 
     List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(typeLabel));
-    IAbstract requirement = setupRequirement(loc, stmt, new Name(loc, StandardNames.EQUALITY), tVars);
-    if (requirement != null) {
-      implTpSpec = mergeRequirements(tp, requirement, constraints);
+    List<IAbstract> requirements = setupRequirements(stmt, eqCon, tVars);
 
-      eqnType = mergeRequirements(eqnType, requirement, constraints);
-    } else
-      implTpSpec = mergeRequirements(tp, constraints);
+    IAbstract implType = eqCon.apply(tp);
+
+    if (!requirements.isEmpty()) {
+      implType = Abstract.binary(loc, StandardNames.WHERE, implType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+      eqnType = Abstract.binary(loc, StandardNames.WHERE, eqnType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+    }
 
     eqnType = CompilerUtils.universalType(loc, tVars, eqnType);
 
@@ -115,8 +117,7 @@ public class EqualityBuilder
       // {= = <label>}
       IAbstract defn = CompilerUtils.letExp(loc, equations, CompilerUtils.blockTerm(loc, Abstract.binary(loc,
           StandardNames.EQUAL, new Name(loc, StandardNames.EQUAL), new Name(loc, label))));
-      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, Abstract.binary(loc,
-          StandardNames.OVER, new Name(loc, StandardNames.EQUALITY), implTpSpec)), defn);
+      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
     }
     return null;
   }
@@ -143,8 +144,8 @@ public class EqualityBuilder
   {
     Location loc = tp.getLoc();
 
-    return Abstract.binary(loc, StandardNames.WHERE, tp, CompilerUtils.tupleUp(loc, StandardNames.AND, constraints,
-        req));
+    return Abstract.binary(loc, StandardNames.WHERE, tp, CompilerUtils
+        .tupleUp(loc, StandardNames.AND, constraints, req));
   }
 
   public static IAbstract mergeRequirements(IAbstract tp, List<IAbstract> constraints)
@@ -157,7 +158,8 @@ public class EqualityBuilder
       return tp;
   }
 
-  public static IAbstract setupRequirement(Location loc, IAbstract stmt, IAbstract contract, List<IAbstract> tVars)
+  public static IAbstract setupRequirement(Location loc, IAbstract stmt, Function<IAbstract, IAbstract> over,
+      List<IAbstract> tVars)
   {
     findRequirement(tVars, CompilerUtils.typeDefnType(stmt));
     for (IAbstract con : CompilerUtils.unWrap(CompilerUtils.typeDefnConstructors(stmt)))
@@ -167,7 +169,7 @@ public class EqualityBuilder
     if (!tVars.isEmpty()) {
       IAbstract req = null;
       for (IAbstract ref : tVars) {
-        IAbstract contTerm = Abstract.binary(loc, StandardNames.OVER, contract, ref);
+        IAbstract contTerm = over.apply(ref);
         if (req == null)
           req = contTerm;
         else
@@ -176,6 +178,24 @@ public class EqualityBuilder
       return req;
     } else
       return null;
+  }
+
+  public static List<IAbstract> setupRequirements(IAbstract stmt, Function<IAbstract, IAbstract> over,
+      List<IAbstract> tVars)
+  {
+    findRequirement(tVars, CompilerUtils.typeDefnType(stmt));
+    List<IAbstract> reqs = new ArrayList<>();
+
+    for (IAbstract con : CompilerUtils.unWrap(CompilerUtils.typeDefnConstructors(stmt)))
+      if (Abstract.isBinary(con, StandardNames.WHERE))
+        findConstraintRequirements(tVars, Abstract.binaryRhs(con));
+
+    if (!tVars.isEmpty()) {
+      for (IAbstract ref : tVars) {
+        reqs.add(over.apply(ref));
+      }
+    }
+    return reqs;
   }
 
   public static void findRequirement(List<IAbstract> requirements, IAbstract tpExp)

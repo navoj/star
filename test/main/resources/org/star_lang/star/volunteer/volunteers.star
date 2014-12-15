@@ -50,8 +50,8 @@ Name is connections{
       -- This is actually in portType
       type port of %schema is port{
         _notify has type ((%schema)=>())=>();
-        _request has type action((%schema)=>(),()=>quoted,()=>dictionary of (string,any));
-        _query has type  for all %a such that ((%schema)=>%a,()=>quoted,()=>dictionary of (string,any))=>%a;
+        _request has type action((%schema)=>(),()=>quoted,()=>dictionary of (string,quoted));
+        _query has type  for all %a such that ((%schema)=>%a,()=>quoted,()=>dictionary of (string,quoted))=>%a;
       };
       
       connectAo(Br,Cr) is port{
@@ -319,7 +319,7 @@ Name is connections{
     #freeHash(?F#@?Args) ==> dictionary of { unPack(#:Args) } ## {
       #unPack((?L,())) ==> unPack(L);
       #unPack((?L,?R)) ==> #( unPack(L);unPack(R))#;
-      #unPack(?A) ==> #($$A -> (A cast any))#;
+      #unPack(?A) ==> #($$A -> (A as quoted))#;
     };
         
     #queryFun(?lVar, (?qExp,()) ) ==> (#(_query(Fn,Qt,Fr) is qExp)#, ());

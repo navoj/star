@@ -62,7 +62,7 @@ public class LibraryTest extends SRTest
 
     String tstCat = TemplateString
         .stringTemplate(
-            "test is catalog{\n  content is hash{\n    \"libtest\"->\"$libtest\";\n      \"persons\"->\"$persons\";\n    \"libmanifest\"->\"$libmanifest\";\n  }\n}",
+            "catalog{\n  content is hash{\n    \"libtest\"->\"$libtest\";\n      \"persons\"->\"$persons\";\n    \"libmanifest\"->\"$libmanifest\";\n  }\n}",
             vars);
     File tstCatFile = FileUtil.writeFile(new File(tstDir, "catalog"), tstCat);
 
@@ -94,7 +94,7 @@ public class LibraryTest extends SRTest
 
     String tstCat = TemplateString
         .stringTemplate(
-            "test is catalog{\n  content is hash{\n    \"libtest\"->\"$libtest\";\n    \"persons\"->\"$persons\";\n    \"libmanifest\"->\"$libmanifest\";\n  }\n}",
+            "catalog{\n  content is hash{\n    \"libtest\"->\"$libtest\";\n    \"persons\"->\"$persons\";\n    \"libmanifest\"->\"$libmanifest\";\n  }\n}",
             vars);
     File tstCatFile = FileUtil.writeFile(new File(tstDir, "catalog"), tstCat);
 

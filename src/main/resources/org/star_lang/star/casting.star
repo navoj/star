@@ -197,3 +197,20 @@ implementation coercion over (float,quoted) is {
   coerce(float(Dx)) is floatAst(noWhere,float(Dx));
   coerce(nonFloat) is <|nonFloat|>;
 }
+
+implementation for all t such that 
+  coercion over (cons of t,quoted) where coercion over (t,quoted) is {
+  coerce(L) is quoteList(L);
+} using {
+  quoteList(nil) is <|nil|>;
+  quoteList(cons(H,T)) is <|cons(?(H as quoted),?(quoteList(T)))|>
+}
+
+implementation for all t such that
+    coercion over (quoted,cons of t) where coercion over (quoted,t) is {
+  coerce(Q) is unquoteList(Q);
+} using {
+  unquoteList(<|nil|>) is nil;
+  unquoteList(<|cons(?H,?T)|>) is cons(H as t,unquoteList(T));
+}
+ 

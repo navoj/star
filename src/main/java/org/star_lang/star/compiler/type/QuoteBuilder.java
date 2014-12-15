@@ -2,6 +2,7 @@ package org.star_lang.star.compiler.type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.Abstract;
@@ -91,36 +92,37 @@ public class QuoteBuilder
     return false;
   }
 
-  public static IAbstract dequoteImplementation(IAbstract tDef, Dictionary dict)
+  public static IAbstract dequoteImplementation(IAbstract stmt, Dictionary dict)
   {
-    assert CompilerUtils.isTypeDefn(tDef);
+    assert CompilerUtils.isTypeDefn(stmt);
 
-    IAbstract specs = CompilerUtils.typeDefnConstructors(tDef);
-    IAbstract tp = CompilerUtils.typeDefnType(tDef);
+    IAbstract specs = CompilerUtils.typeDefnConstructors(stmt);
+    IAbstract tp = CompilerUtils.typeDefnType(stmt);
     String typeLabel = CompilerUtils.typeLabel(tp);
     String label = typeLabel + "$dequote";
 
-    IAbstract implTpSpec;
-    IAbstract tpConstraint = null;
-
     Location loc = tp.getLoc();
+    IAbstract quoted = Abstract.name(loc, StandardTypes.QUOTED);
+    IAbstract coercion = Abstract.name(loc, StandardNames.COERCION);
 
     if (Abstract.isBinary(tp, StandardNames.WHERE)) {
-      tpConstraint = Abstract.binaryRhs(tp);
       tp = Abstract.binaryLhs(tp);
     }
 
-    IAbstract quoted = Abstract.name(loc, StandardTypes.QUOTED);
     IAbstract eqnType = CompilerUtils.functionType(loc, FixedList.create(quoted), tp);
+    Function<IAbstract, IAbstract> qtCon = (t) -> Abstract.binary(loc, StandardNames.OVER, coercion, Abstract
+        .tupleTerm(loc, quoted, t));
 
     List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(typeLabel));
-    IAbstract requirement = setupDeQuoteRequirement(loc, tp, tVars);
-    if (requirement != null) {
-      implTpSpec = mergeRequirements(Abstract.tupleTerm(loc, quoted, tp), requirement, tpConstraint);
+    List<IAbstract> requirements = EqualityBuilder.setupRequirements(stmt, qtCon, tVars);
 
-      eqnType = mergeRequirements(eqnType, requirement, tpConstraint);
-    } else
-      implTpSpec = mergeRequirements(Abstract.tupleTerm(loc, quoted, tp), tpConstraint);
+    IAbstract implType = qtCon.apply(tp);
+    if (!requirements.isEmpty()) {
+      implType = Abstract.binary(loc, StandardNames.WHERE, implType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+      eqnType = Abstract.binary(loc, StandardNames.WHERE, eqnType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+    }
 
     eqnType = CompilerUtils.universalType(loc, tVars, eqnType);
 
@@ -131,8 +133,7 @@ public class QuoteBuilder
       // {= = <label>}
       IAbstract defn = CompilerUtils.letExp(loc, equations, CompilerUtils.blockTerm(loc, CompilerUtils.equals(loc,
           new Name(loc, StandardNames.COERCE), new Name(loc, label))));
-      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, Abstract.binary(loc,
-          StandardNames.OVER, new Name(loc, StandardNames.COERCION), implTpSpec)), defn);
+      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
     }
     return null;
   }
@@ -155,42 +156,46 @@ public class QuoteBuilder
   }
 
   /**
-   * Set up implementation of the coercion from teh type to quoted.
+   * Set up implementation of the coercion from the type to quoted.
    * 
-   * @param tpDef
+   * @param stmt
    * @param dict
    * @return an implementation of (tp)=>quoted
    */
 
-  public static IAbstract quoteImplementation(IAbstract tpDef, Dictionary dict)
+  public static IAbstract quoteImplementation(IAbstract stmt, Dictionary dict)
   {
-    assert CompilerUtils.isTypeDefn(tpDef);
+    assert CompilerUtils.isTypeDefn(stmt);
 
-    IAbstract specs = CompilerUtils.typeDefnConstructors(tpDef);
-    IAbstract tp = CompilerUtils.typeDefnType(tpDef);
+    IAbstract specs = CompilerUtils.typeDefnConstructors(stmt);
+    IAbstract tp = CompilerUtils.typeDefnType(stmt);
     String typeLabel = CompilerUtils.typeLabel(tp);
     String label = typeLabel + "$quote";
 
-    IAbstract implTpSpec;
-    IAbstract tpConstraint = null;
-
     Location loc = tp.getLoc();
+    IAbstract quoted = Abstract.name(loc, StandardTypes.QUOTED);
+    IAbstract coercion = Abstract.name(loc, StandardNames.COERCION);
 
     if (Abstract.isBinary(tp, StandardNames.WHERE)) {
-      tpConstraint = Abstract.binaryRhs(tp);
       tp = Abstract.binaryLhs(tp);
     }
 
     IAbstract eqnType = CompilerUtils.functionType(loc, FixedList.create(tp), quoted);
 
-    List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(typeLabel));
-    IAbstract requirement = setupQuoteRequirement(loc, tp, tVars);
-    if (requirement != null) {
-      implTpSpec = mergeRequirements(Abstract.tupleTerm(loc, tp, quoted), requirement, tpConstraint);
+    Function<IAbstract, IAbstract> qtCon = (t) -> Abstract.binary(loc, StandardNames.OVER, coercion, Abstract
+        .tupleTerm(loc, t, quoted));
 
-      eqnType = mergeRequirements(eqnType, requirement, tpConstraint);
-    } else
-      implTpSpec = mergeRequirements(Abstract.tupleTerm(loc, tp, quoted), tpConstraint);
+    List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(typeLabel));
+    List<IAbstract> requirements = EqualityBuilder.setupRequirements(stmt, qtCon, tVars);
+
+    IAbstract implType = qtCon.apply(tp);
+
+    if (!requirements.isEmpty()) {
+      implType = Abstract.binary(loc, StandardNames.WHERE, implType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+      eqnType = Abstract.binary(loc, StandardNames.WHERE, eqnType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+    }
 
     eqnType = CompilerUtils.universalType(loc, tVars, eqnType);
 
@@ -201,107 +206,9 @@ public class QuoteBuilder
       // {coerce = <label>}
       IAbstract defn = CompilerUtils.letExp(loc, equations, CompilerUtils.blockTerm(loc, CompilerUtils.equals(loc,
           new Name(loc, StandardNames.COERCE), new Name(loc, label))));
-      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, Abstract.binary(loc,
-          StandardNames.OVER, new Name(loc, StandardNames.COERCION), implTpSpec)), defn);
+      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
     }
     return null;
-  }
-
-  public static IAbstract mergeRequirements(IAbstract tp, IAbstract req, IAbstract constraint)
-  {
-    Location loc = tp.getLoc();
-
-    if (constraint != null)
-      return Abstract.binary(loc, StandardNames.WHERE, tp, Abstract.binary(loc, StandardNames.AND, constraint, req));
-    else
-      return Abstract.binary(loc, StandardNames.WHERE, tp, req);
-  }
-
-  public static IAbstract mergeRequirements(IAbstract tp, IAbstract constraint)
-  {
-    Location loc = tp.getLoc();
-
-    if (constraint != null)
-      return Abstract.binary(loc, StandardNames.WHERE, tp, constraint);
-    else
-      return tp;
-  }
-
-  private static IAbstract setupDeQuoteRequirement(Location loc, IAbstract tp, List<IAbstract> tVars)
-  {
-    findRequirement(tVars, tp);
-    if (!tVars.isEmpty()) {
-      IAbstract req = null;
-      IAbstract quotedType = new Name(loc, StandardTypes.QUOTED);
-      IAbstract contract = new Name(loc, StandardNames.COERCION);
-
-      for (IAbstract ref : tVars) {
-        IAbstract contTerm = Abstract.binary(loc, StandardNames.OVER, contract, Abstract
-            .tupleTerm(loc, quotedType, ref));
-        if (req == null)
-          req = contTerm;
-        else
-          req = Abstract.binary(loc, StandardNames.AND, contTerm, req);
-      }
-      return req;
-    } else
-      return null;
-  }
-
-  private static IAbstract setupQuoteRequirement(Location loc, IAbstract tp, List<IAbstract> tVars)
-  {
-    findRequirement(tVars, tp);
-    if (!tVars.isEmpty()) {
-      IAbstract req = null;
-      IAbstract quotedType = new Name(loc, StandardTypes.QUOTED);
-      IAbstract contract = new Name(loc, StandardNames.COERCION);
-
-      for (IAbstract ref : tVars) {
-        IAbstract contTerm = Abstract.binary(loc, StandardNames.OVER, contract, Abstract
-            .tupleTerm(loc, ref, quotedType));
-        if (req == null)
-          req = contTerm;
-        else
-          req = Abstract.binary(loc, StandardNames.AND, contTerm, req);
-      }
-      return req;
-    } else
-      return null;
-  }
-
-  public static void findRequirement(List<IAbstract> requirements, IAbstract tpExp)
-  {
-    if (CompilerUtils.isTypeVar(tpExp)) {
-      tpExp = CompilerUtils.typeVName(tpExp);
-      if (!requirements.contains(tpExp))
-        requirements.add(tpExp);
-    } else if (Abstract.isBinary(tpExp, StandardNames.OF))
-      findRequirement(requirements, Abstract.binaryRhs(tpExp));
-    else if (Abstract.isParenTerm(tpExp))
-      findRequirement(requirements, Abstract.deParen(tpExp));
-    else if (Abstract.isTupleTerm(tpExp)) {
-      for (IValue el : Abstract.tupleArgs(tpExp))
-        findRequirement(requirements, (IAbstract) el);
-    } else if (Abstract.isBinary(tpExp, StandardNames.WHERE)) {
-      findRequirement(requirements, Abstract.binaryLhs(tpExp));
-      findConstraintRequirements(requirements, Abstract.binaryRhs(tpExp));
-    }
-  }
-
-  public static void findConstraintRequirements(List<IAbstract> requirements, IAbstract tpExp)
-  {
-    if (Abstract.isBinary(tpExp, StandardNames.OVER))
-      findRequirement(requirements, Abstract.binaryRhs(tpExp));
-    else if (CompilerUtils.isDerived(tpExp)) {
-      findRequirement(requirements, CompilerUtils.derivedType(tpExp));
-      findRequirement(requirements, CompilerUtils.dependsType(tpExp));
-    } else if (CompilerUtils.isImplementsConstraint(tpExp)) {
-      findRequirement(requirements, CompilerUtils.implementConType(tpExp));
-      for (IAbstract el : CompilerUtils.unWrap(CompilerUtils.implementsConstraints(tpExp), StandardNames.TERM)) {
-        if (CompilerUtils.isTypeAnnotation(el))
-          findRequirement(requirements, CompilerUtils.typeAnnotation(el));
-      }
-    }
   }
 
   /**
@@ -479,20 +386,25 @@ public class QuoteBuilder
         for (IAbstract arg : CompilerUtils.unWrap(CompilerUtils.braceArg(el), StandardNames.TERM)) {
           if (CompilerUtils.isTypeAnnotation(arg)) {
             IAbstract type = CompilerUtils.typeAnnotation(arg);
-            if (CompilerUtils.isProgramType(type) || Abstract.isName(type, StandardNames.ANY))
+            if (!supportsQuoting(type))
               return false;
           }
         }
       } else if (Abstract.isApply(el)) {
         for (IValue arg : Abstract.getArgs(el)) {
           IAbstract type = (IAbstract) arg;
-          if (CompilerUtils.isProgramType(type) || Abstract.isName(type, StandardNames.ANY))
+          if (!supportsQuoting(type))
             return false;
         }
       }
     }
 
     return true;
+  }
+
+  private static boolean supportsQuoting(IAbstract type)
+  {
+    return !CompilerUtils.isProgramType(type) && !Abstract.isName(type, StandardNames.ANY);
   }
 
   /**

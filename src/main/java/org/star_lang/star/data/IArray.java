@@ -2,7 +2,6 @@ package org.star_lang.star.data;
 
 /**
  *  The IArray interface is implemented by array-like objects.
- *   Copyright (C) 2013 Starview Inc
  *
  *   This library is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU Lesser General Public
@@ -26,18 +25,6 @@ import java.util.Collection;
 
 public interface IArray extends IList
 {
-
-  /**
-   * Set the cell at a specific position to a new value. Should NEVER be null.
-   * 
-   * @param index
-   * @param value
-   * @throws IndexOutOfBoundsException
-   *           when attempting to set a value outside the current bounds of the array.
-   */
-  @Deprecated
-  void setCell(int index, IValue value);
-
   /**
    * Splice another array into this one.
    * 
@@ -181,5 +168,4 @@ public interface IArray extends IList
   @Override
   IValue rightFold(IFunction transform, IValue init) throws EvaluationException;
 
-  
 }

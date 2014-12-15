@@ -29,9 +29,9 @@ person is package{
     age default is nonFloat;
     
     assert age=nonFloat or age>0.0;
-  } or noone;
+  } or noone implementing quotable;
   
-  type gender is male or female;
+  type gender is male or female implementing quotable;
   
   implementation comparable over person is {
     (<) = person_less;

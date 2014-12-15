@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.Abstract;
@@ -281,32 +282,35 @@ public class DisplayBuilder
     return false;
   }
 
-  private static IAbstract ppImplementation(IAbstract tDef, Dictionary dict)
+  private static IAbstract ppImplementation(IAbstract stmt, Dictionary dict)
   {
-    assert CompilerUtils.isTypeDefn(tDef);
+    assert CompilerUtils.isTypeDefn(stmt);
 
-    IAbstract specs = CompilerUtils.typeDefnConstructors(tDef);
-    IAbstract tp = CompilerUtils.typeDefnType(tDef);
+    IAbstract specs = CompilerUtils.typeDefnConstructors(stmt);
+    IAbstract tp = CompilerUtils.typeDefnType(stmt);
     String tplabel = CompilerUtils.typeLabel(tp);
     String label = tplabel + "$display";
 
-    IAbstract implTpSpec;
-    List<IAbstract> constraints = EqualityBuilder.findConstraints(tDef);
     if (Abstract.isBinary(tp, StandardNames.WHERE))
       tp = Abstract.binaryLhs(tp);
 
-    Location loc = tDef.getLoc();
+    Location loc = stmt.getLoc();
+    IAbstract pprint = new Name(loc, StandardNames.PPRINT);
+
     List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(tplabel));
 
     IAbstract prtType = CompilerUtils.functionType(loc, FixedList.create(tp), Abstract.name(loc, StandardNames.PP));
+    Function<IAbstract, IAbstract> ppCon = (t) -> Abstract.binary(loc, StandardNames.OVER, pprint, t);
 
-    IAbstract requirement = EqualityBuilder.setupRequirement(loc, tDef, new Name(loc, StandardNames.PPRINT), tVars);
-    if (requirement != null) {
-      implTpSpec = EqualityBuilder.mergeRequirements(tp, requirement, constraints);
+    List<IAbstract> requirements = EqualityBuilder.setupRequirements(stmt, ppCon, tVars);
+    IAbstract implType = ppCon.apply(tp);
 
-      prtType = EqualityBuilder.mergeRequirements(prtType, requirement, constraints);
-    } else
-      implTpSpec = EqualityBuilder.mergeRequirements(tp, constraints);
+    if (!requirements.isEmpty()) {
+      implType = Abstract.binary(loc, StandardNames.WHERE, implType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+      prtType = Abstract.binary(loc, StandardNames.WHERE, prtType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+    }
 
     prtType = CompilerUtils.universalType(loc, tVars, prtType);
 
@@ -315,8 +319,7 @@ public class DisplayBuilder
     if (functions != null) {
       IAbstract defn = CompilerUtils.letExp(loc, functions, CompilerUtils.blockTerm(loc, Abstract.binary(loc,
           StandardNames.EQUAL, new Name(loc, StandardNames.PPDISP), new Name(loc, label))));
-      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, Abstract.binary(loc,
-          StandardNames.OVER, new Name(loc, StandardNames.PPRINT), implTpSpec)), defn);
+      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
     }
     return null;
   }
@@ -330,26 +333,26 @@ public class DisplayBuilder
     String tpLabel = CompilerUtils.typeLabel(tp);
 
     List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(tpLabel));
-    List<IAbstract> constraints = EqualityBuilder.findConstraints(stmt);
+    IAbstract pprint = Abstract.name(loc, StandardNames.PPRINT);
 
-    IAbstract implTpSpec;
+    Function<IAbstract, IAbstract> ppCon = (t) -> Abstract.binary(loc, StandardNames.OVER, pprint, t);
 
-    IAbstract requirement = EqualityBuilder.setupRequirement(loc, stmt, new Name(loc, StandardNames.PPRINT), tVars);
-    if (requirement != null) {
-      implTpSpec = EqualityBuilder.mergeRequirements(tp, requirement, constraints);
-    } else
-      implTpSpec = EqualityBuilder.mergeRequirements(tp, constraints);
+    List<IAbstract> requirements = EqualityBuilder.setupRequirements(stmt, ppCon, tVars);
+    IAbstract implType = ppCon.apply(tp);
+
+    if (!requirements.isEmpty()) {
+      implType = Abstract.binary(loc, StandardNames.WHERE, implType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+          requirements));
+    }
 
     IAbstract arg = new Name(loc, GenSym.genSym("V$"));
-    List<IAbstract> args = new ArrayList<>();
-    args.add(arg);
+    List<IAbstract> args = FixedList.create(arg);
 
     IAbstract eqn = CompilerUtils.equation(loc, StandardNames.PPDISP, args, Abstract.binary(loc, "sequenceDisplay",
         new StringLiteral(loc, tpLabel), arg));
 
     IAbstract defn = CompilerUtils.blockTerm(loc, eqn);
-    return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, Abstract.binary(loc,
-        StandardNames.OVER, new Name(loc, StandardNames.PPRINT), implTpSpec)), defn);
+    return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
   }
 
   private static IAbstract specFunctions(Location loc, String label, IAbstract term, IAbstract type, IAbstract prtType)

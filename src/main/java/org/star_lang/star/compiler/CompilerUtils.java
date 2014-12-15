@@ -2252,7 +2252,7 @@ public class CompilerUtils
 
   public static IAbstract implementationStmt(Location loc, IAbstract con, IAbstract def)
   {
-    assert Abstract.isBinary(unwrapQuants(con), StandardNames.OVER);
+    assert isContractSpec(con);
 
     return Abstract.unary(loc, StandardNames.IMPLEMENTATION, Abstract.binary(loc, StandardNames.IS, con, def));
   }
@@ -2896,7 +2896,7 @@ public class CompilerUtils
   {
     if (!bv.isEmpty()) {
       IAbstract bvars = tupleUp(loc, StandardNames.COMMA, bv);
-      return Abstract.binary(loc, StandardNames.ST, Abstract.unary(loc, StandardNames.FOR_ALL, bvars), bt);
+      return Abstract.binary(loc, StandardNames.S_T, Abstract.unary(loc, StandardNames.FOR_ALL, bvars), bt);
     } else
       return bt;
   }

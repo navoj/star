@@ -27,8 +27,8 @@ private import maps;
 private import macrosupport;
 
 contract speech over %t determines (%u,%%a) where execution over %%a is {
-  _query has type for all %s such that (%t,(%u)=>%s,()=>quoted,()=>dictionary of (string,any))=>%%a of %s;
-  _request has type (%t,(%u)=>(),()=>quoted,()=>dictionary of (string,any)) => %%a of ();
+  _query has type for all %s such that (%t,(%u)=>%s,()=>quoted,()=>dictionary of (string,quoted))=>%%a of %s;
+  _request has type (%t,(%u)=>(),()=>quoted,()=>dictionary of (string,quoted)) => %%a of ();
   _notify has type (%t,(%u)=>()) => %%a of ();
 };
 
@@ -62,8 +62,8 @@ type stream of %t is alias of action(%t);
 # freeVarMap(?Exp,?XX) ==> #*formHash(__find_free(Exp,XX,comma,())) ## {
   #formHash(()) ==> dictionary of {};
   #formHash(?E) ==> dictionary of {hashEntries(E)};
-  #hashEntries(comma(?V,())) ==> $$V->#(V cast any)#;
-  #hashEntries(comma(?V,?T)) ==> #($$V->#(V cast any)#;hashEntries(T))#;
+  #hashEntries(comma(?V,())) ==> $$V->#(V as quoted)#;
+  #hashEntries(comma(?V,?T)) ==> #($$V->#(V as quoted)#;hashEntries(T))#;
 };
 
 #queryFree(?Qq,?Excl) ==> freeVarMap(Qq,#*queryDefined(Qq,Excl)) ## {

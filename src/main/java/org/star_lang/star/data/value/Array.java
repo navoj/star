@@ -115,17 +115,6 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  @Deprecated
-  public void setCell(int index, IValue value)
-  {
-    int ix = index + first;
-    if (index < 0 || ix > last)
-      throw new IndexOutOfBoundsException("array index " + index + " not in range 0.." + size());
-
-    base.setCell(ix, value);
-  }
-
-  @Override
   public IList substituteCell(int index, IValue value)
   {
     int ix = index + first;
