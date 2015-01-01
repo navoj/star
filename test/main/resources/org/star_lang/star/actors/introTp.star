@@ -17,7 +17,7 @@
  */
 introTp is package{
   AA has type actor of {
-    IN has type stream of integer;
+    IN has type occurrence of integer;
   };
   
   AA is actor{

@@ -221,9 +221,9 @@ public class CafeManifest implements CodeTree, CodeParser
   }
 
   @Override
-  public CodeTree parse(ResourceURI uri, InputStream stream, ErrorReport errors) throws ResourceException
+  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException
   {
-    try (ObjectInputStream in = new ObjectInputStream(stream)) {
+    try (ObjectInputStream in = new ObjectInputStream(input)) {
       return (CafeManifest) in.readObject();
     } catch (IOException ex) {
       errors.reportError("IOException: " + ex.getMessage());

@@ -6,7 +6,7 @@ sendToConc is package{
     price has type float
   }
 
-  C has type concurrent actor of { tick has type stream of stockTick };
+  C has type concurrent actor of { tick has type occurrence of stockTick };
   C is concurrent actor{
     on X on tick do
       logMsg(info,"#(X.symbol) price: $(X.price)")

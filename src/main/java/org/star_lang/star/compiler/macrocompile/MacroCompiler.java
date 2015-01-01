@@ -140,7 +140,7 @@ import org.star_lang.star.resource.catalog.CatalogException;
  *   } in _replacer(T,pkg%walk)
  * </pre>
  */
-/* 
+/*
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
@@ -673,12 +673,9 @@ public class MacroCompiler
       CompilerUtils.appendCondition(cond, subCond);
 
       return astApply(loc, anon, opPtn, argVr);
-    } else if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
+    } else if (Abstract.isUnary(ptn, StandardNames.QUESTION) && Abstract.isName(Abstract.unaryArg(ptn))) {
       String var = Abstract.getId(Abstract.unaryArg(ptn));
-      if (var == null) {
-        errors.reportError("expecting a variable after ?, not " + Abstract.unaryArg(ptn), loc);
-        return new Name(loc, GenSym.genSym("_"));
-      } else if (var.equals(StandardNames.ANONYMOUS))
+      if (var.equals(StandardNames.ANONYMOUS))
         return new Name(loc, var);
       else if (vars.contains(var)) {
         String nvar = GenSym.genSym(var);

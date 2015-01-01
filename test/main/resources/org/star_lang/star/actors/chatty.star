@@ -19,7 +19,7 @@
 -- This is a simple tick-tock scenario
 
 chatty is package{  
-  type talker is alias of actor of {ear has type stream of string};
+  type talker is alias of actor of {ear has type occurrence of string};
   
   chatty has type (()=>talker)=>talker;
   chatty(Who) is actor{

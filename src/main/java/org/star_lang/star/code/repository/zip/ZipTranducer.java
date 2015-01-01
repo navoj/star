@@ -42,9 +42,9 @@ public class ZipTranducer implements Transducer
   @Override
   public Reader getReader(ResourceURI uri) throws ResourceException
   {
-    InputStream stream = getInputStream(uri);
-    if (stream != null)
-      return new InputStreamReader(stream);
+    InputStream input = getInputStream(uri);
+    if (input != null)
+      return new InputStreamReader(input);
     else
       return null;
   }

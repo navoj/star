@@ -26,5 +26,5 @@ account is package{
     hist has type ref list of tx;
   }
   
-  type accountActor is alias of actor of { txs has type stream of tx };
+  type accountActor is alias of actor of { txs has type occurrence of tx };
 }

@@ -19,7 +19,7 @@ picoRequest is package{
   
   -- test requests with and without write back 
   listener has type actor of{
-    msg has type stream of ((string,integer));
+    msg has type occurrence of ((string,integer));
     report has type ()=>list of ((string,integer));
     clearHistory has type action();
   }

@@ -38,8 +38,8 @@ public class HttpTransducer implements Transducer
   {
     try {
       URL url = new URL(uri.toString());
-      InputStream stream = url.openStream();
-      return new InputStreamReader(stream);
+      InputStream input = url.openStream();
+      return new InputStreamReader(input);
     } catch (Exception e) {
       throw new ResourceException(e.getMessage());
     }

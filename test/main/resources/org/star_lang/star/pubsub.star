@@ -24,10 +24,10 @@ pubsub is package{
   type newsItem is item(list of topic,string);
   
   server has type actor{
-    report has type stream of newsItem;
+    report has type occurrence of newsItem;
     catalog has type relation of ((topic, newsItem));
   } originates {
-    news has type stream of topic;
+    news has type occurrence of topic;
   };
   
   server is actor{
@@ -45,7 +45,7 @@ pubsub is package{
   };
   
   type listenerActorType is alias of actor {
-    news has type stream of topic;
+    news has type occurrence of topic;
   } originates{
     catalog has type relation of {topic has type topic; item has type newsItem};
   };
@@ -73,7 +73,7 @@ pubsub is package{
     topics has type relation of topic;
     blast has type action(integer);
   } originates{
-    report has type stream of newsItem;
+    report has type occurrence of newsItem;
   };
   
   spammer(tops) is actor{

@@ -24,7 +24,7 @@ actorupdate is package {
   main() do {
     X is let {
       type FooActor is alias of actor of {
-        Y has type stream of integer;
+        Y has type occurrence of integer;
         f has type ref list of Foo;
       }
       aoeu has type FooActor;

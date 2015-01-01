@@ -100,9 +100,9 @@ public class ManifestParser implements CodeParser
   }
 
   @Override
-  public CodeTree parse(ResourceURI uri, InputStream stream, ErrorReport errors) throws ResourceException
+  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException
   {
-    try (InputStreamReader rdr = new InputStreamReader(stream)) {
+    try (InputStreamReader rdr = new InputStreamReader(input)) {
       return parse(uri, rdr, errors);
     } catch (IOException e) {
       throw new ResourceException("poblem with parsing " + uri, e);

@@ -34,9 +34,9 @@ volunteers is package{
 
 import volunteers;
 Name is connections{
-     originate(Ao,{DATA has type stream of Person; ACT has type (Person)=>(); R has type list of ((Person,string))});
-     respond(Br,{INP has type stream of Person});
-     respond(Cr,{DATA has type stream of Person; ACT has type (Person)=>(); R has type list of ((Person,string))});
+     originate(Ao,{DATA has type occurrence of Person; ACT has type (Person)=>(); R has type list of ((Person,string))});
+     respond(Br,{INP has type occurrence of Person});
+     respond(Cr,{DATA has type occurrence of Person; ACT has type (Person)=>(); R has type list of ((Person,string))});
      connect(Ao,Br,(X on DATA as X on INP));
      connect(Ao,Cr,(query X as X));
    }
@@ -75,7 +75,7 @@ Name is connections{
     
     # (?T) :: legalConnectType :- T::legalConnectType;
     # list of ?T :: legalConnectType :- T::typeExpression;
-    # stream of ?T :: legalConnectType :- T::typeExpression;
+    # occurrence of ?T :: legalConnectType :- T::typeExpression;
     # dictionary of (?K,?V) :: legalConnectType :- K::typeExpression :& V::typeExpression;
     # #(tuple?A)# => ?R :: legalConnectType :- A:*typeExpression :& R::typeExpression;
     # ?A <= ?P :: legalConnectType :- A::typeExpression :& P::typeExpression;
@@ -145,7 +145,7 @@ Name is connections{
     #generateDeflt(?Ch,?Tp,((),?Ot)) ==> glom(genDeflt(Ch,Tp),Ot);
     #generateDeflt(?Ch,?Tp,(?Lc,?Ot)) ==> glom(Lc,Ot);
     
-    #genDeflt(?Ch,stream of ?T) ==> #(Ch(#$"X") do nothing)#;
+    #genDeflt(?Ch,occurrence of ?T) ==> #(Ch(#$"X") do nothing)#;
     #genDeflt(?Ch,action#@?Ar) ==> #(Ch#@ #<#:argTemplate(#:Ar)># do nothing)#;
     #genDeflt(?Ch,#(?Ar)#=>()) ==>  #(Ch#@ #<#:argTemplate(#:Ar)># do nothing)#;
     #genDeflt(?Ch,#(?Ar=>?rs)#) ==> #(Ch#@ #<#:argTemplate(#:Ar)># is raise "no data")#;
@@ -159,7 +159,7 @@ Name is connections{
     #validateSchema(?Schema,?Res,?Specs./respond(?Res,{?Schema}),?Chnl,?Tp,?Conns) ==> all(Res,Chnl);
     #validateSchema(?Schema,?Res,?Specs,?Chnl,?Tp,?Conns) ==> (#*ruleTmpl(Res,Chnl,Tp),Conns);
     
-    #ruleTmpl(?Res,?Chnl,stream of ?Tp) ==> some(Res,(#$"X"),Chnl(#$"X"));
+    #ruleTmpl(?Res,?Chnl,occurrence of ?Tp) ==> some(Res,(#$"X"),Chnl(#$"X"));
     #ruleTmpl(?Res,?Chnl,action#@?Ar) ==> #*tmplSomeArgs(Res,#<#:argTemplate(#:Ar)>#,Chnl);
     #ruleTmpl(?Res,?Chnl,#(?Ar=>?R)#) ==> #*tmplSomeArgs(Res,#<#:argTemplate(#:Ar)>#,Chnl);
     #ruleTmpl(?Res,?Chnl,ref ?Tp) ==> some(Res,reference,Chnl);
@@ -171,21 +171,21 @@ Name is connections{
     #processNotifies(?lVar,?Schema,?OP,?Specs) ==> #*notifyProc(lVar,#*notifies(Schema,Schema,OP,Specs,()));
     
     #notifies(#(?L;?R)#,?Schema,?OP,?Specs,?Rules) ==> notifies(R,Schema,OP,Specs,notifies(L,Schema,OP,Specs,Rules));
-    #notifies(#(?Ch has type stream of ?Tp)#,?Schema,?OP,?Specs,?Rules) ==> 
+    #notifies(#(?Ch has type occurrence of ?Tp)#,?Schema,?OP,?Specs,?Rules) ==> 
         mergeRules(#*notifyRule(Ch,#*notifyConns(OP,Ch,Specs,Specs,Schema,())),Rules);
     #notifies(#(?Ch has type ?tV~?Tp)#,?Schema,?OP,?Specs,?Rules) ==> notifies(#(Ch has type Tp)#,Schema,OP,Specs,Rules);
     #notifies(#(?Ch has type for all ?tV such that ?Tp)#,?Schema,?OP,?Specs,?Rules) ==> notifies(#(Ch has type Tp)#,Schema,OP,Specs,Rules);
     #notifies(?Tp,?Schema,?OP,?Specs,?Rules) ==> Rules;
     
     #notifyConns(?OP,?Chnl,connect(?OP,?Res,(?Vol)),?Specs,?Schema,?Conns) ==> notifyConns(OP,Chnl,connect(OP,Res,Vol),Specs,Schema,Conns); 
-    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(volunteer ?X on ?Chnl as ?X on ?ResCh)#),?Specs,?Schema,?Conns) ==> (ruleTmpl(Res,ResCh,stream of any),Conns);
+    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(volunteer ?X on ?Chnl as ?X on ?ResCh)#),?Specs,?Schema,?Conns) ==> (ruleTmpl(Res,ResCh,occurrence of any),Conns);
     #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(volunteer ?X on ?Chnl as ?Y on ?ResCh)#),?Specs,?Schema,?Conns) ==> (some(Res,(X),ResCh(Y)),Conns);
-    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(volunteer notify #(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,stream of any,Conns);
-    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(volunteer #(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,stream of any,Conns);
-    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(?X on ?Chnl as ?X on ?ResCh)#),?Specs,?Schema,?Conns) ==> (ruleTmpl(Res,ResCh,stream of any),Conns);
+    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(volunteer notify #(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,occurrence of any,Conns);
+    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(volunteer #(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,occurrence of any,Conns);
+    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(?X on ?Chnl as ?X on ?ResCh)#),?Specs,?Schema,?Conns) ==> (ruleTmpl(Res,ResCh,occurrence of any),Conns);
     #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(?X on ?Chnl as ?Y on ?ResCh)#),?Specs,?Schema,?Conns) ==> (some(Res,(X),ResCh(Y)),Conns);
-    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(notify #(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,stream of any,Conns);
-    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(#(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,stream of any,Conns);
+    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(notify #(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,occurrence of any,Conns);
+    #notifyConns(?OP,?Chnl,connect(?OP,?Res,#(#(identifier?X)# as ?X)#),?Specs,?Schema,?Conns) ==> validateSchema(Schema,Res,Specs,Chnl,occurrence of any,Conns);
     #notifyConns(?OP,?Chnl,#(?L;?R)#,?Specs,?Schema,?Conns) ==> notifyConns(OP,Chnl,R,Specs,Schema,notifyConns(OP,Chnl,L,Specs,Schema,Conns));
     #notifyConns(?OP,?Chnl,?Oth,?Specs,?Schema,?Conns) ==> Conns;
     
@@ -271,7 +271,7 @@ Name is connections{
     #queries(#(?L;?R)#,?OP,?Schema,?Specs,?Rules) ==> queries(R,OP,Schema,Specs,queries(L,OP,Schema,Specs,Rules));
     #queries(#(?Ch has type action#@?Tp)#,?OP,?Schema,?Specs,?Rules) ==> Rules;
     #queries(#(?Ch has type #(?Tp)#=>())#,?OP,?Schema,?Specs,?Rules) ==> Rules;
-    #queries(#(?Ch has type stream of ?Tp)#,?OP,?Schema,?Specs,?Rules) ==> Rules;
+    #queries(#(?Ch has type occurrence of ?Tp)#,?OP,?Schema,?Specs,?Rules) ==> Rules;
     #queries(#(?Ch has type ?V~?Tp)#,?Op,?Schema,?Specs,?Rules) ==> queries(#(Ch has type Tp)#,Op,Schema,Specs,Rules);
     #queries(#(?Ch has type for all ?V such that ?Tp)#,?Op,?Schema,?Specs,?Rules) ==> queries(#(Ch has type Tp)#,Op,Schema,Specs,Rules);
     #queries(#(?Ch has type ?Tp)#,?OP,?Schema,?Specs,?Rules) ==> mergeEquations(#*queryEqn(OP,Ch,Tp,#*queryConns(OP,Ch,Tp,Specs,Schema,Specs,())),Rules);

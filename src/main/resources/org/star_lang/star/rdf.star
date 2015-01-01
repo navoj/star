@@ -32,11 +32,7 @@ import cons;
  
  -- Validation rules for N3 graph expressions
  # graph{} :: expression;
- # graph{?G} :: expression :- G::triples ## {
- 
- # #(?A;?B)# :: triples :- A::triples :& B::triples;
- # #(?A;)# :: triples :- A::triples;
- # ?T :: triples :- T::triple;
+ # graph{?G} :: expression :- G;*triple ## {
  
  # ?S ! ?V :: triple :- S::nounPhrase :& V::verbPhrase;
  # ?T :: triple :- error("$T is not a valid triple");
@@ -143,8 +139,6 @@ import cons;
     valis R
   }
   
-  
-
   pairJoin(L1,L2) is list of { (E1,E2) where E1 in L1 and E2 in L2 };
   
   tripleJoin(L1,L2) is list of { <| n3Triple(?S,?V,?O) |> where S in L1 and (V,O) in L2 };

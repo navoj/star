@@ -25,7 +25,7 @@ actorOverload is package{
   };
 
   type AA is alias of actor of {
-    foo has type stream of integer;
+    foo has type occurrence of integer;
     signaled has type ()=>boolean;
   };
 

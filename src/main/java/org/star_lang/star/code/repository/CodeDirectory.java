@@ -368,7 +368,7 @@ public class CodeDirectory implements CodeCatalog
     }
   }
 
-  public static CodeTree parse(ResourceURI uri, InputStream stream, String extension) throws RepositoryException,
+  public static CodeTree parse(ResourceURI uri, InputStream input, String extension) throws RepositoryException,
       ResourceException
   {
     CodeParser parser = parsers.get(extension);
@@ -376,7 +376,7 @@ public class CodeDirectory implements CodeCatalog
       throw new RepositoryException("cannot find parser for extension: " + extension);
     ErrorReport errors = new ErrorReport();
     try {
-      return parser.parse(uri, stream, errors);
+      return parser.parse(uri, input, errors);
     } finally {
       if (!errors.isErrorFree())
         throw new RepositoryException("cannot parse " + uri);

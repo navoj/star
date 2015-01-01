@@ -24,7 +24,7 @@ eventProcessor is package{
   type timestamp is alias of long;
   type stockAgentType is alias of actor{		
     inflow has type port of (StockEvent, long);
-   	outflow has type stream of (OutputStockEvent, long);
+   	outflow has type occurrence of (OutputStockEvent, long);
   };
   type printConditionAgentType is alias of actor{
   	inflow has type port of (OutputStockEvent, long);
@@ -46,7 +46,7 @@ eventProcessor is package{
     };
   mainAgent has type actor{
     STOCK_EVENT has type port of (StockEvent, long);
-	OUTPUT_STOCK_EVENT has type stream of (OutputStockEvent, long);
+	OUTPUT_STOCK_EVENT has type occurrence of (OutputStockEvent, long);
 	TO_BROADCAST has type port of (OutputStockEvent, long);
   }; 	
   mainAgent is actor{

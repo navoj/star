@@ -19,7 +19,7 @@ whereActor is package{
 
   type flowActorType is alias of actor{
     inflow has type port of (integer,integer);
-    outflow has type stream of (integer,integer);
+    outflow has type occurrence of (integer,integer);
   };
   
   posActor has type flowActorType; 

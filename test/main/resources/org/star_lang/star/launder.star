@@ -35,7 +35,7 @@ launder is package{
     balance has type (ac) => float;
     
   } originates {
-    txs has type stream of ((ac,tx,eventTime));
+    txs has type occurrence of ((ac,tx,eventTime));
   };
   
   bankAgent has type ()=>bankAgent;
@@ -71,8 +71,8 @@ launder is package{
   };
   
   agency has type actor{
-    txs has type stream of ((ac,tx,eventTime));
-    msgs has type stream of alert;
+    txs has type occurrence of ((ac,tx,eventTime));
+    msgs has type occurrence of alert;
   };
   agency is actor{
     on (Ac,Tx,Wh) on txs and (Ac,MA) in monitors do
@@ -90,9 +90,9 @@ launder is package{
   };
   
   type monitorAgentType is alias of actor{
-    txs has type stream of ((tx,eventTime));
+    txs has type occurrence of ((tx,eventTime));
   } originates {
-    msgs has type stream of alert
+    msgs has type occurrence of alert
   };
   
   monitor has type (ac) => monitorAgentType;

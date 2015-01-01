@@ -18,7 +18,7 @@
 picoSequence is package{
   
   listener has type actor of {
-    msg has type stream of ((string,integer));
+    msg has type occurrence of ((string,integer));
     history has type ()=>list of ((string,integer));
     clearHistory has type action();
   }

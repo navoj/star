@@ -2,7 +2,7 @@ TestActor is package {
   import concurrency;
 	
   A has type concurrent actor of {
-    tick has type stream of string;
+    tick has type occurrence of string;
     getTick has type () => string;
     doDump has type (string) => ();
   }

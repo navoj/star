@@ -43,7 +43,7 @@ implementation speech over actor of %t determines (%t,action) is {
 
 type actor of %t is act0r(%t) or nonActor;
 
-type stream of %t is alias of action(%t);
+type occurrence of %t is alias of action(%t);
 
 #prefix((notify),1100);
 #prefix((query),1000);

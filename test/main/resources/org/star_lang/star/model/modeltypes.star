@@ -18,10 +18,10 @@
 import metamodeldefn;
 
 modeltypes is package {
-  type In is In{STR_STREAM has type stream of any};
+  type In is In{STR_STREAM has type occurrence of any};
   type MODEL_IN is MODEL_IN{
-    ATTRIBUTE_UPDATES has type stream of dictionary of (string, any);
-    DEFAULT has type stream of mModel;
+    ATTRIBUTE_UPDATES has type occurrence of dictionary of (string, any);
+    DEFAULT has type occurrence of mModel;
     GET_CONFIGURATION has type (string) => mModel
   };
   type IManage is IManage{
@@ -36,7 +36,7 @@ modeltypes is package {
   };
   
   type MODEL_OUT is MODEL_OUT{
-    DEFAULT has type stream of mModel;
+    DEFAULT has type occurrence of mModel;
     DEFAULT_RELATION has type list of mModel
   };
   

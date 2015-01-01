@@ -139,7 +139,7 @@ public class ClassRoot implements CodeTree, CodeParser
   }
 
   @Override
-  public CodeTree parse(ResourceURI uri, InputStream stream, ErrorReport errors) throws ResourceException
+  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException
   {
     OpGrammar parser = new OpGrammar(Operators.operatorRoot(), errors);
     int mark = errors.errorCount();
@@ -147,7 +147,7 @@ public class ClassRoot implements CodeTree, CodeParser
     String pkgFunName = null;
 
     IAbstract term = null;
-    try (Reader rdr = new InputStreamReader(stream)) {
+    try (Reader rdr = new InputStreamReader(input)) {
       term = parser.parse(uri, rdr, null);
     } catch (IOException e) {
       errors.reportError("IO problem in accessing resource " + uri + ": " + e.getMessage(), Location.location(uri));

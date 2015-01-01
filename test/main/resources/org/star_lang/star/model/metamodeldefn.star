@@ -238,7 +238,7 @@ type mAction is mvSequence(list of mAction)
   or mvActionVar(string);
 
 type mSpeechActionPtn is mvSpeechActionPtnVar(string)
-  or mvNotifyPtn(mPtn, string) -- string = "" - matching notify without stream name
+  or mvNotifyPtn(mPtn, string) -- string = "" - matching notify without occurrence name
   or mvRequestPtn(mActionPtn)
   or mvQueryPtn(mCondition);
   -- or mvSpeechActionPtnWhere(mSpeechActionPtn, mCondition) -- supported at mSpeechAction level...

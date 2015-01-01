@@ -43,9 +43,9 @@ public class CafeClassParser implements CodeParser
     if (uri.getScheme().equals(Resources.FILE))
       return new ClassFile(new File(uri.getPath()), uri.getPath());
     else {
-      try (InputStream stream = Resources.getInputStream(uri)) {
-        if (stream != null)
-          return parse(uri, stream, errors);
+      try (InputStream input = Resources.getInputStream(uri)) {
+        if (input != null)
+          return parse(uri, input, errors);
       } catch (IOException e) {
         throw new ResourceException("problem in reading " + uri, e);
       }
@@ -54,16 +54,16 @@ public class CafeClassParser implements CodeParser
   }
 
   @Override
-  public CodeTree parse(ResourceURI uri, InputStream stream, ErrorReport errors) throws ResourceException
+  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException
   {
     try {
-      byte[] codeArray = new byte[stream.available()];
+      byte[] codeArray = new byte[input.available()];
       byte[] buffer = new byte[codeArray.length];
       int pos = 0;
       int read;
 
       do {
-        read = stream.read(buffer);
+        read = input.read(buffer);
         if (read >= 0) {
           if (pos + read > codeArray.length)
             codeArray = Arrays.copyOf(codeArray, codeArray.length + read);
@@ -81,7 +81,7 @@ public class CafeClassParser implements CodeParser
       throw new ResourceException("could not access resource", e);
     } finally {
       try {
-        stream.close();
+        input.close();
       } catch (IOException e) {
       }
     }

@@ -43,5 +43,5 @@ public interface CodeParser
    */
   CodeTree parse(ResourceURI uri, ErrorReport errors) throws ResourceException;
 
-  CodeTree parse(ResourceURI uri, InputStream stream, ErrorReport errors) throws ResourceException;
+  CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException;
 }

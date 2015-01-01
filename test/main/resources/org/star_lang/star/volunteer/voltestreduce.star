@@ -19,12 +19,12 @@ import volunteers;
 import ports;
 
 voltestreduce is connections{
-  originate(p1,{notes has type stream of string;
+  originate(p1,{notes has type occurrence of string;
                 reqs has type action(string,integer);
                 ques has type (string)=>integer
                });
-  respond(p2,{notes has type stream of string;
-                otherNots has type stream of integer;
+  respond(p2,{notes has type occurrence of string;
+                otherNots has type occurrence of integer;
                 reqs has type action(string,integer);
                 otherreqs has type action(integer,string);
                 ques has type (string)=>integer;

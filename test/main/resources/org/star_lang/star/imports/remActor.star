@@ -20,7 +20,7 @@ remActor is package{
   
   N is notes(foo);
 
-  foo has type actor of { x has type stream of integer};
+  foo has type actor of { x has type occurrence of integer};
   foo is actor {
     on a on x do
       logMsg(info, "$a");

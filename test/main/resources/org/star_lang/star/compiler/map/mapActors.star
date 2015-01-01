@@ -27,7 +27,7 @@ mapActors is package{
   }
   
   recep has type (string)=>actor of {
-    dataChannel has type stream of any;
+    dataChannel has type occurrence of any;
   }
   recep(Key) is actor{
     on Data on dataChannel do

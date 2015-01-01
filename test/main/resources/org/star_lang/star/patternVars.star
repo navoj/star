@@ -24,7 +24,7 @@ patternVars is package{
   type possible of %t is possible(%t) or impossible;
 
   actorFun has type (string)=> actor{ 
-    events has type stream of event;
+    events has type occurrence of event;
   };
   
   actorFun(St) is actor{

@@ -242,7 +242,7 @@ public class OpGrammar implements PrettyPrintable
     }
 
     case terminal:
-      reportError("unexpected end of stream", hed.getLoc());
+      reportError("unexpected end of input", hed.getLoc());
       termStack.push(Abstract.tupleTerm(hed.getLoc()));
       return MIN_PRIORITY;
 

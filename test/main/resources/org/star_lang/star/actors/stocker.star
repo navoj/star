@@ -21,7 +21,7 @@ stocker is package{
   type eventTime is alias of long;
   
   stocker has type ()=>actor of{
-    tick has type stream of ((float,eventTime));
+    tick has type occurrence of ((float,eventTime));
     avePrice has type (eventTime,eventTime)=>float;
   };
   stocker() is actor{

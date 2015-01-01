@@ -941,7 +941,7 @@ public class TypeChecker
       return QueryPlanner.transformReferenceExpression(queryInfo.left(), free, queryCxt, outer, bound, deflt,
           expectedType, loc, errors);
     } else if (Abstract.isBinary(term, StandardNames.WHERE)
-        && (Abstract.isUnary(Abstract.getArg(term, 0), StandardNames.ANYOF) || Abstract.isUnary(Abstract
+        && (Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.ANYOF) || Abstract.isUnary(Abstract
             .getArg(term, 0), StandardNames.ANY_OF))) {
       IAbstract lhs = Abstract.getArg(term, 0);
       IAbstract rhs = Abstract.getArg(term, 1);
