@@ -23,8 +23,8 @@ taskPerformanceTest is package {
     -- work is taskBind(taskReturn(42), (function(v) is taskReturn(v)));
     work is taskReturn(42);
     
-    one has type () => task of integer
-    one is (function () is valof {
+    once has type () => task of integer
+    once is (function () is valof {
       completor is valof backgroundF(work);
       valis taskBind(completor, taskReturn);
     })
@@ -35,7 +35,7 @@ taskPerformanceTest is package {
       loop has type (integer, integer) => task of integer
       loop(0, res) is taskReturn(res)
       loop(i, res) default is
-        taskBind(one(), (function (v) is loop(i-1, res+v)));
+        taskBind(once(), (function (v) is loop(i-1, res+v)));
 
       -- "falling asleep" in the background is much more efficient than in the foreground...!
       w is valof backgroundF(loop(numSpawn, 0));

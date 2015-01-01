@@ -39,8 +39,6 @@ typeCon is package {
   main () do {
     thirteen is constant(13);
     
-    zero is dbl2(3);
-    
-    assert dbl2(3)=0;
+    assert dbl2(3)=zero;
   }
 }

@@ -18,8 +18,8 @@
 masktest is package{
     private commonMask(H1,H2) is valof{
     var M := 0;
-    var H := one;
-    var Lst := zero;
+    var H := 1_;
+    var Lst := 0_;
     -- logMsg(info,"compute common mask of #(integer(H1)) and #(integer(H2))");
     while M<32 do{
       -- logMsg(info,"H=$(integer(H))");
@@ -30,7 +30,7 @@ masktest is package{
       
       if __integer_eq(H1U,H2U) then {
         Lst := H1U;
-        H := __integer_bit_or(__integer_bit_shl(H,one),one); --   (H.<<.1)+1;
+        H := __integer_bit_or(__integer_bit_shl(H,1_),1_); --   (H.<<.1)+1;
         M := M+1;
       } else
         valis Lst;
@@ -39,13 +39,7 @@ masktest is package{
   };
   
   mask(integer(H1),integer(H2)) is integer(commonMask(H1,H2));
-  
-  private unwrapInt(integer(I)) is I;
-    
-  private one is unwrapInt(1);
-  
-  private zero is unwrapInt(0);
-  
+          
   main() do {
     for I in iota(0,15,1) do {
       for J in iota(0,15,1) do {

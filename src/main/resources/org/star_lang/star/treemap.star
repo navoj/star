@@ -35,7 +35,7 @@ type treemap of (%k,%v) is trNode{
   right has type treemap of (%k,%v);
 } or trEmpty or trLeaf(integer_,seqmap of (%k,%v));
 
-private treeOk(T) where validTree(T,zero) is true;
+private treeOk(T) where validTree(T,0_) is true;
 treeOk(T) default is valof{
   logMsg(info,"tree #(__display(T)) is not valid");
   valis false
@@ -89,11 +89,9 @@ private insrt(K,V,S) is mergeTree(S,trLeaf(__hashCode(K), seqmap(list of {(K,V)}
 
 private mOne is -1_;
 
-private MSB is __integer_bit_neg(__integer_bit_shr(mOne,one));
+private MSB is __integer_bit_neg(__integer_bit_shr(mOne,1_));
 
-private one is 1_;
-
-private zero is 0_;
+private 1_ is 1_;
 
 private ThirtyTwo is 32_;
 
@@ -103,10 +101,10 @@ private commonMaskLen(H1,H2) is valof{
   var HH1 := H1;
   var HH2 := H2;
   
-  while __integer_ne(HH1,HH2) and __integer_gt(C,zero) do {
-    HH1 := __integer_bit_shr(HH1,one);
-    HH2 := __integer_bit_shr(HH2,one);
-    C := __integer_minus(C,one);
+  while __integer_ne(HH1,HH2) and __integer_gt(C,0_) do {
+    HH1 := __integer_bit_shr(HH1,1_);
+    HH2 := __integer_bit_shr(HH2,1_);
+    C := __integer_minus(C,1_);
   };
   
   valis C 
@@ -128,7 +126,7 @@ private truncatedMask(M,L) is valof{
 
 private hex(I) is string(__integer_hex(I));
 
-private mask(trEmpty) is zero;
+private mask(trEmpty) is 0_;
 mask(trLeaf(M,_)) is M;
 mask(trNode{mask=M}) is M;
 
