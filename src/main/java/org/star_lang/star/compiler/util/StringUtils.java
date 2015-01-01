@@ -387,7 +387,8 @@ public class StringUtils
           } while (ix < limit && (ch = str.codePointAt(ix)) != '`');
           break;
         }
-      ix = str.offsetByCodePoints(ix, 1);
+      if (ix < limit)
+        ix = str.offsetByCodePoints(ix, 1);
     } while (ix < limit && depth > 0);
     return ix;
   }
