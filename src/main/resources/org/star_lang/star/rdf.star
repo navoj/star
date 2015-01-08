@@ -27,8 +27,9 @@ import cons;
    Supports triples and quads -- in the form of named graph structures.
  */
  
- #right((!),500);
- #right(($),450);
+ #right("!",500);
+ #right("$",450);
+ #prefix(":",100);
  
  -- Validation rules for N3 graph expressions
  # graph{} :: expression;
@@ -62,7 +63,7 @@ import cons;
  -- # identifier @ identifier :: concept;
  # ( ?P $ ?O ) :: concept :- P::verb :& O::nounPhrase;
  # identifier : identifier :: concept;
- # identifier :: concept;
+ # : identifier :: concept;
  # ?C :: concept :- error("$C is not a recognized form of concept");
  };
  -- Implementation 
@@ -75,7 +76,6 @@ import cons;
  type n3Concept is n3C(string,string) or n3S(string,string);
  
  implementation pPrint over n3Concept is {
-   ppDisp(n3C("",C)) is ppStr(C)
    ppDisp(n3C(G,C)) is ppSequence(0,cons of {ppStr(G);ppStr(":");ppStr(C)})
    ppDisp(n3S(_,S)) is ppStr(display(S));
  }
@@ -105,7 +105,7 @@ import cons;
       
   trConcept(<| #(string?S)# : #(string?Lng)# |>) is <| n3S(?S,?Lng) |>; 
   trConcept(<| #(identifier?G)# : #(identifier ? C)# |>) is <| n3C(?nameString(G), ?nameString(C)) |>;
-  trConcept(<| identifier?C |>) is <| n3C("", ?nameString(C)) |>;
+  trConcept(<| : identifier?C |>) is <| n3C("", ?nameString(C)) |>;
   trConcept(<| string ?S |>) is <| n3S(?S,"") |>;
   
   nameString(nameAst(Lc,N)) is stringAst(Lc,N);

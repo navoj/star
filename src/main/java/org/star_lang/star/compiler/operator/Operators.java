@@ -277,7 +277,6 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.AS, 420);
 
     defineRight(StandardNames.COLON, 400);
-    definePostfix(StandardNames.COLON, 400);
     definePrefix(StandardNames.UNIQUE, 400);
     definePrefix(StandardNames.ALL, 400);
     definePrefix(StandardNames.ANYOF, 400);

@@ -22,16 +22,16 @@ import rdf;
 peopleGraph is package{
 
   people is graph{
-    john ! parent $ sam;
-    john ! parent $ jim;
+    :john ! :parent $ :sam;
+    :john ! :parent $ :jim;
     
-    jane ! parent $ [sam, jim];
+    :jane ! :parent $ [:sam, :jim];
     
-    peter ! parent $ jj;
-    peter ! address $ "2 smart place";
-    peter ! address $ "1 holiday Dr";
+    :peter ! :parent $ :jj;
+    :peter ! :address $ "2 smart place";
+    :peter ! :address $ "1 holiday Dr";
     
-    other:peter ! [ parent $ jj, address $ [ "2 smart place", "1 holiday Dr"]];
+    other:peter ! [ :parent $ :jj, :address $ [ "2 smart place", "1 holiday Dr"]];
     
    -- ( lives $ john ) ! address $ "1 smart Place":"en";
   };
