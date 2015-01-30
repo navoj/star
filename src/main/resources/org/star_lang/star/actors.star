@@ -26,10 +26,10 @@ private import arrays;
 private import maps;
 private import macrosupport;
 
-contract speech over %t determines (%u,%%a) where execution over %%a is {
-  _query has type for all %s such that (%t,(%u)=>%s,()=>quoted,()=>dictionary of (string,quoted))=>%%a of %s;
-  _request has type (%t,(%u)=>(),()=>quoted,()=>dictionary of (string,quoted)) => %%a of ();
-  _notify has type (%t,(%u)=>()) => %%a of ();
+contract speech over t determines (u,a) where execution over a is {
+  _query has type for all s such that (t,(u)=>s,()=>quoted,()=>dictionary of (string,quoted))=>a of s;
+  _request has type (t,(u)=>(),()=>quoted,()=>dictionary of (string,quoted)) => a of ();
+  _notify has type (t,(u)=>()) => a of ();
 };
 
 implementation speech over actor of %t determines (%t,action) is {
