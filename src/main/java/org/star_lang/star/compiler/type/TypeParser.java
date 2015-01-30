@@ -368,15 +368,22 @@ public class TypeParser
       List<IType> argTypes = parseArgTypes(Abstract.binaryRhs(tp), dict, errors, varHandler);
 
       IType tyCon = parseType(con, dict, errors, varHandler);
-      IType type = checkConstraints(TypeUtils.typeExp(tyCon, argTypes), dict, loc, errors);
 
       try {
-        type = typeAlias(dict, type, loc);
+
+        if (!tyCon.kind().check(argTypes.size())) {
+          errors.reportError(StringUtils.msg(con, " expects ", tyCon.kind().arity(), " type arguments, got ", argTypes
+              .size()), loc);
+          return new TypeVar();
+        }
+
+        IType type = checkConstraints(TypeUtils.typeExp(tyCon, argTypes), dict, loc, errors);
+
+        return typeAlias(dict, type, loc);
       } catch (TypeConstraintException e) {
         errors.reportError(e.getMessage(), Location.merge(loc, e.getLocs()));
+        return new TypeVar();
       }
-
-      return type;
     } else if (CompilerUtils.isUniversalType(tp)) {
       IAbstract tArg = CompilerUtils.universalTypeVars(tp);
       IAbstract bndArg = CompilerUtils.universalBoundType(tp);
