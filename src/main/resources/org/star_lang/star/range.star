@@ -22,6 +22,7 @@ private import iterable;
 private import sequences;
 private import strings;
 private import casting;
+private import folding;
 
 type range of t where arithmetic over t and comparable over t is range(t,t,t);
 
@@ -62,6 +63,38 @@ implementation for all t such that sequence over range of t determines t where c
     _back(range(F,E-I,I),E) from range(F,E,I);
     _nil() is range(0 as t,0 as t,1 as t);
   }
+
+implementation for all t such that foldable over range of t determines t 
+  where arithmetic over t and comparable over t is {
+  leftFold(F,I,range(Fr,To,Inc)) is  valof{
+    var r := Fr
+    var limit is To*Inc
+    var st := I;
+    while r*Inc< limit do {
+      st := F(st,r);
+      r := r+Inc
+    }
+    valis st;
+  };
+    
+  rightFold(F,I,range(Fr,To,Inc)) is  valof{
+    var r := To
+    var limit is Fr*Inc
+    var st := I;
+    while r*Inc > limit do {
+      r := r-Inc
+      st := F(r,st);
+    }
+    valis st;
+  };
+    
+  leftFold1(F,range(Fr,To,Inc)) where Fr*Inc<To*Inc is leftFold(F,Fr,range(Fr+Inc,To,Inc))
+  leftFold1(F,_) is raise "range is empty";
+  
+
+  rightFold1(F,range(Fr,To,Inc)) where Fr*Inc<To*Inc is rightFold(F,To,range(Fr,To-Inc,Inc))
+  rightFold1(F,_) is raise "range is empty";
+}
 
 -- macro out common use cases ...
 # #(for #(identifier?C)# in range(?S,?L,1) do ?A)# ==> {
