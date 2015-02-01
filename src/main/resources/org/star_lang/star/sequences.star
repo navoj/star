@@ -25,8 +25,8 @@ contract sequence over %t determines %e is {
   _nil has type ()=>%t;
 }
   
-contract concatenate over %t is {
-  (++) has type (%t,%t)=>%t;
+contract concatenate over t is {
+  (++) has type (t,t)=>t;
 }
         
 contract indexable over s determines (k,v) is {

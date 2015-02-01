@@ -49,10 +49,6 @@ private iotaIterate(Fr,To,Stp,Fn,S) is valof{
   valis St;
 }
 
-implementation for all t such that concatenate over range of t where equality over t is {
-  range(F,I,St)++range(I,To,St) is range(F,To,St);
-}
-
 implementation for all t such that sequence over range of t determines t where coercion over (integer,t) and equality over t is {
     _empty() from range(F,T,I) where F*I>=T*I
     _pair(F,range(F+I,T,I)) from range(F,T,I) where F*I<T*I;
@@ -64,8 +60,7 @@ implementation for all t such that sequence over range of t determines t where c
     _nil() is range(0 as t,0 as t,1 as t);
   }
 
-implementation for all t such that foldable over range of t determines t 
-  where arithmetic over t and comparable over t is {
+implementation for all t such that foldable over range of t determines t is {
   leftFold(F,I,range(Fr,To,Inc)) is  valof{
     var r := Fr
     var limit is To*Inc
@@ -94,6 +89,10 @@ implementation for all t such that foldable over range of t determines t
 
   rightFold1(F,range(Fr,To,Inc)) where Fr*Inc<To*Inc is rightFold(F,To,range(Fr,To-Inc,Inc))
   rightFold1(F,_) is raise "range is empty";
+}
+
+implementation for all t such that concatenate over range of t where equality over t is {
+  range(Fr,Md,Inc)++range(Md,To,Inc) is range(Fr,To,Inc);
 }
 
 -- macro out common use cases ...
