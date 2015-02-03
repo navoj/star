@@ -4,10 +4,6 @@ private import arrays;
 private import strings;
 private import sequences;
 private import folding;
-
-  -- test out ideas for a Star work sheet.
-  
-  -- worksheet would be used instead of a package:
   
   /*
   

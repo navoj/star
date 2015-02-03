@@ -1,5 +1,4 @@
 parmap is package{
-  import concurrency;
 	
   -- this is 'fast' takeuchi, optimizing by hand integer arithmetic
   

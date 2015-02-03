@@ -17,7 +17,6 @@
  */
 /* see http://chimera.labs.oreilly.com/books/1230000000929/ch04.html */
 shortestPath is package {
-  import concurrency;
 
   type vertex is alias of integer;
   type weight is alias of integer;

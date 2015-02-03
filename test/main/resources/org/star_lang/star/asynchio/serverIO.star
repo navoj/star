@@ -1,5 +1,4 @@
 worksheet{
-  import concurrency;
   
   listen(integer(P)) is __tcp_listen(P);
   

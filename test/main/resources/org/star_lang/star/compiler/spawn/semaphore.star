@@ -16,7 +16,6 @@
  *
  */
 semaphore is package{
-  import concurrency;
   
   type sem is alias of  { grab has type ()=>task of (()); release has type ()=>task of (()) };
 

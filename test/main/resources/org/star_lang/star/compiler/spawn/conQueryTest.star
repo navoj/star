@@ -1,5 +1,4 @@
 TestActor is package {
-  import concurrency;
 	
   A has type concurrent actor of {
     tick has type occurrence of string;

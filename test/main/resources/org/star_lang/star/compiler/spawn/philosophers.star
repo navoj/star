@@ -16,7 +16,6 @@
  *
  */
 philoshopers is package{
-  import concurrency;
   import semaphore;
     
   -- Dining philosophers using concurrency primitives

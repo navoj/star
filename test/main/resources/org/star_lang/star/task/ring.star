@@ -1,5 +1,4 @@
 ring is package{
-  import concurrency;
 
   exitChnnl is channel();
 

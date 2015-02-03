@@ -17,7 +17,6 @@
  */
 messages is package{
   -- implement message box in terms of tasks
-  import concurrency;
   
   type mbox of %t is mbox{
     post has type (%t)=>task of %t;

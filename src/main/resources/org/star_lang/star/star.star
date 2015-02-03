@@ -42,6 +42,7 @@ import quoteable;
 import range;
 import option;
 import worksheet;
+import concurrency;
 
 -- used in processing ordered queries
 contract _project0 over %%c is {

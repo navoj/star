@@ -1,5 +1,3 @@
-import concurrency;
-
 basicFileInput is package{
 
   openFile(string(Fl)) is __asynch_open_file(Fl);

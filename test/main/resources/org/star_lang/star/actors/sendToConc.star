@@ -1,5 +1,4 @@
 sendToConc is package{
-  import concurrency;
   
   type stockTick is stockTick{
     symbol has type string;

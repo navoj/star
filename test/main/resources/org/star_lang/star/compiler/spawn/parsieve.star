@@ -17,7 +17,6 @@
  */
 parsieve is package{
   -- parallel implementation of naive sieve of eratosthenes, based on Reppy's implementation
-  import concurrency;
   
   filter(P,inCh) is let{
     outCh is channel();

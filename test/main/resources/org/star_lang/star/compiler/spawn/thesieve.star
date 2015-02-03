@@ -1,4 +1,3 @@
-import concurrency;
 worksheet{
   sieve(inChannel,Max) is valof {
     var nxPrime is valof (wait for recvRv(inChannel));

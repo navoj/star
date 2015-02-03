@@ -17,7 +17,6 @@
  */
 -- implement sieve of erastosthenes -- using concurrent actors
 actorSieve is package{
-  import concurrency;
  
   filterActor(P) is concurrent actor{
     private var Nx := (function(_) is task{});
