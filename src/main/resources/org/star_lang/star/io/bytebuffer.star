@@ -2,8 +2,6 @@ import star;
 bytebuffer is package {
   private import buffer;
 
-  java org.star_lang.star.operators.pio.runtime.ByteBufferBindings;
-
   type bytebuffer is alias of binary
 
   _raw_bytebuffer has type (bytebuffer) => binary
