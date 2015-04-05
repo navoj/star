@@ -2478,8 +2478,8 @@ public class TypeChecker
       TypeExp funCon = (TypeExp) TypeUtils.unwrap(programType, funTypeVars);
       for (TypeVar tv : funTypeVars)
         funCxt.defineType(new TypeExists(loc, tv.getVarName(), tv));
-      resultType = TypeUtils.deRef(funCon.getTypeArg(0));
-      matchType = funCon.getTypeArg(1);
+      resultType = TypeUtils.deRef(TypeUtils.getTypeArg(funCon,0));
+      matchType = TypeUtils.getTypeArg(funCon,1);
     } else if (programType instanceof TypeVar) {
       IType[] argTypes = new IType[arity];
       for (int ix = 0; ix < argTypes.length; ix++)

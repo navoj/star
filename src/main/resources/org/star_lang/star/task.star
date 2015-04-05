@@ -207,10 +207,6 @@ taskGuard(f) is
 -- ***************** User level utilities ******************
 
 private
-type Maybe of %a is
-  Nothing or Just(%a)
-
-private
 type taskResult of %a is TaskSuccess(%a) or TaskError(exception);
  
 private
@@ -233,8 +229,8 @@ _backgroundOn has type (task of %a) => task of %a
 _backgroundOn(op) is
   let {
     -- either the task is finished before the caller waits for the result, or he waits for it before the child operation is done.
-    var result_value := Nothing;
-    var result_wakeup := Nothing;
+    var result_value := none;
+    var result_wakeup := none;
     
     _result_undefined is false;
     _result_set is true;
@@ -247,22 +243,22 @@ _backgroundOn(op) is
         TaskSuccess(r) is taskReturn(r)
         TaskError(e) is taskFail(e); -- pass exception to waiter
       });
-      result_value := Just(rv);
+      result_value := some(rv);
       
       if not try_signal_result() then {
         -- result was already signaled, so the waiter was 'faster'
         case result_wakeup in {
-          Just(w) do w(rv)
+          some(w) do w(rv)
           _ default do assert(false);
         }
       }
     });
     
     blockWaiter is (function(wakeup) is valof {
-      result_wakeup := Just(wakeup);
+      result_wakeup := some(wakeup);
       if not try_signal_result() then {
         -- result was already signaled, so the child task was 'faster'
-        Just(v) is result_value;
+        some(v) is result_value;
         valis TaskMicroSleep(v);
       } else {
         valis TaskSleep;

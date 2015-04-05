@@ -25,7 +25,7 @@ import Prelude;
 
 type CellInstruction of %a is CellGet or CellSet(%a);
 
-type Cell of %a is alias of ((CellInstruction of %a) => Maybe of %a);
+type Cell of %a is alias of ((CellInstruction of %a) => option of %a);
 
 makeCell has type (%a) => Cell of %a;
 makeCell(a) is
@@ -33,15 +33,15 @@ makeCell(a) is
 		var x := a;  
 	} in (function (i) is
 			case i in {
-				CellGet is Just(x);
+				CellGet is some(x);
 				CellSet(n) is valof {
 					x := n;
-					valis Nothing
+					valis none
 				}
 			});
 
 cellRef has type (Cell of %a) => %a;
-cellRef(c) is case c(CellGet) in { Just(x) is x };
+cellRef(c) is case c(CellGet) in { some(x) is x };
 
 cellSet has type action(Cell of %a, %a);
 cellSet(c, x) do {

@@ -15,9 +15,7 @@
  * @author fgm
  *
  */
-condexptask is package{
-  import tasking;
-  
+condexptask is package{  
   tt(X) is task{
     valis valof task { valis X+2 };
   }

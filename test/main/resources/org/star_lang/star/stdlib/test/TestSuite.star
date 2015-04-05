@@ -24,12 +24,12 @@ import PPrint;
 
 type TestState is
 	TestState{
-		maybeTest has type Maybe of Test
+		maybeTest has type option of Test
 		path has type List of string
 		failures has type List of TestFailure
 	}
 
-emptyTestState is TestState{ maybeTest = Nothing; path = Null; failures = Null } 
+emptyTestState is TestState{ maybeTest = none; path = Null; failures = Null } 
 
 -- "TestStateTransformer"
 type TST of %a is alias of ((TestState) => (TestState, %a))
@@ -86,7 +86,7 @@ type TestFailure is
 withTest has type (Test, TST of %a) => TST of %a
 withTest(t, tst) is
 	(function (ts) is
-		tst(ts substitute { maybeTest = Just(t) }))
+		tst(ts substitute { maybeTest = some(t) }))
 
 currentTestState has type TST of TestState
 currentTestState(ts) is (ts, ts)
@@ -109,7 +109,7 @@ withLabel(l, tst) is
 		} in
 			(newTS substitute { path = oldPath }, val));
 
-assertSomething has type (() => Maybe of Doc) => Assertion;
+assertSomething has type (() => option of Doc) => Assertion;
 assertSomething(f) is
 	currentTest tstBind
 	 (function (t) is
@@ -117,8 +117,8 @@ assertSomething(f) is
 	    (function (path) is
 	      (function (ts) is
 			  case f() in {
-				Nothing is (ts, Unit);
-				Just(dsc) is
+				none is (ts, Unit);
+				some(dsc) is
 				  (ts substitute { failures = Cons(f, ts.failures) }, Unit)
 				  	using {
 				  		f is TestFailure{ test = t; path = path; description = dsc}
@@ -193,7 +193,7 @@ implementation Testable of (TST of Unit) is {
 */
 
 assertBool has type (string, () => boolean) => Assertion
-assertBool(s, b) is assertSomething((function () is b() ? Nothing | Just(docText(s))));
+assertBool(s, b) is assertSomething((function () is b() ? none | some(docText(s))));
 	
 #AssertBool(?s, ?exp) ==> assertBool(s, (function () is ?exp));
 
@@ -205,8 +205,8 @@ assertGEqual(s, expected, eq, actual) is
 		tstBind (function (actualVal) is
 	assertSomething((function () is
 					  eq(expectedVal, actualVal)
-					  ? Nothing
-					  | Just(docText(s) docConcat docSeparator(":")
+					  ? none
+					  | some(docText(s) docConcat docSeparator(":")
 							 docConcat docSeparator("expected:")
 							 docConcat docText(display(expectedVal))
 							 docConcat docSeparator(" actual:")
@@ -227,8 +227,8 @@ assertNotGEqual(s, expected, eq, actual) is
 		tstBind (function (actualVal) is
 	assertSomething((function () is
 					  not eq(expectedVal, actualVal)
-					  ? Nothing
-					  | Just(docText(s) docConcat docSeparator(":")
+					  ? none
+					  | some(docText(s) docConcat docSeparator(":")
 							 docConcat docSeparator("expected: something other than")
 							 docConcat docText(display(expectedVal))
 							 docConcat docSeparator(" actual:")
@@ -245,9 +245,9 @@ assertThat(s, matcher, actual) is
 	tstBind (function (actualVal) is
   assertSomething((function () is
 					case match(matcher, actualVal) in {
-					  Nothing is Nothing;
-					  Just(dsc) is
-						Just(docText(s) docConcat docSeparator(":")
+					  none is none;
+					  some(dsc) is
+						some(docText(s) docConcat docSeparator(":")
 							 docConcat docSeparator("actual value:")
 							 docConcat docText(display(actualVal))
 							 docConcat docSeparator(" did not match")

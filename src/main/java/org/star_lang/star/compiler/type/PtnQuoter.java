@@ -131,11 +131,14 @@ public class PtnQuoter implements IAbstractVisitor
           matchTest = Abstract.binary(loc, StandardNames.MATCHING,
               Abstract.binary(loc, StringLiteral.name, anon, anon), rhs);
         else
-          errors.reportError(StringUtils.msg("illegal quote pattern: ", app), loc);
+          errors.reportError(StringUtils.msg("invalid quote pattern: ", lhs), lhs.getLoc());
         if (matchTest != null)
           stack.push(checker.typeOfPtn(matchTest, astType, cond, cxt, outer, varHandler));
         else
           stack.push(checker.typeOfPtn(rhs, astType, cond, cxt, outer, varHandler));
+      } else{
+        errors.reportError(StringUtils.msg("expecting an identifier, not: `", lhs,"'"), lhs.getLoc());
+        stack.push(checker.typeOfPtn(rhs, astType, cond, cxt, outer, varHandler));
       }
     } else if (Abstract.isBinary(app, StandardNames.MACRO_APPLY)) {
       Abstract.binaryLhs(app).accept(this);

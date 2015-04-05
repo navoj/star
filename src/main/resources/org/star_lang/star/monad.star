@@ -15,8 +15,6 @@
  * @author fgm
  *
  */
-type Maybe of %a is Nothing 
-  or Just(%a);
 
 contract monad over %%m is {
   _return has type (%a) => %%m of %a;
@@ -25,12 +23,12 @@ contract monad over %%m is {
   _perform has type (%%m of %a) => %a;
 };
 
-implementation monad over Maybe is {
-  _return(x) is Just(x);
+implementation monad over option is {
+  _return(x) is some(x);
   _bind(m, f) is case m in {
-    Nothing is Nothing;
-    Just(v) is f(v);
+    none is none;
+    some(v) is f(v);
   };
-  _fail() is Nothing;
-  _perform(Just(X)) is X;
+  _fail() is none;
+  _perform(some(X)) is X;
 };

@@ -105,7 +105,7 @@ import cons;
       
   trConcept(<| #(string?S)# : #(string?Lng)# |>) is <| n3S(?S,?Lng) |>; 
   trConcept(<| #(identifier?G)# : #(identifier ? C)# |>) is <| n3C(?nameString(G), ?nameString(C)) |>;
-  trConcept(<| : identifier?C |>) is <| n3C("", ?nameString(C)) |>;
+  trConcept(<| : #(identifier?C)# |>) is <| n3C("", ?nameString(C)) |>;
   trConcept(<| string ?S |>) is <| n3S(?S,"") |>;
   
   nameString(nameAst(Lc,N)) is stringAst(Lc,N);

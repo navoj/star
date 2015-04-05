@@ -1,7 +1,5 @@
 package org.star_lang.star.data.type;
 
-import java.util.Collection;
-
 import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.TypeUtils;
 
@@ -10,14 +8,9 @@ public class TupleType implements IType
 {
   private final IType[] elTypes;
 
-  public TupleType(IType... elTypes)
+  public TupleType(IType[] elTypes)
   {
     this.elTypes = elTypes;
-  }
-
-  public TupleType(Collection<IType> elTypes)
-  {
-    this.elTypes = elTypes.toArray(new IType[elTypes.size()]);
   }
 
   public int arity()

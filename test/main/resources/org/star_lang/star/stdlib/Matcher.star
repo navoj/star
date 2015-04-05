@@ -32,9 +32,9 @@ valueIs(eq, eqName, val) is
 	doc = docText(eqName) docConcat docSeparator(" to") docConcat docText(display(val));
   };
 
-/* returns Just(doc) in case of failure */
-match has type (Matcher of %a, %a) => Maybe of Doc;
+/* returns some(doc) in case of failure */
+match has type (Matcher of %a, %a) => option of Doc;
 match(m, v) is
-  (m.predicate(v)) ? Nothing | Just(m.doc);
+  (m.predicate(v)) ? none | some(m.doc);
   
 }

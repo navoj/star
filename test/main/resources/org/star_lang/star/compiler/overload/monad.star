@@ -17,23 +17,19 @@
  */
 monad is package {
 
-  type Maybe of %a is
-  	   Nothing 
-    or Just(%a);
-
   contract monad over %%m is {
     return has type for all a such that (a) => %%m of a;
     bind has type for all a,b such that (%%m of a, (a) => %%m of b) => %%m of b
     fail has type for all a such that () => %%m of a;
   };
 
-  implementation monad over Maybe is {
-    return(x) is Just(x);
+  implementation monad over option is {
+    return(x) is some(x);
     bind(m, f) is
 			case m in {
-			  Nothing is Nothing;
-			  Just(v) is f(v);
+			  none is none;
+			  some(v) is f(v);
 			 };
-    fail() is Nothing;
+    fail() is none;
   };
 }

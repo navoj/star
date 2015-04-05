@@ -15,9 +15,7 @@
  * @author fgm
  *
  */
-whileSearch is package{
-  import tasking;
-  
+whileSearch is package{  
   tt(X) is task{
     valis X+2;
   }

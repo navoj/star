@@ -75,8 +75,6 @@ private queuePair has type (%e,queue of %e)<=queue of %e;
 queuePair(E,queue{front=F;back=B}) from queue{front = cons(E,F); back = B};
 queuePair(E,queue{front=B;back=nil}) from queue{front=nil; back=Bk} where reverseCons(Bk) matches cons(E,B);
 
-type Maybe of %a is Just(%a) or Nothing
-
 -- Filter elements out, and return new size
 _filter_size has type (((%a) => boolean), queue of %a) => (integer_, queue of %a)
 _filter_size(pred, que) is
@@ -120,13 +118,13 @@ enqueue(q0, v) is let {
   isAlive := q1.isAlive;
 }
 
-dequeue has type (cml_queue of %a) => (Maybe of %a, cml_queue of %a)
+dequeue has type (cml_queue of %a) => (option of %a, cml_queue of %a)
 dequeue(cq) is valof {
   if queue_isEmpty(cq)
-  then valis (Nothing, cq)
+  then valis (none, cq)
   else {
     queuePair(r, rest) is cq.q;
-    valis (Just(r), _CMLQueue {
+    valis (some(r), _CMLQueue {
       q := rest;
       size := __integer_minus(cq.size, 1_);
       cleanup_threshold := cq.cleanup_threshold;
@@ -136,18 +134,18 @@ dequeue(cq) is valof {
 }
 
 -- dequeue the first entry matching the predicate
-dequeue_match has type (cml_queue of %a, (%a) => boolean) => (Maybe of %a, cml_queue of %a)
+dequeue_match has type (cml_queue of %a, (%a) => boolean) => (option of %a, cml_queue of %a)
 dequeue_match(cq, pred) is valof {
   var noMatch := nil;
   var _q := cq.q;
   var nsize := cq.size;
-  var res := Nothing;
+  var res := none;
   var found := false;
   while (not found) and (not queueIsEmpty(_q)) do {
     queuePair(r, rest) is _q;
     _q := rest;
     if pred(r) then {
-      res := Just(r)
+      res := some(r)
       nsize := __integer_minus(nsize, 1_);
       found := true;
     }

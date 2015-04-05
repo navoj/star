@@ -210,6 +210,7 @@ public class StandardNames
   public static final String WHERE = keyword("where");
   public static final String IN = keyword("in");
   public static final String CASE = keyword("case");
+  public static final String SWITCH = keyword("switch");
 
   public static final String CAST = keyword("cast");
   public static final String COERCE = standard("coerce");

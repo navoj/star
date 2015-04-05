@@ -19,12 +19,12 @@ oddFilter(f, OddNull) is OddNull;
 oddFilter(f, OddCons(x, xs)) is
 	f(x) ? oddCons(x, oddFilter(f, xs)) | oddFilter(f, xs);
 
-oddFilterMap has type ((%a) => Maybe of %b, OddStream of %a) => OddStream of %b;
+oddFilterMap has type ((%a) => option of %b, OddStream of %a) => OddStream of %b;
 oddFilterMap(f, OddNull) is OddNull;
 oddFilterMap(f, OddCons(x, xs)) is
 	case f(x) in {
-		Nothing is oddFilterMap(f, xs);
-		Just(y) is oddCons(y, oddFilterMap(f, xs)); 
+		none is oddFilterMap(f, xs);
+		some(y) is oddCons(y, oddFilterMap(f, xs)); 
 	}; 
 
 oddIsNull has type (OddStream of %a) => boolean;

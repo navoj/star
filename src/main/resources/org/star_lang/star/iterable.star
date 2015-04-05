@@ -25,12 +25,12 @@ type IterState of t is NoneFound or NoMore(t) or ContinueWith(t) or AbortIter(ex
 -- The iterable contract is used in planning queries
 -- The iterate function takes a filter function and iterates over the collection using it while it returns a IterState state 
 
-contract iterable over %s determines %e is {
-  _iterate has type for all %r such that (%s,(%e,IterState of %r)=>IterState of %r,IterState of %r) => IterState of %r;
+contract iterable over s determines e is {
+  _iterate has type for all r such that (s,(e,IterState of r)=>IterState of r,IterState of r) => IterState of r;
 }
 
-contract indexed_iterable over %s determines (%k,%v) is {
-  _ixiterate has type for all %r such that (%s,(%k,%v,IterState of %r)=>IterState of %r,IterState of %r) => IterState of %r;
+contract indexed_iterable over s determines (k,v) is {
+  _ixiterate has type for all r such that (s,(k,v,IterState of r)=>IterState of r,IterState of r) => IterState of r;
 }
 
 type _possible of t is _impossible or _possible(t);

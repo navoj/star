@@ -41,9 +41,9 @@ reducible is package{
       bind(reducer(x, state),
 	       (function (newState) is consReduce(xs, reducer, newState)));
 	       
-  adder(J,ContinueWith(I)) is Just(ContinueWith(I+J));
-  adder(_,NoMore(I)) is Just(NoMore(I));
-  adder(I,NoneFound) is Just(ContinueWith(I))
+  adder(J,ContinueWith(I)) is some(ContinueWith(I+J));
+  adder(_,NoMore(I)) is some(NoMore(I));
+  adder(I,NoneFound) is some(ContinueWith(I))
 
   main() do {
     II is cons of {1;2;3};

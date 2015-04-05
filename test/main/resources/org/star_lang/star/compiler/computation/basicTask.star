@@ -16,7 +16,7 @@
  *
  */
 basicTask is package{
-  import tasking;
+  -- import tasking;
    
   tt(X) is task{
     Y is 2;

@@ -15,9 +15,7 @@
  * @author fgm
  *
  */
-whileTask is package{
-  import tasking;
-  
+whileTask is package{  
   tt(X) is task{
     valis X+2;
   }

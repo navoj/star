@@ -228,11 +228,11 @@ rbAppend(RBT(RBR, a, x, b), c) is RBT(RBR, a, x, rbAppend(b, c));
 
 -- FINITE MAPS
 
-rbLookup has type (RedBlackTree of ((%k, %a)), %k ) => Maybe of %a where comparable over %k;
-rbLookup(RBE, _) is Nothing;
+rbLookup has type (RedBlackTree of ((%k, %a)), %k ) => option of %a where comparable over %k;
+rbLookup(RBE, _) is none;
 rbLookup(RBT(_, a, (l, x), b), k) is
 	(k <= l)
-	? ((l <= k) ? Just(x) | rbLookup(a, k))
+	? ((l <= k) ? some(x) | rbLookup(a, k))
 	| rbLookup(b, k); 
 
 rbUpdate has type
@@ -244,21 +244,21 @@ rbUpdate(rb, k, x) is
 rbFUpdate has type
 	(RedBlackTree of ((%k, %a)),
 	 %k,
-     (Maybe of %a) => %a) => RedBlackTree of ((%k, %a)) where comparable over %k;
+     (option of %a) => %a) => RedBlackTree of ((%k, %a)) where comparable over %k;
 rbFUpdate(s, k, x) is
 	let {
 		(_, a, y, b) is unpackRedBlackTree(rbDoFUpdate(s, k, x));
 	}
 	in RBT(RBB, a, y, b);
 
-rbDoFUpdate(RBE, k, f) is RBT(RBR, RBE, (k, f(Nothing)), RBE);
+rbDoFUpdate(RBE, k, f) is RBT(RBR, RBE, (k, f(none)), RBE);
 rbDoFUpdate(s matching RBT(RBB, a, (l, y), b), k, f) is
 	(k <= l)
-	? ((l <= k) ? RBT(RBB, a, (k, f(Just(y))), b) | rbBalance(rbDoFUpdate(a, k, f), (l, y), b))
+	? ((l <= k) ? RBT(RBB, a, (k, f(some(y))), b) | rbBalance(rbDoFUpdate(a, k, f), (l, y), b))
 	| rbBalance(a, (l, y), rbDoFUpdate(b, k, f));
 rbDoFUpdate(s matching RBT(RBR, a, (l, y), b), k, f) is
 	(k <= l)
-	? ((l <= k) ? RBT(RBR, a, (k, f(Just(y))), b) | RBT(RBR, rbDoFUpdate(a, k, f), (l, y), b))
+	? ((l <= k) ? RBT(RBR, a, (k, f(some(y))), b) | RBT(RBR, rbDoFUpdate(a, k, f), (l, y), b))
 	| RBT(RBR, a, (l, y), rbDoFUpdate(b, k, f));
 
 rbDeleteAt has type (RedBlackTree of ((%k, %a)), %k ) => RedBlackTree of ((%k, %a)) where comparable over %k;

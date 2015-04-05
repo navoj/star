@@ -17,18 +17,14 @@
  */
 typeCon is package {
 
-  type Maybe of %a is
-      Nothing 
-  or Just(%a);
-
   contract Monad over %%m of %a is {
     mcreate has type (%a) => %%m of %a;
   }
 
-  maybeCreate has type (%a) => Maybe of %a;
-  maybeCreate(a) is Just(a);
+  maybeCreate has type (%a) => option of %a;
+  maybeCreate(a) is some(a);
 
-  implementation Monad over Maybe of %a default is {
+  implementation Monad over option of %a default is {
     mcreate = maybeCreate;
   }
 

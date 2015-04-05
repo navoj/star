@@ -829,7 +829,7 @@ public class TypeUtils
 
   public static IType tupleType(List<IType> types)
   {
-    return new TupleType(types);
+    return new TupleType(types.toArray(new IType[types.size()]));
   }
 
   public static boolean isTupleType(IType type)
@@ -1260,7 +1260,7 @@ public class TypeUtils
   {
     assert isOverloadedType(type) && isTupleType(getTypeArg(type, 0));
     type = unwrap(type);
-    return ((TypeExp) type).getTypeArg(0);
+    return getTypeArg(type, 0);
   }
 
   public static IType getContract(IType type)

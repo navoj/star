@@ -2,19 +2,15 @@ Prelude is package {
 
 type Unit is Unit;
 
-type Maybe of %a is
-  	Nothing 
- or Just(%a);
+isJust has type (option of %a) => boolean;
+isJust(none) is false;
+isJust(some(_)) is true;
 
-isJust has type (Maybe of %a) => boolean;
-isJust(Nothing) is false;
-isJust(Just(_)) is true;
+expectJust has type (option of %a) => %a
+expectJust(some(x)) is x
 
-expectJust has type (Maybe of %a) => %a
-expectJust(Just(x)) is x
-
-expectJust1 has type (Maybe of %a) => %a
-expectJust1(Just(x)) is x
+expectJust1 has type (option of %a) => %a
+expectJust1(some(x)) is x
 
 type Either of (%a, %b) is Left(%a) or Right(%b)
 
@@ -146,31 +142,31 @@ hasEvery(p, lis) is valof {
 	valis true;
 };
 
-find has type ((%a) => boolean, List of %a) => Maybe of %a where equality over %a;
+find has type ((%a) => boolean, List of %a) => option of %a where equality over %a;
 find(p, lis) is valof {
 	var r:= lis;
 	while r != Null do {
 		Cons(x, xs) is r;
-		if p(x) then valis Just(x);
+		if p(x) then valis some(x);
 		r := xs;
 	}
-	valis Nothing;
+	valis none;
 };
 
-/* find an element matching a given Just predicate, and return what that returns */
+/* find an element matching a given some predicate, and return what that returns */
 
-findAndApply has type ((%a) => Maybe of %b, List of %a) => Maybe of %b where equality over %a;
+findAndApply has type ((%a) => option of %b, List of %a) => option of %b where equality over %a;
 findAndApply(f, lis) is valof {
   var r:= lis;
   while r != Null do {
 	Cons(x, xs) is r;
 	case f(x) in {
-	  Nothing do nothing;
-	  a matching Just(y) do valis a;
+	  none do nothing;
+	  a matching some(y) do valis a;
 	};
 	r := xs;
   };
-  valis Nothing;
+  valis none;
 };
 
 member has type ((%a, %a) => boolean, %a, List of %a) => boolean where equality over %a;
@@ -184,16 +180,16 @@ member(eq, y, lis) is valof {
 	valis false;
 };
 
-assoc has type ((%a, %a) => boolean, %a, List of ((%a, %b))) => Maybe of ((%a, %b)) where equality over %a and equality over %b;
+assoc has type ((%a, %a) => boolean, %a, List of ((%a, %b))) => option of ((%a, %b)) where equality over %a and equality over %b;
 assoc(eq, y, lis) is valof {
   var r := lis;
   while r != Null do {
 	Cons(p, xs) is r;
 	(x, _) is p;
-	if eq(x, y) then valis Just(p);
+	if eq(x, y) then valis some(p);
 	r := xs;
   };
-  valis Nothing
+  valis none
 };
 
 filter has type ((%a) => boolean, List of %a) => List of %a where equality over %a;
@@ -201,12 +197,12 @@ filter(p, lis) is
 	foldLeft((function (r, x) is p(x) ? Cons(x, r) | r), Null,
 			 reverse(lis));
 
-filterMap has type ((%a) => Maybe of %b, List of %a) => List of %b where equality over %a and equality over %b;
+filterMap has type ((%a) => option of %b, List of %a) => List of %b where equality over %a and equality over %b;
 filterMap(p, lis) is
 	foldLeft((function (r, x) is 
 				case p(x) in {
-					Nothing is r
-					Just(y) is Cons(y, r)
+					none is r
+					some(y) is Cons(y, r)
 				}),
 			 Null,
 			 reverse(lis));
@@ -305,21 +301,21 @@ nth(lis, n) is valof {
 	valis x
 }
 
-findIndexAndApply has type ((%a) => Maybe of %b, List of %a) => Maybe of ((integer, %b)) where equality over %a;
+findIndexAndApply has type ((%a) => option of %b, List of %a) => option of ((integer, %b)) where equality over %a;
 findIndexAndApply(f, lis) is valof {
   var r := lis;
   var i := 0;
   while r != Null do {
 	Cons(x, xs) is r;
 	case f(x) in {
-	  Nothing do nothing;
-	  Just(y) do
-		valis Just((i, y));
+	  none do nothing;
+	  some(y) do
+		valis some((i, y));
 	};
 	i := i + 1;
 	r := xs;
   };
-  valis Nothing;
+  valis none;
 };
 
 -- replaceAtIndex has type (List of %a, integer, %a) => List of %a;
@@ -404,14 +400,14 @@ enumeratorFilter(f, enum) is
 			 seed));
 				
 enumeratorFilterMap has type
-	((%val1) => Maybe of %val2, CollEnumerator of (%val1, %seed))
+	((%val1) => option of %val2, CollEnumerator of (%val1, %seed))
 		=> CollEnumerator of (%val2, %seed);
 enumeratorFilterMap(f, enum) is	
 	(function (it, seed) is
 		enum((function (seed1, val1) is
 				case f(val1) in {
-					Nothing is Right(seed1);
-					Just(val2) is it(seed1, val2);
+					none is Right(seed1);
+					some(val2) is it(seed1, val2);
 				}),
 			 seed));
 

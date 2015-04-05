@@ -23,12 +23,12 @@ type binmap of (%k,%v) is
      emptyTree
   or binNode(binmap of (%k,%v), %k, %v, binmap of (%k,%v));
   
-private findNode has type (binmap of (%k,%v),%k)=> Maybe of %v where comparable over %k and equality over %k;
-findNode(emptyTree,K) => Nothing;
-findNode(binNode(L,K,V,R),K) => Just(V);
+private findNode has type (binmap of (%k,%v),%k)=> option of %v where comparable over %k and equality over %k;
+findNode(emptyTree,K) => none;
+findNode(binNode(L,K,V,R),K) => some(V);
 findNode(binNode(L,K1,_,_),K) where K<K1 is findNode(L,K);
 findNode(binNode(_,K1,_,R),K) where K>K1 is findNode(R,K);
-findNode(_,_) default is Nothing;
+findNode(_,_) default is none;
 
 private insertNode has type (binmap of (%k,%v),%k,%v) => binmap of (%k,%v) where comparable over %k and equality over %k;
 insertNode(emptyTree,K,V) is binNode(emptyTree,K,V,emptyTree);

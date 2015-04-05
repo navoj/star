@@ -96,7 +96,7 @@ _new_fiber(parent) is
       current_custodian := controller;
     };
     -- let the caller do this? _activate_resource(res, suspend_this);
-    suspend_this is (procedure () do nothing); -- Nothing special to do here, because the task trampoline will look at the Deactivating flag, that is set anyways
+    suspend_this is (procedure () do nothing); -- none special to do here, because the task trampoline will look at the Deactivating flag, that is set anyways
     __atomic_assign(res.state, ResActive(suspend_this));
     valis fib;
   }

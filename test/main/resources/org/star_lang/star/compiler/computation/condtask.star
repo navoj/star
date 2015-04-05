@@ -15,9 +15,7 @@
  * @author fgm
  *
  */
-condtask is package{
-  import tasking;
-  
+condtask is package{  
   tt(X) is task{
     valis X+2;
   }

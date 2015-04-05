@@ -162,6 +162,7 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.WITH, 1050);
 
     definePrefix(StandardNames.CASE, 1020);
+    definePrefix(StandardNames.SWITCH, 1020);
 
     defineInfix(StandardNames.HAS_TYPE, HAS_TYPE_PRIORITY);
     defineInfix(StandardNames.HASTYPE, 1020);

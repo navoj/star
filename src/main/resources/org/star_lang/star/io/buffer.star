@@ -17,22 +17,4 @@ buffer is package {
   type word64 is _word64(long);
   word64(l) default is _word64(l);
   word64(nonLong) is raise "nonLong not a word64";
-
-  contract buffer over %b is {
-    getWord8 has type (%b) => word8;
-    putWord8 has type (%b, word8) => void;
-    
-    getWord16 has type (%b) => word16;
-    putWord16 has type (%b, word16) => void;
-
-    getWord32 has type (%b) => word32;
-    putWord32 has type (%b, word32) => void;
-
-    getWord64 has type (%b) => word64;
-    putWord64 has type (%b, word64) => void;
-
-    /* get/put buffer of a certain size */
-    getBytes has type (%b, integer) => array of word8;      /* would have like word32, but underlying Java API has only int */
-    putBytes has type (%b, array of word8) => void;         /* puts/appends contents of bytebuffer to first %b */
-  };
 }

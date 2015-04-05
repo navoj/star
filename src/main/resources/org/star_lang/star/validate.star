@@ -271,11 +271,14 @@ private import macrosupport;
 };
 
 # case ?E in ?Cs :: action :- E::expression :& Cs::actionCases;
+# switch ?E in {?Cs} :: action :- E::expression :& Cs;*actionCase;
 
 # { ?Cs } :: actionCases :- Cs ;* actionCase;
 
 # ?Ptn do ?Act :: actionCase :- Ptn::pattern :& Act:: action;
-# ?Ptn default do ?Act :: actionCase :- Ptn::pattern :& Act::action; 
+# ?Ptn default do ?Act :: actionCase :- Ptn::pattern :& Act::action;
+
+# case ?Ptn do ?Act :: actionCase :- Ptn::pattern :& Act:: action;
 
 -- lValues 
 # identifier :: lvalue;
@@ -311,9 +314,12 @@ private import macrosupport;
 
 -- case expression
 # case ?E in { ?Cs } :: expression :- E::expression :& Cs;*caseExpRule;
+# switch ?E in { ?Cs } :: expression :- E::expression :& Cs;*caseExpRule;
 
 # ?Ptn is ?Exp :: caseExpRule :- Ptn::pattern :& Exp::expression;
 # ?Ptn default is ?Exp :: caseExpRule :- Ptn::pattern :& Exp::expression;
+
+# case ?Ptn is ?Exp :: caseExpRule :- Ptn::pattern :& Exp::expression;
 
 -- Lambdas
 # function#@?Arg is ?Exp :: expression :- Arg :* pattern :& ?Exp :: expression;

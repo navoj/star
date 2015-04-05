@@ -16,8 +16,6 @@
  *
  */
 subTask is package{
-  import tasking;
-
   tt(X) is task{
     valis X+2;
   }

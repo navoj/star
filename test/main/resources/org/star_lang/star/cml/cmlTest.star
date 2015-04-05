@@ -27,7 +27,7 @@ cmlTest is package {
     q1 is mk_queue((function (e) is true));
     expected is "Hello";
     (actual, _) is dequeue(enqueue(q1, expected))
-    assert (actual = Just(expected));
+    assert (actual = some(expected));
 
     -- dequeueMatch    
     var q2 := mk_queue((function (e) is true));
@@ -38,10 +38,10 @@ cmlTest is package {
     (actual2, _) is dequeue_match(q2, (function (e) is e = 2));
     
     (actual3, _) is dequeue(q2);
-    assert(actual3 = Just(1));
-    assert(actual2 = Just(2));
-    -- assert(dequeue(q2) = Just(3));
-    -- assert(dequeue(q2) = Just(4));
+    assert(actual3 = some(1));
+    assert(actual2 = some(2));
+    -- assert(dequeue(q2) = some(3));
+    -- assert(dequeue(q2) = some(4));
   }
   
   testAtomicRef() do {

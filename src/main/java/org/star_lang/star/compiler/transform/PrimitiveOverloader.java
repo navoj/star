@@ -59,8 +59,8 @@ public class PrimitiveOverloader
     if (conMap == null)
       return null;
     else {
-      assert contract.typeArity() == 1;
-      IType prType = TypeUtils.deRef(contract.getTypeArg(0));
+      assert TypeUtils.typeArity(contract) == 1;
+      IType prType = TypeUtils.deRef(TypeUtils.getTypeArg(contract,0));
       if (TypeUtils.typeArity(prType) == 0) {
         Map<IType, String> typeMap = conMap.get(mtd);
         if (typeMap == null)

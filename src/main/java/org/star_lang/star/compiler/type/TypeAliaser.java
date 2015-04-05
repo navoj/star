@@ -136,8 +136,8 @@ public class TypeAliaser implements TypeTransformer<IType, ITypeConstraint, Void
     boolean clean = con == t.getTypeCon();
     IType args[] = new IType[t.typeArity()];
     for (int ix = 0; ix < t.typeArity(); ix++) {
-      args[ix] = t.getTypeArg(ix).transform(this, cxt);
-      clean &= args[ix] == t.getTypeArg(ix);
+      args[ix] = TypeUtils.getTypeArg(t,ix).transform(this, cxt);
+      clean &= args[ix] == TypeUtils.getTypeArg(t,ix);
     }
     if (clean)
       return typeAlias(t);
