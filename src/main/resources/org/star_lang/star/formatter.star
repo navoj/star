@@ -162,7 +162,3 @@
 -- # ?V matching ?P :: pattern --> P::{indent:+2};
 
 # ?P where ?C :: pattern --> C::{breakBefore:true; indent:+4};
-
-
--- hash pattern
-# hash{ ?H } :: pattern --> H::{indent:+2};

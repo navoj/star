@@ -721,7 +721,7 @@ serialization is package {
     /* need type declaration for elements for for-loop */
     hashFromElements has type (array of ((%k, %v))) => dictionary of (%k, %v);
     hashFromElements(elements) is valof {
-      var res := hash of {};
+      var res := dictionary of {};
       for (K,V) in elements do {
         res[K] := V;
       }

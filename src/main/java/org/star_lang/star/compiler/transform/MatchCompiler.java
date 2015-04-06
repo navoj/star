@@ -28,10 +28,10 @@ import org.star_lang.star.compiler.canonical.IContentExpression;
 import org.star_lang.star.compiler.canonical.IContentPattern;
 import org.star_lang.star.compiler.canonical.Matches;
 import org.star_lang.star.compiler.canonical.MatchingPattern;
-import org.star_lang.star.compiler.canonical.NullAction;
 import org.star_lang.star.compiler.canonical.NullExp;
 import org.star_lang.star.compiler.canonical.PatternAbstraction;
 import org.star_lang.star.compiler.canonical.PatternApplication;
+import org.star_lang.star.compiler.canonical.RaiseAction;
 import org.star_lang.star.compiler.canonical.RaiseExpression;
 import org.star_lang.star.compiler.canonical.RecordPtn;
 import org.star_lang.star.compiler.canonical.RegExpPattern;
@@ -122,6 +122,14 @@ public class MatchCompiler
 
     Generate<IContentExpression> gen = new ExpressionCaseGenerator(type);
 
+    IContentExpression ex = genException(loc, cxt, errors);
+    RaiseExpression failure = new RaiseExpression(loc, new TypeVar(), ex);
+
+    return compileMatch(loc, newVars, list, failure, subCxt, outer, gen, definedVars, maxDepth, errors);
+  }
+
+  private static IContentExpression genException(Location loc, Dictionary cxt, ErrorReport errors)
+  {
     IContentExpression code = CompilerUtils.stringLiteral(loc, "error");
     IContentExpression raised = new Scalar(loc, StandardTypes.stringType, Factory
         .newString("all available cases failed, at " + loc));
@@ -130,10 +138,7 @@ public class MatchCompiler
 
     IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
         raised, location);
-
-    RaiseExpression failure = new RaiseExpression(loc, new TypeVar(), ex);
-
-    return compileMatch(loc, newVars, list, failure, subCxt, outer, gen, definedVars, maxDepth, errors);
+    return ex;
   }
 
   private static class ExpressionCaseGenerator implements Generate<IContentExpression>
@@ -329,8 +334,6 @@ public class MatchCompiler
     }
   }
 
-  ;
-
   public static IContentAction generateCaseAction(Location loc, IContentExpression selector,
       List<Pair<IContentPattern, IContentAction>> cases, Dictionary cxt, Dictionary outer, ErrorReport errors)
   {
@@ -352,8 +355,10 @@ public class MatchCompiler
 
     Generate<IContentAction> gen = new ActionCaseGenerator();
 
-    return compileMatch(loc, newVars, list, new NullAction(loc, new TypeVar()), cxt, outer, gen, definedVars, maxDepth,
-        errors);
+    IContentExpression ex = genException(loc, cxt, errors);
+    RaiseAction failure = new RaiseAction(loc, ex);
+
+    return compileMatch(loc, newVars, list, failure, cxt, outer, gen, definedVars, maxDepth, errors);
   }
 
   public static PatternAbstraction compileMatch(Location loc, String name,

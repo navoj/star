@@ -4484,6 +4484,7 @@ public class TypeChecker
           Variable resltVar = new Variable(loc, resultType, GenSym.genSym());
           cases.add(Pair.pair((IContentPattern) CompilerUtils.noMorePtn(loc, resltVar),
               (IContentAction) new ValisAction(loc, resltVar)));
+          cases.add(Pair.pair(CompilerUtils.noneFoundPtn(loc, resultType), new NullAction(loc,resultType)));
         }
 
         if (!cases.isEmpty())
