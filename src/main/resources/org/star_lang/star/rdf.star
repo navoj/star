@@ -113,7 +113,7 @@ import cons;
   unwrapSemi(<| ?L ; ?R |>,Lst) is unwrapSemi(R,unwrapSemi(L,Lst));
   unwrapSemi(El,Lst) is list of [Lst..,El];
  
-  unwrap(A) is valof{
+  showQ(A) is valof{
     var R is unwrapSemi(A,list of []);
     logMsg(info,"","Unwrap of $(display_quoted(A)) is");
     for E in R do

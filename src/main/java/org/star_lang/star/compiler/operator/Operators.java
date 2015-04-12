@@ -291,6 +291,8 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.MACRO_LOC, 200);
 
     defineLeft(StandardNames.PERIOD, 175);
+    defineLeft(StandardNames.OPTIONPERIOD, 175);
+    defineLeft(StandardNames.OPTIONINDEX, 175);
 
     definePrefix(StandardNames.SHRIEK, 150);
 

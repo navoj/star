@@ -1070,6 +1070,56 @@ public class CompilerUtils
     return Abstract.binary(loc, StandardNames.PERIOD, record, field);
   }
 
+  // An optional field access expression
+  public static boolean isOptionFieldAccess(IAbstract term)
+  {
+    return Abstract.isBinary(term, StandardNames.OPTIONPERIOD);
+  }
+
+  public static IAbstract optionRecord(IAbstract term)
+  {
+    assert isOptionFieldAccess(term);
+
+    return Abstract.binaryLhs(term);
+  }
+
+  public static IAbstract optionField(IAbstract term)
+  {
+    assert isOptionFieldAccess(term);
+
+    return Abstract.binaryRhs(term);
+  }
+
+  public static IAbstract optionFieldExp(Location loc, IAbstract record, IAbstract field)
+  {
+    return Abstract.binary(loc, StandardNames.OPTIONPERIOD, record, field);
+  }
+
+  // An optional index or function application expression
+  public static boolean isOptionIndex(IAbstract term)
+  {
+    return Abstract.isBinary(term, StandardNames.OPTIONINDEX);
+  }
+
+  public static IAbstract optionIndexFun(IAbstract term)
+  {
+    assert isOptionIndex(term);
+
+    return Abstract.binaryLhs(term);
+  }
+
+  public static IAbstract optionIndexIndex(IAbstract term)
+  {
+    assert isOptionIndex(term);
+
+    return Abstract.binaryRhs(term);
+  }
+
+  public static IAbstract optionIndexExp(Location loc, IAbstract record, IAbstract field)
+  {
+    return Abstract.binary(loc, StandardNames.OPTIONINDEX, record, field);
+  }
+
   // A square term uses the [] as the binary operator... A[x] = A([](x))
   public static boolean isSquareTerm(IAbstract term)
   {

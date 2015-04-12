@@ -72,7 +72,7 @@ public class PkgSpec implements PrettyPrintable
   {
     uri.prettyPrint(disp);
     if (!dependants.isEmpty()) {
-      disp.append("->[");
+      disp.append("<-[");
       disp.prettyPrint(dependants, ",");
       disp.append("]");
     }

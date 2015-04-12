@@ -305,4 +305,10 @@ public class TypeTests extends SRTest
   {
     runStar("moduleContracts.star");
   }
+  
+  @Test
+  public void optionChaining()
+  {
+    runStar("optionChaining.star");
+  }
 }

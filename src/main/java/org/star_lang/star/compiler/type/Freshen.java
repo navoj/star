@@ -390,7 +390,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
     IType[] typeArgs = t.getTypeArgs();
     IType args[] = new IType[typeArgs.length];
     for (int ix = 0; ix < typeArgs.length; ix++) {
-      args[ix] = typeArgs[ix].transform(this, cxt);
+      args[ix] = TypeUtils.deRef(typeArgs[ix]).transform(this, cxt);
       clean &= args[ix] == typeArgs[ix];
     }
     if (clean)

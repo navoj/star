@@ -291,6 +291,9 @@ public class StandardNames
   public static final String QUESTION = graphic("?");
   public static final String TYPEVAR = PCENT;
   public static final String ANONYMOUS = graphic("_");
+  
+  public static final String OPTIONPERIOD = standard("?.");
+  public static final String OPTIONINDEX = standard("??");
 
   public static final String STRING_CATENATE = graphic("++");
   public static final String DISPLAY = "display";
