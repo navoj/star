@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 public class Version
 {
-	public static final String version = "1.00 ${env.BUILD_NUMBER}-${env.MERCURIAL_REVISION}";
+	public static final String version = "1.01 ${env.BUILD_NUMBER}-${env.MERCURIAL_REVISION}";
 	
 	private static final Logger logger = Logger.getLogger(StarRules.class.getName());
 	

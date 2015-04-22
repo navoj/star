@@ -74,7 +74,7 @@ private import actors;
 type saNotifyFun of %t is alias of ((%t)=>()) => rendezvous of ();
 type saRequestFun of %t is alias of (for all %r such that ((%t)=>%r) => rendezvous of %r);
   
-type concActor of %t is conAct0r(saNotifyFun of %t,saRequestFun of %t) or nonConActor;
+type concActor of %t is conAct0r(saNotifyFun of %t,saRequestFun of %t);
 
 -- performing a speech action on a concActor involves sending the speech function
 -- to the underlying background server task and waiting for a reply.

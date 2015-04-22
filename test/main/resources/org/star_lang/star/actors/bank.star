@@ -30,14 +30,12 @@ bank is package{
     on removeAccount(Nm) on cust do
       remove allActs[Nm];
       
-    getAccount(Nm) is allActs[Nm] or else nonActor;
+    getAccount(Nm) is allActs[Nm];
   }
   
   bank is actor{
-    on (Tx,Id) on tx do{
-      AC is query AllAccounts with getAccount(Id);
-      
-      if AC != nonActor then
+    on (Tx,Id) on tx do{      
+      if (query AllAccounts with getAccount(Id)) has value AC then
         notify AC with Tx on txs
       else
         logMsg(info,"do not know customer $Id");

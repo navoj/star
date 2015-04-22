@@ -34,14 +34,11 @@ contract speech over t determines (u,a) where execution over a is {
 
 implementation speech over actor of %t determines (%t,action) is {
   _query(act0r(Ac),Qf,_,_) is action { valis Qf(Ac)};
-  _query(nonActor,_,_,_) is action{ raise "cannot query nonActor"};
   _request(act0r(Ac),Rf,_,_) is action{ Rf(Ac) };
-  _request(nonActor,_,_,_) is action{};
   _notify(act0r(Ac),Np) is action{ Np(Ac) };
-  _notify(nonActor,_) is action{};
 };
 
-type actor of %t is act0r(%t) or nonActor;
+type actor of %t is act0r(%t);
 
 type occurrence of %t is alias of action(%t);
 
