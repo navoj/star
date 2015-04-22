@@ -80,21 +80,21 @@ tickTackToe is package{
   
   blockFork(B,M) is forkMove(B,reverse(M));
   
-  move(board(B),P,M) where B[P]=blank is some(board(B[P->M]));
+  move(board(B),P,M) where B[P] has value blank is some(board(B[P->M]));
   move(_,_,_) default is none;
   
   play(board(B),Ps,P) is board(B[Ps->P]);
   
-  oppositeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[opposite(P)]=reverse(Plyr) and B[P]=blank };
+  oppositeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[opposite(P)] = some(reverse(Plyr)) and B[P] has value blank };
   
   opposite(0) is 8;
   opposite(8) is 0;
   opposite(2) is 6;
   opposite(6) is 2;
   
-  freeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[P]=blank };
+  freeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[P] has value blank };
   
-  freeSide(board(B),Plyr) is list of { all P where P in list of {1; 3; 5; 7} and B[P]=blank };
+  freeSide(board(B),Plyr) is list of { all P where P in list of {1; 3; 5; 7} and B[P] has value blank };
   
   BB0 is board(list of {blank;blank;blank;blank;blank;blank;blank;blank;blank});
   BB1 is board(list of {blank;blank;circle;blank;circle;circle;blank;blank;blank});
@@ -128,7 +128,7 @@ tickTackToe is package{
     valis none;
   }
   
-  freePositions(board(BB)) is list of { all Ps where Ps in range(0,9,1) and BB[Ps]=blank };
+  freePositions(board(BB)) is list of { all Ps where Ps in range(0,9,1) and BB[Ps] has value blank };
   
   randomPlay(B,Plyr) is any of P where P in freePositions(B) and random(2) >1;
   

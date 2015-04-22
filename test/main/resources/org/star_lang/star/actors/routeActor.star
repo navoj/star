@@ -11,7 +11,7 @@ routeActor is package {
     };
     on V on mapChannel do {
       var key is "";
-      var value is rD.routesMap[key] default 0;
+      var value is rD.routesMap[key] or else 0;
       rD.routesMap[key] := value+1;
     }
   }

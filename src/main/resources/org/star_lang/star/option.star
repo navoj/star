@@ -1,14 +1,14 @@
 private import strings
 private import base
 private import folding
+private import casting
+private import iterable
 
 /*
 type option of %a is
     none
     or some(%a);
 */  
-
-#infix("unwraps",900);
 
 implementation pPrint over option of %a where pPrint over %a is {
   ppDisp(X) is sho(X)
@@ -30,19 +30,37 @@ implementation mappable over option is {
   map = _optionMap
 }
 
+implementation for all t such that
+    coercion over (option of t,string) where coercion over (t,string) is {
+  coerce(X) is toString(X)
+} using {
+  toString(some(X)) is X as string
+  toString(none) is "none"
+}
+ 
 _optionMap(_,none) is none
 _optionMap(F,some(X)) is some(F(X))
 
 _optionPartial(none,_) is none
 _optionPartial(some(X),F) is F(X)
 
-# ?L is some ?E :: condition :- E::expression :& L::pattern;
+_optionDeflt(none,D) is D()
+_optionDeflt(some(X),_) is X
 
-#?R ?. ?F ==> _optionMap(fn RR=>RR.F,R)
-#?R ?? ?E ==> processOption(E) ## {
-  #processOption(<|[?Ex]|>) is <|_optionPartial(?R,fn RR=>_index(RR,?Ex))|>
-  #processOption(applyAst(Loc,nameAst(_,Op),Args)) where Op matches `\$[0-9]+` is <|_optionMap(fn RR=>?applyAst(Loc,<|RR|>,Args),?R)|>
+# ?E has value ?P :: condition :- E::expression :& P::pattern;
+
+#?R ?. ?F ==> (R has value #$R ? some(#$R.F) | none)
+#?R or else ?E ==> _optionDeflt(R,fn()=>E)
+
+# ?O. #(?M)#[?K] has value ?V ==> _index(O.M,K) matches some(V);
+# #(?M)#[?K] has value ?V ==> _index(M,K) matches some(V);
+#?E has value ?P ==> E matches some(P);
+
+
+implementation for all t,e such that
+  iterable over option of t determines e where iterable over t determines e is {
+  _iterate(none,_,S) is S
+  _iterate(some(M),F,S) is iterate(M,F,S)
+} using {
+  iterate(M,F,S) is _iterate(M,F,S)
 }
-
-#?P unwraps ?E ==> E matches some(P);
-

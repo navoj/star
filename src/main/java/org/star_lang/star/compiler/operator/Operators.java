@@ -246,6 +246,8 @@ public class Operators implements PrettyPrintable
 
     defineInfix(StandardNames.MATCHES, 900);
     defineInfix(StandardNames.BOUND_TO, 900);
+    defineInfix(StandardNames.HAS_VALUE, 900);
+    defineRight(StandardNames.OR_ELSE, 900);
 
     defineRight(StandardNames.OVER, 900);
 
@@ -292,7 +294,6 @@ public class Operators implements PrettyPrintable
 
     defineLeft(StandardNames.PERIOD, 175);
     defineLeft(StandardNames.OPTIONPERIOD, 175);
-    defineLeft(StandardNames.OPTIONINDEX, 175);
 
     definePrefix(StandardNames.SHRIEK, 150);
 

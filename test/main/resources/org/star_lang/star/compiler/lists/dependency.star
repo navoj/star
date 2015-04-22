@@ -63,7 +63,7 @@ dependency is package{
    
     sortGraph() is valof{
       while not isEmpty(nodes) do{
-        N is nodes[0];
+        N is someValue(nodes[0]);
         remove nodes[0];
 
         ignore analyseNode(N,stack of {});

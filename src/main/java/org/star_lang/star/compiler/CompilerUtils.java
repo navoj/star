@@ -1095,31 +1095,6 @@ public class CompilerUtils
     return Abstract.binary(loc, StandardNames.OPTIONPERIOD, record, field);
   }
 
-  // An optional index or function application expression
-  public static boolean isOptionIndex(IAbstract term)
-  {
-    return Abstract.isBinary(term, StandardNames.OPTIONINDEX);
-  }
-
-  public static IAbstract optionIndexFun(IAbstract term)
-  {
-    assert isOptionIndex(term);
-
-    return Abstract.binaryLhs(term);
-  }
-
-  public static IAbstract optionIndexIndex(IAbstract term)
-  {
-    assert isOptionIndex(term);
-
-    return Abstract.binaryRhs(term);
-  }
-
-  public static IAbstract optionIndexExp(Location loc, IAbstract record, IAbstract field)
-  {
-    return Abstract.binary(loc, StandardNames.OPTIONINDEX, record, field);
-  }
-
   // A square term uses the [] as the binary operator... A[x] = A([](x))
   public static boolean isSquareTerm(IAbstract term)
   {
@@ -1774,12 +1749,12 @@ public class CompilerUtils
 
   public static boolean isDefaultExp(IAbstract term)
   {
-    return Abstract.isBinary(term, StandardNames.DEFAULT);
+    return Abstract.isBinary(term, StandardNames.OR_ELSE);
   }
 
   public static IAbstract defaultExp(Location loc, IAbstract term, IAbstract deflt)
   {
-    return Abstract.binary(loc, StandardNames.DEFAULT, term, deflt);
+    return Abstract.binary(loc, StandardNames.OR_ELSE, term, deflt);
   }
 
   public static IAbstract defaultExpDefault(IAbstract term)

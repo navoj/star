@@ -26,7 +26,7 @@ mapeq is package{
     M2 is valof{
       var M := dictionary of{};
       for Ix in iota(1,3,1) do
-        M[L1[Ix-1]]:= Ix;
+        M[someValue(L1[Ix-1])]:= Ix;
       valis M
     };
     

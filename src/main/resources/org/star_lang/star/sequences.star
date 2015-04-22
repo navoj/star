@@ -70,24 +70,25 @@ contract sliceable over s determines k is {
 # _slice(?M,?Ix,?Tx) := ?Exp ==> M := _splice(M,Ix,Tx,Exp);
   
 # #(?M)#[?Ix] := ?Exp ==> M := _set_indexed(M,Ix,Exp);
-# someValue(_index(?M,?Ix)) := ?Exp ==> M := _set_indexed(M,Ix,Exp);
+# _index(?M,?Ix) := ?Exp ==> M := _set_indexed(M,Ix,Exp);
 
 # remove #(?M)#[?Ix] ==> M := _delete_indexed(M,Ix);
-# remove someValue(_index(?M,?Ix)) ==> M := _delete_indexed(M,Ix);
+# remove _index(?M,?Ix) ==> M := _delete_indexed(M,Ix);
 # #(?M)#[?Ky->?Vl] ==> _set_indexed(M,Ky,Vl);
 # #(?M)#[with ?Ky->?Vl] ==> _set_indexed(M,Ky,Vl);
-# someValue(_index(?M,?Ky->?Vl)) ==> _set_indexed(M,Ky,Vl);
-# someValue(_index(?M,with ?Ky->?Vl)) ==> _set_indexed(M,Ky,Vl);
+# _index(?M,?Ky->?Vl) ==> _set_indexed(M,Ky,Vl);
+# _index(?M,with ?Ky->?Vl) ==> _set_indexed(M,Ky,Vl);
 # #(?M)#[without ?Ky] ==> _delete_indexed(M,Ky);
-# someValue(_index(?M,without ?Ky)) ==> _delete_indexed(M,Ky);
+# _index(?M,without ?Ky) ==> _delete_indexed(M,Ky);
 
-# #(?M)#[?Ix] ==> someValue(_index(M,Ix));
+# #(?M)#[?Ix] ==> _index(M,Ix);
   
 # prefix((present),500);
 # present #(?M)#[?Ix] :: expression :- M::expression :& Ix::expression;
 # present #(?M)# . #(?F)# [?Ix] ==> _index(M.F,Ix) matches some(_);
 # present #(?M)#[?Ix] ==> _index(M,Ix) matches some(_);
 
+# ?O. #(?M)#[?K] matches ?V ==> _index(O.M,K) matches some(V);
 # #(?M)#[?K] matches ?V ==> _index(M,K) matches some(V);
   
 contract sorting over %c determines %t is {

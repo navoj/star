@@ -36,9 +36,9 @@ treemapUpdate is package {
     logMsg(info, "tm2[b] = $(tm2["b"])");
     logMsg(info, "tm3[b] = $(tm3["b"])"); 
     
-    assert tm0["b"] = 3;
-    assert tm1["b"] = 3;
-    assert tm2["b"] = 5;
-    assert tm3["b"] = 5;
+    assert tm0["b"] has value 3;
+    assert tm1["b"] has value 3;
+    assert tm2["b"] has value 5;
+    assert tm3["b"] has value 5;
   }
 }

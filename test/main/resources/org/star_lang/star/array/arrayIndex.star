@@ -22,13 +22,13 @@ arrayIndex is package{
     II has type ref list of string;
     var II := list of ["alpha", "beta", "gamma", "delta"];
     
-    assert II[0]="alpha";
-    assert II[1]="beta";
-    assert II[2]="gamma";
-    assert II[3]="delta";
+    assert II[0] has value "alpha";
+    assert II[1] has value "beta";
+    assert II[2] has value "gamma";
+    assert II[3] has value "delta";
     
-    assert (II[4] default nonString)=nonString;
-    assert (II[-1] default nonString)=nonString;
+    assert (II[4] or else nonString)=nonString;
+    assert (II[-1] or else nonString)=nonString;
     
     var C := list of [0,1,2];
     

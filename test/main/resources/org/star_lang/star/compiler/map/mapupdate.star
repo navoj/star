@@ -37,6 +37,6 @@ mapupdate is package{
     
     logMsg(info,"$Joe");
     
-    assert (Joe.atts.values)[prop] = "gamma"; 
+    assert (Joe.atts.values)[prop] has value "gamma"; 
   }
 }

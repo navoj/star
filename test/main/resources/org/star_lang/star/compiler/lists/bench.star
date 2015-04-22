@@ -47,7 +47,7 @@ bench is package {
     var el_list := iota(0,Count-1, 1);
     timer_finish(timer);
 
-    var ignre := el_list[0];
+    var ignre := someValue(el_list[0]);
 
     timer := timer_start(Count, "Accessing all elements in native list");
     for i in el_list do {

@@ -5,7 +5,7 @@ modules is package{
   };
   
   implementation foo over cons of integer determines integer is {
-    f(L) is L[0];
+    f(L) is L[0] or else nonInteger;
   }
   
   type m of t is m{

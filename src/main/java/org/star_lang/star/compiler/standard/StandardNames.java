@@ -211,6 +211,9 @@ public class StandardNames
   public static final String IN = keyword("in");
   public static final String CASE = keyword("case");
   public static final String SWITCH = keyword("switch");
+  public static final String HAS_VALUE = standard("has value");
+  public static final String OR_ELSE = standard("or else");
+  public static final String EXPECTED_OPTION = standard("_optionDeflt");
 
   public static final String CAST = keyword("cast");
   public static final String COERCE = standard("coerce");
@@ -291,9 +294,8 @@ public class StandardNames
   public static final String QUESTION = graphic("?");
   public static final String TYPEVAR = PCENT;
   public static final String ANONYMOUS = graphic("_");
-  
+
   public static final String OPTIONPERIOD = standard("?.");
-  public static final String OPTIONINDEX = standard("??");
 
   public static final String STRING_CATENATE = graphic("++");
   public static final String DISPLAY = "display";

@@ -57,13 +57,13 @@ jsonTest is package{
 
     logMsg(info,"Look=$(I1[list of {kString("statusFrequency");kInt(0);kString("200")}])");
 
-    assert I1[list of {kString("statusFrequency");kInt(0);kString("200")}]=iNum(75L);
+    assert I1[list of {kString("statusFrequency");kInt(0);kString("200")}] has value iNum(75L);
 
     I1[list of {kString("statusFrequency");kInt(0);kString("404")}] := iNum(7L);
     logMsg(info,"After update $I1");
  
-    assert I1[list of {kString("statusFrequency");kInt(0);kString("200")}]=iNum(75L);
-    assert I1[list of {kString("statusFrequency");kInt(0);kString("404")}]=iNum(7L);
+    assert I1[list of {kString("statusFrequency");kInt(0);kString("200")}] has value iNum(75L);
+    assert I1[list of {kString("statusFrequency");kInt(0);kString("404")}] has value iNum(7L);
 
     remove I1[list of {kString("statusFrequency");kInt(0)}]
     logMsg(info,"After remove $I1");

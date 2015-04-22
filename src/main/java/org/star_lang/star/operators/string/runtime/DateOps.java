@@ -12,6 +12,7 @@ import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.Factory;
+import org.star_lang.star.data.value.Option;
 import org.star_lang.star.operators.CafeEnter;
 
 /**
@@ -93,15 +94,16 @@ public class DateOps
   {
 
     @CafeEnter
-    public static long enter(String date) throws EvaluationException
+    public static IValue enter(String date) throws EvaluationException
     {
       try {
-        return DateFormat.getInstance().parse(date).getTime();
+        return Option.some(Factory.newLng(DateFormat.getInstance().parse(date).getTime()));
       } catch (ParseException e) {
         try {
-          return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).parse(date).getTime();
+          return Option.some(Factory.newLng(DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG)
+              .parse(date).getTime()));
         } catch (ParseException ee) {
-          throw new EvaluationException(e.getMessage());
+          return Option.noneEnum;
         }
       }
     }
@@ -109,7 +111,7 @@ public class DateOps
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newLong(enter(Factory.stringValue(args[0])));
+      return enter(Factory.stringValue(args[0]));
     }
 
     @Override
@@ -120,7 +122,7 @@ public class DateOps
 
     public static IType funType()
     {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.rawLongType);
+      return TypeUtils.functionType(StandardTypes.rawStringType, TypeUtils.optionType(StandardTypes.longType));
     }
   }
 

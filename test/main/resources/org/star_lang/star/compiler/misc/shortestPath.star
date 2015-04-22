@@ -87,7 +87,7 @@ shortestPath is package {
 	};
 
 
-  mapLookup(m, k) is present m[k] ? some(m[k]) | none;
+  mapLookup(m, k) is m[k];
 
   itMap(f, lis) is
 	let {

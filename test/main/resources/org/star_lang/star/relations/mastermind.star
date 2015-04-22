@@ -42,7 +42,7 @@ mastermind is package{
     var P := choices;
     var Scores := list of {};
     while true do{
-      Guess is P[0];
+      Guess is someValue(P[0]);
     
       Sc is score(Guess,Secret);
       logMsg(info,"guess = $Guess, score=$Sc");
@@ -54,7 +54,7 @@ mastermind is package{
   }
   
   main() do {    
-    Secret is choices[random(size(choices))];
+    Secret is someValue(choices[random(size(choices))]);
     logMsg(info,"secret is $Secret");
     
     Find is guessSecret(Secret);

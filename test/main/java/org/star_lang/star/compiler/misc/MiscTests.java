@@ -457,12 +457,6 @@ public class MiscTests extends SRTest
   }
 
   @Test
-  public void testFunnyDefault()
-  {
-    runStar("defaultAssign.star");
-  }
-
-  @Test
   public void testWhilePerf()
   {
     runStar("whilePerf.star");

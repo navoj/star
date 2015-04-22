@@ -19,13 +19,13 @@ strindex is package{
   main() do {
     src is "the quick brown fox jumped over the lazy dog";
     
-    assert src[0]='t';
+    assert src[0] has value 't';
     
     var dog := src;
     
-    assert dog[4] = 'q';
+    assert dog[4] has value 'q';
     dog[4] := '%';
-    assert dog[4]='%';
+    assert dog[4] has value '%';
     
     logMsg(info,"$dog");
     

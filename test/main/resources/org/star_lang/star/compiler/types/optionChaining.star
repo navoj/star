@@ -10,7 +10,7 @@ optionChaining is package{
     line2 has type option of string;
     city has type string;
     state has type string;
-    phone has type option of list of string
+    phone has type list of string
   }
   
   main() do {
@@ -19,7 +19,7 @@ optionChaining is package{
       line2 = none
       city = "Market"
       state = "MyState"
-      phone = some(["alpha","beta"])
+      phone = ["alpha","beta"]
     }
     
     P is person{
@@ -31,11 +31,11 @@ optionChaining is package{
     logMsg(info,display(P))
     
     assert P.address?.line1 = some("1 Main St")
-    assert A.phone??[0] = some("alpha")
-    assert P.call??() = some("fred")
+    assert A.phone[0] has value "alpha"
+    assert someValue(P.call)() = "fred"
     
-    assert L unwraps P.address?.line1 and L="1 Main St"
+    assert P.address?.line1 has value "1 Main St"
   }
 } 
-    
+
     

@@ -30,7 +30,7 @@ bank is package{
     on removeAccount(Nm) on cust do
       remove allActs[Nm];
       
-    getAccount(Nm) is allActs[Nm] default nonActor;
+    getAccount(Nm) is allActs[Nm] or else nonActor;
   }
   
   bank is actor{

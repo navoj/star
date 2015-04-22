@@ -20,6 +20,6 @@ arrayliteral is package{
   main() do {
     L is list of ["alpha", "beta", "gamma", "delta", "eta"];
     
-    assert L[0]="alpha";
+    assert L[0] has value "alpha";
   }
 }

@@ -26,16 +26,16 @@ maptest is package{
   {
     BV is H["B"];
     logMsg(info,"get H[B] is $BV");
-    assert BV=2;
+    assert BV has value 2;
     
-    assert H["D"]=4;
+    assert H["D"] has value 4;
     
-    assert H["D"] matches 4;
+    assert H["D"]  has value  4;
     
-    assert not H["E"] matches _;
+    assert not H["E"] has value  _;
     
     try{
-      assert H["E"] = 1
+      assert someValue(H["E"]) = 1
     } on abort {
       E do logMsg(info,"We got the exception $E");
     };

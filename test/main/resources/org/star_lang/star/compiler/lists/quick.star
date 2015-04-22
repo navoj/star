@@ -27,7 +27,7 @@ quick is package{
     var lftHalf := list of [];
     rgtHalf has type ref list of %s;
     var rgtHalf := list of [];
-    pivot is L[0];
+    pivot is someValue(L[0]);
     
     split has type action();
     split() do {

@@ -68,7 +68,7 @@ listtests is package{
     
     logMsg(info,"second from end $(secondToLast(L))"); 
     
-    assert secondToLast(L)=4;
+    assert secondToLast(L) has value 4;
     
     dummyAction(23,L);
     
@@ -80,7 +80,7 @@ listtests is package{
     L2[1] := 19;
 
     logMsg(info, "L1 and L2 are $L1 and $L2");
-    assert L1[1]=2 and L2[1]=19;
+    assert L1[1] has value 2 and L2[1] has value 19;
     
     logMsg(info,"even of list of [1,2,3,4,5] = $(onlyEven(list of [1,2,3,4,5]))");
     assert onlyEven(list of [1,2,3,4,5])=list of[2,4];

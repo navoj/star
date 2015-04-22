@@ -2,8 +2,6 @@ import worksheet;
 import json
 
 worksheet{
-	
-	
   -- Test with an example json value
 	 
   J is json{
@@ -40,11 +38,11 @@ worksheet{
 				
   phoneNums    is J[list of {kString("phoneNumbers");kInt(0);kString("number")}];
 	    
-  assert phoneNums = iText("212 555-1234")
+  assert phoneNums has value iText("212 555-1234")
   
-  assert fnames = iText("John")
+  assert fnames has value iText("John")
   
   show J[list of {kString("phoneNumbers");kInt(1)}] 
    		
-  assert J[list of {kString("phoneNumbers");kInt(1)}] = json{"number":"646 555-4567"; "type":"fax"}
+  assert someValue(J[list of {kString("phoneNumbers");kInt(1)}]) = json{"number":"646 555-4567"; "type":"fax"}
 }

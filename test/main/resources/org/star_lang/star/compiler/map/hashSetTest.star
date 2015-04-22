@@ -61,7 +61,7 @@ hashSetTest is package{
  
     var S1 := nanos();
     for i in range(1,Count,1) do
-      assert (M[i] default "not found") != "not found";
+      assert present M[i];
     S1 := nanos()-S1;
     
     logMsg(info,"time for hash is $((S1-S0) as float/1.0e9) secs");

@@ -43,7 +43,7 @@ implementation equality over quoted is {
   equalArgs(A1,A2) where size(A1)=size(A2) is valof{
     var ix := 0;
     while ix<size(A1) do {
-      if not astEqual(A1[ix],A2[ix]) then
+      if not astEqual(someValue(A1[ix]),someValue(A2[ix])) then
         valis false;
       ix := ix+1;
     }

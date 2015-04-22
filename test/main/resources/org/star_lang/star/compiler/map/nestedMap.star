@@ -21,11 +21,11 @@ nestedMap is package{
                 "delta" -> dictionary of {}};
   
   main() do {
-    assert size(MM)=2;
-    assert size(MM["alpha"])=2;
+    assert size(MM) = 2;
+    assert size(someValue(MM["alpha"])) = 2;
     
     assert present MM["delta"];
     assert not present MM["beta"];
-    assert present MM["alpha"]["beta"];
+    assert MM["alpha"] has value I and present I["beta"];
   }
 }

@@ -32,7 +32,7 @@ arrayIndexMatch is package{
   	
   	assert not (A,4) matches __array_index(E);
   	
-  	assert (B,1) matches consIndex("beta");
+  	assert (B,1) matches consIndex(some("beta"));
   	
   	assert not (B,4) matches consIndex(_);
   }

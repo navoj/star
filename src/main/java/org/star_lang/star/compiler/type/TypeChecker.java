@@ -958,13 +958,17 @@ public class TypeChecker
     } else if (CompilerUtils.isQueryTerm(term))
       return queryExpression(term, expectedType, dict, outer);
     else if (CompilerUtils.isDefaultExp(term)) {
-      IContentExpression normal = typeOfExp(CompilerUtils.defaultExpNormal(term), expectedType, dict, outer);
-      IContentExpression deflt = typeOfExp(CompilerUtils.defaultExpDefault(term), expectedType, dict, outer);
+      IType expectedOptionType = TypeUtils.optionType(expectedType);
+      IContentExpression normal = typeOfExp(CompilerUtils.defaultExpNormal(term), expectedOptionType, dict, outer);
 
-      IContentAction normValis = new ValisAction(normal.getLoc(), normal);
-      IContentAction defltValis = new ValisAction(deflt.getLoc(), deflt);
+      IType defltFunType = TypeUtils.functionType(expectedType);
+      IContentExpression defltFun = typeOfExp(CompilerUtils.lambda(loc, Abstract.tupleTerm(loc), CompilerUtils
+          .defaultExpDefault(term)), defltFunType, dict, outer);
 
-      return new ValofExp(loc, expectedType, new ExceptionHandler(loc, normValis, defltValis));
+      IContentExpression optionDeflt = new Variable(loc, TypeUtils.functionType(expectedOptionType, defltFunType),
+          StandardNames.EXPECTED_OPTION);
+
+      return Application.apply(loc, expectedType, optionDeflt, normal, defltFun);
     } else if (Abstract.isBinary(term, StandardNames.APPLY)) {
       TypeVar argType = new TypeVar();
       argType.setConstraint(new TupleConstraint(argType));
@@ -2478,8 +2482,8 @@ public class TypeChecker
       TypeExp funCon = (TypeExp) TypeUtils.unwrap(programType, funTypeVars);
       for (TypeVar tv : funTypeVars)
         funCxt.defineType(new TypeExists(loc, tv.getVarName(), tv));
-      resultType = TypeUtils.deRef(TypeUtils.getTypeArg(funCon,0));
-      matchType = TypeUtils.getTypeArg(funCon,1);
+      resultType = TypeUtils.deRef(TypeUtils.getTypeArg(funCon, 0));
+      matchType = TypeUtils.getTypeArg(funCon, 1);
     } else if (programType instanceof TypeVar) {
       IType[] argTypes = new IType[arity];
       for (int ix = 0; ix < argTypes.length; ix++)
@@ -4484,7 +4488,7 @@ public class TypeChecker
           Variable resltVar = new Variable(loc, resultType, GenSym.genSym());
           cases.add(Pair.pair((IContentPattern) CompilerUtils.noMorePtn(loc, resltVar),
               (IContentAction) new ValisAction(loc, resltVar)));
-          cases.add(Pair.pair(CompilerUtils.noneFoundPtn(loc, resultType), new NullAction(loc,resultType)));
+          cases.add(Pair.pair(CompilerUtils.noneFoundPtn(loc, resultType), new NullAction(loc, resultType)));
         }
 
         if (!cases.isEmpty())

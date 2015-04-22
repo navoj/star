@@ -35,15 +35,15 @@ indextest is package{
   main() do {
     logMsg(info,"$LL");
     XX is LL[size(LL)-1];
-    assert XX="f";
+    assert XX has value "f";
     logMsg(info,"LL[\$]=$XX");
     
-    EE is LL[size(LL)-2];
+    EE is someValue(LL[size(LL)-2]);
     logMsg(info,"EE = $EE");
     
     AA is LL[0];
     logMsg(info,"AA = $AA");
-    assert AA="a";
+    assert AA has value "a";
         
     BB is Ag.LL[1];
     logMsg(info,"BB=$BB");
@@ -51,14 +51,14 @@ indextest is package{
     DD is Ag.LL[size(LL)-3];
     logMsg(info,"DD=$DD");
     
-    assert (LL[10] default "none") = "none";
+    assert (LL[10] or else "none") = "none";
     
-    assert MM["a"]=1;
-    assert MM["b"]=2;
-    assert MM["c"]=3;
-    assert (MM["e"] default nonInteger)=nonInteger;
+    assert MM["a"] has value 1;
+    assert MM["b"] has value 2;
+    assert MM["c"] has value 3;
+    assert (MM["e"] or else nonInteger)=nonInteger;
     
-    assert CC[0]="a";
-    assert CC[1]="b";
+    assert CC[0] has value "a";
+    assert CC[1] has value "b";
   }
 }

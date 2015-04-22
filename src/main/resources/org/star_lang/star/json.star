@@ -65,8 +65,8 @@ private import folding;
       _ default is raise "illegal key $Ky"
     };
     updte(list of {Ky;..Keys},I,V) is case Ky in {
-      kString(K) where I matches iColl(M) is iColl(M[K->updte(Keys,M[K],V)]);
-      kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->updte(Keys,L[Ix],V)]);
+      kString(K) where I matches iColl(M) is iColl(M[K->updte(Keys,someValue(M[K]),V)]);
+      kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->updte(Keys,someValue(L[Ix]),V)]);
       _ default is raise "illegal key $Ky";
     }
 
@@ -78,8 +78,8 @@ private import folding;
       _ default is raise "illegal key $Ky";
     }
     remve(list of {Ky;..Keys},I) is case Ky in {
-      kString(K) where I matches iColl(M) is iColl(_set_indexed(M,K,remve(Keys,M[K])));
-      kInt(Ix) where I matches iSeq(L) is iSeq(_set_indexed(L,Ix,remve(Keys,L[Ix])));
+      kString(K) where I matches iColl(M) is iColl(_set_indexed(M,K,remve(Keys,someValue(M[K]))));
+      kInt(Ix) where I matches iSeq(L) is iSeq(_set_indexed(L,Ix,remve(Keys,someValue(L[Ix]))));
       _ default is raise "illegal key $Ky";
     }
   }

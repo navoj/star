@@ -8,8 +8,8 @@ recordMap is package{
   main() do {
     R.f["beta"] := 2
     
-    assert R.f["alpha"] = 1
-    assert R.f["beta"] = 2
+    assert R.f["alpha"] has value 1
+    assert R.f["beta"] has value 2
   }
 }
     

@@ -18,6 +18,7 @@
 private import base;
 private import casting;
 private import strings;
+private import option;
 
 -- dates and time
 
@@ -29,7 +30,8 @@ implementation coercion over (date,string) is {
 }
 
 implementation coercion over (string,date) is {
-  coerce(string(S)) is date(__string_date(S)) default never;
+  coerce(string(S)) where __string_date(S) has value long(D) is date(D);
+  coerce(_) default is never;
 }
 
 implementation coercion over (date, long) is {

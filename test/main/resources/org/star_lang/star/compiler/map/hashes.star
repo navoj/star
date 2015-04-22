@@ -23,11 +23,11 @@ hashes is package{
   main() do {
     logMsg(info,"M=$M");
     -- test indexable
-    assert M["a"]=1;
-    assert M["b"]=2;
-    assert M["c"]=3;
+    assert M["a"] has value 1;
+    assert M["b"] has value 2;
+    assert M["c"] has value 3;
     
-    assert (M["d"] default nonInteger) = nonInteger;
+    assert (M["d"] or else nonInteger) = nonInteger;
     
     -- test sizeable
     assert size(M)=3;

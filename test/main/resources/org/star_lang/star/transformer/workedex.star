@@ -77,7 +77,7 @@ workedex is package{
   genIndex(R,key,ref index) is valof{
     H is key(R);
     Id is nextId();
-    Ix is index[H] default cons of {};
+    Ix is index[H] or else cons of {};
     index[H] := cons of {(Id,R);..Ix};
     valis Id;
   }
@@ -104,8 +104,8 @@ workedex is package{
     Ix is getAccountIndex(Ptn);
     
     if Ix!=nonLong then{ 
-      accounts[Ix] := Updater(accounts[Ix]);
-      redoResult(accntFollow[Ix]);
+      accounts[Ix] := Updater(someValue(accounts[Ix]));
+      redoResult(someValue(accntFollow[Ix]));
     }
   }
   
@@ -113,7 +113,7 @@ workedex is package{
     var track := list of [];
     
     updateAct((Ix,Act)) is valof{
-      ActFoll is accntFollow[Ix];
+      ActFoll is someValue(accntFollow[Ix]);
       track := list of [ActFoll,..track];
       
       UpAc is Updater(Act);
@@ -145,7 +145,7 @@ workedex is package{
   
   redoFullAccount(Ix) do {
     -- logMsg(info,"redo full $Ix");
-    D is fullDeps[Ix];
+    D is someValue(fullDeps[Ix]);
     
     -- logMsg(info,"depends = $D");
     Acts is getDepAccount(D); 
@@ -187,7 +187,7 @@ workedex is package{
     
     if Ky!=nonLong then{ 
       remove accounts[Ky];
-      removeResult(accntFollow[Ky]);
+      removeResult(someValue(accntFollow[Ky]));
     }
   }
   
@@ -195,7 +195,7 @@ workedex is package{
     var track := list of [];
     
     removeAct(Ix) is valof{
-      ActFoll is accntFollow[Ix];
+      ActFoll is someValue(accntFollow[Ix]);
       track := list of [ActFoll,..track];
       valis true;
     };
@@ -216,7 +216,7 @@ workedex is package{
 
     FF is all (F,Ix) where Ix->F in full; -- this is a work-around.
     for (F,Ix) in FF do{
-      D is fullDeps[Ix];
+      D is someValue(fullDeps[Ix]);
       Acts is getDepAccount(D);
       
       Txs is dictionary of {(IxT,Tx);..getDepTxs(D)};
@@ -235,7 +235,7 @@ workedex is package{
     var track := list of [];
     
     updateTx((Ix,Tx)) is valof{
-      ActFoll is transFollow[Ix];
+      ActFoll is someValue(transFollow[Ix]);
       track := list of [ActFoll,..track];
       
       valis (Ix,Updater(Tx));
@@ -252,13 +252,13 @@ workedex is package{
     logMsg(info,"full after tx update: $full");
   }
   
-  getDepAccount(dep("accounts",Id)) is dictionary of {(Id,accounts[Id])};
+  getDepAccount(dep("accounts",Id)) is dictionary of {(Id,someValue(accounts[Id]))};
   getDepAccount(allDep("accounts")) is accounts;
-  getDepAccount(multiDep(L)) is dictionary of {all (Id,accounts[Id]) where dep("accounts",Id) in L };
+  getDepAccount(multiDep(L)) is dictionary of {all (Id,someValue(accounts[Id])) where dep("accounts",Id) in L };
   
-  getDepTxs(dep("transactions",Id)) is dictionary of {(Id,transactions[Id])};
+  getDepTxs(dep("transactions",Id)) is dictionary of {(Id,someValue(transactions[Id]))};
   getDepTxs(allDep("transactions")) is transactions;
-  getDepTxs(multiDep(L)) is dictionary of {all (Id,transactions[Id]) where dep("transactions",Id) in L};
+  getDepTxs(multiDep(L)) is dictionary of {all (Id,someValue(transactions[Id])) where dep("transactions",Id) in L};
   
   -- update a follows table based on the new set up dependencies
   /*@
@@ -282,7 +282,7 @@ workedex is package{
       updateDeps(dep(F,Fix)) is multiDep(list of {dep(F,Fix);dep(FollowLbl,FollowIx)});
       updateDeps(multiDep(L)) is multiDep((list of {dep(FollowLbl,FollowIx)}) union L);
       updateDeps(allDep(Lbls)) is allDep(Lbls);
-    } in _set_indexed(Follow,Id,updateDeps((Follow[Id] default noDep)));
+    } in _set_indexed(Follow,Id,updateDeps((Follow[Id] or else noDep)));
     updateFlw(Follow,dep(_,Id)) is Follow;
     updateFlw(Follow,multiDep(L)) is leftFold(updateFlw,Follow,L)
   } in updateFlw(Flw,Deps);
