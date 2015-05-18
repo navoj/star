@@ -23,7 +23,7 @@ trialLazy is package{
  	
  	#lazyTrial is valof{
  	  (Others,LVars) is collectLazyVars(B, (list of [],dictionary of {}));
- 	  var subFun is fn (V,Th) => semi(macroSubstitute(V,dictionary of {},LVars),Th);
+ 	  var subFun is (V,Th) => semi(macroSubstitute(V,dictionary of {},LVars),Th);
  	  
  	  trVars is rightFold(subFun,<|{}|>, LVars);
  	  nBody is subFun(B,trVars);

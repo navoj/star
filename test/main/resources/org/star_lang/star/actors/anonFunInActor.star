@@ -22,7 +22,7 @@ anonFunInActor is package {
  }
  main() do {
    c is 3;
-   x is query AA's fn1 with fn1(1, 1, fn(a,b) => a+b*c);
+   x is query AA's fn1 with fn1(1, 1, (a,b) => a+b*c);
    request AA's act1 to act1("hello", let{ proc(cx) do logMsg(info, cx)} in proc);
    assert x = 4;
  }

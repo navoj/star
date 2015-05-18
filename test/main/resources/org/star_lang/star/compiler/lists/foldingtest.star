@@ -25,9 +25,9 @@ foldingtest is package{
     
     assert rightFold((+),0,L) = leftFold((+),0,L)
     
-    logMsg(info,"fold T= $(leftFold(fn(A,(K,V))=>(A++V),"",T))");
+    logMsg(info,"fold T= $(leftFold((A,(K,V))=>(A++V),"",T))");
     
-    assert leftFold(fn(A,(K,V))=>(A++V),"",T)="onetwothree";
+    assert leftFold((A,(K,V))=>(A++V),"",T)="onetwothree";
     
     logMsg(info,"sub = $(leftFold((-),0,L))");
     logMsg(info,"sub = $(rightFold((-),0,L))");

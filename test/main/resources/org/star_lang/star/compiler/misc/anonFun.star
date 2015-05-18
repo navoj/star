@@ -17,14 +17,14 @@
  */
 anonFun is package {
   foo() is let {
-    bar is (function() is 3);
+    bar is () => 3;
   } in bar;
   
   ffoo() is let{
     bar() is 3;
   } in bar;
   
-  inc(X) is fn Y => X+Y;
+  inc(X) is (Y) => X+Y;
  
   main() do {
     logMsg(info,"foo is $(foo()())");

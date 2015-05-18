@@ -14,7 +14,7 @@ worksheet{
     qLoop(Q) default is wait for postM(Q) or pollM(Q)
  
     postM(Q) is 
-      wrapRv(recvRv(postMsgChnl), fn A => qLoop([Q..,A]))
+      wrapRv(recvRv(postMsgChnl), (A) => qLoop([Q..,A]))
 
     pollM([A,..Q]) is let{
       reply(R) is valof{

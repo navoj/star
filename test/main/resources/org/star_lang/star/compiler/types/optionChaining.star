@@ -25,7 +25,7 @@ optionChaining is package{
     P is person{
       name = "fred"
       address = some(A)
-      call = some(fn ()=>"fred")
+      call = some(()=>"fred")
     }
     
     logMsg(info,display(P))

@@ -47,10 +47,13 @@ _optionPartial(some(X),F) is F(X)
 _optionDeflt(none,D) is D()
 _optionDeflt(some(X),_) is X
 
+_optionSelect(none,_,D) is D()
+_optionSelect(some(X),A,_) is A(X)
+
 # ?E has value ?P :: condition :- E::expression :& P::pattern;
 
 #?R ?. ?F ==> (R has value #$R ? some(#$R.F) | none)
-#?R or else ?E ==> _optionDeflt(R,fn()=>E)
+#?R or else ?E ==> _optionDeflt(R, ()=>E)
 
 # ?O. #(?M)#[?K] has value ?V ==> _index(O.M,K) matches some(V);
 # #(?M)#[?K] has value ?V ==> _index(M,K) matches some(V);

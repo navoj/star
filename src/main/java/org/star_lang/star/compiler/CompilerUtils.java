@@ -1526,7 +1526,8 @@ public class CompilerUtils
   public static boolean isLambdaExp(IAbstract term)
   {
     return Abstract.isBinary(term, StandardNames.FUN_ARROW)
-        && Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.LAMBDA);
+        && (Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.LAMBDA) || Abstract.isTupleTerm(Abstract
+            .binaryLhs(term)));
   }
 
   public static IAbstract lambdaExp(IAbstract term)
@@ -1540,7 +1541,12 @@ public class CompilerUtils
   {
     assert isLambdaExp(term);
 
-    return Abstract.unaryArg(Abstract.binaryLhs(term));
+    IAbstract lhs = Abstract.binaryLhs(term);
+
+    if (Abstract.isTupleTerm(lhs))
+      return lhs;
+    else
+      return Abstract.unaryArg(lhs);
   }
 
   public static int lambdaArity(IAbstract term)

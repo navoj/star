@@ -322,7 +322,7 @@ private import macrosupport;
 
 -- Lambdas
 # function#@?Arg is ?Exp :: expression :- Arg :* pattern :& ?Exp :: expression;
-# fn ?Arg => ?Exp :: expression :- Arg:*pattern :& Exp::expression;
+# ?Arg => ?Exp :: expression :- Arg:*pattern :& Exp::expression;
 
 # #(procedure#@?Arg)# { ?Act } :: expression :- Arg :* pattern :& Act:: action;
 # #(?P#@?Arg)# { ?Act } :: expression :- Arg :* pattern :& Act:: action :& error("expecting `procedure', not `$P'");

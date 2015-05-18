@@ -18,8 +18,8 @@
 mapFoldTest is package{
   var H is dictionary of { "A"->1; "B"->2; "C"->3; "D"->4 };
   
-  L is leftFold(fn(A,(K,V))=>(A+V),0,H);
-  R is rightFold(fn((K,V),A)=>(A*V),1,H);
+  L is leftFold((A,(K,V))=>(A+V),0,H);
+  R is rightFold(((K,V),A)=>(A*V),1,H);
   
   main() do {
     assert L=10;

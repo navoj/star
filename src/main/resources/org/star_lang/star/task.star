@@ -67,13 +67,13 @@ taskBind(_task(b), f) is let {
 
 taskWaitExt has type ((action(task of %a)) => taskWaitResult of %a) => task of %a
 taskWaitExt(start) is
-  _task(fn () => TaskWait(start, id))
+  _task(() => TaskWait(start, id))
 
 -- Returns an asynchronous task, that, when executed, will call the given 'start' action.
 -- The passed 'wakener' action should then be called when the result of the asynchronous
 -- task is available or has failed - possibly by some other thread.
 taskWait has type (action(action(task of %a))) => task of %a
-taskWait(start) is taskWaitExt(fn wakeup => valof { start(wakeup); valis TaskSleep; })
+taskWait(start) is taskWaitExt((wakeup) => valof { start(wakeup); valis TaskSleep; })
   
 -- implement the computation contract
 implementation (computation) over task is {
@@ -282,7 +282,7 @@ backgroundFF has type (task of %a) => task of task of %a
 backgroundFF(t) is taskLift((function () is _backgroundOn(t)))
 
 backgroundF has type (task of %a) => task of task of %a
-backgroundF(t) is taskBind(backgroundFF(t), fn r => taskReturn(r))
+backgroundF(t) is taskBind(backgroundFF(t), (r) => taskReturn(r))
 
 -- Synchronous evaluation, but on the thread pool; the current thread will only block once
 executeTaskOnThreadPool(op,EF) is

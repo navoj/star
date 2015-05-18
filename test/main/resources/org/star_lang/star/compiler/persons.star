@@ -37,7 +37,7 @@ persons is package{
 	
   main() do
   {
-	logMsg(info,sho(fn() => john));
+	logMsg(info,sho(() => john));
 	disp(john);
 	assert john.name="john";
   }

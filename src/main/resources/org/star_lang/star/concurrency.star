@@ -85,7 +85,6 @@ implementation speech over concActor of %t determines (%t,task) is {
   _notify(conAct0r(Notifyfun,_),Np) is await(Notifyfun(Np));
 };
 
--- #prefix("concurrent actor",1999,2000); -- this is an impossible operator. Defined for the token.
 #token("concurrent actor");
 
 #concurrent actor{?Defs} :: expression :- Defs ;* statement;
@@ -155,6 +154,6 @@ actorHead(Defs) is let{
 #select{?R} ==> wait for chooseRv(list of {ruleConvert(R)}) ## {
   #when ?C on ?Evt do ?Action ==> guardRv(task{ if C then valis wrapRv(Evt,(procedure(_) do Action)) else valis neverRv });
   #on ?Evt do ?Action ==> wrapRv(Evt,(procedure(_) do Action));
-  #when ?C on ?Evt is ?Exp ==> guardRv(task{ if C then valis wrapRv(Evt,fn _ => Exp) else valis neverRv});
-  #on ?Evt is ?Exp ==> wrapRv(Evt,fn _ => Exp); 
+  #when ?C on ?Evt is ?Exp ==> guardRv(task{ if C then valis wrapRv(Evt,(_) => Exp) else valis neverRv});
+  #on ?Evt is ?Exp ==> wrapRv(Evt,(_) => Exp); 
 };

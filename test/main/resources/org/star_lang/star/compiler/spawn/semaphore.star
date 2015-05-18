@@ -27,9 +27,9 @@ semaphore is package{
     { ignore background semLoop(Count); }
     
     private
-    releaseR(x) is choose wrap incoming releaseCh in fn _ => semLoop(x+1);
+    releaseR(x) is choose wrap incoming releaseCh in (_) => semLoop(x+1);
     private
-    grabR(x) is choose wrap incoming grabCh in fn _ => semLoop(x-1);
+    grabR(x) is choose wrap incoming grabCh in (_) => semLoop(x-1);
    
     private 
     semLoop(0) is wait for releaseR(0);

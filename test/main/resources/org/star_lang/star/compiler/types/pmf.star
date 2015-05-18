@@ -14,7 +14,7 @@ worksheet{
   type discrete of (k,v) where arithmetic over v is discrete{
     data has type dictionary of (k,v);
     total has type v;
-    total default is project1(leftFold1(fn((_,A),(K,V))=>(K,A+V),data));
+    total default is project1(leftFold1(((_,A),(K,V))=>(K,A+V),data));
   }
   
   private project1((_,X)) is X;

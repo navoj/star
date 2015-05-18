@@ -149,17 +149,13 @@ public class ContractConstraint implements ITypeConstraint
           if (fallbackType == null)
             throw new TypeConstraintException(FixedList.create(DisplayType.showContract(contract),
                 " not known to be implemented"));
-          else {
-            if (TypeUtils.isOverloadedType(fallbackType)) {
-              IType instType = TypeUtils.refreshOverloaded(fallbackType);
-              Subsume.subsume(TypeUtils.getOverloadedType(instType), contract, loc, dict);
-            }
+          else if (TypeUtils.isOverloadedType(fallbackType)) {
+            IType instType = TypeUtils.refreshOverloaded(fallbackType);
+            Subsume.subsume(TypeUtils.getOverloadedType(instType), contract, loc, dict);
           }
-        } else {
-          if (TypeUtils.isOverloadedType(instanceType)) {
-            IType instType = TypeUtils.refreshOverloaded(instanceType);
-            Subsume.subsume(TypeUtils.getOverloadedType(instType), contract, loc, dict, false);
-          }
+        } else if (TypeUtils.isOverloadedType(instanceType)) {
+          IType instType = TypeUtils.refreshOverloaded(instanceType);
+          Subsume.subsume(TypeUtils.getOverloadedType(instType), contract, loc, dict, false);
         }
       }
     }
