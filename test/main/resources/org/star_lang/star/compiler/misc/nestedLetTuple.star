@@ -17,15 +17,15 @@
  */
 nestedLetTuple is package{
   foo() is let{
-    (a, (b, c)) is (1, (2, 3));
+    def (a, (b, c)) is (1, (2, 3));
   } in (a,b,c);
   
   bar(X) is let{
-    (a, (b, c)) is X;
+    def (a, (b, c)) is X;
   } in (a,b,c);
   
   foo2 is let {
-    var ((a,b), c) is ((1,2),3);
+    def ((a,b), c) is ((1,2),3);
   } in 0;
   
   main() do {

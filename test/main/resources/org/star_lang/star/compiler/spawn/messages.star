@@ -26,10 +26,10 @@ messages is package{
   box() is mbox{
     private var Q := queue of {};
     
-    private _ is background msgLoop();
+    { ignore background msgLoop(); }
    
-    private grabMsgChnl is channel();
-    private postMsgChnl is channel();
+    private def grabMsgChnl is channel();
+    private def postMsgChnl is channel();
    
     post(M) is send(postMsgChnl,M);
     grab() is let{

@@ -21,21 +21,21 @@ actorupdate is package {
     b has type list of string;
   };
 
-  main() do {
-    X is let {
+  prc main() do {
+    def X is let {
       type FooActor is alias of actor of {
         Y has type occurrence of integer;
         f has type ref list of Foo;
       }
       aoeu has type FooActor;
 
-      aoeu is actor {
-        var f := list of {
-	      foo{b is list of {"fo";"bar"};};
-	      foo{b is list of {"foo";"baz"};};
-	    };
+      def aoeu is actor {
+        var f := list of [
+	      foo{def b is list of ["fo","bar"]},
+	      foo{def b is list of ["foo","baz"]}
+	    ];
         on elt on Y do {
-	      update (x matching foo{b=B} where "foo" in B) in f with x substitute{b=list of {}};
+	      update (x matching foo{b=B} where "foo" in B) in f with x substitute{b=list of []};
 	      logMsg(info, "$f");
 	    };
       }

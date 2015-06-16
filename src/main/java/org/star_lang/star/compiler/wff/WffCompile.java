@@ -250,7 +250,7 @@ public class WffCompile
             errors.reportError("missing variable name", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
-              return new WffTermPtn(dict.get(var), identifierOf(category));
+              return new WffSequencePtn(dict.get(var), StandardNames.TERM, identifierOf(category));
             } else
               errors.reportError("validation variable " + var + " not defined in lhs", ptn.getLoc());
           }
@@ -261,7 +261,33 @@ public class WffCompile
             errors.reportError("missing validation variable name", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
-              return new WffTermPtn(dict.get(var), identifierOf(category));
+              return new WffSequencePtn(dict.get(var), StandardNames.TERM, identifierOf(category));
+            } else
+              errors.reportError("validation variable " + var + " not defined in lhs", ptn.getLoc());
+          }
+        } else
+          errors.reportError("lhs must be a variable spec", bdy.getLoc());
+      } else if (Abstract.isBinary(body, StandardNames.WFF_RULES)) {
+        IAbstract category = Abstract.getArg(body, 1);
+        IAbstract ptn = Abstract.getArg(body, 0);
+        if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
+          String var = identifierOf(((Apply) ptn).getArg(0));
+          if (var == null)
+            errors.reportError("missing variable name", bdy.getLoc());
+          else {
+            if (dict.containsKey(var)) {
+              return new WffSequencePtn(dict.get(var), StandardNames.PIPE, identifierOf(category));
+            } else
+              errors.reportError("validation variable " + var + " not defined in lhs", ptn.getLoc());
+          }
+          return new WffPtnNull();
+        } else if (ptn instanceof Name) {
+          String var = identifierOf(ptn);
+          if (var == null)
+            errors.reportError("missing validation variable name", bdy.getLoc());
+          else {
+            if (dict.containsKey(var)) {
+              return new WffSequencePtn(dict.get(var), StandardNames.PIPE, identifierOf(category));
             } else
               errors.reportError("validation variable " + var + " not defined in lhs", ptn.getLoc());
           }

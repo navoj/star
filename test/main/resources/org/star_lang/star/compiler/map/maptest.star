@@ -19,7 +19,7 @@ maptest is package{
 
   var H := dictionary of { "A"->1; "B"->2; "C"->3; "D"->4 };
   
-  #mget(?H,?P,?D) ==> (__hashGet(H,P) matches some(V) ? V |  D);
+  #mget(?H,?P,?D) ==> (__hashGet(H,P) matches some(V) ? V :  D);
 
   main has type action();
   main() do
@@ -57,7 +57,7 @@ maptest is package{
     else
       logMsg(info,"$H does not contain A");
       
-    if H["A"] matches _ then
+    if H["A"] has value _ then
       logMsg(info,"$H contains A")
     else
       logMsg(info,"$H does not contain A");

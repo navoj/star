@@ -90,9 +90,30 @@ final class AstFreeFinder extends DefaultAbstractVisitor
       excludes.push(ptnExclusions);
       CompilerUtils.patternRuleHead(app).accept(this);
       excludes.pop();
+    } else if (CompilerUtils.isFunctionStatement(app))
+      CompilerUtils.functionRules(app).accept(this);
+    else if (CompilerUtils.isProcedureStatement(app))
+      CompilerUtils.procedureRules(app).accept(this);
+    else if (CompilerUtils.isPatternStatement(app))
+      CompilerUtils.patternRules(app).accept(this);
+    else if (Abstract.isBinary(app, StandardNames.PIPE)) {
+      Abstract.binaryLhs(app).accept(this);
+      Abstract.binaryRhs(app).accept(this);
+    } else if (CompilerUtils.isIsStatement(app)) {
+      Set<Name> ptnExclusions = exclude(CompilerUtils.isStmtPattern(app));
+      excludes.push(ptnExclusions);
+      CompilerUtils.isStmtValue(app).accept(this);
+      excludes.pop();
+    } else if (CompilerUtils.isVarDeclaration(app)) {
+      Set<Name> ptnExclusions = exclude(CompilerUtils.varDeclarationPattern(app));
+      excludes.push(ptnExclusions);
+      CompilerUtils.varDeclarationExpression(app).accept(this);
+      excludes.pop();
     } else if (CompilerUtils.isLetTerm(app)) {
       Set<Name> letExcludes = excludeDefs(CompilerUtils.letDefs(app));
       excludes.push(letExcludes);
+      for (IAbstract stmt : CompilerUtils.letDefs(app))
+        stmt.accept(this);
       CompilerUtils.letBound(app).accept(this);
       excludes.pop();
     } else {
@@ -116,23 +137,25 @@ final class AstFreeFinder extends DefaultAbstractVisitor
     return exclusions;
   }
 
-  private Set<Name> excludeDefs(IAbstract term)
+  private Set<Name> excludeDefs(Iterable<IAbstract> stmts)
   {
     Set<Name> exclusions = new HashSet<Name>(excludes.peek());
     AstFreeFinder finder = new AstFreeFinder(exclusions, found);
 
-    for (IAbstract stmt : CompilerUtils.unWrap(term)) {
-      if (CompilerUtils.isEquation(stmt)) {
+    for (IAbstract stmt : stmts) {
+      if (CompilerUtils.isFunctionStatement(stmt)) {
         exclusions.add(CompilerUtils.functionName(stmt));
-        CompilerUtils.equationLhs(stmt).accept(finder);
-      } else if (CompilerUtils.isActionRule(stmt)) {
+      } else if (CompilerUtils.isProcedureStatement(stmt)) {
         exclusions.add(CompilerUtils.procedureName(stmt));
-        CompilerUtils.actionRuleLhs(stmt).accept(finder);
-      } else if (CompilerUtils.isPatternRule(stmt)) {
+      } else if (CompilerUtils.isPatternStatement(stmt)) {
         exclusions.add(CompilerUtils.patternName(stmt));
-        CompilerUtils.patternRuleBody(stmt).accept(finder);
+      } else if (CompilerUtils.isIsStatement(stmt)) {
+        CompilerUtils.isStmtPattern(stmt).accept(finder);
+      } else if (CompilerUtils.isVarDeclaration(stmt)) {
+        CompilerUtils.varDeclarationPattern(stmt).accept(finder);
       }
     }
+
     return exclusions;
   }
 }

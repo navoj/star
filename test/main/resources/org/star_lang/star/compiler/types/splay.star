@@ -35,11 +35,11 @@ splay is package{
 	  E is (t,E);
 	  T(b1,y,b2) is 
 	    Element.le(y,pivot) ? valof{
-		var (small,big) is partition(pivot,b2);
+		def (small,big) is partition(pivot,b2);
 		valis (T(T(a,x,b1),y,small),big)
 	      } | 
 	      valof{
-		var (small,big) is partition(pivot,b1);
+		def (small,big) is partition(pivot,b1);
 		valis (T(a,x,small),T(big,y,b2));
 	      }
 	})
@@ -48,22 +48,22 @@ splay is package{
 	  T(a1,y,a2) is 
 	    Element.le(y,pivot) ?
 	      valof{
-		var (small,big) is partition(pivot,a2);
+		def (small,big) is partition(pivot,a2);
 		valis (T(a1,y,small),T(big,x,b))
 	      } |
 	      valof{
-		var (small,big) is partition(pivot,a1);
+		def (small,big) is partition(pivot,a1);
 		valis (small,T(big,y,T(a2,x,b)));
 	      }
 	});
     insertQ(x,t) is valof{
-      var (a,b) is partition(x,t);
+      def (a,b) is partition(x,t);
       valis T(a,x,b);
     };
 
     mergeQ(E,t) is t;
     mergeQ(T(a,x,b),t) is valof{
-      var (ta,tb) is partition(x,t);
+      def (ta,tb) is partition(x,t);
       valis T(mergeQ(ta,a),x,mergeQ(tb,b));
     };
 

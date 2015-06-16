@@ -22,14 +22,14 @@ private import strings;
 
 type fiber is _fiber {}
 
-new_fiber() is _fiber {}
+fun new_fiber() is _fiber {}
 
-with_current_fiber(fib, body) is body()
-current_fiber() is new_fiber()
-_maybe_do_suspend(fib, resumet) is false
+fun with_current_fiber(fib, body) is body()
+fun current_fiber() is new_fiber()
+fun _maybe_do_suspend(fib, resumet) is false
 
-suspend(fib) do nothing
-resume(fib) do nothing
+prc suspend(fib) do nothing
+prc resume(fib) do nothing
 
 /* under heavy construction...*/
 
@@ -60,36 +60,36 @@ type fiber is _fiber {
 }
  
 _current_custodian has type (fiber) => custodian 
-_current_custodian(fib) is fib.current_custodian
+fun _current_custodian(fib) is fib.current_custodian
 
-private __set_current_custodian(fib, cust) do {
+private prc __set_current_custodian(fib, cust) do {
   fib.current_custodian := cust;
 }
 
 _with_new_custodian has type (fiber, (custodian) => %a) => %a
-_with_new_custodian(fib, f) is valof {
-  parent is _current_custodian(fib);
-  n is _new_custodian();
+fun _with_new_custodian(fib, f) is valof {
+  def parent is _current_custodian(fib);
+  def n is _new_custodian();
   add_subcustodian(parent, n);
   __set_current_custodian(fib, n);
-  res is f(n);
+  def res is f(n);
   -- try/finally?
   __set_current_custodian(fib, parent);
   valis res;
 }
 
-with_new_custodian(f) is _with_new_custodian(current_fiber(), f)
+fun with_new_custodian(f) is _with_new_custodian(current_fiber(), f)
 
-_new_fiber(parent) is
+fun _new_fiber(parent) is
   let {
-    controller is _current_custodian(parent);
-    res is _resource {
+    def controller is _current_custodian(parent);
+    def res is _resource {
       state = atomic(ResTransient);
       controllers := _mutable_list { value := cons of { controller } };
     };
   } in valof {
-    token is add_resource(controller, res);
-    fib is _fiber {
+    def token is add_resource(controller, res);
+    def fib is _fiber {
       resource = res;
       token = token;
       keep_alive := cons of {};
@@ -102,16 +102,16 @@ _new_fiber(parent) is
   }
 
 -- TODO new_fiber using the current fiber as default parent
-new_fiber() is _new_fiber(current_fiber())
+fun new_fiber() is _new_fiber(current_fiber())
 
 -- TODO unique object
-__main_fiber is let {
-  terminate is (procedure () do nothing); -- terminate program?
-  res is _resource {
+def __main_fiber is let {
+  def terminate is (procedure () do nothing); -- terminate program?
+  def res is _resource {
     state = atomic(ResActive(terminate));
     controllers := _mutable_list { value := cons of {_main_custodian} };
   };
-  fib is _fiber {
+  def fib is _fiber {
     resource = res;
     token = add_resource(_main_custodian, res);
     keep_alive := cons of {};
@@ -119,29 +119,29 @@ __main_fiber is let {
   }
 } in fib
 
-_current_fiber is _cell(__main_fiber) -- TODO thread-local, built-in
+def _current_fiber is _cell(__main_fiber) -- TODO thread-local, built-in
 
-current_fiber() is _current_fiber
+fun current_fiber() is _current_fiber
 
-private __set_current_fiber(fib) do _current_fiber := fib; -- TODO
-private __unset_current_fiber() do nothing; -- TODO?
+private prc __set_current_fiber(fib) do _current_fiber := fib; -- TODO
+private prc __unset_current_fiber() do nothing; -- TODO?
 
 dynamic_wind has type (action(), () => %a, action()) => %a
-dynamic_wind(entera, body, exita) is valof {
+fun dynamic_wind(entera, body, exita) is valof {
   entera();
-  r is body();
+  def r is body();
   exita();
   valis r;
 }
 
-with_current_fiber(fib, f) is dynamic_wind((procedure () do __set_current_fiber(fib)), f, __unset_current_fiber)
+fun with_current_fiber(fib, f) is dynamic_wind((procedure () do __set_current_fiber(fib)), f, __unset_current_fiber)
 
 _maybe_do_suspend has type (fiber, action()) => boolean
 -- atomic is used instead of a volatile declaration, which does not exist
-_maybe_do_suspend(fib, resume_it) is _my_atomic_test_n_set(fib.resource.state, ResDeactivating, ResInactive(resume_it))
+fun _maybe_do_suspend(fib, resume_it) is _my_atomic_test_n_set(fib.resource.state, ResDeactivating, ResInactive(resume_it))
 
 _keep_alive_with_me has type action(fiber, fiber) -- or connect with resource?
-_keep_alive_with_me(curr, other) do {
+prc _keep_alive_with_me(curr, other) do {
   -- remember for the future, to resume that whenever this is resumed
   curr.keep_alive := _cons(other, current_fiber().keep_alive);
 
@@ -152,10 +152,10 @@ _keep_alive_with_me(curr, other) do {
   _activate_if_inactive(other.resource);
 }
 
-keep_alive_with_me(other) is _keep_alive_with_me(current_fiber(), other)
+fun keep_alive_with_me(other) is _keep_alive_with_me(current_fiber(), other)
 
 suspend has type action(fiber)
-suspend(fib) do {
+prc suspend(fib) do {
   -- TODO: only if this is the only controller (and thread has not been linked with another one?)
   _remove_controller_and_deactivate(fib.resource, _current_custodian(fib));
   -- block until suspended?
@@ -163,7 +163,7 @@ suspend(fib) do {
 }
 
 resume has type action(fiber)
-resume(fib) do {
+prc resume(fib) do {
   -- TODO: resume on which custodian? update controllers etc...?
   _activate_if_inactive(fib.resource);
 }

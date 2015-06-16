@@ -16,27 +16,27 @@
  *
  */
 naive is package{
-  append(nil,X) is X;
-  append(cons(H,T),X) is cons(H,append(T,X));
+  fun append(nil,X) is X
+   |  append(cons(H,T),X) is cons(H,append(T,X))
   
-  reverse(nil) is nil;
-  reverse(cons(H,T)) is append(reverse(T),cons(H,nil));
+  fun reverse(nil) is nil
+   |  reverse(cons(H,T)) is append(reverse(T),cons(H,nil));
   
-  iot(K,K) is cons(K,nil);
-  iot(M,X) is cons(M,iot(M+1,X));
+  fun iot(K,K) is cons(K,nil)
+   |  iot(M,X) is cons(M,iot(M+1,X));
   
-  bench(Count,Run) is valof{
-    LL is iot(1,Count);
-    St is nanos();
+  fun bench(Count,Run) is valof{
+    def LL is iot(1,Count);
+    def St is nanos();
     for Ix in iota(1,Run,1) do{
-      RR is reverse(LL);
+      def RR is reverse(LL);
     }
-    Tm is (nanos()-St)/Run as long;
-    lips is 500000000L*((Count+Count*Count)as long)/Tm;
+    def Tm is (nanos()-St)/Run as long;
+    def lips is 500000000L*((Count+Count*Count)as long)/Tm;
     valis lips;
   }
   
-  main() do {
+  prc main() do {
     for C in range(30,300,10) do
       logMsg(info,"bench of $C is $(bench(C,1000))");
   }

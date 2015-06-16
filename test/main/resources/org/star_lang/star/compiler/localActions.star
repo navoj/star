@@ -20,8 +20,8 @@ localActions is package{
     logMsg(info,hello());
   };
   
-  hello() is "hello world";
+  fun hello() is "hello world";
   
-  main() do
+  prc main() do
     logMsg(info,"again");
 }

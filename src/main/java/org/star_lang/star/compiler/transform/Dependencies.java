@@ -318,10 +318,23 @@ public class Dependencies
   {
     if (term != null) {
       for (IAbstract el : CompilerUtils.unWrap(term)) {
-        if (Abstract.isBinary(el, StandardNames.EQUAL) && CompilerUtils.isIdentifier(Abstract.binaryLhs(term)))
-          exclusion.push(Abstract.getId(Abstract.binaryLhs(el)));
-        else if (CompilerUtils.isProgramStmt(el))
-          addPatternToExclusions(CompilerUtils.programStmtPattern(el), exclusion);
+        if (CompilerUtils.isEquals(el)) {
+          IAbstract lhs = CompilerUtils.equalityLhs(el);
+          if (CompilerUtils.isIdentifier(lhs))
+            exclusion.push(Abstract.getId(lhs));
+        } else if (CompilerUtils.isFunctionStatement(el)) {
+          for (IAbstract eqn : CompilerUtils.unWrap(CompilerUtils.functionRules(el), StandardNames.PIPE))
+            addPatternToExclusions(CompilerUtils.equationLhs(eqn), exclusion);
+        } else if (CompilerUtils.isProcedureStatement(el)) {
+          for (IAbstract rle : CompilerUtils.unWrap(CompilerUtils.procedureRules(el), StandardNames.PIPE))
+            addPatternToExclusions(CompilerUtils.actionRuleLhs(rle), exclusion);
+        } else if (CompilerUtils.isPatternStatement(el)) {
+          for (IAbstract rle : CompilerUtils.unWrap(CompilerUtils.patternRules(el), StandardNames.PIPE))
+            addPatternToExclusions(CompilerUtils.patternName(rle), exclusion);
+        } else if (CompilerUtils.isIsStatement(el))
+          addPatternToExclusions(CompilerUtils.isStmtPattern(el), exclusion);
+        else if (CompilerUtils.isVarDeclaration(el))
+          addPatternToExclusions(CompilerUtils.varDeclarationPattern(el), exclusion);
       }
     }
   }
@@ -394,7 +407,7 @@ public class Dependencies
     return null;
   }
 
-  public void thDepend(List<IAbstract> theta)
+  private void thDepend(List<IAbstract> theta)
   {
     for (IAbstract stmt : theta) {
       IAbstract term = stmt;
@@ -449,90 +462,19 @@ public class Dependencies
 
         if (visibility == Visibility.priVate)
           markPrivate(loc, Abstract.getId(lhs), DefinitionKind.variable);
-      } else if (Abstract.isBinary(term, StandardNames.IS)) {
-        IAbstract lhs = Abstract.binaryLhs(term);
-
-        if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-          lhs = Abstract.unaryArg(lhs);
-
-        if (Abstract.isBinary(lhs, StandardNames.WHERE))
-          lhs = Abstract.binaryLhs(lhs);
-
-        lhs = Abstract.deParen(lhs);
-
-        if (lhs instanceof Name) {
-          String name = ((Name) lhs).getId();
-          addDefinition(loc, name, term, visibility(name, visibility, DefinitionKind.variable), DefinitionKind.variable);
-        } else if (Abstract.isTupleTerm(lhs)) {
-          List<String> defines = findDefinedNames(lhs, new ArrayList<String>());
-
-          Definition def = new Definition(lhs.getLoc(), term, defines.toArray(new String[defines.size()]),
-              DefinitionKind.variable, visibility(defines, visibility, DefinitionKind.variable));
-          definitions.add(def);
-        } else if (lhs instanceof Apply) { // Must be a function definition
-          IAbstract fun = Abstract.deParen(((Apply) lhs).getOperator());
-
-          if (fun instanceof Name) {
-            String name = ((Name) fun).getId();
-            addDefinition(loc, name, term, visibility(name, visibility, DefinitionKind.variable),
-                DefinitionKind.variable);
-          } else
-            errors.reportError("invalid form of function", term.getLoc());
-        } else
-          errors.reportError("invalid form of definition statement", term.getLoc());
       } else if (CompilerUtils.isVarDeclaration(term))
         extractDefines(CompilerUtils.varPtnVar(CompilerUtils.varDeclarationPattern(term)), term, visibility);
       else if (CompilerUtils.isIsStatement(term))
         extractDefines(CompilerUtils.isStmtPattern(term), term, visibility);
-      else if (Abstract.isUnary(term, StandardNames.VAR)
-          && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.ASSIGN)) {
-        IAbstract varDec = Abstract.getArg(term, 0);
-        IAbstract var = Abstract.getArg(varDec, 0);
-
-        if (var instanceof Name)
-          makeDefinition(varDec.getLoc(), Abstract.getId(var), term, visibility, DefinitionKind.variable);
-        else
-          errors.reportError("invalid form of variable declaration", term.getLoc());
-      } else if (CompilerUtils.isOpen(term)) {
+      else if (CompilerUtils.isFunctionStatement(term))
+        addDefinition(loc, Abstract.getId(CompilerUtils.functionName(term)), term, visibility, DefinitionKind.variable);
+      else if (CompilerUtils.isProcedureStatement(term))
+        addDefinition(loc, Abstract.getId(CompilerUtils.procedureName(term)), term, visibility, DefinitionKind.variable);
+      else if (CompilerUtils.isPatternStatement(term))
+        addDefinition(loc, Abstract.getId(CompilerUtils.patternName(term)), term, visibility, DefinitionKind.variable);
+      else if (CompilerUtils.isOpen(term))
         definitions.add(new Definition(loc, term, new String[] {}, DefinitionKind.imports, visibility));
-      } else if (CompilerUtils.isBraceTerm(term)) { // Procedure
-        IAbstract lhs = Abstract.deParen(CompilerUtils.braceLabel(term));
-
-        if (lhs instanceof Apply) { // Must be a procedure definition
-          Apply fPtn = (Apply) lhs;
-          IAbstract fun = fPtn.getOperator();
-
-          if (fun instanceof Name)
-            makeDefinition(loc, ((Name) fun).getId(), term, visibility, DefinitionKind.variable);
-          else
-            errors.reportError("invalid form of procedure", loc);
-        } else if (lhs instanceof Name)
-          addDefinition(loc, ((Name) lhs).getId(), term, visibility, DefinitionKind.variable);
-        else
-          errors.reportError("invalid form of definition statement", term.getLoc());
-      } else if (Abstract.isBinary(term, StandardNames.DO)) {
-        IAbstract lhs = Abstract.binaryLhs(term);
-
-        if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-          lhs = Abstract.unaryArg(lhs);
-
-        if (Abstract.isBinary(lhs, StandardNames.WHERE))
-          lhs = Abstract.binaryLhs(lhs);
-
-        if (lhs instanceof Apply) { // Must be a procedure definition
-          IAbstract prc = ((Apply) lhs).getOperator();
-
-          if (prc instanceof Name) {
-            String name = ((Name) prc).getId();
-            if (StandardNames.isKeyword(name))
-              errors.reportError("keyword " + name + " cannot be used as the name of a procedure", prc.getLoc());
-
-            addDefinition(loc, name, term, visibility, DefinitionKind.variable);
-          } else
-            errors.reportError("invalid form of action rule", term.getLoc());
-        } else
-          errors.reportError("invalid form of procedure statement", term.getLoc());
-      } else if (CompilerUtils.isTypeAlias(term)) {
+      else if (CompilerUtils.isTypeAlias(term)) {
         IAbstract definedType = CompilerUtils.typeAliasType(term);
         String tpName = CompilerUtils.typeLabel(definedType);
 
@@ -560,18 +502,6 @@ public class Dependencies
       } else if (CompilerUtils.isTypeWitness(term)) {
         String tpName = CompilerUtils.typeLabel(CompilerUtils.witnessedType(term));
         makeDefinition(loc, tpName, term, visibility, DefinitionKind.type);
-      } else if (CompilerUtils.isPatternRule(term)) {
-        IAbstract lhs = Abstract.deParen(CompilerUtils.patternRuleHead(term));
-
-        if (lhs instanceof Apply) { // Must be a function definition
-          IAbstract fun = Abstract.deParen(((Apply) lhs).getOperator());
-
-          if (fun instanceof Name)
-            addDefinition(loc, ((Name) fun).getId(), term, visibility, DefinitionKind.variable);
-          else
-            errors.reportError("invalid form of pattern abstraction", term.getLoc());
-        } else
-          errors.reportError("invalid form of definition statement", term.getLoc());
       } else if (CompilerUtils.isEmptyBlock(term))
         ;
       else if (CompilerUtils.isBlockTerm(term))
@@ -653,7 +583,7 @@ public class Dependencies
       defs = new Definition(loc, stmt, name, kind, visibility);
       definitions.add(defs);
     } else
-      defs.addRule(stmt);
+      errors.reportError(StringUtils.msg(name, " already defined at ", defs.getLoc()), loc);
   }
 
   private void extractDefines(IAbstract lhs, IAbstract term, Visibility visibility)

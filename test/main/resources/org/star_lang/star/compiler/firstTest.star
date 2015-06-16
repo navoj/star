@@ -17,10 +17,10 @@
  */
 firstTest is package{
   second has type ((%s,%t,%u)) => %t;
-  second((_,X,_)) is X;
+  fun second((_,X,_)) is X;
   
   main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"$(second((1,2,3)))");
   }
 }

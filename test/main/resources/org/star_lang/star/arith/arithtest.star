@@ -16,13 +16,13 @@
  *
  */
 arithtest is package{
-  square has type (%t) => %t where arithmetic over %t and comparable over %t;
-  square(X) is times(X,X);
+  square has type for all t such that (t) => t where arithmetic over t and comparable over t
+  fun square(X) is times(X,X)
   
-  times(X,Y) where X>=Y is X*Y;
+  fun times(X,Y) where X>=Y is X*Y
   
-  main has type action();
-  main() do {
+  main has type action()
+  prc main() do {
     logMsg(info,"square of 4 is $(square(4))");
     logMsg(info,"times of 4 is $(times(4,4))");
     
@@ -38,4 +38,4 @@ arithtest is package{
     
     assert 9.0**0.5=3.0;
   }
-};
+}

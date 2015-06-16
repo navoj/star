@@ -22,28 +22,28 @@ private import cons;
 private import signatures;
 
 priorityFun has type for all elem such that (comparison of elem)=>priorityQ of elem;
-priorityFun(C) is priorityQ{
+fun priorityFun(C) is priorityQ{
   type splay of elem is eQ or Nd(splay of elem, elem, splay of elem);
   
-  emptyQ is eQ;
-  isEmptyQ(eQ) is true;
-  isEmptyQ(_) default is false;
+  def emptyQ is eQ;
+  fun isEmptyQ(eQ) is true
+   |  isEmptyQ(_) default is false;
   
   private
-  partition(pivot,eQ) is (eQ,eQ);
-  partition(pivot,t matching Nd(a,x,b)) is
-  	C.le(x,pivot) ?
-  	  case b in {
-  	    eQ is (t,eQ);
-  	    Nd(b1,y,b2) is valof{
-  	      if C.le(y,pivot) then {
-  	        var (small, big) is partition(pivot,b2);
-  	        valis (Nd(Nd(a,x,b),y,small),big)
-  	      } else {
-  	        var (small,big) is partition(pivot,b1);
-  	        valis (Nd(a,x,small),Nd(big,y,b2));
+  fun partition(pivot,eQ) is (eQ,eQ)
+   |  partition(pivot,t matching Nd(a,x,b)) is
+  	    C.le(x,pivot) ?
+  	      case b in {
+  	        eQ is (t,eQ);
+  	        Nd(b1,y,b2) is valof{
+  	          if C.le(y,pivot) then {
+  	            def (small, big) is partition(pivot,b2);
+  	            valis (Nd(Nd(a,x,b),y,small),big)
+  	          } else {
+  	            def (small,big) is partition(pivot,b1);
+  	            valis (Nd(a,x,small),Nd(big,y,b2));
+  	          }
   	      }
-  	  }
   	
   	      
   
@@ -52,7 +52,7 @@ priorityFun(C) is priorityQ{
   mergeQ(h,eQ) is h;
   mergeQ(eQ,h) is h;
   mergeQ(h1 matching queueNd(x,hs1), h2 matching queueNd(y,hs2)) is
-  	C.le(x,y) ? queueNd(x, cons(h2,hs1)) | queueNd(y, cons(h1,hs2));
+  	C.le(x,y) ? queueNd(x, cons(h2,hs1)) : queueNd(y, cons(h1,hs2));
   	
   private mergePairs(nil) is eQ;
   mergePairs(cons(H,nil)) is H;

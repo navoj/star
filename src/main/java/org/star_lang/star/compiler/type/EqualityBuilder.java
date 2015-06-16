@@ -10,6 +10,7 @@ import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.util.ComboIterable;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.Location;
@@ -42,9 +43,9 @@ import org.star_lang.star.operators.string.StringCompare;
  */
 public class EqualityBuilder
 {
-  private static boolean checkThetaForEquality(String tpLabel, IAbstract theta)
+  private static boolean checkThetaForEquality(String tpLabel, Iterable<IAbstract> theta)
   {
-    for (IAbstract stmt : CompilerUtils.unWrap(theta)) {
+    for (IAbstract stmt : theta) {
       if (CompilerUtils.isImplementationStmt(stmt)) {
         IAbstract con = CompilerUtils.implementedContract(stmt);
         if (Abstract.isName(con, StandardNames.EQUALITY)) {
@@ -56,10 +57,10 @@ public class EqualityBuilder
     return false;
   }
 
-  public static IAbstract checkForEqualities(IAbstract theta, Dictionary dict)
+  public static Iterable<IAbstract> checkForEqualities(Iterable<IAbstract> theta, Dictionary dict)
   {
     List<IAbstract> equalities = new ArrayList<>();
-    for (IAbstract stmt : CompilerUtils.unWrap(theta)) {
+    for (IAbstract stmt : theta) {
       Visibility visibility = CompilerUtils.privacy(stmt);
       stmt = CompilerUtils.dePrivatize(stmt);
       if (CompilerUtils.isTypeDefn(stmt) && !CompilerUtils.isTypeAlias(stmt)) {
@@ -72,9 +73,11 @@ public class EqualityBuilder
         }
       }
     }
-    for (IAbstract stmt : equalities)
-      theta = Abstract.binary(stmt.getLoc(), StandardNames.TERM, stmt, theta);
-    return theta;
+
+    if (!equalities.isEmpty())
+      return new ComboIterable<IAbstract>(theta, equalities);
+    else
+      return theta;
   }
 
   public static IAbstract equalityImplementation(IAbstract stmt, Dictionary dict)
@@ -89,7 +92,7 @@ public class EqualityBuilder
     Location loc = tp.getLoc();
     IAbstract equality = Abstract.name(loc, StandardNames.EQUALITY);
 
-    if (Abstract.isBinary(tp, StandardNames.WHERE)) 
+    if (Abstract.isBinary(tp, StandardNames.WHERE))
       tp = Abstract.binaryLhs(tp);
 
     IAbstract eqnType = CompilerUtils.functionType(loc, FixedList.create(tp, tp), Abstract.name(loc,
@@ -252,7 +255,6 @@ public class EqualityBuilder
   private static IAbstract specEquations(Location loc, String label, IAbstract term, IAbstract type, IAbstract eqType)
   {
     List<IAbstract> eqns = new ArrayList<>();
-    eqns.add(CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), eqType));
     if (Abstract.isBinary(term, StandardNames.WHERE))
       term = Abstract.binaryLhs(term);
     for (IAbstract el : CompilerUtils.unWrap(term, StandardNames.OR)) {
@@ -263,7 +265,9 @@ public class EqualityBuilder
 
     if (eqns.size() > 1)
       eqns.add(specDeflt(loc, label));
-    return CompilerUtils.tupleUp(loc, StandardNames.TERM, eqns);
+
+    return CompilerUtils.blockTerm(loc, CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), eqType),
+        CompilerUtils.function(loc, eqns));
   }
 
   private static IAbstract specEquality(Location loc, String label, IAbstract term, IAbstract type)

@@ -35,28 +35,28 @@ contract indexed_iterable over s determines (k,v) is {
 
 type _possible of t is _impossible or _possible(t);
 
-_checkIterState(NoMore(X),_) is X;
-_checkIterState(ContinueWith(X),_) is X;
-_checkIterState(NoneFound,D) is D();
+fun _checkIterState(NoMore(X),_) is X
+ |  _checkIterState(ContinueWith(X),_) is X
+ |  _checkIterState(NoneFound,D) is D()
 
-_negate(NoMore(true),A,B) is A();
-_negate(ContinueWith(true),A,B) is A();
-_negate(_,A,B) default is B();
+fun _negate(NoMore(true),A,B) is A()
+ |  _negate(ContinueWith(true),A,B) is A()
+ |  _negate(_,A,B) default is B()
 
-_otherwise(NoneFound,F) is F();
-_otherwise(ContinueWith(_empty()),F) is F();
-_otherwise(St,_) default is St;
+fun _otherwise(NoneFound,F) is F()
+ |  _otherwise(ContinueWith(_empty()),F) is F()
+ |  _otherwise(St,_) default is St
 
-_project_0_2((L,_)) is L;
+fun _project_0_2((L,_)) is L;
 
 -- We have to put this here because we need to import strings
 
 implementation iterable over string determines char is {
-  _iterate(M,F,S) is __string_iter(M,F,S);
+  fun _iterate(M,F,S) is __string_iter(M,F,S)
 }
 
 implementation indexed_iterable over string determines (integer,char) is {
-  _ixiterate(string(Str),F,S) is __string_ix_iterate(Str,F,S);
+  fun _ixiterate(string(Str),F,S) is __string_ix_iterate(Str,F,S)
 }
 
 contract grouping over coll determines (m,k,v) where indexable over m of (k,coll of v) determines (k,coll of v) is {

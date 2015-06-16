@@ -19,7 +19,7 @@ private import base;
 
 -- compare and swap
 atomic_int_cas has type (atomic_int, integer_, integer_) => integer_
-atomic_int_cas(ar, expected, upd) is valof {
+fun atomic_int_cas(ar, expected, upd) is valof {
   while (true) do {
     var curr := __atomic_int_reference(ar);
     if __atomic_int_test_n_set(ar, expected, upd) then
@@ -33,4 +33,4 @@ atomic_int_cas(ar, expected, upd) is valof {
 
 -- referential equality
 atomic_int_ref_eq has type (atomic_int, atomic_int) => boolean
-atomic_int_ref_eq(r1, r2) is __equal(r1, r2)
+fun atomic_int_ref_eq(r1, r2) is __equal(r1, r2)

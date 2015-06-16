@@ -16,7 +16,7 @@
  *
  */
 tableInserts is package{
-  -- test out ading elements to a list
+  -- test out adding elements to a list
 
   R has type ref list of ((string,integer));
   var R := list of [

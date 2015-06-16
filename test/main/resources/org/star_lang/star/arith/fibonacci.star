@@ -18,9 +18,9 @@
 fibonacci is package{
   import fib;
   
-  main() do {
+  prc main() do {
     var time := nanos();
-    res is nfib(24) as long;
+    def res is nfib(24) as long;
     time := nanos()-time;
     logMsg(info,"nfib(24)=$(res) in $(time as float/1.0e9) seconds, $(time/res) nanos/call");
     

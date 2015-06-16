@@ -1,6 +1,6 @@
 worksheet{
   sieve(inChannel,Max) is valof {
-    var nxPrime is valof (wait for recvRv(inChannel));
+    def nxPrime is valof (wait for recvRv(inChannel));
     -- logMsg(info,"next prime is $nxPrime");
     if nxPrime<Max then
       valis sieve(filter(nxPrime,inChannel),Max)
@@ -8,10 +8,10 @@ worksheet{
       valis nxPrime
   };
   
-  var naturals is let {
-    var natChannel is channel();
+  def naturals is let {
+    def natChannel is channel();
     { logMsg(info,"starting...");
-    ignore background task {
+      ignore background task {
         var counter := 3;
         while true do{
          -- logMsg(info,"sending... $counter on $natChannel");
@@ -23,10 +23,10 @@ worksheet{
   } in natChannel;
   
   filter(P,inChannel) is let{
-    var outChannel is channel();
+    def outChannel is channel();
     loop() is task{
       while true do {
-        var I is valof (wait for recvRv(inChannel));
+        def I is valof (wait for recvRv(inChannel));
         if I%P!=0 then -- not a multiple, pass it on
           perform send(outChannel,I)
       }

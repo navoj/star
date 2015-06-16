@@ -24,15 +24,15 @@ dotacc is package{
     someone{ name="jane" }
   ];
   
-  A is actor{
-    Ap is people;
+  def A is actor{
+    def Ap is people;
   };
   
   main() do {
-    F is list of { all P where P in people and P.name="fred" };
+    def F is list of { all P where P in people and P.name="fred" };
     logMsg(info,"F=$F");
     
-    G is query A with list of { all P where P in people and P.name="fred" };
+    def G is query A with list of { all P where P in people and P.name="fred" };
     logMsg(info,"G=$G");
   }
 } 

@@ -24,7 +24,7 @@ dependency is package{
     var groups := list of {};
     
     analyseNode(N, S) is valof{
-      var L0 is size(S);
+      def L0 is size(S);
       
       var Stk := stack of {N;..S};
       var Low := L0;

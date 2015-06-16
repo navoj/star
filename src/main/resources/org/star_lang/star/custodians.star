@@ -22,10 +22,10 @@ private import base;
 -- if the predicate holds for the current value of the reference, it is returned and the
 -- update value is set into the reference; if it does not hold, the current value is
 -- returned and reference is not changed.
-_my_atomic_test_n_swap_ext(ar, pred, upd) is
+fun _my_atomic_test_n_swap_ext(ar, pred, upd) is
   valof {
     while (true) do {
-      curr is __atomic_reference(ar);
+      def curr is __atomic_reference(ar);
       if pred(curr) then {
         if __atomic_test_n_set(ar, curr, upd) then {
           valis curr;
@@ -60,7 +60,8 @@ type resource_box is _resource_box {
   value has type resource;
   token has type ref resource_token; -- TODO weak ref
 }
-new_resource_box(res, token) is _resource_box {
+
+fun new_resource_box(res, token) is _resource_box {
   value = res;
   token := token;
 }
@@ -79,28 +80,28 @@ implementation equality over custodian is {
   state_eq(st1, st2) is (st1 = st2); -- referential equality on atomic references works
 }
 
-_new_custodian() is _custodian {
+fun _new_custodian() is _custodian {
   state = atomic(CustActive);
   subcustodians := cons of {};
   resources := cons of {};
 }
  
-_main_custodian is _new_custodian(); -- TODO: unique object
+def _main_custodian is _new_custodian(); -- TODO: unique object
 
-add_subcustodian has type action(custodian, custodian)
-add_subcustodian(parent, child) do {
+add_subcustodian has type (custodian, custodian)=>()
+prc add_subcustodian(parent, child) do {
   parent.subcustodians := _cons(child, parent.subcustodians); -- TODO thread safe?
 }
 
 add_resource has type (custodian, resource) => resource_token
-add_resource(custodian, res) is valof {
-  token is _resource_token {}; -- needs to be new object on every call
+fun add_resource(custodian, res) is valof {
+  def token is _resource_token {}; -- needs to be new object on every call
   custodian.resources := _cons(new_resource_box(res, token), custodian.resources);  -- TODO thread safe?
   valis token;
 }
 
 _remove_controller_and_deactivate has type action(resource, custodian)
-_remove_controller_and_deactivate(res, cust) do {
+fun _remove_controller_and_deactivate(res, cust) do {
   -- logMsg(info, "_remove_controller_and_deactivate: start");
   delete (c where c = cust) in res.controllers.value; -- should be correct even if list is shared
   if res.controllers.value matches _empty() then {
@@ -109,8 +110,8 @@ _remove_controller_and_deactivate(res, cust) do {
   }
 }
 
-shutdown has type action(custodian)
-shutdown(cust) do {
+shutdown has type (custodian)=>()
+prc shutdown(cust) do {
   if __atomic_test_n_set(cust.state, CustActive, CustShuttingDown) then {
     for subcust in cust.subcustodians do {
       shutdown(subcust);
@@ -122,28 +123,28 @@ shutdown(cust) do {
   }
 }
 
-_join_resource_controllers has type action(resource, resource);
-_join_resource_controllers(res1, res2) do {
-  l1 is res1.controllers.value;
-  l2 is res2.controllers.value;
-  common is l1++l2; -- TODO no dups
-  common_ref is _mutable_list { value := common };
+_join_resource_controllers has type (resource, resource)=>()
+prc _join_resource_controllers(res1, res2) do {
+  def l1 is res1.controllers.value;
+  def l2 is res2.controllers.value;
+  def common is l1++l2; -- TODO no dups
+  def common_ref is _mutable_list { value := common };
   res1.controllers := common_ref;
   res2.controllers := common_ref;
 }
 
-_activate_if_inactive(res) do {
-  is_inactive_state is (function (st) is case st in { ResInactive(_) is true; _ default is false; });
-  st is _my_atomic_test_n_swap_ext(res.state, is_inactive_state, ResTransient)
+prc _activate_if_inactive(res) do {
+  def is_inactive_state is ( (st) => case st in { ResInactive(_) is true; _ default is false; });
+  def st is _my_atomic_test_n_swap_ext(res.state, is_inactive_state, ResTransient)
   case st in {
     ResInactive(activate) do activate(); -- shall set state to ResActive
     -- what if Deactivating state?
   }
 }
 
-_deactivate_if_active(res) do {
-  is_active_state is (function (st) is case st in { ResActive(_) is true; _ default is false; });
-  st is _my_atomic_test_n_swap_ext(res.state, is_active_state, ResDeactivating)
+prc _deactivate_if_active(res) do {
+  def is_active_state is ( (st) => case st in { ResActive(_) is true; _ default is false; });
+  def st is _my_atomic_test_n_swap_ext(res.state, is_active_state, ResDeactivating)
   case st in {
     ResActive(deactivate) do deactivate(); -- shall set state to ResInactive
     -- what if Transient state?

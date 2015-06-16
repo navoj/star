@@ -18,11 +18,11 @@
 arraysets is package{
   -- test set operations over arrays
   
-  A is list of ["alpha", "beta", "gamma"];
+  def A is list of ["alpha", "beta", "gamma"];
   
-  B is list of ["alpha", "gamma", "delta"];
+  def B is list of ["alpha", "gamma", "delta"];
   
-  main() do {
+  prc main() do {
     assert A union A=A;
     
     assert B intersect B=B;

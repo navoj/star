@@ -22,29 +22,30 @@ private import cons;
 private import signatures;
 
 priorityFun has type for all elem such that (comparison of elem)=>priorityQ of elem;
-priorityFun(C) is priorityQ{
+fun priorityFun(C) is priorityQ{
   type queue of elem is eQ or queueNd(elem,cons of queue of elem);
   
-  emptyQ is eQ;
-  isEmptyQ(eQ) is true;
-  isEmptyQ(_) default is false;
+  def emptyQ is eQ;
+  fun isEmptyQ(eQ) is true
+   |  isEmptyQ(_) default is false;
   
-  insertQ(el,Q) is mergeQ(queueNd(el,nil));
+  fun insertQ(el,Q) is mergeQ(queueNd(el,nil));
   
-  mergeQ(h,eQ) is h;
-  mergeQ(eQ,h) is h;
-  mergeQ(h1 matching queueNd(x,hs1), h2 matching queueNd(y,hs2)) is
-  	C.le(x,y) ? queueNd(x, cons(h2,hs1)) | queueNd(y, cons(h1,hs2));
+  fun mergeQ(h,eQ) is h
+   |  mergeQ(eQ,h) is h
+   |  mergeQ(h1 matching queueNd(x,hs1), h2 matching queueNd(y,hs2)) is
+  	    C.le(x,y) ? queueNd(x, cons(h2,hs1)) : queueNd(y, cons(h1,hs2));
   	
-  private mergePairs(nil) is eQ;
-  mergePairs(cons(H,nil)) is H;
-  mergePairs(cons(h1,cons(h2,hs))) is mergeQ(mergeQ(h1,h2),mergePairs(hs));
+  private 
+  fun mergePairs(nil) is eQ
+   |  mergePairs(cons(H,nil)) is H
+   |  mergePairs(cons(h1,cons(h2,hs))) is mergeQ(mergeQ(h1,h2),mergePairs(hs));
   
-  findQMin(eQ) is raise "empty";
-  findQMin(queueNd(x,_)) is x;
+  fun findQMin(eQ) is raise "empty"
+   |  findQMin(queueNd(x,_)) is x;
   
-  deleteQMin(eQ) is raise "empty";
-  deleteQMin(queueNd(_,hs)) is mergePairs(hs);
+  fun deleteQMin(eQ) is raise "empty"
+   |  deleteQMin(queueNd(_,hs)) is mergePairs(hs);
 }
 
 

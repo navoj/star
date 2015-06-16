@@ -18,14 +18,14 @@
 genericcontracts is package{
   import random;
   
-  main() do {
-    G is StdGen(0,1000);
+  prc main() do {
+    def G is StdGen(0,1000);
     
-    (R1,G1) is next(G);
+    def (R1,G1) is next(G);
     
     logMsg(info,"first random is $R1");
     
-    (R2,G2) is next(G1);
+    def (R2,G2) is next(G1);
     
     logMsg(info,"second is $R2");
     

@@ -20,16 +20,16 @@ introTp is package{
     IN has type occurrence of integer;
   };
   
-  AA is actor{
+  def AA is actor{
     private proc has type (integer)=>(integer,integer,integer);
-    proc(I) is (I,I,I);
+    fun proc(I) is (I,I,I);
     
     on X on IN do{
       logMsg(info,"Got $X - $(proc(X))");
     }
   } 
   
-  main() do {
+  prc main() do {
     notify AA with 10 on IN;
   }
 }

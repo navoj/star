@@ -16,13 +16,13 @@
  *
  */
 nonNums is package{
-  main() do {
-    C is nonChar;
-    B is nonBinary;
-    D is nonDecimal;
-    I is nonInteger;
-    L is nonLong;
-    F is nonFloat;
-    S is nonString;
+  prc main() do {
+    def C is nonChar;
+    def B is nonBinary;
+    def D is nonDecimal;
+    def I is nonInteger;
+    def L is nonLong;
+    def F is nonFloat;
+    def S is nonString;
   }
 }

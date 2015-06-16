@@ -19,8 +19,8 @@ basicAtomic is package{
 
   private import atomics;
   
-  main() do {
-    A is atomic(34);
+  prc main() do {
+    def A is atomic(34);
     
     assert _get(A)=34;
     
@@ -29,7 +29,7 @@ basicAtomic is package{
     assert _get(A)=45;
     
     I has type atomic_int;
-    I is _atomic(23);
+    def I is _atomic(23);
     
     assert _get(I)=23;
     

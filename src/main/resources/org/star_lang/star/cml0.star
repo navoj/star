@@ -34,30 +34,29 @@ type cont of %a is alias of action(task of %a)
 
 private
 mk_task_cont has type (action(task of %a)) => cont of %a
-mk_task_cont(wakeup) is wakeup
+fun mk_task_cont(wakeup) is wakeup
 
 -- returns a continuation, which, when continued, calls the function F before continuing with K.
 private
 cont_wrap has type (cont of %a, (%b) => task of %a) => cont of %b
-cont_wrap(k, f) is
-  (procedure (tb) do k(taskBind(tb, f)))
+fun cont_wrap(k, f) is ( (tb) do k(taskBind(tb, f)))
 
 private
 cont_throw_task has type action(cont of %a, task of %a)
-cont_throw_task(k, t) do { k(t); }
+prc cont_throw_task(k, t) do { k(t) }
 
 private
 cont_throw_val has type action(cont of %a, %a)
-cont_throw_val(k, v) do { cont_throw_task(k, taskReturn(v)); }
+prc cont_throw_val(k, v) do { cont_throw_task(k, taskReturn(v)); }
 
 -- The most primitive CML functions and types
 
 -- private
 type rv_status is alias of integer_
 
-private WAITING is 0_
-private CLAIMED is 1_
-private SYNCHED is 2_
+private def WAITING is 0_
+private def CLAIMED is 1_
+private def SYNCHED is 2_
 
 -- private
 type rv_state is alias of atomic_int
@@ -94,7 +93,7 @@ type recv_request of %a is recv_request {
 }
 
 private
-_same_state(req, s) is atomic_int_ref_eq(req.state, s)
+fun _same_state(req, s) is atomic_int_ref_eq(req.state, s)
 
 type chan of %a is _chan {
   -- name has type string;
@@ -104,15 +103,15 @@ type chan of %a is _chan {
 }
 
 private
-_send_request_is_alive(sr) is
+fun _send_request_is_alive(sr) is
   not __integer_eq(__atomic_int_reference(sr.state), SYNCHED)
   
 private
-_recv_request_is_alive(rr) is
+fun _recv_request_is_alive(rr) is
   not __integer_eq(__atomic_int_reference(rr.state), SYNCHED)
 
 chan has type () => chan of %a
-chan() is _chan {
+fun chan() is _chan {
   -- sometimes good for debugging: name = name;
   lock = mk_spin_lock();
   -- the predicates are used to cleanup the queues from useless entries from time to time
@@ -166,9 +165,9 @@ firstMapMaybe(f, lis) is valof {
 
 private
 poll has type (prv of %a) => cons of brv of %a
-poll(prv) is let {
+fun poll(prv) is let {
   poll_(BRV(brv0), enabled) is
-    brv0.pollFn() ? cons(brv0, enabled) | enabled
+    brv0.pollFn() ? cons(brv0, enabled) : enabled
   poll_(CHOOSE(rv1, _, rv2, _), enabled) is
     poll_(rv1, poll_(rv2, enabled))
 } in poll_(prv, nil)
@@ -185,7 +184,7 @@ randomFirst_ has type ((brv of %a) => option of %c, prv of %a, prv of %a, intege
 randomFirst_(pred, BRV(brv0), rest, sz_rest) is
   case pred(brv0) in {
     some(v) is some(v)
-    _ default is __integer_eq(sz_rest, 0_) ? none | randomFirst_(pred, rest, neverPrv, 0_)
+    _ default is __integer_eq(sz_rest, 0_) ? none : randomFirst_(pred, rest, neverPrv, 0_)
   }
   
 randomFirst_(pred, CHOOSE(c1, sz1, c2, sz2), rest, sz_rest) is
@@ -206,7 +205,7 @@ randomFirst_(pred, CHOOSE(c1, sz1, c2, sz2), rest, sz_rest) is
 */
 
 /* iterative version */
-randomFirst_(pred, prv0_, rest_, sz_rest_) is valof {
+fun randomFirst_(pred, prv0_, rest_, sz_rest_) is valof {
   var prv0 := prv0_;
   var rest := rest_;
   var sz_rest := sz_rest_;
@@ -255,77 +254,77 @@ randomFirst_(pred, prv0_, rest_, sz_rest_) is valof {
 
 private
 randomFirst has type ((brv of %a) => option of %c, prv of %a) => option of %c
-randomFirst(pred, prv0) is randomFirst_(pred, prv0, neverPrv, 0_)
+fun randomFirst(pred, prv0) is randomFirst_(pred, prv0, neverPrv, 0_)
 
 private
 randomPollFirst has type (prv of %a) => option of task of %a
-randomPollFirst(prv0) is randomFirst(_opoll, prv0)
+fun randomPollFirst(prv0) is randomFirst(_opoll, prv0)
 
 private
-_opoll(brvx) is brvx.pollFn() ? brvx.doFn() | none
+fun _opoll(brvx) where brvx.pollFn() is brvx.doFn()
+ |  _opoll(_) default is none
 
 -- Return some(v) of the first base rendezvous where doFN is possible, or none.
 private
-_get_first_enabled(prv) is 
+fun _get_first_enabled(prv) is 
   -- To not always favor one alternative over the other, we randomly choose in the enabled list.
   -- Another approach could be: Make 'enabled' a priority queue; pollFn determined a priority based on how many times a channel has beed enabled without being selected.
   randomPollFirst(prv)
   
   -- Unfairly get the first one:
-  -- firstMapMaybe((function (brv0) is brv0.doFn()), poll(prv))
+  -- firstMapMaybe( (brv0) => brv0.doFn(), poll(prv))
 
 -- Block on all base rendezvous
 private
 block has type action(prv of %a, rv_state, cont of %a)
-block(BRV(brv0), state, k) do {
-  brv0.blockFn(state, k);
-}
-block(CHOOSE(rv1, sz1, rv2, sz2), state, k) do {
-  block(rv1, state, k);
-  block(rv2, state, k);
-}
+prc block(BRV(brv0), state, k) do {
+    brv0.blockFn(state, k);
+  }
+ |  block(CHOOSE(rv1, sz1, rv2, sz2), state, k) do {
+      block(rv1, state, k);
+      block(rv2, state, k);
+    }
     
-prv_await(prv) is let {
-  start is (function (wakeup) is valof {
+fun prv_await(prv) is let {
+  fun start(wakeup) is valof {
     case _get_first_enabled(prv) in {
       some(t) do valis TaskMicroSleep(t)
       _ default do {
-        k is mk_task_cont(wakeup);
+        def k is mk_task_cont(wakeup);
         block(prv, atomic_int(WAITING), k);
         valis TaskSleep;
       }
     }
-  });
-  base is taskWaitExt(start);
+  };
+  def base is taskWaitExt(start);
 } in (base)
 
 wrapPrv has type (prv of %a, (%a) => task of %b) => prv of %b
-wrapPrv(BRV(base), f) is BRV( brv {
-  pollFn = base.pollFn;
-  doFn = (function () is base.doFn() matches some(t) ? some(taskBind(t, f)) | none);
-  blockFn = (procedure (state, k) do {
-    base.blockFn(state, cont_wrap(k, f))
-  });
-})
-
-wrapPrv(CHOOSE(rv1, sz1, rv2, sz2), f) is
-  CHOOSE(wrapPrv(rv1, f), sz1, wrapPrv(rv2, f), sz2)
+fun wrapPrv(BRV(base), f) is BRV( brv {
+      pollFn = base.pollFn;
+      doFn = (() => (base.doFn() matches some(t) ? some(taskBind(t, f)) : none));
+      blockFn = ( (state, k) do {
+        base.blockFn(state, cont_wrap(k, f))
+      });
+    })
+ |  wrapPrv(CHOOSE(rv1, sz1, rv2, sz2), f) is
+      CHOOSE(wrapPrv(rv1, f), sz1, wrapPrv(rv2, f), sz2)
   
 private
 _size has type (prv of %a) => integer_
-_size(BRV(b1)) is 1_
-_size(CHOOSE(c1, sz1, c2, sz2)) is __integer_plus(sz1, sz2)
+fun _size(BRV(b1)) is 1_
+ |  _size(CHOOSE(c1, sz1, c2, sz2)) is __integer_plus(sz1, sz2)
 
-choosePrv(prv1, prv2) is CHOOSE(prv1, _size(prv1), prv2, _size(prv2))
+fun choosePrv(prv1, prv2) is CHOOSE(prv1, _size(prv1), prv2, _size(prv2))
 
 choosePrvList has type (cons of prv of %a) => prv of %a
-choosePrvList(nil) is neverPrv
-choosePrvList(cons(x, nil)) is x
-choosePrvList(cons(x, xs)) default is choosePrv(x, choosePrvList(xs))
+fun choosePrvList(nil) is neverPrv
+ |  choosePrvList(cons(x, nil)) is x
+ |  choosePrvList(cons(x, xs)) default is choosePrv(x, choosePrvList(xs))
 
 -- The reference implementation (Parallel CML) did dispatch() calls at various places - they probably only serve for a better performance (TODO? Check)
 private
-_dispatch() do {
+prc _dispatch() do {
   -- sleep(0L)
   -- nothing;
   __yield()
@@ -333,14 +332,14 @@ _dispatch() do {
 
 -- send and receive rendezvous are almost the same, only some things mirrored; this is an internal abstraction over them
 private
-_channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, make_request) is
+fun _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, make_request) is
   let {
-    pollFn() is valof {
+    fun pollFn() is valof {
       -- logMsg(info, "Poll for $(act) over $(ch.name)");
       valis not queue_isEmpty(in_queue)
     }
     
-    doFn() is valof { -- try to find and sync with a partner
+    fun doFn() is valof { -- try to find and sync with a partner
       -- logMsg(info, "Try $(act) over $(ch.name)");
       spinLock(ch.lock);
       while dequeue(in_queue) matches (some(his_request), n_in_queue) do {
@@ -375,13 +374,13 @@ _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, make_r
       valis none
     }
     
-    blockFn(state, k) do {
+    prc blockFn(state, k) do {
       -- logMsg(info, "Try again $(act) over $(ch.name)");
       spinLock(ch.lock);
       -- first try again to find a partner (because poll is not synchronized)
-      done is valof {
+      def done is valof {
         -- We need to ignore requests contained in the same sync operation/rendezvous (the same state flag)
-        while dequeue_match(in_queue, (function(e) is not _same_state(e, state))) matches (some(his_request), n_in_queue) do {
+        while dequeue_match(in_queue, ((e) => not _same_state(e, state))) matches (some(his_request), n_in_queue) do {
           in_queue := n_in_queue;
           -- a partner blocked since we polled
           while not __integer_eq(__atomic_int_reference(his_request.state), SYNCHED) do {
@@ -427,7 +426,7 @@ _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, make_r
       if not done then {
         -- nobody found, so put our request in the queue
         -- logMsg(info, "Blocked $(act) over $(ch.name)");
-        k_ is (procedure (v) do {
+        def k_ is ((v) do {
            -- logMsg(info, "Unblocked $(act) request on channel");
            k(v) }); 
         out_queue := enqueue(out_queue, make_request(state, k_));
@@ -437,29 +436,29 @@ _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, make_r
   
   } in BRV( brv { pollFn = pollFn; doFn = doFn; blockFn = blockFn; } )
   
-sendPrv(ch, msg) is let {
+fun sendPrv(ch, msg) is let {
     -- the result is always ()
-    get_result(his_request) is ()
+    fun get_result(his_request) is ()
     -- when there is nothing in receive queue, we need a send request:
-    make_request(state, k) is send_request { state = state; msg = msg; k = k };
+    fun make_request(state, k) is send_request { state = state; msg = msg; k = k };
   } in
     _channelPrv("send", ch, ref ch.recvq, ref ch.sendq, get_result, msg, make_request)
 
-recvPrv(ch) is let {
+fun recvPrv(ch) is let {
     -- the result is the message from the other side
-    get_result(his_request) is his_request.msg;
+    fun get_result(his_request) is his_request.msg;
     -- when there is nothing in send queue, we need a receive request:
-    make_request(state, k) is recv_request { state = state; k = k };
+    fun make_request(state, k) is recv_request { state = state; k = k };
   } in
     _channelPrv("receive", ch, ref ch.sendq, ref ch.recvq, get_result, (), make_request)
   
-mk_cvar() is cvar {
+fun mk_cvar() is cvar {
   lock = mk_spin_lock();
   state := false;
   waiting := nil;
 }
 
-cvar_set(cv) do {
+prc cvar_set(cv) do {
   var waiting := nil;
   
   spinLock(cv.lock);
@@ -476,16 +475,16 @@ cvar_set(cv) do {
 }
 
 private
-_taskUnit is taskReturn(())
+def _taskUnit is taskReturn(())
 private
-_justUnit is some(_taskUnit)
+def _justUnit is some(_taskUnit)
 
-waitPrv(cv) is let {
-  pollFn() is cv.state
+fun waitPrv(cv) is let {
+  fun pollFn() is cv.state
   
-  doFn() is _justUnit -- always possible after pollFn returned true
+  fun doFn() is _justUnit -- always possible after pollFn returned true
   
-  blockFn(state, k) do {
+  prc blockFn(state, k) do {
     spinLock(cv.lock);
     if cv.state then {
       spinUnlock(cv.lock);
@@ -504,16 +503,16 @@ waitPrv(cv) is let {
   
 } in BRV( brv { pollFn = pollFn; doFn = doFn; blockFn = blockFn; } )
  
-alwaysPrv(msg) is let {
-  pollFn() is true
-  doFn() is some(taskReturn(msg))
-  blockFn(state, k) do {
+fun alwaysPrv(msg) is let {
+  fun pollFn() is true
+  fun doFn() is some(taskReturn(msg))
+  prc blockFn(state, k) do {
     raise "blockFn not applicable on alwaysPrv"
   }
 } in BRV( brv { pollFn = pollFn; doFn = doFn; blockFn = blockFn; } )
   
-neverPrv is let {
-  pollFn() is false
-  doFn() is none
-  blockFn(state, k) do nothing;
+def neverPrv is let {
+  fun pollFn() is false
+  fun doFn() is none
+  prc blockFn(state, k) do nothing;
 } in BRV( brv { pollFn = pollFn; doFn = doFn; blockFn = blockFn; } )

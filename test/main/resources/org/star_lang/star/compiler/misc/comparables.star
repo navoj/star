@@ -17,7 +17,7 @@
  */
 comparables is package {
     foo has type (%a, %a)=>%a where comparable over %a;
-    foo(x, y) is (x>=y) ? x | bar(y,x);
+    foo(x, y) is (x>=y) ? x : bar(y,x);
 
     bar has type (%a,%a)=>%a where comparable over %a; 
     bar(y, x) is foo(y,x);

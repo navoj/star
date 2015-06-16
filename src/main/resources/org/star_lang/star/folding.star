@@ -28,8 +28,8 @@ contract filterable over t determines e is {
 -- This has to be here, to avoid circular packages
 
 implementation filterable over string determines char is {
-  filter(P,string(S)) is string(__string_filter(S,P));
-  filter(_,nonString) is nonString;
+  fun filter(P,string(S)) is string(__string_filter(S,P))
+   |  filter(_,nonString) is nonString;
 }
 
 contract foldable over c determines e is {
@@ -38,17 +38,17 @@ contract foldable over c determines e is {
   rightFold has type for all st such that ((e,st)=>st,st,c)=>st;
   rightFold1 has type ((e,e)=>e,c)=>e;
   
-  leftFold1(F,C) default is let{
-    razer() is raise "problem";
-    leftState(NoneFound,E) is ContinueWith(E);
-    leftState(ContinueWith(St),E) is ContinueWith(F(E,St));
-    leftState(X,_) default is X;
+  fun leftFold1(F,C) default is let{
+    fun razer() is raise "problem"
+    fun leftState(NoneFound,E) is ContinueWith(E)
+     |  leftState(ContinueWith(St),E) is ContinueWith(F(E,St))
+     |  leftState(X,_) default is X
   } in _checkIterState(leftFold(leftState,NoneFound,C),razer);
   
-  rightFold1(F,C) default is let{
-    razer() is raise "problem";
-    rightState(E,NoneFound) is ContinueWith(E);
-    rightState(E,ContinueWith(St)) is ContinueWith(F(St,E));
-    rightState(_,X) default is X;
+  fun rightFold1(F,C) default is let{
+    fun razer() is raise "problem"
+    fun rightState(E,NoneFound) is ContinueWith(E)
+     |  rightState(E,ContinueWith(St)) is ContinueWith(F(St,E))
+     |  rightState(_,X) default is X
   } in _checkIterState(rightFold(rightState,NoneFound,C),razer);
 }

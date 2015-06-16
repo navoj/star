@@ -18,14 +18,14 @@
 displayAnon is package{
   RR has type list of {name has type string; age has type integer}; 
   
-  var RR is list of [ {name="john"; age=23}, {name="peter"; age=34}];
+  def RR is list of [ {name="john"; age=23}, {name="peter"; age=34}];
   
   main() do {
-    var R is {name="john"; age=23};
+    def R is {name="john"; age=23};
     logMsg(info,"$R");
     logMsg(info,"$RR");
     
-    T is ("john",23);
+    def T is ("john",23);
     logMsg(info,"$T");
   }
 }

@@ -18,7 +18,7 @@
 actorbank is package{  
   type tx is deposit(float) or withdraw(float);
   
-  account((Nm has type string), Acct) is actor {
+  fun account((Nm has type string), Acct) is actor {
     private var bal := 0.0;
     
     on deposit(Amnt) on Tx do
@@ -35,33 +35,33 @@ actorbank is package{
     on withdraw(Amnt) on Tx where Amnt<0.0 or Amnt>bal do
       logMsg(info,"Cannot withdraw amnt: $Amnt from $Nm");
    
-    balance() is bal;
-    name is Nm;
+    fun balance() is bal;
+    def name is Nm;
   }
   
-  bank(Nm) is actor{
+  fun bank(Nm) is actor{
     var accounts := dictionary of {};
     var acctNo := 0;
     
-    custBals() is all (Nm,Bal) where K->A in accounts and (query A's name 'n balance with (name,balance())) matches (Nm,Bal);
+    fun custBals() is all (Nm,Bal) where K->A in accounts and (query A's name 'n balance with (name,balance())) matches (Nm,Bal);
     
-    newAccount(Name) is valof{
+    fun newAccount(Name) is valof{
       acctNo := acctNo+1;
       accounts[acctNo] := account(Name,acctNo);
       valis acctNo
     }
     
-    custBal(acct) where accounts[acct] matches A is some((query A with balance()));
-    custBal(_) default is none;
+    fun custBal(acct) where accounts[acct] has value A is some((query A with balance()))
+     |  custBal(_) default is none;
     
-    on (acNo,T) on Tx where accounts[acNo] matches A do
+    on (acNo,T) on Tx where accounts[acNo] has value A do
       notify A with T on Tx;
   } 
 
-  main() do {
-    B is bank("Super");
+  prc main() do {
+    def B is bank("Super");
     
-    JJ is query B with newAccount("joe");
+    def JJ is query B with newAccount("joe");
         
     logMsg(info,"customers of bank are $(query B's custBals with custBals())");
     

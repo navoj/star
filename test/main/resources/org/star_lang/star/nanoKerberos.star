@@ -36,13 +36,13 @@ nanoKerberos is package {
     private var sessions := list of [];
     
     login(User,Pass) where {user=User;password=Pass} in users is valof{
-      SessionId is random(1000000);
+      def SessionId is random(1000000);
       extend sessions with (User,SessionId);
       valis allowed(SessionId);
     };
     login(User,_) where {user=User} in users is notAllowed;
     login(U,P) where not {user=U} in users is valof{
-      SessionId is random(1000000);
+      def SessionId is random(1000000);
       extend sessions with (U,SessionId);
       valis allowed(SessionId);
     }
@@ -61,7 +61,7 @@ nanoKerberos is package {
   provider has type ((string)=>possible of %t)=>service of %t;
   provider(F) is actor{
     provide(SId,Key) is valof{
-      P is request validate(SId);
+      def P is request validate(SId);
       if P=user or P=administrator then
         valis allowed(F(Key))
       else
@@ -108,15 +108,15 @@ nanoKerberos is package {
   }
   
   main() do {
-    fred is userAgent("fred","FRED",list of ["alpha","beta","omega","eta"]);
+    def fred is userAgent("fred","FRED",list of ["alpha","beta","omega","eta"]);
     volunteer request login(N,P) from fred as request login(N,P) to login;
     volunteer request provide(I,K) from fred as request provide(I,K) to filer;
     
-    drWho is userAgent("drWho","Who",list of ["alpha"]);
+    def drWho is userAgent("drWho","Who",list of ["alpha"]);
     volunteer request login(N,P) from drWho as request login(N,P) to login;
     volunteer request provide(I,K) from drWho as request provide(I,K) to filer;
     
-    root is userAgent("root","OPEN",list of ["alpha","beta","omega","eta"]);
+    def root is userAgent("root","OPEN",list of ["alpha","beta","omega","eta"]);
     volunteer request login(N,P) from root as request login(N,P) to login;
     volunteer request provide(I,K) from root as request provide(I,K) to filer;
     

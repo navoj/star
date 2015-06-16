@@ -59,7 +59,7 @@ shortestPath is package {
 	using {
 	  upd(gt, k) is 
 		task {
-		  g is valof gt;
+		  def g is valof gt;
 		  valis
 			let {
 			  shortmap has type (vertex, intmap of weight) => intmap of weight;

@@ -18,7 +18,7 @@
 act0rs is package{
   
   pinger has type (()=>actor of {pong has type action(integer)})=>actor of {ping has type action(integer)};
-  pinger(A) is actor{
+  fun pinger(A) is actor{
 	  on X on ping do {
 		if X<300 then{
 		  logMsg(info,"$X");
@@ -28,17 +28,17 @@ act0rs is package{
 	};
 
   ponger has type (()=>actor of {ping has type action(integer)})=>actor of {pong has type action(integer)};
-  ponger(A) is actor{
+  fun ponger(A) is actor{
 	on X on pong do notify A() with X on ping
   }
 
-  K(X) is (function() is X);
+  fun K(X) is () => X;
 
-  group() is let{
-	  PI is memo pinger(PO);
-	  PO is memo ponger(PI);
+  fun group() is let{
+	  def PI is memo pinger(PO);
+	  def PO is memo ponger(PI);
   } in PI();
 
-  main() do
+  prc main() do
 	  notify group() with 0 on ping;
 }

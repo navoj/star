@@ -16,28 +16,28 @@
  *
  */
 largenumbers is package{
-  plus has type (decimal,long) =>decimal;
-  plus(X,Y) is X+(Y as decimal);
+  plus has type (decimal,long) =>decimal
+  fun plus(X,Y) is X+(Y as decimal)
   
-  A is 1a;
+  def A is 1a;
   
   sL has type long;
-  sL is smallest;
+  def sL is smallest;
   
   lL has type long;
-  lL is largest;
+  def lL is largest;
   
   sF has type float;
-  sF is smallest;
+  def sF is smallest;
   
   lF has type float
-  lF is largest;
+  def lF is largest;
   
   lD has type date;
-  lD is largest;
+  def lD is largest;
   
   main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"a large now $(plus(A,long(_now())))");
     
     logMsg(info, "smallest long $sL");

@@ -1,5 +1,5 @@
 worksheet{
-  tst(myColl) is valof {
+  fun tst(myColl) is valof {
     var len := 0;
     for s in myColl do
       len := len + size(s);

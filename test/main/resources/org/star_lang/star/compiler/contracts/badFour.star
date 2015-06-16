@@ -5,7 +5,7 @@ worksheet{
     mul has type(t,t)=>t;
     div has type (t,t)=>t;
   }
-  double(X) is plus(X,X)
+  fun double(X) is plus(X,X)
       
   show double(2)
 }

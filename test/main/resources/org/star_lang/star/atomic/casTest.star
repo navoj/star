@@ -20,9 +20,9 @@ casTest is package{
   
   -- test the test_and_swap
   
-  main() do {
-    I is 34;
-    A is atomic(I);
+  prc main() do {
+    def I is 34;
+    def A is atomic(I);
     
     assert __atomic_test_n_set(A,I,56);
     
@@ -35,9 +35,9 @@ casTest is package{
     -- test integer atomics
     
     II has type atomic_int;
-    II is _atomic(34);
+    def II is _atomic(34);
     
-    IR is 56_;
+    def IR is 56_;
     
     assert __atomic_int_test_n_set(II,34_,IR);
     

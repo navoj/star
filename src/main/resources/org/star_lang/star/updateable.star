@@ -31,5 +31,5 @@ contract updateable over %r determines %t is {
 
 # extend ?Tgt with ?Exp ==> Tgt := _extend(Tgt,Exp);
 # merge ?Tgt with ?Exp ==> Tgt := _merge(Tgt, Exp);
-# delete ?Ptn in ?Tgt ==> Tgt := _delete(Tgt, (pattern() from Ptn));
-# update ?Ptn in ?Tgt with ?Exp ==> Tgt := _update(Tgt, (pattern() from Ptn), (function(Ptn) is Exp));
+# delete ?Ptn in ?Tgt ==> Tgt := _delete(Tgt, (() from Ptn));
+# update ?Ptn in ?Tgt with ?Exp ==> Tgt := _update(Tgt, (() from Ptn), (Ptn) => Exp);

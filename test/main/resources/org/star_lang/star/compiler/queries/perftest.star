@@ -18,7 +18,7 @@
 perftest is package{
   Size is 10000;
   
-  Base is indexed of {all ("$Ix",Ix) where Ix in (iota(1,Size,1) has type array of integer)};
+  def Base is indexed of {all ("$Ix",Ix) where Ix in (iota(1,Size,1) has type array of integer)};
   
   var ind := indexed{};
   
@@ -29,32 +29,32 @@ perftest is package{
   main() do {
     -- logMsg(info,"base is $Base");
     
-    startBase is nanos();
+    def startBase is nanos();
     for Cx in iota(1,Size,3) do
     {
-      XX is all Ix where (Ix,Cx) in Base; 
+      def XX is all Ix where (Ix,Cx) in Base; 
       -- logMsg(info,"$XX");
     }
-    baseTime is nanos()-startBase;
+    def baseTime is nanos()-startBase;
     logMsg(info,"base time is $(baseTime/1000000L) milli-seconds");
     
     -- make sure index is seeded
-    firstInd is nanos();
+    def firstInd is nanos();
     for Cx in iota(1,Size,3) do
     {
-      XX is all Ix where (Ix,Cx) in ind; 
+      def XX is all Ix where (Ix,Cx) in ind; 
       -- logMsg(info,"$Cx->$XX");
     }
-    firstIndTime is nanos()-firstInd;
+    def firstIndTime is nanos()-firstInd;
     logMsg(info,"first indexed time is $(firstIndTime/100000L) milli-seconds");
     
-    startInd is nanos();
+    def startInd is nanos();
     for Cx in iota(1,Size,3) do
     {
-      XX is all Ix where (Ix,Cx) in ind; 
+      def XX is all Ix where (Ix,Cx) in ind; 
       -- logMsg(info,"$Cx->$XX");
     }
-    indTime is nanos()-startInd;
+    def indTime is nanos()-startInd;
     logMsg(info,"indexed time is $(indTime/100000L) milli-seconds");
         
     -- logMsg(info,"indexed is $ind");

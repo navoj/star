@@ -25,7 +25,7 @@ taskExpTest is package{
   };
   
   tt(X) is task{
-    Y is 2;
+    def Y is 2;
     valis X+Y;
   }
   
@@ -49,10 +49,10 @@ taskExpTest is package{
   };
   
   main() do {
-    XX is valof tt(3);
+    def XX is valof tt(3);
     assert XX=5;
     
-    YY is valof uu(3);
+    def YY is valof uu(3);
     assert YY=6;
     
     -- __stop_here();

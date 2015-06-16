@@ -33,9 +33,9 @@ contract speech over t determines (u,a) where execution over a is {
 };
 
 implementation speech over actor of %t determines (%t,action) is {
-  _query(act0r(Ac),Qf,_,_) is action { valis Qf(Ac)};
-  _request(act0r(Ac),Rf,_,_) is action{ Rf(Ac) };
-  _notify(act0r(Ac),Np) is action{ Np(Ac) };
+  fun _query(act0r(Ac),Qf,_,_) is action { valis Qf(Ac)};
+  fun _request(act0r(Ac),Rf,_,_) is action{ Rf(Ac) };
+  fun _notify(act0r(Ac),Np) is action{ Np(Ac) };
 };
 
 type actor of %t is act0r(%t);
@@ -48,7 +48,7 @@ type occurrence of %t is alias of action(%t);
 
 -- _notify speech action
 # notify ?Ag with ?Exp on identifier :: action :- Exp::expression :& Ag::expression;
-# notify ?A with ?E on ?C ==> perform _notify(A,(procedure(#$"XX") do C(E) using #$"XX"'s C));
+# notify ?A with ?E on ?C ==> perform _notify(A,((#$"XX") do C(E) using #$"XX"'s C));
 
 -- _query speech action
 # query ?Ag with ?Exp :: expression :- Ag::agentExpression :& Exp::expression;
@@ -89,23 +89,23 @@ type occurrence of %t is alias of action(%t);
   #freePtn(?X,?I) ==> I;
 }
 
-#query ?A's ?Ex with ?E ==> valof _query(A,(function(#$"XX") is E using #$"XX"'s Ex),(function() is quote(E)),(function() is queryFree(E,Ex)));
-#query ?A with ?E ==> valof _query(A,(function(#$"XX") is let { open #$"XX" } in E),(function() is quote(E)),(function() is queryFree(E,())));
+#query ?A's ?Ex with ?E ==> valof _query(A,(#$"XX") => E using #$"XX"'s Ex,() => quote(E),() => queryFree(E,Ex));
+#query ?A with ?E ==> valof _query(A,((#$"XX") => let { open #$"XX" } in E),(() => quote(E)),(() => queryFree(E,())));
 
 -- _request speech actions  
 #request ?Ag to ?Act :: action :- Act::action :& Ag::agentExpression;
 
 #request ?A to extend ?Tgt with ?Exp  ==>
-        perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _extend(#(#$"XX")#.Tgt,Exp)}),(function() is <|extend ?Tgt with ?Exp|>),(function() is freeVarMap(Exp)));
+        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _extend(#(#$"XX")#.Tgt,Exp)}),(() => <|extend ?Tgt with ?Exp|>),(() => freeVarMap(Exp)));
 #request ?A to merge ?Tgt with ?Exp  ==>
-        perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _merge(#(#$"XX")#.Tgt,Exp)}),(function() is <|merge ?Tgt with ?Exp|>),(function() is freeVarMap(Exp)));
+        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _merge(#(#$"XX")#.Tgt,Exp)}),(() => <|merge ?Tgt with ?Exp|>),(() => freeVarMap(Exp)));
 #request ?A to delete ?Ptn in ?Tgt  ==>
-        perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(pattern() from Ptn))}),(function() is <|delete ?Ptn in ?Tgt|>),(function() is dictionary of {}));
+        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(pattern() from Ptn))}),(() => <|delete ?Ptn in ?Tgt|>),(() => dictionary of {}));
 #request ?A to update ?Ptn in ?Tgt with ?Exp  ==>
-        perform _request(A,(procedure(#$"XX") do {#(#$"XX")#.Tgt := _update(#(#$"XX")#.Tgt,(pattern() from Ptn), (function(Ptn) is Exp))}),(function() is <|update ?Ptn in ?Tgt with ?Exp|>),(function() is freeVarMap(Exp,Ptn)));
+        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _update(#(#$"XX")#.Tgt,(pattern() from Ptn), (Ptn) => Exp)}),(() => <|update ?Ptn in ?Tgt with ?Exp|>),() => freeVarMap(Exp,Ptn));
 
-#request ?A's ?Ex to ?Act  ==> perform _request(A,(procedure(#$"XX") do {Act using #$"XX"'s Ex}),(function() is quote(Act)),(function() is freeVarMap(Act,Ex)));
-#request ?A to ?Act ==> perform _request(A,(procedure(#$"XX") do {let{ open #$"XX" } in Act}),(function() is quote(Act)),(function() is freeVarMap(Act,())));
+#request ?A's ?Ex to ?Act  ==> perform _request(A,((#$"XX") do {Act using #$"XX"'s Ex}),(() => quote(Act)),(() => freeVarMap(Act,Ex)));
+#request ?A to ?Act ==> perform _request(A,((#$"XX") do {let{ open #$"XX" } in Act}),(() => quote(Act)),(() => freeVarMap(Act,())));
 
 -- event rules
 # on ?E do ?A :: statement :-  A :: action :& E::eventCondition ## {
@@ -120,43 +120,43 @@ type occurrence of %t is alias of action(%t);
 
 #actorTheta(?ActorDefs) ==> {makeActorRules(ActorDefs)} ## {
   
-  #makeActorRules(Defs) is let{
-    collectRules(Rl matching <|on ?Evt do ?Act|>, (Theta, EventRules)) is (Theta,insertEventRule(EventRules,eventRule(Rl)));
-    collectRules(<|?L;?R|>,Coll) is collectRules(R,collectRules(L,Coll));
-    collectRules(Stmt,(Theta,Rules)) is (list of {Theta..;Stmt},Rules);
+  #fun makeActorRules(Defs) is let{
+    fun collectRules(Rl matching <|on ?Evt do ?Act|>, (Theta, EventRules)) is (Theta,insertEventRule(EventRules,eventRule(Rl)))
+     |  collectRules(<|?L;?R|>,Coll) is collectRules(R,collectRules(L,Coll))
+     |  collectRules(Stmt,(Theta,Rules)) is (list of {Theta..;Stmt},Rules)
 
-    insertEventRule(Rules,Rl matching (Ch,P,C,A)) where _index(Rules,Ch) matches some(chnnlRules) is _set_indexed(Rules,Ch,list of {chnnlRules..;Rl});
-    insertEventRule(Rules,Rl matching (Ch,P,C,A)) is _set_indexed(Rules,Ch,list of {Rl});
+    fun insertEventRule(Rules,Rl matching (Ch,P,C,A)) where _index(Rules,Ch) matches some(chnnlRules) is _set_indexed(Rules,Ch,list of {chnnlRules..;Rl})
+     |  insertEventRule(Rules,Rl matching (Ch,P,C,A)) is _set_indexed(Rules,Ch,list of {Rl})
 
     -- pick apart an event condition into individual pieces
-    eventRule(<|on ?P on ?Ch where ?C do ?A|>) is (Ch,P,C,A);
-    eventRule(<|on ?P on ?Ch do ?A|>) is (Ch,P,<|true|>,A);
+    fun eventRule(<|on ?P on ?Ch where ?C do ?A|>) is (Ch,P,C,A)
+     |  eventRule(<|on ?P on ?Ch do ?A|>) is (Ch,P,<|true|>,A)
 
-    channelProc(Ch,Rules) is let{
-      eVar is _macro_gensym("evt");
+    fun channelProc(Ch,Rules) is let{
+      def eVar is _macro_gensym("evt");
     
-      rlProc((_,P,C,A)) is let{
-        ecaName is _macro_gensym("eca");
-      } in (<| #(?ecaName)# (?P) where ?C do ?A |>, <|#(?ecaName)# (?eVar) |>);
+      fun rlProc((_,P,C,A)) is let{
+        def ecaName is _macro_gensym("eca");
+      } in (<| prc #(?ecaName)# (?P) where ?C do ?A |>, <|#(?ecaName)# (?eVar) |>);
 
-      makeRules(_empty()) is (<|{}|>,<|{}|>);
-      makeRules(_pair(Rl,_empty())) is rlProc(Rl);
-      makeRules(_pair(Rl,Ules)) is valof{
-        (Pr,Cl) is rlProc(Rl);
-        (D,C) is makeRules(Ules);
+      fun makeRules(_empty()) is (<|{}|>,<|{}|>)
+       |  makeRules(_pair(Rl,_empty())) is rlProc(Rl)
+       |  makeRules(_pair(Rl,Ules)) is valof{
+        def (Pr,Cl) is rlProc(Rl);
+        def (D,C) is makeRules(Ules);
         valis (semi(D,Pr),semi(C,Cl))
       };
       
-      semi(X,Y) is <| ?X ; ?Y |>;
+      fun semi(X,Y) is <| ?X ; ?Y |>;
       
-      makeEcaProc((Dfs, Calls)) is <| #(?Ch)#(?eVar) do {?Calls} using { ?Dfs } |>;
+      fun makeEcaProc((Dfs, Calls)) is <| prc #(?Ch)#(?eVar) do {?Calls} using { ?Dfs } |>;
 
-      makeEca(list of {(_,P,C,A)}) is <| #(?Ch)#(?P) where ?C do ?A |>;
-      makeEca(Rls) is makeEcaProc(makeRules(Rls));
+      fun makeEca(list of {(_,P,C,A)}) is <| prc #(?Ch)#(?P) where ?C do ?A |>
+       |  makeEca(Rls) is makeEcaProc(makeRules(Rls))
     } in makeEca(Rules);
 
-    makeActorTheta((Theta,EvtRules)) is let{
-      eventRules is list of { all channelProc(Ch,Rules) where Ch->Rules in EvtRules};
+    fun makeActorTheta((Theta,EvtRules)) is let{
+      def eventRules is list of { all channelProc(Ch,Rules) where Ch->Rules in EvtRules}
     } in __wrapSemi(eventRules,__wrapSemi(Theta,<|{}|>));
 
   } in makeActorTheta(collectRules(Defs,(list of {}, dictionary of {})));

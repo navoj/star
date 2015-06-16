@@ -75,7 +75,6 @@ public class StandardNames
   public static final String IMPLIES = keyword("implies");
 
   public static final String WHEN = keyword("when");
-  public static final String FATBAR = graphic("|_|");
 
   public static final String NUMBER = standard("number");
 
@@ -162,7 +161,10 @@ public class StandardNames
 
   public static final String REF = keyword("ref");
   public static final String VAR = keyword("var");
+  public static final String DEF = keyword("def");
   public static final String FUN = keyword("fun");
+  public static final String PRC = keyword("prc");
+  public static final String PTN = keyword("ptn");
 
   public static final String SHRIEK = graphic("!");
 
@@ -341,6 +343,7 @@ public class StandardNames
   public static final String WFF_DEFINES = graphic("::");
   public static final String WFF_STAR = graphic(":*");
   public static final String WFF_TERM = graphic(";*");
+  public static final String WFF_RULES = graphic("|*");
   public static final String WFF_VAR = graphic("?");
   public static final String WFF_STATEMENT = "statement";
   public static final String WFF_IDENTIFIER = "identifier";

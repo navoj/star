@@ -7,8 +7,8 @@ worksheet{
   
   msgQ has type for all a such that ()=>messageQ of a;
   msgQ() is let{
-    var postMsgChnl is channel();
-    var grabMsgChnl is channel();
+    def postMsgChnl is channel();
+    def grabMsgChnl is channel();
 
     qLoop(Q) where isEmpty(Q) is wait for postM(Q);
     qLoop(Q) default is wait for postM(Q) or pollM(Q)
@@ -42,13 +42,13 @@ worksheet{
   
   worker(W,Q) is task{
     while true do{
-      var Nx is valof Q.poll();
+      def Nx is valof Q.poll();
       logMsg(info,"$W doing $Nx");
       sleep(random(100L))
     }
   }
   
-  var MQ is msgQ();
+  def MQ is msgQ();
   ignore background worker("alpha",MQ);
   ignore background worker("beta",MQ);
   

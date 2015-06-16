@@ -92,7 +92,7 @@ private digitSizeElem has type (FLDigit of %a) => integer_;
 digitSizeElem(flDigit) is __array_size(flDigit);
 
 private digitSizeNode has type (FLDigit of FLNode of (%a)) => integer_;
-digitSizeNode(flDigit) is array_int_foldLeft((function(s, fln) is __integer_plus(s, nodeSize(fln))), ZERO, flDigit);
+digitSizeNode(flDigit) is array_int_foldLeft((s, fln) => __integer_plus(s, nodeSize(fln)), ZERO, flDigit);
 
 /* FLNode */
 private nodeSize has type (FLNode of %a) => integer_;
@@ -104,7 +104,7 @@ flNodeElem(els) is FLNode(__array_size(els), els);
 
 private flNodeNode has type (list of FLNode of %a) => FLNode of FLNode of %a;
 flNodeNode(nodes) is FLNode(sz, nodes) using {
-  sz is array_int_foldLeft((function(s,n) is __integer_plus(s, nodeSize(n))), ZERO, nodes);
+  sz is array_int_foldLeft((s,n) => __integer_plus(s, nodeSize(n)), ZERO, nodes);
 };
 
 private nodesFromListHelper has type ((list of %a) => %%e of %a, list of %a) => list of %%e of %a;
@@ -197,7 +197,7 @@ flFoldLeft(f, b0, FLDeep(_, l, m, r)) is valof {
 
 flFilter has type ((%a) => boolean, FingerList of (%a)) => FingerList of (%a);
 flFilter(p, ft) is
-  helper((function(b, a) is (p(a) ? flAdjoin(b, a) | b)), FLEmpty, ft)
+  helper((b, a) => (p(a) ? flAdjoin(b, a) : b), FLEmpty, ft)
 using {
   helper has type ((%b, %c) => %b, %b, FingerList of (%c)) => %b;
   helper(f, b, FLEmpty) is b;
@@ -331,7 +331,7 @@ flAppend(xs, ys) is app3Elem(xs, __array_nil(), ys) using {
     FLDeep(__integer_plus(v1, __integer_plus(v2, sumNodeSize(ts))), pr1, app3Node(m1, (nodesFromListNode(__array_concatenate((sf1), __array_concatenate(ts, (pr2))))), m2), sf2);
 
   sumNodeSize has type (list of (FLNode of %c)) => integer_;
-  sumNodeSize(s) is array_int_foldLeft((function(a,b) is __integer_plus(a,nodeSize(b))), ZERO, s);
+  sumNodeSize(s) is array_int_foldLeft((a,b) => __integer_plus(a,nodeSize(b)), ZERO, s);
 }
 
 /********************************************************************************************/
@@ -633,7 +633,7 @@ flAdjoin(s, a) is flAdjoinElem(s, a);
 
 flToCons has type (FingerList of %a) => cons of %a;
 -- FIXME optimized version for performance
-flToCons(s) is reverse(flFoldLeft((function(l,a) is cons(a,l)), nil, s));
+flToCons(s) is reverse(flFoldLeft((l,a) => cons(a,l), nil, s));
 
 flFromCons has type (cons of %a) => FingerList of %a;
 -- FIXME optimized version for performance
@@ -707,7 +707,7 @@ implementation pPrint over FingerList of %t where pPrint over %t is {
   inter is ppStr(";");
   dispFtl(fl, sep0) is let {
     (res, _) is flFoldLeft(
-                  (function((d, sep), t) is (cons(ppDisp(t), cons(sep, d)), inter)),
+                  (((d, sep), t) => (cons(ppDisp(t), cons(sep, d)), inter)),
                   (nil,sep0),
                   fl);
     } in reverse(res);
@@ -728,7 +728,7 @@ implementation sequence over FingerList of %e determines %e is {
 
 /* only return new values */
 implementation indexable over FingerList of %e determines (integer,%e) is {
-  _index(fl,integer(Ix)) is flCheckIndex(fl,Ix) ? some(flSplitElem(fl, Ix)) | none;
+  _index(fl,integer(Ix)) is flCheckIndex(fl,Ix) ? some(flSplitElem(fl, Ix)) : none;
   _set_indexed(fl,integer(Ix),E) is valof {flRaiseIfIndexCheckFails(fl, Ix); valis flSubstituteElem(fl, Ix, E)};
   _delete_indexed(fl,integer(Ix)) is valof {flRaiseIfIndexCheckFails(fl, Ix); valis flRemoveElem(fl, Ix)};
 };

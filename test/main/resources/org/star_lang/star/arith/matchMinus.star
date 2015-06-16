@@ -16,13 +16,13 @@
  *
  */
 matchMinus is package {
-  foo(a) is case a in {
+  fun foo(a) is case a in {
     (-1) is "neg";
      0 is "zero";
      1 is "pos";
   };
   
-  main() do{
+  prc main() do{
     assert foo(-1) = "neg";
     assert foo(0) = "zero";
     assert foo(1) = "pos";

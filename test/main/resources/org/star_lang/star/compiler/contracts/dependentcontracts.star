@@ -26,14 +26,14 @@ dependentcontracts is package{
   type solid is solid(string)
   
   implementation foo over hollow of %e determines %e is {
-    bar(hollow(X)) is X;
+    fun bar(hollow(X)) is X;
   }
   
   implementation foo over solid determines string is {
-    bar(solid(X)) is X;
+    fun bar(solid(X)) is X;
   }
   
-  main() do
+  prc main() do
   {
     assert "fred" = bar(solid("fred"));
     

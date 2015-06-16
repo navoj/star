@@ -23,13 +23,13 @@ dependtype is package{
   }
   
   implementation bar over string is {
-    bore(X) is X;
+    fun bore(X) is X;
   }
   
   alpha has type (foo of %t) => string;
-  alpha(nofuss(X)) is bore(X);
+  fun alpha(nofuss(X)) is bore(X);
   
-  main() do
+  prc main() do
   {
     assert alpha(nofuss("fred"))="fred";
   }

@@ -32,21 +32,21 @@ type task of %a is _task(() => taskEvalState of %a)
 
 -- Returns an asynchronous task, that will yield the given value when executed
 taskReturn has type (%a) => task of %a
-taskReturn(v) is _task((function () is TaskDone(v)))
+fun taskReturn(v) is _task(() => TaskDone(v))
 
 -- Failure
 taskFail has type (exception) => task of %a
-taskFail(e) is
-  _task((function () is TaskFailure(e)))
+fun taskFail(e) is
+  _task( () => TaskFailure(e))
   
 -- Handle failure
 taskCatch has type (task of %a, (exception) => task of %a) => task of %a
-taskCatch(_task(b),EF) is let{
-   catchTask() is
+fun taskCatch(_task(b),EF) is let{
+  fun catchTask() is
     case b() in {
       TaskFailure(E) is TaskContinue(EF(E));
       TaskContinue(b2) is TaskContinue(taskCatch(b2, EF));
-      TaskWait(start, more) is TaskWait(start, (function (c) is taskCatch(more(c), EF)))
+      TaskWait(start, more) is TaskWait(start,  (c) => taskCatch(more(c), EF))
       Other default is Other; -- TaskDone
     }
 } in _task(catchTask)
@@ -54,26 +54,26 @@ taskCatch(_task(b),EF) is let{
 -- Returns an asynchronous task, that, when executed, will 'continue' in the given
 -- function as soon as the first task completes.
 taskBind has type (task of %b, (%b) => task of %a) => task of %a
-taskBind(_task(b), f) is let {
-  boundTask() is
+fun taskBind(_task(b), f) is let {
+  fun boundTask() is
     case b() in {
       TaskDone(v) is TaskContinue(f(v)); -- TODO? catch java exceptions in f?
       TaskContinue(b2) is TaskContinue(taskBind(b2, f));
-      TaskWait(start, more) is TaskWait(start, (function (c) is taskBind(more(c), f)))
+      TaskWait(start, more) is TaskWait(start,  (c) => taskBind(more(c), f))
       TaskFailure(e) is TaskFailure(e)
     }
 } in _task(boundTask)
 
 
 taskWaitExt has type ((action(task of %a)) => taskWaitResult of %a) => task of %a
-taskWaitExt(start) is
+fun taskWaitExt(start) is
   _task(() => TaskWait(start, id))
 
 -- Returns an asynchronous task, that, when executed, will call the given 'start' action.
 -- The passed 'wakener' action should then be called when the result of the asynchronous
 -- task is available or has failed - possibly by some other thread.
 taskWait has type (action(action(task of %a))) => task of %a
-taskWait(start) is taskWaitExt((wakeup) => valof { start(wakeup); valis TaskSleep; })
+fun taskWait(start) is taskWaitExt((wakeup) => valof { start(wakeup); valis TaskSleep; })
   
 -- implement the computation contract
 implementation (computation) over task is {
@@ -88,15 +88,15 @@ implementation execution over task is {
 }
 
 implementation injection over (task,task) is {
-  _inject(C) is C;
+  fun _inject(C) is C;
 }
 
 implementation injection over (task,action) is {
-  _inject(t) is _done(executeTask(t, raiser_fun));
+  fun _inject(t) is _done(executeTask(t, raiser_fun));
 }
 
 implementation injection over (action,task) is {
-  _inject(a) is runCombo(a,taskReturn,taskFail);
+  fun _inject(a) is runCombo(a,taskReturn,taskFail);
 }
 
 #task{?A} :: expression :- A ;* action;
@@ -108,8 +108,8 @@ type taskWaitResult of %a is TaskSleep or TaskMicroSleep(task of %a)
 
 private
 _doWait has type (action(task of %b), (action(task of %a)) => taskWaitResult of %a, (task of %a) => task of %b) => taskWaitResult of %b
-_doWait(resumet, start, k) is valof {
-  wakeup is (procedure(tv) do {
+fun _doWait(resumet, start, k) is valof {
+  def wakeup is ((tv) do {
      -- when this procedure is called, the waiter shall be woken up.
      -- k creates the continuation task that depended on v. Attention: tv may be a taskFail
      resumet(k(tv));
@@ -129,7 +129,7 @@ type taskStepResult of %a is
 -- function returns.
 -- This functions throws (does not catch) exceptions thrown by the executed part of the task.
 executeTaskStep has type (action(task of %a), task of %a) => taskStepResult of %a
-executeTaskStep(resumet, _task(a)) is valof {
+fun executeTaskStep(resumet, _task(a)) is valof {
   var curr := a;
   
   while true do {
@@ -154,9 +154,9 @@ private type future of %a is alias of __forkJoinTask of %a;
 private future_wait has type (future of %a) => %a
 private future_set has type action(future of %a, %a)
 
-private future_init(v) is __fjtFuture(v);
-private future_wait(f) is __fjtJoinReinit(f);
-private future_set(f, v) do __fjtComplete(f, v);
+private fun future_init(v) is __fjtFuture(v);
+private fun future_wait(f) is __fjtJoinReinit(f);
+private prc future_set(f, v) do __fjtComplete(f, v);
 
 -- Execute and wait until the given asynchronous task completes and return it's value.
 -- This functions throws (does not catch) exceptions thrown by the task.
@@ -165,13 +165,11 @@ executeTask has type (task of %a,(exception)=>%a) => %a
 -- two variants, one utilizes the calling thread only (potentially spending several thread sync ops),
 -- the other one uses the global thread pool and only one sync on the end of the whole computation.
 
-executeTaskOnCurrentThread(op,EF) is valof {
-  fut is future_init(op); -- first wait will return op
-  resumer is (procedure(next) do {
-                future_set(fut, next);
-                });
+fun executeTaskOnCurrentThread(op,EF) is valof {
+  def fut is future_init(op); -- first wait will return op
+  def resumer is ((next) do { future_set(fut, next); });
   while true do {
-    next is executeTaskStep(resumer, future_wait(fut));
+    def next is executeTaskStep(resumer, future_wait(fut));
     case next in {
       TaskFailed(e) do valis EF(e);
       TaskCompleted(res) do valis res; -- return
@@ -186,23 +184,23 @@ executeTaskOnThreadPool has type (task of %a,(exception)=>%a) => %a
 -- defined below..
 
 -- Now we can choose between the two implementations
-executeTask(op,EF) is executeTaskOnThreadPool(op,EF)
+fun executeTask(op,EF) is executeTaskOnThreadPool(op,EF)
 -- executeTask(op,EF) is executeTaskOnCurrentThread(op,EF)
 
 -- Returns an asynchronous task, that, when executed, calls the given function and returns it's result.
 -- It 'lifts' a synchronous operation into the asynchronous world.
--- Note this is equivalent to taskBind(taskReturn(()), (function (_) is taskReturn(f()))).
+-- Note this is equivalent to taskBind(taskReturn(()),  (_) => taskReturn(f())).
 taskLift has type (() => %a) => task of %a
-taskLift(f) is
-  _task((function () is TaskDone(f())))
+fun taskLift(f) is
+  _task( () => TaskDone(f()))
   
 -- Returns an asynchronous task, that, when executed, calls the given function and continues with the
 -- exection of it's result.
 -- It 'delays' a asynchronous operation.
--- Note this is equivalent to taskBind(taskReturn(()), (function (_) is f())).
+-- Note this is equivalent to taskBind(taskReturn(()),  (_) => f()).
 taskGuard has type (() => task of %a) => task of %a
-taskGuard(f) is
-  _task((function () is TaskContinue(f())))
+fun taskGuard(f) is
+  _task(() => TaskContinue(f()))
 
 -- ***************** User level utilities ******************
 
@@ -211,11 +209,11 @@ type taskResult of %a is TaskSuccess(%a) or TaskError(exception);
  
 private
 _executeTaskOnAndThen has type action(task of %a, action(taskResult of %a));
-_executeTaskOnAndThen(op, cont) do {
-  task_resume is (procedure (next) do {
+prc _executeTaskOnAndThen(op, cont) do {
+  def task_resume is ((next) do {
     _executeTaskOnAndThen(next,  cont);
   });
-  task_job is (procedure () do
+  def task_job is (() do
     case executeTaskStep(task_resume, op) in {
       TaskFailed(e) is cont(TaskError(e));
       TaskCompleted(v) is cont(TaskSuccess(v));
@@ -226,23 +224,23 @@ _executeTaskOnAndThen(op, cont) do {
 
 private
 _backgroundOn has type (task of %a) => task of %a
-_backgroundOn(op) is
+fun _backgroundOn(op) is
   let {
     -- either the task is finished before the caller waits for the result, or he waits for it before the child operation is done.
     var result_value := none;
     var result_wakeup := none;
     
-    _result_undefined is false;
-    _result_set is true;
-    result_flag is atomic(_result_undefined);
-    try_signal_result() is
+    def _result_undefined is false;
+    def _result_set is true;
+    def result_flag is atomic(_result_undefined);
+    fun try_signal_result() is
       __atomic_test_n_set(result_flag, _result_undefined, _result_set);
 
-    taskIsDone is (procedure (v) do {
-      rv is (case v in {
+    prc taskIsDone(v) do {
+      def rv is case v in {
         TaskSuccess(r) is taskReturn(r)
         TaskError(e) is taskFail(e); -- pass exception to waiter
-      });
+      };
       result_value := some(rv);
       
       if not try_signal_result() then {
@@ -252,18 +250,18 @@ _backgroundOn(op) is
           _ default do assert(false);
         }
       }
-    });
+    };
     
-    blockWaiter is (function(wakeup) is valof {
+    fun blockWaiter(wakeup) is valof {
       result_wakeup := some(wakeup);
       if not try_signal_result() then {
         -- result was already signaled, so the child task was 'faster'
-        some(v) is result_value;
+        def some(v) is result_value;
         valis TaskMicroSleep(v);
       } else {
         valis TaskSleep;
       }
-    });
+    };
     
     -- spawn the operation, and then either call the wakeup action or put the result in result.
     {
@@ -279,19 +277,19 @@ _backgroundOn(op) is
 -- task's result
 -- Note that if you don't need the result of the child task, you can use executeTask.
 backgroundFF has type (task of %a) => task of task of %a
-backgroundFF(t) is taskLift((function () is _backgroundOn(t)))
+fun backgroundFF(t) is taskLift(() => _backgroundOn(t))
 
 backgroundF has type (task of %a) => task of task of %a
-backgroundF(t) is taskBind(backgroundFF(t), (r) => taskReturn(r))
+fun backgroundF(t) is taskBind(backgroundFF(t), (r) => taskReturn(r))
 
 -- Synchronous evaluation, but on the thread pool; the current thread will only block once
-executeTaskOnThreadPool(op,EF) is
+fun executeTaskOnThreadPool(op,EF) is
   let {
     -- putting in background is still in foreground..
-    async_result is executeTaskOnCurrentThread(backgroundF(op), raiser_fun)
+    def async_result is executeTaskOnCurrentThread(backgroundF(op), raiser_fun)
   }
   -- and waiting for the result in foreground...
   in executeTaskOnCurrentThread(async_result, EF);
 
 #prefix((background),900);
-background T is valof backgroundF(T);
+fun background T is valof backgroundF(T);

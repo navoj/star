@@ -25,14 +25,16 @@ import org.star_lang.star.data.type.Location;
  *
  */
 @SuppressWarnings("serial")
-public class WffTermPtn implements WffCond
+public class WffSequencePtn implements WffCond
 {
   private final String category;
+  private final String operator;
   private final int offset;
 
-  public WffTermPtn(int offset, String category)
+  public WffSequencePtn(int offset, String operator, String category)
   {
     this.category = category;
+    this.operator = operator;
     this.offset = offset;
   }
 
@@ -41,7 +43,7 @@ public class WffTermPtn implements WffCond
   {
     IAbstract term = env[offset];
 
-    for (IAbstract el : CompilerUtils.unWrap(term)) {
+    for (IAbstract el : CompilerUtils.unWrap(term, operator)) {
       applyMode mode = engine.validate(el, category);
 
       if (mode != applyMode.validates)

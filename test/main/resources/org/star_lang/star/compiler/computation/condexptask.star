@@ -30,13 +30,13 @@ condexptask is package{
     valis "$X"
   }
   
-  S0(X) is task{ valis (pos(X) ? alpha | valof cc(X)) }
+  S0(X) is task{ valis (pos(X) ? alpha : valof cc(X)) }
 
-  S1(X) is task{ valis (pos(X) ? valof task{ valis "$X"}  | beta) }
+  S1(X) is task{ valis (pos(X) ? valof task{ valis "$X"}  : beta) }
   
   L is list of {1;2;3};
 
-  S2(X) is task{ valis X in L ? valof task { valis X} | nonInteger };
+  S2(X) is task{ valis X in L ? valof task { valis X} : nonInteger };
   
   main() do{
     R0a is valof S0(1);

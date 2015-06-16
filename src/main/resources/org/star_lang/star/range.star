@@ -27,15 +27,15 @@ private import folding;
 type range of t where arithmetic over t and comparable over t is range(t,t,t);
 
 implementation sizeable over range of %t where coercion over (%t,integer) is {
-  isEmpty(range(F,T,_)) is F>=T;
-  size(range(F,T,S)) is ((T-F)/S) as integer;
+  fun isEmpty(range(F,T,_)) is F>=T;
+  fun size(range(F,T,S)) is ((T-F)/S) as integer;
 }
 
 implementation iterable over range of %t determines %t is {
-  _iterate(range(Fr,To,Stp),Fn,St) is iotaIterate(Fr,To,Stp,Fn,St);
+  fun _iterate(range(Fr,To,Stp),Fn,St) is iotaIterate(Fr,To,Stp,Fn,St);
 }
 
-private iotaIterate(Fr,To,Stp,Fn,S) is valof{
+private fun iotaIterate(Fr,To,Stp,Fn,S) is valof{
   var St := S;
   var Ix := Fr;
   
@@ -50,20 +50,20 @@ private iotaIterate(Fr,To,Stp,Fn,S) is valof{
 }
 
 implementation for all t such that sequence over range of t determines t where coercion over (integer,t) and equality over t is {
-    _empty() from range(F,T,I) where F*I>=T*I
-    _pair(F,range(F+I,T,I)) from range(F,T,I) where F*I<T*I;
-    _cons(H,range(F,T,I)) where F*I>=T*I is range(H,H+I,I)
-    _cons(H,range(F,T,I)) where F-I=H is range(H,T,I);
-    _apnd(range(F,T,I),E) where F*I>=T*I is range(E,E+I,I)
-    _apnd(range(F,T,I),E) where T+I=E is range(F,E,I);
-    _back(range(F,E-I,I),E) from range(F,E,I);
-    _nil() is range(0 as t,0 as t,1 as t);
+    ptn _empty() from range(F,T,I) where F*I>=T*I
+    ptn _pair(F,range(F+I,T,I)) from range(F,T,I) where F*I<T*I;
+    fun _cons(H,range(F,T,I)) where F*I>=T*I is range(H,H+I,I)
+     |  _cons(H,range(F,T,I)) where F-I=H is range(H,T,I);
+    fun _apnd(range(F,T,I),E) where F*I>=T*I is range(E,E+I,I)
+     |  _apnd(range(F,T,I),E) where T+I=E is range(F,E,I);
+    ptn _back(range(F,E-I,I),E) from range(F,E,I);
+    fun _nil() is range(0 as t,0 as t,1 as t);
   }
 
 implementation for all t such that foldable over range of t determines t is {
-  leftFold(F,I,range(Fr,To,Inc)) is  valof{
+  fun leftFold(F,I,range(Fr,To,Inc)) is  valof{
     var r := Fr
-    var limit is To*Inc
+    def limit is To*Inc
     var st := I;
     while r*Inc< limit do {
       st := F(st,r);
@@ -72,9 +72,9 @@ implementation for all t such that foldable over range of t determines t is {
     valis st;
   };
     
-  rightFold(F,I,range(Fr,To,Inc)) is  valof{
+  fun rightFold(F,I,range(Fr,To,Inc)) is  valof{
     var r := To
-    var limit is Fr*Inc
+    def limit is Fr*Inc
     var st := I;
     while r*Inc > limit do {
       r := r-Inc
@@ -83,16 +83,16 @@ implementation for all t such that foldable over range of t determines t is {
     valis st;
   };
     
-  leftFold1(F,range(Fr,To,Inc)) where Fr*Inc<To*Inc is leftFold(F,Fr,range(Fr+Inc,To,Inc))
-  leftFold1(F,_) is raise "range is empty";
+  fun leftFold1(F,range(Fr,To,Inc)) where Fr*Inc<To*Inc is leftFold(F,Fr,range(Fr+Inc,To,Inc))
+   |  leftFold1(F,_) is raise "range is empty";
   
 
-  rightFold1(F,range(Fr,To,Inc)) where Fr*Inc<To*Inc is rightFold(F,To,range(Fr,To-Inc,Inc))
-  rightFold1(F,_) is raise "range is empty";
+  fun rightFold1(F,range(Fr,To,Inc)) where Fr*Inc<To*Inc is rightFold(F,To,range(Fr,To-Inc,Inc))
+   |  rightFold1(F,_) is raise "range is empty";
 }
 
 implementation for all t such that concatenate over range of t where equality over t is {
-  range(Fr,Md,Inc)++range(Md,To,Inc) is range(Fr,To,Inc);
+  fun range(Fr,Md,Inc)++range(Md,To,Inc) is range(Fr,To,Inc);
 }
 
 -- macro out common use cases ...

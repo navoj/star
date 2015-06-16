@@ -17,7 +17,7 @@
  */
 strindex is package{
   main() do {
-    src is "the quick brown fox jumped over the lazy dog";
+    def src is "the quick brown fox jumped over the lazy dog";
     
     assert src[0] has value 't';
     

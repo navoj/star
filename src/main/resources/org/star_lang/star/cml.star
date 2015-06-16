@@ -35,7 +35,7 @@ type rendezvous of %a is _Rendezvous(task of ((cons of cvar, prv of ((cons of cv
 type channel of %a is alias of chan of %a
 
 channel has type () => channel of %a
-channel is chan
+def channel is chan
 
 recvRv has type (channel of %a) => rendezvous of %a
 sendRv has type (channel of %a, %a) => rendezvous of ()
@@ -63,77 +63,77 @@ await has type (rendezvous of %a) => task of %a
 -- Implementations
 
 private
-_basePrvTask(rv) is taskReturn((nil, wrapPrv(rv, (function (x) is taskReturn((nil, taskReturn(x)))))))
+fun _basePrvTask(rv) is taskReturn((nil, wrapPrv(rv, (x) => taskReturn((nil, taskReturn(x))))))
+
 private
-_basePrv(rv) is _Rendezvous(_basePrvTask(rv))
+fun _basePrv(rv) is _Rendezvous(_basePrvTask(rv))
 
-alwaysRv(v) is _basePrv(alwaysPrv(v))
+fun alwaysRv(v) is _basePrv(alwaysPrv(v))
  
-neverRv is _Rendezvous(taskReturn((nil, neverPrv)))
+def neverRv is _Rendezvous(taskReturn((nil, neverPrv)))
 
-recvRv(ch) is _basePrv(recvPrv(ch))
+fun recvRv(ch) is _basePrv(recvPrv(ch))
 
-sendRv(ch, msg) is _basePrv(sendPrv(ch, msg))
+fun sendRv(ch, msg) is _basePrv(sendPrv(ch, msg))
 
-wrapRv(_Rendezvous(e), f) is
+fun wrapRv(_Rendezvous(e), f) is
   _Rendezvous(taskBind(e,
-    (function ((cvs, rv)) is let {
-      pwrap((cvs2, g)) is taskReturn((cvs2, taskBind(g, f)));
+    ( ((cvs, rv)) => let {
+      fun pwrap((cvs2, g)) is taskReturn((cvs2, taskBind(g, f)));
     } in taskReturn((cvs, wrapPrv(rv, pwrap))))))
     
-guardRv(t) is
-  _Rendezvous(taskBind(t, (function (_Rendezvous(rv)) is rv)))
+fun guardRv(t) is
+  _Rendezvous(taskBind(t,  (_Rendezvous(rv)) => rv))
 
-withNackRv(f) is
-  _Rendezvous(taskGuard((function () is let {
-    nack is mk_cvar();
-    var _Rendezvous(e) is f(_basePrv(waitPrv(nack)));
-    } in taskBind(e, (function ((cvs, rv)) is taskReturn((cons(nack, cvs), rv))))
+fun withNackRv(f) is
+  _Rendezvous(taskGuard((() => let {
+    def nack is mk_cvar();
+    def _Rendezvous(e) is f(_basePrv(waitPrv(nack)));
+    } in taskBind(e, ((cvs, rv)) => taskReturn((cons(nack, cvs), rv)))
   )))
 
 private
-  consConc(nil,X) is X;
-  consConc(cons(H,T),X) is cons(H,consConc(T,X));
+  fun consConc(nil,X) is X
+   |  consConc(cons(H,T),X) is cons(H,consConc(T,X))
 
-_choose2(_Rendezvous(e1), _Rendezvous(e2)) is
+fun _choose2(_Rendezvous(e1), _Rendezvous(e2)) is
   _Rendezvous(taskBind(e1,
-    (function ((cvs1, rv1)) is
+    ( ((cvs1, rv1)) =>
       taskBind(e2,
-        (function ((cvs2, rv2)) is
+        (((cvs2, rv2)) =>
   	    taskReturn((consConc(cvs1, cvs2),
-            choosePrv(wrapPrv(rv1, (function ((cvs, th)) is taskReturn((consConc(cvs,cvs2), th)))),
-                      wrapPrv(rv2, (function ((cvs, th)) is taskReturn((consConc(cvs,cvs1), th)))))
+            choosePrv(wrapPrv(rv1, (((cvs, th)) => taskReturn((consConc(cvs,cvs2), th)))),
+                      wrapPrv(rv2, (((cvs, th)) => taskReturn((consConc(cvs,cvs1), th)))))
                       )))))))
 
-chooseRv(nil) is neverRv
-chooseRv(cons(x, nil)) is x
-chooseRv(cons(x, xs)) default is _choose2(x, chooseRv(xs))
+fun chooseRv(nil) is neverRv
+ |  chooseRv(cons(x, nil)) is x
+ |  chooseRv(cons(x, xs)) default is _choose2(x, chooseRv(xs))
   
 
 private
-_timeoutRv(long(ms)) is
-  taskGuard((function () is let {
-    cv is mk_cvar();
-    end_timed_rv() do cvar_set(cv);
-    _ is __spawnDelayedAction(end_timed_rv, ms);
+fun _timeoutRv(long(ms)) is
+  taskGuard((() => let {
+    def cv is mk_cvar();
+    prc end_timed_rv() do cvar_set(cv);
+    { ignore __spawnDelayedAction(end_timed_rv, ms) }
     } in _basePrvTask(waitPrv(cv))
   ))
 
-timeoutRv(ms) is _Rendezvous(_timeoutRv(ms))
+fun timeoutRv(ms) is _Rendezvous(_timeoutRv(ms))
 
-atDateRv(date(_ms_since_epoch)) is
-  _Rendezvous(taskGuard((function () is let {
-    diff_ms is timeDiff(date(_ms_since_epoch), now())
+fun atDateRv(date(_ms_since_epoch)) is
+  _Rendezvous(taskGuard((() => let {
+    def diff_ms is timeDiff(date(_ms_since_epoch), now())
     } in _timeoutRv(diff_ms)
   )))
+ |  atDateRv(never) is neverRv
 
-atDateRv(never) is neverRv
-
-await(_Rendezvous(e)) is
+fun await(_Rendezvous(e)) is
   taskBind(e,
-    (function ((_, rv)) is
+    ( ((_, rv)) =>
       taskBind(prv_await(rv),
-        (function ((cvs, act)) is valof {
+        ( ((cvs, act)) => valof {
           var _cvs := cvs;
           while _cvs matches cons(cv, rest) do {
             cvar_set(cv)
@@ -142,6 +142,6 @@ await(_Rendezvous(e)) is
           valis act; -- act contains the wrapped tasks
           }))))
 
-recv(ch) is await(recvRv(ch))
+fun recv(ch) is await(recvRv(ch))
 
-send(ch, msg) is await(sendRv(ch, msg))
+fun send(ch, msg) is await(sendRv(ch, msg))

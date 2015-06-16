@@ -3,6 +3,6 @@ univProc is package {
         p has type ref action();
     }
     main() do {
-        var r is t{p:=(procedure() do nothing)};
+        def r is t{p:=(procedure() do nothing)};
     }
 }

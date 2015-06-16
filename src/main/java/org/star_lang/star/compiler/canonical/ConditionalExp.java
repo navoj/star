@@ -71,7 +71,7 @@ public class ConditionalExp extends BaseExpression
       int mark = disp.markIndent(2);
       disp.append("\n");
       cond.getThExp().prettyPrint(disp);
-      disp.append(StandardNames.PIPE);
+      disp.append(StandardNames.COLON);
       disp.popIndent(mark);
       disp.append("\n");
       exp = cond.getElExp();

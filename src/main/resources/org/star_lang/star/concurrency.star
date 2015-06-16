@@ -54,19 +54,19 @@ private import actors;
 #wait for ?E :: expression :- choose E :: expression;
 
 #choose ?Rendez ==> rEnder(Rendez) ## {
-  #rEnder(<|?L or ?R|>) is <|_choose2(?rEnder(L),?rEnder(R))|>;
-  #rEnder(<|(?R)|>) is rEnder(R);
-  #rEnder(<|always ?X|>) is <|alwaysRv(?X)|>;
-  #rEnder(<|never|>) is <|neverRv|>;
-  #rEnder(<|timeout ?T|>) is <|timeoutRv(?T)|>;
-  #rEnder(<|at ?T|>) is <|atDateRv(?T)|>;
-  #rEnder(<|choose ?R|>) is <|rEnder(?R)|>;
-  #rEnder(<|incoming ?Ch|>) is <|recvRv(?Ch)|>;
-  #rEnder(<|put ?M on ?Ch|>) is <|sendRv(?Ch,?M)|>;
-  #rEnder(<|wrap ?R in ?P->?T|>) is <|wrapRv(?rEnder(R),(function(?P) is ?T))|>;
-  #rEnder(<|wrap ?R in ?F|>) is <|wrapRv(?rEnder(R),?F)|>;
-  #rEnder(<|guard ?R|>) is <|guardRv(?R)|>;
-  #rEnder(E) is E;
+  #fun rEnder(<|?L or ?R|>) is <|_choose2(?rEnder(L),?rEnder(R))|>
+    |  rEnder(<|(?R)|>) is rEnder(R)
+    |  rEnder(<|always ?X|>) is <|alwaysRv(?X)|>
+    |  rEnder(<|never|>) is <|neverRv|>
+    |  rEnder(<|timeout ?T|>) is <|timeoutRv(?T)|>
+    |  rEnder(<|at ?T|>) is <|atDateRv(?T)|>
+    |  rEnder(<|choose ?R|>) is <|rEnder(?R)|>
+    |  rEnder(<|incoming ?Ch|>) is <|recvRv(?Ch)|>
+    |  rEnder(<|put ?M on ?Ch|>) is <|sendRv(?Ch,?M)|>
+    |  rEnder(<|wrap ?R in ?P->?T|>) is <|wrapRv(?rEnder(R),(?P) => ?T)|>
+    |  rEnder(<|wrap ?R in ?F|>) is <|wrapRv(?rEnder(R),?F)|>
+    |  rEnder(<|guard ?R|>) is <|guardRv(?R)|>
+    |  rEnder(E) is E;
 };
 
 #wait for ?R ==> await(choose R);
@@ -80,9 +80,9 @@ type concActor of %t is conAct0r(saNotifyFun of %t,saRequestFun of %t);
 -- to the underlying background server task and waiting for a reply.
   
 implementation speech over concActor of %t determines (%t,task) is {
-  _query(conAct0r(_,SAfun),Qf,_,_) is await(SAfun(Qf));
-  _request(conAct0r(_,SAfun),Qf,_,_) is await(SAfun(Qf));
-  _notify(conAct0r(Notifyfun,_),Np) is await(Notifyfun(Np));
+  fun _query(conAct0r(_,SAfun),Qf,_,_) is await(SAfun(Qf));
+  fun _request(conAct0r(_,SAfun),Qf,_,_) is await(SAfun(Qf));
+  fun _notify(conAct0r(Notifyfun,_),Np) is await(Notifyfun(Np));
 };
 
 #token("concurrent actor");
@@ -102,29 +102,29 @@ private type tractorSa is trRequest{
     chnl has type channel of chnlType}
   or trNotify(()=>(),channel of ());
  
-actorHead(Defs) is let{
-  actorChnl is channel();
+fun actorHead(Defs) is let{
+  def actorChnl is channel();
 
   -- standard speech action processing function    
-  speechFun(QF) is valof{
-    ReplyChnl is channel();
+  fun speechFun(QF) is valof{
+    def ReplyChnl is channel();
     
     -- send the request to the actor's server task
-    ignore background task { perform await(sendRv(actorChnl,trRequest{ type %t counts as chnlType; queryFun() is QF(Defs); chnl is ReplyChnl}))};
+    ignore background task { perform await(sendRv(actorChnl,trRequest{ type %t counts as chnlType; fun queryFun() is QF(Defs); def chnl is ReplyChnl}))};
      
     valis recvRv(ReplyChnl);
   };
   
-  notifyFun(QF) is valof{
-     ReplyChnl is channel();
+  fun notifyFun(QF) is valof{
+     def ReplyChnl is channel();
     
     -- send the notify to the actor's server task
-    ignore background task { perform await(sendRv(actorChnl,trNotify((procedure() do QF(Defs)),ReplyChnl)))};
+    ignore background task { perform await(sendRv(actorChnl,trNotify((() do QF(Defs)),ReplyChnl)))};
      
     valis choose incoming ReplyChnl;
   };
   
-  loop() is task{
+  fun loop() is task{
     while true do{
       case valof recv(actorChnl) in {
         trRequest{queryFun = QF; chnl=RepChnl} do {
@@ -152,8 +152,8 @@ actorHead(Defs) is let{
 };
 
 #select{?R} ==> wait for chooseRv(list of {ruleConvert(R)}) ## {
-  #when ?C on ?Evt do ?Action ==> guardRv(task{ if C then valis wrapRv(Evt,(procedure(_) do Action)) else valis neverRv });
-  #on ?Evt do ?Action ==> wrapRv(Evt,(procedure(_) do Action));
+  #when ?C on ?Evt do ?Action ==> guardRv(task{ if C then valis wrapRv(Evt,((_) do Action)) else valis neverRv });
+  #on ?Evt do ?Action ==> wrapRv(Evt,((_) do Action));
   #when ?C on ?Evt is ?Exp ==> guardRv(task{ if C then valis wrapRv(Evt,(_) => Exp) else valis neverRv});
   #on ?Evt is ?Exp ==> wrapRv(Evt,(_) => Exp); 
 };

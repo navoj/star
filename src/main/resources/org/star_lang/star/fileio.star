@@ -17,27 +17,27 @@
  */
 private import base;
 
-connect(string(H),integer(P)) is __connect(H,P);
+fun connect(string(H),integer(P)) is __connect(H,P);
 
-openReadfile(string(F)) is __openInFile(F);
+fun openReadfile(string(F)) is __openInFile(F);
 
-openWriteFile(string(F)) is __openOutFile(F);
+fun openWriteFile(string(F)) is __openOutFile(F);
 
-closeFile(IO) do __closeIO(IO);
+prc closeFile(IO) do __closeIO(IO);
 
-readLn(IO) is string(__readLn(IO)) default nonString;
+fun readLn(IO) is string(__readLn(IO)) default nonString;
 
-readCh(IO) is char(__readChar(IO)) default nonChar;
+fun readCh(IO) is char(__readChar(IO)) default nonChar;
 
-readAll(string(F)) is valof{
-  IO is __openInFile(F);
-  Txt is __readAll(IO);
+fun readAll(string(F)) is valof{
+  def IO is __openInFile(F);
+  def Txt is __readAll(IO);
   __closeIO(IO);
   valis string(Txt)
 }
 
-writeLn(IO,string(L)) do __writeLn(IO,L);
+prc writeLn(IO,string(L)) do __writeLn(IO,L);
 
-writeStr(IO,string(L)) do __writeStr(IO,L);
+prc writeStr(IO,string(L)) do __writeStr(IO,L);
 
-atEof(IO) is __atEof(IO);
+fun atEof(IO) is __atEof(IO);

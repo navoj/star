@@ -28,7 +28,7 @@ aggRelations is package{
   main has type action();
   main() do {
     var ns := list of [1,6,5,3,8,5,7,3,5,4];
-	items is list of {all item{pos=E} where E in ns};
+	def items is list of {all item{pos=E} where E in ns};
 	logMsg(info,"items = $items");
 	
 	logMsg(info, display(testf(items,3)));

@@ -1,12 +1,12 @@
 fixedSqrt is package{
 
-  tolerance is 0.0001;
-  isCloseEnough(x,y) is abs((x-y)/x) < tolerance;
+  def tolerance is 0.0001;
+  fun isCloseEnough(x,y) is abs((x-y)/x) < tolerance;
   
-  fixedPoint(f) is let{
-    g(First) is let{
-      iterate(guess) is valof{
-        next is f(guess);
+  fun fixedPoint(f) is let{
+    fun g(First) is let{
+      fun iterate(guess) is valof{
+        def next is f(guess);
         if isCloseEnough(guess,next) then
           valis next
         else
@@ -15,15 +15,15 @@ fixedSqrt is package{
     } in iterate(First)
   } in g;
   
-  averageDamp(F) is (function(X) is (X+F(X))/2.0);
+  fun averageDamp(F) is (X) => (X+F(X))/2.0;
   
-  sqrt(X) is fixedPoint(averageDamp((function(Y) is X/Y)))(1.0)
+  fun sqrt(X) is fixedPoint(averageDamp((Y) => X/Y))(1.0)
   
-  main() do {
-    T is fixedPoint((function(x) is 1.0+x/2.0))(1.0);
+  prc main() do {
+    def T is fixedPoint((x) => 1.0+x/2.0)(1.0);
     logMsg(info,"T=$T");
     
-    S is sqrt(2.0)
+    def S is sqrt(2.0)
     logMsg(info,"S=$S");
   }
 }

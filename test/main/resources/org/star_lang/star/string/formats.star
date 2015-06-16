@@ -19,11 +19,11 @@ formats is package{
  -- test the various formatting capabilities
  
   main() do {
-    val is 123456;
-    neg is -val;
+    def val is 123456;
+    def neg is -val;
     
-    five is 5;
-    mfive is -5;
+    def five is 5;
+    def mfive is -5;
    
     assert "--$val:P999999.99P;--"="-- 1234.56 --";
    

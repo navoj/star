@@ -12,7 +12,7 @@ largeMapTest is package{
     start is nanos();
     for Ix in range(0,limit,1) do{
       Cx is random(limit);
-      if M[Cx] matches R then
+      if M[Cx] has value R then
         R.count := R.count+1
       else{
         count is counter{count := 1;}

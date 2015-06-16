@@ -31,7 +31,7 @@ actorOverload is package{
 
   main() do {
     X has type AA;
-    X is actor {
+    def X is actor {
       private var S := false;
       on elt on foo do {
         var y := getFoo(elt);

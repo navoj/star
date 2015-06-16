@@ -20,15 +20,15 @@ mathLibTest is package{
   
   -- test accessing fibonacci and factorial
   
-  main() do {
+  prc main() do {
     var time := nanos();
-    res is nfib(24) as long;
+    def res is nfib(24) as long;
     time := nanos()-time;
     logMsg(info,"nfib(24)=$(res) in $(time as float/1.0e9) seconds, $(time/res) nanos/call");
     
     assert res=150049L;
     
-    f is fact(10.0);
+    def f is fact(10.0);
     logMsg(info,"fact(10.0) is $f");
     
     assert f = 3628800.0;

@@ -40,7 +40,7 @@ redblack is package{
 	x<y ? balance(C,ins(L),y,R) |
 	x>y ? balance(C,L,y,ins(R)) |
 	s;
-    var rbNode(_,A,Y,B) is ins(S);
+    def rbNode(_,A,Y,B) is ins(S);
   } in rbNode(black,A,Y,B);
 
   private
@@ -66,7 +66,7 @@ redblack is package{
 
   -- Some tests
   main() do {
-    T is rbInsert("beta",rbInsert("alpha",rbInsert("gamma",rbInsert("delta",rbEmpty))));
+    def T is rbInsert("beta",rbInsert("alpha",rbInsert("gamma",rbInsert("delta",rbEmpty))));
     logMsg(info,"T=$T");
   }
 }

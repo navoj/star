@@ -53,10 +53,10 @@ eventProcessor is package{
   	stockAgent has type (string) =>stockAgentType;
     stockAgent(s) is actor{
   	  stockSymbol is s;
-  	  float var lastPrice := -1;
-      float var incCount := 0;
+  	  var lastPrice := -1.0;
+      var incCount := 0.0;
       on stockEvent{stockSymbol=N; price=P; initTimestamp=Time; loadGenTimestamp=T2} at T from inflow do { 
-    	b is s=N;    			
+    	def b is s=N;    			
      	if(lastPrice = -1) then{
     	  lastPrice = P;
     	  -- logMsg(info, "setting initial price of last Price");

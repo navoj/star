@@ -129,7 +129,7 @@ public class Definition implements PrettyPrintable
     if (definition == null)
       definition = el;
     else
-      definition = Abstract.binary(loc, StandardNames.FATBAR, definition, el);
+      definition = Abstract.binary(loc, StandardNames.PIPE, definition, el);
   }
 
   public IAbstract get()

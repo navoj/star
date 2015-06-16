@@ -177,6 +177,7 @@ public class DisplayAst implements IFunction
         } else {
           paren(disp, prefixPriority, priority, "(");
           disp.appendWord(op);
+          disp.space();
           display(disp, arg, prefix.rightPriority());
           paren(disp, prefixPriority, priority, ")");
         }

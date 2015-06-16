@@ -153,7 +153,7 @@
 -- Lambdas
 
 -- Conditional expression
--- # #( ?T ? ?Th | ?El)# :: expression --> Th::{indent:+2} :& El::{indent:+2};
+-- # #( ?T ? ?Th : ?El)# :: expression --> Th::{indent:+2} :& El::{indent:+2};
 
 -- conditions
 

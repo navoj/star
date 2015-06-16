@@ -30,11 +30,12 @@ defaults is package{
     age default is nonFloat;
   } or noone;
   
-  type gender is male or female;  
-  JJ is someone{name="fred"};
+  type gender is male or female;
+  
+  def JJ is someone{name="fred"};
   
   main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"$JJ");
     
     assert JJ.name="fred";

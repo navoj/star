@@ -19,6 +19,7 @@ import java.util.SortedMap;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.Apply;
@@ -538,26 +539,26 @@ public class CompilerUtils
 
   public static boolean isConditional(IAbstract term)
   {
-    return Abstract.isBinary(term, StandardNames.PIPE)
-        && Abstract.isBinary(Abstract.binaryLhs(term), StandardNames.QUESTION);
+    return Abstract.isBinary(term, StandardNames.QUESTION)
+        && Abstract.isBinary(Abstract.binaryRhs(term), StandardNames.COLON);
   }
 
   public static IAbstract conditionalTest(IAbstract term)
   {
     assert isConditional(term);
-    return Abstract.binaryLhs(Abstract.binaryLhs(term));
+    return Abstract.binaryLhs(term);
   }
 
   public static IAbstract conditionalThen(IAbstract term)
   {
     assert isConditional(term);
-    return Abstract.binaryRhs(Abstract.binaryLhs(term));
+    return Abstract.binaryLhs(Abstract.binaryRhs(term));
   }
 
   public static IAbstract conditionalElse(IAbstract term)
   {
     assert isConditional(term);
-    return Abstract.binaryRhs(term);
+    return Abstract.binaryRhs(Abstract.binaryRhs(term));
   }
 
   public static boolean isComputational(IContentExpression exp)
@@ -835,6 +836,33 @@ public class CompilerUtils
       return null;
     else
       return Abstract.argPath(term, 0);
+  }
+
+  public static List<IAbstract> contentsOfBlock(IAbstract term)
+  {
+    assert isBlockTerm(term);
+
+    return contentsOfTheta(Abstract.unaryArg(term));
+  }
+
+  public static List<IAbstract> contentsOfTheta(IAbstract term)
+  {
+    List<IAbstract> stmts = new ArrayList<>();
+
+    checkBlockTerm(term, stmts);
+
+    return stmts;
+  }
+
+  private static void checkBlockTerm(IAbstract term, List<IAbstract> stmts)
+  {
+    if (Abstract.isBinary(term, StandardNames.TERM)) {
+      checkBlockTerm(Abstract.binaryLhs(term), stmts);
+      checkBlockTerm(Abstract.binaryRhs(term), stmts);
+    } else if (Abstract.isUnary(term, StandardNames.TERM))
+      checkBlockTerm(Abstract.unaryArg(term), stmts);
+    else
+      stmts.add(term);
   }
 
   // look for name{} = name('{}')
@@ -1219,6 +1247,11 @@ public class CompilerUtils
       return false;
   }
 
+  public static Iterable<IAbstract> contentsOfRecord(IAbstract term)
+  {
+    return contentsOfTheta(braceArg(term));
+  }
+
   public static IAbstract recordLiteral(Location loc, String label, IAbstract... content)
   {
     return braceTerm(loc, label, tupleUp(loc, StandardNames.TERM, content));
@@ -1328,40 +1361,34 @@ public class CompilerUtils
     return new ConstructorTerm(loc);
   }
 
-  public static IContentExpression letify(ProgramLiteral prog, Dictionary dict)
-  {
-    Location loc = prog.getLoc();
-    Variable progVar = Variable.create(loc, prog.getType(), prog.getName());
-    return new LetTerm(loc, progVar, new VarEntry(loc, progVar, prog, AccessMode.readOnly, Visibility.priVate));
-  }
-
   public static boolean isLetTerm(IAbstract term)
   {
-    return Abstract.isBinary(term, StandardNames.IN) && isBraceTerm(Abstract.getArg(term, 0), StandardNames.LET)
-        || Abstract.isBinary(term, StandardNames.USING) && isBlockTerm(Abstract.binaryRhs(term));
+    return (Abstract.isUnary(term, StandardNames.LET) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IN))
+        || (Abstract.isBinary(term, StandardNames.USING) && isBlockTerm(Abstract.binaryRhs(term)));
   }
 
-  public static IAbstract letDefs(IAbstract term)
+  public static List<IAbstract> letDefs(IAbstract term)
   {
     assert isLetTerm(term);
-    if (Abstract.isBinary(term, StandardNames.IN))
-      return braceArg(Abstract.binaryLhs(term));
+
+    if (Abstract.isUnary(term, StandardNames.LET) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IN))
+      return contentsOfBlock(Abstract.binaryLhs(Abstract.unaryArg(term)));
     else
-      return blockContent(Abstract.binaryRhs(term));
+      return contentsOfBlock(Abstract.binaryRhs(term));
   }
 
   public static IAbstract letBound(IAbstract term)
   {
     assert isLetTerm(term);
-    if (Abstract.isBinary(term, StandardNames.IN))
-      return Abstract.binaryRhs(term);
+    if (Abstract.isUnary(term, StandardNames.LET) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IN))
+      return Abstract.binaryRhs(Abstract.unaryArg(term));
     else
       return Abstract.binaryLhs(term);
   }
 
   public static IAbstract letExp(Location loc, IAbstract defs, IAbstract bound)
   {
-    return Abstract.binary(loc, StandardNames.IN, braceTerm(loc, StandardNames.LET, defs), bound);
+    return Abstract.unary(loc, StandardNames.LET, Abstract.binary(loc, StandardNames.IN, defs, bound));
   }
 
   public static boolean isUsingExp(IAbstract term)
@@ -1563,12 +1590,37 @@ public class CompilerUtils
 
   public static IAbstract lambda(Location loc, IAbstract lhs, IAbstract rhs)
   {
-    return Abstract.binary(loc, StandardNames.FUN_ARROW, Abstract.unary(loc, StandardNames.LAMBDA, lhs), rhs);
+    return Abstract.binary(loc, StandardNames.FUN_ARROW, lhs, rhs);
   }
 
   public static boolean isMemoExp(IAbstract term)
   {
     return Abstract.isUnary(term, StandardNames.MEMO);
+  }
+
+  public static IAbstract convertToLambda(IAbstract rules)
+  {
+    if (Abstract.isBinary(rules, StandardNames.PIPE))
+      return Abstract.binary(rules.getLoc(), StandardNames.PIPE, convertToLambda(Abstract.binaryLhs(rules)),
+          convertToLambda(Abstract.binaryRhs(rules)));
+    else if (Abstract.isBinary(rules, StandardNames.IS))
+      return Abstract.binary(rules.getLoc(), StandardNames.FUN_ARROW, convertLambdaHead(Abstract.binaryLhs(rules)),
+          Abstract.binaryRhs(rules));
+    else
+      return rules;
+  }
+
+  private static IAbstract convertLambdaHead(IAbstract term)
+  {
+    if (Abstract.isBinary(term, StandardNames.WHERE))
+      return Abstract.binary(term.getLoc(), StandardNames.WHERE, convertLambdaHead(Abstract.binaryLhs(term)), Abstract
+          .binaryRhs(term));
+    else if (Abstract.isUnary(term, StandardNames.DEFAULT))
+      return convertLambdaHead(Abstract.unaryArg(term));
+    else if (Abstract.isApply(term))
+      return Abstract.tupleTerm(term.getLoc(), ((Apply) term).getArgs());
+    else
+      return term;
   }
 
   public static IAbstract memoTerm(Location loc, IAbstract trm)
@@ -1642,7 +1694,8 @@ public class CompilerUtils
 
   public static boolean isDefaultRule(IAbstract term)
   {
-    if (Abstract.isBinary(term, StandardNames.IS) || Abstract.isBinary(term, StandardNames.DO))
+    if (Abstract.isBinary(term, StandardNames.IS) || Abstract.isBinary(term, StandardNames.DO)
+        || Abstract.isBinary(term, StandardNames.ASSIGN))
       return Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.DEFAULT);
     else
       return false;
@@ -1652,6 +1705,12 @@ public class CompilerUtils
   {
     assert isDefaultRule(term);
     return Abstract.unaryArg(Abstract.binaryLhs(term));
+  }
+
+  public static IAbstract defaultRuleValue(IAbstract term)
+  {
+    assert isDefaultRule(term);
+    return Abstract.binaryRhs(term);
   }
 
   public static boolean isAssert(IAbstract term)
@@ -2039,122 +2098,54 @@ public class CompilerUtils
 
   public static Name functionName(IAbstract term)
   {
-    if (isPrivate(term))
-      return functionName(privateTerm(term));
-    else if (Abstract.isBinary(term, StandardNames.FATBAR))
-      return functionName(Abstract.getArg(term, 0));
-    else if (Abstract.isBinary(term, StandardNames.IS)) {
-      IAbstract lhs = Abstract.getArg(term, 0);
-      if (Abstract.isBinary(lhs, StandardNames.WHERE))
-        lhs = Abstract.getArg(lhs, 0);
-      else if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-        lhs = Abstract.unaryArg(lhs);
-      if (lhs instanceof Apply) {
-        IAbstract op = Abstract.deParen(((Apply) lhs).getOperator());
-        if (op instanceof Name)
-          return (Name) op;
-      } else if (lhs instanceof Name)
-        return (Name) lhs;
-    }
-    throw new IllegalArgumentException("expecting a function term");
+    assert isFunctionStatement(term);
+
+    IAbstract name = nameOfFunction(term);
+
+    if (name instanceof Name)
+      return (Name) name;
+    else
+      throw new IllegalArgumentException("expecting a function name");
   }
 
   public static Name procedureName(IAbstract term)
   {
-    if (isPrivate(term))
-      return procedureName(privateTerm(term));
-    else if (Abstract.isBinary(term, StandardNames.FATBAR))
-      return procedureName(Abstract.getArg(term, 0));
-    else if (isBraceTerm(term)) {
-      IAbstract head = CompilerUtils.braceLabel(term);
-      if (head instanceof Apply) {
-        IAbstract op = Abstract.deParen(((Apply) head).getOperator());
-        if (op instanceof Name)
-          return ((Name) op);
-      } else if (head instanceof Name)
-        return (Name) head;
-      else
-        throw new IllegalArgumentException("expecting a function term");
-    } else if (Abstract.isBinary(term, StandardNames.DO)) {
-      IAbstract lhs = Abstract.getArg(term, 0);
-      if (Abstract.isBinary(lhs, StandardNames.WHERE))
-        lhs = Abstract.getArg(lhs, 0);
-      else if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-        lhs = Abstract.getArg(lhs, 0);
-      if (lhs instanceof Apply) {
-        IAbstract op = Abstract.deParen(((Apply) lhs).getOperator());
-        if (op instanceof Name)
-          return ((Name) op);
-      } else if (lhs instanceof Name)
-        return (Name) lhs;
-    }
-    throw new IllegalArgumentException("expecting a function term");
+    assert isProcedureStatement(term);
+
+    IAbstract name = nameOfProcedure(term);
+
+    if (name instanceof Name)
+      return (Name) name;
+    else
+      throw new IllegalArgumentException("expecting a procedure term");
   }
 
   public static Name patternName(IAbstract stmt)
   {
-    if (isPrivate(stmt))
-      return patternName(privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR))
-      return patternName(Abstract.getArg(stmt, 0));
-    else if (Abstract.isBinary(stmt, StandardNames.FROM)) {
-      IAbstract lhs = Abstract.binaryLhs(stmt);
+    IAbstract name = nameOfPattern(stmt);
 
-      if (lhs instanceof Apply) {
-        IAbstract op = Abstract.deParen(((Apply) lhs).getOperator());
-        if (op instanceof Name)
-          return (Name) op;
-      }
-    }
-
-    throw new IllegalArgumentException("expecting a pattern abstraction");
+    if (name instanceof Name)
+      return (Name) name;
+    else
+      throw new IllegalArgumentException("expecting a pattern abstraction");
   }
 
   public static boolean isProgramStmt(IAbstract stmt)
   {
     if (isPrivate(stmt))
       return isProgramStmt(privateTerm(stmt));
-    else if (isEquation(stmt) || isActionRule(stmt))
-      return true;
-    else if (isVarDeclaration(stmt) || isIsStatement(stmt) || isOpen(stmt))
-      return true;
-    else if (isPatternRule(stmt))
-      return true;
-    else if (isBraceTerm(stmt) && braceLabel(stmt) instanceof Apply)
-      return true;
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR))
-      return isProgramStmt(Abstract.binaryLhs(stmt)) && isProgramStmt(Abstract.binaryRhs(stmt));
     else
-      return false;
-  }
-
-  public static IAbstract programStmtPattern(IAbstract term)
-  {
-    assert isProgramStmt(term);
-
-    if (Abstract.isBinary(term, StandardNames.IS) || Abstract.isBinary(term, StandardNames.DO))
-      return Abstract.binaryLhs(term);
-    else if (Abstract.isUnary(term, StandardNames.VAR)
-        && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.ASSIGN))
-      return Abstract.argPath(term, 0, 0);
-    else if (Abstract.isUnary(term, StandardNames.VAR) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS))
-      return Abstract.argPath(term, 0, 0);
-    else if (isPatternRule(term))
-      return patternRuleHead(term);
-    else if (Abstract.isBinary(term, StandardNames.FATBAR))
-      return programStmtPattern(Abstract.binaryLhs(term));
-    else
-      return null;
+      return isFunctionStatement(stmt) || isProcedureStatement(stmt) || isPatternStatement(stmt)
+          || isVarDeclaration(stmt) || isIsStatement(stmt) || isOpen(stmt);
   }
 
   public static boolean isVarDeclaration(IAbstract term)
   {
     if (isPrivate(term))
       return isVarDeclaration(privateTerm(term));
-    else if (Abstract.isUnary(term, StandardNames.VAR))
-      return Abstract.isBinary(Abstract.unaryArg(term), StandardNames.ASSIGN);
     else
-      return false;
+      return Abstract.isUnary(term, StandardNames.VAR)
+          && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.ASSIGN);
   }
 
   public static IAbstract varDeclarationPattern(IAbstract term)
@@ -2405,19 +2396,19 @@ public class CompilerUtils
     return Abstract.binaryLhs(con);
   }
 
-  public static IAbstract isStatement(Location loc, IAbstract lhs, IAbstract rhs)
+  public static IAbstract defStatement(Location loc, IAbstract lhs, IAbstract rhs)
   {
-    return Abstract.binary(loc, StandardNames.IS, lhs, rhs);
+    return Abstract.unary(loc, StandardNames.DEF, Abstract.binary(loc, StandardNames.IS, lhs, rhs));
   }
 
   public static boolean isIsStatement(IAbstract term)
   {
     if (isPrivate(term))
       return isIsStatement(privateTerm(term));
-    else if (Abstract.isUnary(term, StandardNames.VAR))
+    else if (Abstract.isUnary(term, StandardNames.DEF))
       return Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS);
     else
-      return Abstract.isBinary(term, StandardNames.IS);
+      return false;
   }
 
   public static IAbstract isStmtPattern(IAbstract term)
@@ -2426,10 +2417,8 @@ public class CompilerUtils
 
     if (isPrivate(term))
       return isStmtPattern(privateTerm(term));
-    else if (Abstract.isUnary(term, StandardNames.VAR) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS))
+    else if (Abstract.isUnary(term, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS))
       return Abstract.binaryLhs(Abstract.unaryArg(term));
-    else if (Abstract.isBinary(term, StandardNames.IS))
-      return Abstract.binaryLhs(term);
     else
       return null;
   }
@@ -2439,17 +2428,15 @@ public class CompilerUtils
     assert isIsStatement(term);
     if (isPrivate(term))
       return isStmtValue(privateTerm(term));
-    else if (Abstract.isUnary(term, StandardNames.VAR) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS))
+    else if (Abstract.isUnary(term, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS))
       return Abstract.binaryRhs(Abstract.unaryArg(term));
-    else if (Abstract.isBinary(term, StandardNames.IS))
-      return Abstract.binaryRhs(term);
     else
       return null;
   }
 
   public static IAbstract varIsDeclaration(Location loc, IAbstract ptn, IAbstract exp)
   {
-    return Abstract.binary(loc, StandardNames.IS, ptn, exp);
+    return Abstract.unary(loc, StandardNames.DEF, Abstract.binary(loc, StandardNames.IS, ptn, exp));
   }
 
   public static boolean isMacroVar(IAbstract term)
@@ -2480,8 +2467,10 @@ public class CompilerUtils
 
   public static boolean isCodeMacro(IAbstract term)
   {
-    if (Abstract.isUnary(term, StandardNames.META_HASH))
-      return isEquation(Abstract.unaryArg(term));
+    if (Abstract.isUnary(term, StandardNames.META_HASH)) {
+      IAbstract stmt = Abstract.unaryArg(term);
+      return isIsStatement(stmt) || isFunctionStatement(stmt);
+    }
     return false;
   }
 
@@ -2491,7 +2480,46 @@ public class CompilerUtils
     return Abstract.unaryArg(term);
   }
 
+  public static boolean testPipe(IAbstract trm, Predicate<IAbstract> test)
+  {
+    if (Abstract.isBinary(trm, StandardNames.PIPE))
+      return testPipe(Abstract.binaryLhs(trm), test) && testPipe(Abstract.binaryRhs(trm), test);
+    else
+      return test.test(trm);
+  }
+
+  public static boolean isFunctionStatement(IAbstract trm)
+  {
+    if (isPrivate(trm))
+      trm = privateTerm(trm);
+
+    return Abstract.isUnary(trm, StandardNames.FUN) && testPipe(Abstract.unaryArg(trm), CompilerUtils::isEquation);
+  }
+
+  public static IAbstract functionRules(IAbstract trm)
+  {
+    assert isFunctionStatement(trm);
+
+    if (isPrivate(trm))
+      trm = privateTerm(trm);
+
+    return Abstract.unaryArg(trm);
+  }
+
+  public static IAbstract firstRule(IAbstract trm)
+  {
+    if (Abstract.isBinary(trm, StandardNames.PIPE))
+      return firstRule(Abstract.binaryLhs(trm));
+    else
+      return trm;
+  }
+
   public static boolean isEquation(IAbstract trm)
+  {
+    return Abstract.isBinary(trm, StandardNames.IS) && isProgramHeadPtn(Abstract.binaryLhs(trm));
+  }
+
+  public static boolean isDefaultEquation(IAbstract trm)
   {
     return Abstract.isBinary(trm, StandardNames.IS) && isProgramHeadPtn(Abstract.binaryLhs(trm));
   }
@@ -2520,6 +2548,7 @@ public class CompilerUtils
   public static int arityOfEquation(IAbstract term)
   {
     assert isEquation(term);
+
     return getEquationArgs(term).size();
   }
 
@@ -2553,32 +2582,116 @@ public class CompilerUtils
         new Apply(loc, label, args)), value);
   }
 
+  public static IAbstract function(Location loc, IAbstract... equations)
+  {
+    assert equations.length > 0;
+    IAbstract rules = equations[equations.length - 1];
+
+    for (int ix = equations.length - 1; ix > 0; ix--)
+      rules = Abstract.binary(loc, StandardNames.PIPE, equations[ix - 1], rules);
+
+    return Abstract.unary(loc, StandardNames.FUN, rules);
+  }
+
+  public static IAbstract function(Location loc, List<IAbstract> equations)
+  {
+    assert equations.size() > 0;
+    IAbstract rules = equations.get(equations.size() - 1);
+
+    for (int ix = equations.size() - 1; ix > 0; ix--)
+      rules = Abstract.binary(loc, StandardNames.PIPE, equations.get(ix - 1), rules);
+
+    return Abstract.unary(loc, StandardNames.FUN, rules);
+  }
+
+  public static boolean isProcedureStatement(IAbstract stmt)
+  {
+    if (isPrivate(stmt))
+      return isProcedureStatement(privateTerm(stmt));
+    else
+      return Abstract.isUnary(stmt, StandardNames.PRC)
+          && testPipe(Abstract.unaryArg(stmt), CompilerUtils::isActionRule);
+  }
+
+  public static IAbstract procedureRules(IAbstract stmt)
+  {
+    assert isProcedureStatement(stmt);
+
+    if (isPrivate(stmt))
+      return procedureRules(privateTerm(stmt));
+    else
+      return Abstract.unaryArg(stmt);
+  }
+
+  public static IAbstract procedure(Location loc, IAbstract... equations)
+  {
+    assert equations.length > 0;
+    IAbstract rules = equations[equations.length - 1];
+
+    for (int ix = equations.length - 1; ix > 0; ix--)
+      rules = Abstract.binary(loc, StandardNames.PIPE, equations[ix - 1], rules);
+
+    return Abstract.unary(loc, StandardNames.PRC, rules);
+  }
+
+  public static IAbstract procedure(Location loc, List<IAbstract> equations)
+  {
+    assert equations.size() > 0;
+    IAbstract rules = equations.get(equations.size() - 1);
+
+    for (int ix = equations.size() - 1; ix > 0; ix--)
+      rules = Abstract.binary(loc, StandardNames.PIPE, equations.get(ix - 1), rules);
+
+    return Abstract.unary(loc, StandardNames.PRC, rules);
+  }
+
   public static boolean isActionRule(IAbstract term)
   {
-    return (Abstract.isBinary(term, StandardNames.DO) && isProgramHeadPtn(Abstract.binaryLhs(term)))
-        || (isBraceTerm(term) && isProgramHeadPtn(CompilerUtils.braceLabel(term)));
+    return Abstract.isBinary(term, StandardNames.DO) && isProgramHeadPtn(Abstract.binaryLhs(term));
+  }
+
+  public static boolean isProcLambda(IAbstract term)
+  {
+    return Abstract.isBinary(term, StandardNames.DO) && Abstract.isTupleTerm(Abstract.binaryLhs(term));
+  }
+
+  public static int procLambdaArity(IAbstract term)
+  {
+    IAbstract lhs = Abstract.binaryLhs(term);
+    if (Abstract.isBinary(lhs, StandardNames.WHERE))
+      lhs = Abstract.binaryLhs(lhs);
+    if (Abstract.isTupleTerm(lhs))
+      return Abstract.tupleArity(lhs);
+    else
+      return 1;
   }
 
   public static IAbstract actionRuleLhs(IAbstract term)
   {
-    assert isActionRule(term);
-    if (Abstract.isBinary(term, StandardNames.DO) && Abstract.binaryLhs(term) instanceof Apply) {
-      IAbstract lhs = Abstract.binaryLhs(term);
-      if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-        return Abstract.unaryArg(lhs);
-      else
-        return lhs;
-    } else
-      return ((Apply) term).getOperator();
+    IAbstract lhs = Abstract.binaryLhs(term);
+
+    if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
+      return Abstract.unaryArg(lhs);
+    else
+      return lhs;
+  }
+
+  public static int arityOfActionRule(IAbstract term)
+  {
+    IAbstract lhs = actionRuleLhs(term);
+
+    if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
+      lhs = Abstract.unaryArg(lhs);
+
+    if (Abstract.isBinary(lhs, StandardNames.WHERE))
+      lhs = Abstract.binaryLhs(lhs);
+
+    return ((Apply) lhs).getArgs().size();
   }
 
   public static IAbstract actionRuleBody(IAbstract term)
   {
-    assert isActionRule(term);
-    if (Abstract.isBinary(term, StandardNames.DO) && Abstract.binaryLhs(term) instanceof Apply)
-      return Abstract.binaryRhs(term);
-    else
-      return braceArg(term);
+    return Abstract.binaryRhs(term);
   }
 
   public static IAbstract actionRule(Location loc, String label, List<IAbstract> args, IAbstract value)
@@ -2591,15 +2704,62 @@ public class CompilerUtils
     return Abstract.binary(loc, StandardNames.DO, new Apply(loc, label, args), value);
   }
 
+  public static IAbstract actionRule(Location loc, IAbstract lhs, IAbstract body)
+  {
+    return Abstract.binary(loc, StandardNames.DO, lhs, body);
+  }
+
   public static IAbstract defaultActionRule(Location loc, String label, List<IAbstract> args, IAbstract value)
   {
     return Abstract.binary(loc, StandardNames.DO, Abstract.unary(loc, StandardNames.DEFAULT,
         new Apply(loc, label, args)), value);
   }
 
+  public static boolean isPatternStatement(IAbstract stmt)
+  {
+    return Abstract.isUnary(stmt, StandardNames.PTN) && testPipe(Abstract.unaryArg(stmt), CompilerUtils::isPatternRule);
+  }
+
+  public static IAbstract patternRules(IAbstract stmt)
+  {
+    assert isPatternStatement(stmt);
+
+    if (isPrivate(stmt))
+      return patternRules(privateTerm(stmt));
+    else
+      return Abstract.unaryArg(stmt);
+  }
+
+  public static IAbstract pattern(Location loc, IAbstract... equations)
+  {
+    assert equations.length > 0;
+    IAbstract rules = equations[equations.length - 1];
+
+    for (int ix = equations.length - 1; ix > 0; ix--)
+      rules = Abstract.binary(loc, StandardNames.PIPE, equations[ix - 1], rules);
+
+    return Abstract.unary(loc, StandardNames.PTN, rules);
+  }
+
+  public static IAbstract pattern(Location loc, List<IAbstract> equations)
+  {
+    assert equations.size() > 0;
+    IAbstract rules = equations.get(equations.size() - 1);
+
+    for (int ix = equations.size() - 1; ix > 0; ix--)
+      rules = Abstract.binary(loc, StandardNames.PIPE, equations.get(ix - 1), rules);
+
+    return Abstract.unary(loc, StandardNames.PTN, rules);
+  }
+
   public static boolean isPatternRule(IAbstract term)
   {
-    return (Abstract.isBinary(term, StandardNames.FROM) && Abstract.binaryLhs(term) instanceof Apply);
+    return Abstract.isBinary(term, StandardNames.FROM);
+  }
+
+  public static boolean isLambdaPattern(IAbstract term)
+  {
+    return Abstract.isBinary(term, StandardNames.FROM) && Abstract.isTupleTerm(Abstract.binaryLhs(term));
   }
 
   public static IAbstract patternRuleHead(IAbstract term)
@@ -2632,6 +2792,26 @@ public class CompilerUtils
     return Abstract.binary(loc, StandardNames.FROM, head, body);
   }
 
+  public static int arityOfPatternRule(IAbstract term)
+  {
+    assert isPatternRule(term);
+
+    IAbstract lhs = patternRuleHead(term);
+
+    return ((Apply) lhs).getArgs().size();
+  }
+
+  public static int arityOfPatternLambda(IAbstract term)
+  {
+    IAbstract lhs = Abstract.binaryLhs(term);
+    if (Abstract.isBinary(lhs, StandardNames.WHERE))
+      lhs = Abstract.binaryLhs(lhs);
+    if (Abstract.isTupleTerm(lhs))
+      return Abstract.tupleArity(lhs);
+    else
+      return 1;
+  }
+
   public static boolean isBoundTo(IAbstract trm)
   {
     return Abstract.isBinary(trm, StandardNames.BOUND_TO) || Abstract.isBinary(trm, StandardNames.MATCHES);
@@ -2662,10 +2842,7 @@ public class CompilerUtils
 
   public static boolean isTypeStmt(IAbstract term)
   {
-    if (Abstract.isBinary(term, StandardNames.FATBAR))
-      return isTypeStmt(Abstract.binaryLhs(term)) && isTypeStmt(Abstract.binaryRhs(term));
-    else
-      return isTypeDefn(term) || isTypeAlias(term) || isTypeWitness(term);
+    return isTypeDefn(term) || isTypeAlias(term) || isTypeWitness(term);
   }
 
   public static boolean isTypeDefn(IAbstract term)
@@ -3056,7 +3233,9 @@ public class CompilerUtils
   {
     if (isPrivate(stmt))
       return nameOfPattern(privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR))
+    else if (Abstract.isUnary(stmt, StandardNames.PTN))
+      return nameOfPattern(Abstract.unaryArg(stmt));
+    else if (Abstract.isBinary(stmt, StandardNames.PIPE))
       return nameOfPattern(Abstract.getArg(stmt, 0));
     else if (Abstract.isBinary(stmt, StandardNames.FROM)) {
       IAbstract lhs = Abstract.binaryLhs(stmt);
@@ -3089,7 +3268,9 @@ public class CompilerUtils
   {
     if (isPrivate(def))
       return nameOfFunction(privateTerm(def));
-    else if (Abstract.isBinary(def, StandardNames.FATBAR))
+    else if (Abstract.isUnary(def, StandardNames.FUN))
+      return nameOfFunction(Abstract.unaryArg(def));
+    else if (Abstract.isBinary(def, StandardNames.PIPE))
       return nameOfFunction(Abstract.getArg(def, 0));
     else {
       assert Abstract.isBinary(def, StandardNames.IS);
@@ -3102,6 +3283,25 @@ public class CompilerUtils
         return ((Apply) lhs).getOperator();
       else
         return lhs;
+    }
+  }
+
+  public static IAbstract functionHead(IAbstract def)
+  {
+    if (isPrivate(def))
+      return functionHead(privateTerm(def));
+    else if (Abstract.isUnary(def, StandardNames.FUN))
+      return functionHead(Abstract.unaryArg(def));
+    else if (Abstract.isBinary(def, StandardNames.PIPE))
+      return functionHead(Abstract.binaryLhs(def));
+    else {
+      assert Abstract.isBinary(def, StandardNames.IS);
+
+      IAbstract lhs = Abstract.binaryLhs(def);
+
+      if (Abstract.isBinary(lhs, StandardNames.WHERE) || Abstract.isUnary(lhs, StandardNames.DEFAULT))
+        lhs = Abstract.getArg(lhs, 0);
+      return lhs;
     }
   }
 
@@ -3272,7 +3472,9 @@ public class CompilerUtils
   {
     if (isPrivate(stmt))
       return nameOfProcedure(privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR))
+    else if (Abstract.isUnary(stmt, StandardNames.PRC))
+      return nameOfProcedure(Abstract.unaryArg(stmt));
+    else if (Abstract.isBinary(stmt, StandardNames.PIPE))
       return nameOfProcedure(Abstract.getArg(stmt, 0));
     else {
       assert Abstract.isBinary(stmt, StandardNames.DO) || isBraceTerm(stmt);

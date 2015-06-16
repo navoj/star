@@ -19,22 +19,20 @@ private import base;
 private import strings;
 
 
-private  
-__locked_v is 1_;
-private
-__unlocked_v is 0_;
+private def __locked_v is 1_;
+private def __unlocked_v is 0_;
 
 type spin_lock is spin_lock {
   locked has type atomic_int;
 }
 
 mk_spin_lock has type () => spin_lock
-mk_spin_lock() is spin_lock {
+fun mk_spin_lock() is spin_lock {
   locked = atomic_int(__unlocked_v);
 }
 
-spinLock has type action(spin_lock)
-spinLock(l) do {
+spinLock has type (spin_lock)=>()
+prc spinLock(l) do {
   -- it's usually better to first try with a normal memory read, and then with the CAS
   var done := false;
   while not done do {
@@ -48,7 +46,7 @@ spinLock(l) do {
   }
 }
 
-spinUnlock has type action(spin_lock)
-spinUnlock(l) do {
+spinUnlock has type (spin_lock)=>()
+prc spinUnlock(l) do {
   __atomic_int_assign(l.locked, __unlocked_v);
 }

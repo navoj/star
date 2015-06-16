@@ -16,17 +16,17 @@
  *
  */
 memoBug is package {
-    actorA is memo actor{
-       replan() do request actorB()'s replan to replan();
+    def actorA is memo actor{
+       prc replan() do request actorB()'s replan to replan();
 
-       restock() do nothing;
+       prc restock() do nothing;
     } using {
-        dummy() do nothing;
+        prc dummy() do nothing;
     };
     
-    actorB is memo actor{
-        removeLot(L) do request actorA()'s restock to restock();
+    def actorB is memo actor{
+        prc removeLot(L) do request actorA()'s restock to restock();
         
-        replan() do nothing; 
+        prc replan() do nothing; 
     };
 }

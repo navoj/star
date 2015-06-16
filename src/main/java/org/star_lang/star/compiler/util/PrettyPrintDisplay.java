@@ -96,6 +96,11 @@ public class PrettyPrintDisplay
       pos++;
     }
   }
+  
+  public void space()
+  {
+    appendChar(' ');
+  }
 
   public void append(int i)
   {
@@ -121,7 +126,7 @@ public class PrettyPrintDisplay
   public void appendWord(long i)
   {
     if (!isWordBoundarySafe())
-      appendChar(' ');
+      space();
     append(Long.toString(i));
     appendChar('L');
   }
@@ -129,7 +134,7 @@ public class PrettyPrintDisplay
   public void appendWord(int i)
   {
     if (!isWordBoundarySafe())
-      appendChar(' ');
+      space();
     append(Integer.toString(i));
   }
 
@@ -168,7 +173,7 @@ public class PrettyPrintDisplay
   {
     if (!str.isEmpty()) {
       if (!isWordBoundarySafe())
-        appendChar(' ');
+        space();
 
       append(str);
     }
@@ -199,7 +204,7 @@ public class PrettyPrintDisplay
   public void appendIden(String str)
   {
     if (!isWordBoundarySafe())
-      appendChar(' ');
+      space();
     for (int ix = 0; ix < str.length(); ix = str.offsetByCodePoints(ix, 1)) {
       int ch = str.codePointAt(ix);
 
@@ -340,7 +345,7 @@ public class PrettyPrintDisplay
 
     lineOffset = offset;
     for (int ix = pos; ix < offset; ix++)
-      appendChar(' ');
+      space();
     newLines = new ArrayList<Integer>();
     return marks.size() - 1;
   }

@@ -17,12 +17,12 @@
  */
 letCast is package{
   isDigit has type (char) => boolean;
-  isDigit(c) is
+  fun isDigit(c) is
     let {
-      sv is c as integer;
+      def sv is c as integer;
     } in ((sv >= 48) and (sv <= 57));
     
-  main() do {
+  prc main() do {
     assert isDigit('0');
     
     assert not isDigit(' ');

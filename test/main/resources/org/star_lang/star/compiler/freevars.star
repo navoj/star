@@ -18,22 +18,21 @@
 freevars is package{
 
   outer has type (integer,integer) =>integer;
-  outer(A,B) is let{
+  fun outer(A,B) is let{
   
     inner has type (integer) =>integer;
-    inner(X) is A+X;
+    fun inner(X) is A+X;
     
     further has type (integer) =>integer;
-    further(X) is let{
+    fun further(X) is let{
       inn has type (integer) =>integer;
-      inn(U) is inner(U*B);
+      fun inn(U) is inner(U*B);
     } in inn(X);
-    
   } in further(A);
   
   main has type action();
-  main() do {
-    logMsg(warning, "$(outer(10,4))");
+  prc main() do {
+    logMsg(warning, "$(outer(10,4))")
   };
 
 }

@@ -21,7 +21,7 @@ bank is package{
   
   type custTx is newAccount(string) or removeAccount(string);
   
-  AllAccounts is actor{
+  def AllAccounts is actor{
     private var allActs := dictionary of {}; 
     
     on newAccount(Nm) on cust do
@@ -30,10 +30,10 @@ bank is package{
     on removeAccount(Nm) on cust do
       remove allActs[Nm];
       
-    getAccount(Nm) is allActs[Nm];
+    fun getAccount(Nm) is allActs[Nm];
   }
   
-  bank is actor{
+  def bank is actor{
     on (Tx,Id) on tx do{      
       if (query AllAccounts with getAccount(Id)) has value AC then
         notify AC with Tx on txs
@@ -46,8 +46,8 @@ bank is package{
   };
   
   account has type (string)=>accountActor;
-  account(owner) is actor{
-    private ac is act{
+  fun account(owner) is actor{
+    private def ac is act{
       id = newCounterNo();
       owner = owner;
       balance := 0.0;
@@ -67,7 +67,7 @@ bank is package{
     }
   }
   
-  main() do{
+  prc main() do{
     notify bank with newAccount("fred") on cust;
     notify bank with newAccount("peter") on cust;
   }

@@ -5,10 +5,10 @@ tplAlias is package {
   }
   
   main() do {
-    var tmp is ("q", "Qr");
-    var tmp2 is ((tmp));
+    def tmp is ("q", "Qr");
+    def tmp2 is ((tmp));
     tt has type t;
-    var tt is t{
+    def tt is t{
       f8=tmp2;
     };
     logMsg(info, "$tt");

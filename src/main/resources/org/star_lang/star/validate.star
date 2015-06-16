@@ -100,7 +100,7 @@ private import macrosupport;
 # ?Id has kind ?K :: typeAnnotation :- Id::id :& K::typeKind;
 # ?Id has kind ?K where ?C :: typeAnnotation :- K::typeKind :& C::typeConstraint;
 
-# #(?N)##@#(tuple?Arg)# default is ?Exp :: typeAnnotation :- N::name :& ?Arg :* pattern :& ?Exp :: expression;
+# fun #(?N)##@#(tuple?Arg)# default is ?Exp :: typeAnnotation :- N::name :& ?Arg :* pattern :& ?Exp :: expression;
 # ?Id default is ?Exp :: typeAnnotation :- Id::id :& Exp::expression;
 # ?Id default := ?Exp :: typeAnnotation :- Id::id :& Exp::expression;
 
@@ -163,42 +163,33 @@ private import macrosupport;
 # {?A} :: statement :- A;* action;
 
 -- Function definitions
-# #(?N)##@#(tuple?Arg)# where ?Cnd is ?Exp :: statement :- 
-    N::name :& ?Arg :* pattern :&
+# fun ?Rls :: statement :- Rls |* equation;
+
+# ?Hd where ?Cnd is ?Exp :: equation :- 
+    Hd :: pattern :&
     ?Cnd :: condition :&
     ?Exp :: expression;
-# #(?N)##@#(tuple?Arg)# default is ?Exp :: statement :-
-    N::name :& ?Arg :* pattern :& ?Exp :: expression;
-# #(?N)##@#(tuple?Arg)# is ?Exp :: statement :-
-    N::name :& Arg :* pattern :& Exp :: expression;
-# #(?N)#{?Arg} where ?Cnd is ?Exp :: statement :-
-    N::name :& ?Arg ;* fieldPattern :&
-    ?Cnd :: condition :&
-    ?Exp :: expression;
-# #(?N)#{?Arg} default is ?Exp :: statement :-
-    N::name :& ?Arg ;* fieldPattern :& Exp :: expression;
-# #(?N)#{?Arg} is ?Exp :: statement :-
-    N::name :& Arg ;* fieldPattern :& Exp :: expression;
+# ?Hd default is ?Exp :: equation :-
+    Hd :: pattern :& ?Exp :: expression;    
+# ?Hd is ?Exp :: equation :-
+    Hd :: pattern :& ?Exp :: expression;
+
+# prc ?Rls :: statement :- Rls |* actionRule;
+
+# ?Hd where ?Cnd do ?Act :: actionRule :-
+  Hd :: pattern :& Cnd :: condition :& Act :: action
+# ?Hd do ?Act :: actionRule :-
+  Hd :: pattern :& Act :: action
+  
 
 -- Variable definitions
-# ?V is ?Exp :: statement :- V::pattern :& Exp::expression;
-# var ?V is ?Exp :: statement :- V::pattern :& Exp::expression;
+# def ?V is ?Exp :: statement :- V::pattern :& Exp::expression;
 # var identifier := ?Exp :: statement :- Exp::expression;
 
-# ?A is ?E :: statement :- error("does not look like a valid statement");
-
--- Procedure definition
-# #(?N#@#(tuple?Arg)#)#{ ?A } :: statement :-
-    N::name :& Arg:*identifier :& A:: action;
-# ?N#@#(tuple?Arg)# where ?Cnd do ?A :: statement :-
-    N :: name :& Arg:*pattern :& Cnd::condition :& A:: action;
-# ?N#@#(tuple?Arg)# default do ?A :: statement :-
-    N::name :& Arg:*pattern :& A:: action;
-# ?N#@#(tuple?Arg)# do ?A :: statement :-
-    N::name :& Arg:*pattern :& A:: action;
-
 -- Pattern abstraction definition
-# ?name#@#(tuple?Arg)# from ?A :: statement :-
+# ptn ?Rls :: statement :- Rls |* patternRule;
+
+# ?name#@#(tuple?Arg)# from ?A :: patternRule :-
     name::name :& Arg:*expression :& A::pattern;
 
 -- Convenience rules
@@ -222,11 +213,10 @@ private import macrosupport;
 # ?A // ?B ==> { T is spawn{A}; B; waitfor T};
 
 # ?Id has type ?Tp :: action :- Id::id :& Tp::typeExpression;
-# ?Id is ?Exp :: action :- Id::pattern :& Exp::expression;
-# var ?Ptn is ?Exp :: action :- Ptn::pattern :& Exp::expression;
-# ?N := ?E :: action :- ?N :: lvalue :& ?E :: expression;
+# def ?Ptn is ?Exp :: action :- Ptn::pattern :& Exp::expression;
+# var identifier := ?Exp :: action :- Exp::expression;
 
-# var identifier := ?E :: action :- ?E :: expression;  
+# ?N := ?E :: action :- ?N :: lvalue :& ?E :: expression;
 
 # if ?S then ?T else ?E :: action :-
     ?S :: condition :& ?T :: action :& ?E :: action;
@@ -240,7 +230,8 @@ private import macrosupport;
 # for ?C do ?B :: action :- C :: condition :& B :: action;
 # while ?C do ?B :: action :- C :: condition :& B :: action;
 
-# let{ ?B } in ?E  :: action :- B;*statement :& E:: action;
+# let ?B in ?E  :: action :- B :: expression :& E:: action;
+
 # ?A using ?S :: action :- A:: action :& S::expression;
 
 # open ?E :: action :- E::expression;
@@ -248,8 +239,8 @@ private import macrosupport;
 -- This is complex because we cannot re-use an identifier. So we have to synthesize new ones.
 
 # ?Exp using #(identifier?SS)# 's ?E ==> #*unwrapLet(#*defs(SS,E,Exp,())) ## {
-  #defs(?S,?L 'n ?R,?A,?D) ==> defs(S,R, A./L->#$L, glue((#(#$L is S.L)#,D)));
-  #defs(?S,?L,?A,?D) ==> (A./L->#$L, glue((#(#$L is S.L)#,D)));
+  #defs(?S,?L 'n ?R,?A,?D) ==> defs(S,R, A./L->#$L, glue((#(def #$L is S.L)#,D)));
+  #defs(?S,?L,?A,?D) ==> (A./L->#$L, glue((#(def #$L is S.L)#,D)));
   
   #glue( (?L,()) )==> L;
   #glue( (?L, ?R) ) ==> #(L ; R)#;
@@ -259,14 +250,14 @@ private import macrosupport;
 };
 
 # ?Exp using ?SS 's ?E ==> #*unwrapLet(#$Id, #*defs(#$Id,E,Exp,())) ## {
-  #defs(?S,?L 'n ?R,?A,?D) ==> defs(S,R, A./L->#$L, glue((#(#$L is S.L)#,D)));
-  #defs(?S,?L,?A,?D) ==> (A./L->#$L, glue((#(#$L is S.L)#,D)));
+  #defs(?S,?L 'n ?R,?A,?D) ==> defs(S,R, A./L->#$L, glue((#(def #$L is S.L)#,D)));
+  #defs(?S,?L,?A,?D) ==> (A./L->#$L, glue((#(def #$L is S.L)#,D)));
   
   #glue( (?L,()) )==> L;
   #glue( (?L, ?R) ) ==> #(L ; R)#;
   
-  #unwrapLet(?Id, (?A, ())) ==> let { Id is SS; A} in A;
-  #unwrapLet(?Id, (?A, ?D)) ==> let { Id is SS; D } in A;
+  #unwrapLet(?Id, (?A, ())) ==> let { def Id is SS; A} in A;
+  #unwrapLet(?Id, (?A, ?D)) ==> let { def Id is SS; D } in A;
 };
 
 # case ?E in ?Cs :: action :- E::expression :& Cs::actionCases;
@@ -308,7 +299,7 @@ private import macrosupport;
 # identifier@ #(?E)# :: expression :- E::expression;
 
 -- Let expressions
-# let {?S} in ?E :: expression :- ?S ;* statement :& ?E :: expression;
+# let ?S in ?E :: expression :- ?S :: expression :& ?E :: expression;
 # ?E using ?S  :: expression :- S::expression :& E::expression;
 
 -- case expression
@@ -321,20 +312,14 @@ private import macrosupport;
 # case ?Ptn is ?Exp :: caseExpRule :- Ptn::pattern :& Exp::expression;
 
 -- Lambdas
-# function#@?Arg is ?Exp :: expression :- Arg :* pattern :& ?Exp :: expression;
 # ?Arg => ?Exp :: expression :- Arg:*pattern :& Exp::expression;
-
-# #(procedure#@?Arg)# { ?Act } :: expression :- Arg :* pattern :& Act:: action;
-# #(?P#@?Arg)# { ?Act } :: expression :- Arg :* pattern :& Act:: action :& error("expecting `procedure', not `$P'");
  
-# #(procedure#@?Arg)# do { ?Act } :: expression :-
-    Arg :* pattern :& Act:: action;
+# ?Arg do ?Act :: expression :- Arg :: pattern :& Act :: action;
 
-# pattern#@?Arg matches ?Ptn :: expression :- Arg:*expression :& Ptn::pattern;
-# pattern#@?Arg from ?Ptn :: expression :- Arg:*expression :& Ptn::pattern;
+# ?Arg from ?Ptn :: expression :- Arg :: expression :& Ptn :: pattern;
  
 -- Conditional expression
-# #( ?T ? ?Th | ?El)# :: expression :- T::condition :& Th::expression :& El::expression;
+# #( ?T ? ?Th : ?El)# :: expression :- T::condition :& Th::expression :& El::expression;
 
 -- Record expressions
 # identifier{} :: expression;
@@ -392,15 +377,12 @@ private import macrosupport;
 # ?L < ?R :: condition :- L::expression :& R::expression;  
 # ?L >= ?R :: condition :- L::expression :& R::expression;  
 # ?L <= ?R :: condition :- L::expression :& R::expression;
-# #(?L)#[?Ix] in ?R :: condition :- L::pattern :& Ix::expression :& R::expression;  
+# ?Ky -> ?Vl in ?R :: condition :- Ky::pattern :& Vl::pattern :& R::expression;  
 # ?L in ?R :: condition :- L::pattern :& R::expression;  
 # ?E matches ?P :: condition :- P::pattern :& E::expression;  
-# #( ?T ? ?Th | ?El)# :: condition :- T::condition :& Th::condition :& El::condition;
+# #( ?T ? ?Th : ?El)# :: condition :- T::condition :& Th::condition :& El::condition;
 # (?C) :: condition :- C::condition;
 # ?E :: condition :- E::expression;
-
--- move the [] term to safety to avoid premature macro-izing
-# #(?L)#[?Ix] in ?R ==> [L,Ix] in R   
 
 -- Simple patterns
 # number :: pattern;
@@ -419,22 +401,6 @@ private import macrosupport;
 
 # ?P cast ?Tp :: pattern :- Tp::typeExpression :& P::pattern;
 
--- hash pattern
-# hash{ ?H } :: pattern :- H;*hashPattern ## {
-  # ?K -> ?P :: hashPattern :- K::pattern :& P::pattern;
-};
-
- -- List patterns
-
-# ?I of {} :: pattern :- I::id;
-# ?I of {?C} :: pattern :- I::id :& C::sequencePtnBody; 
-
--- sequence patterns
-# #( ?S ; ?T )# :: sequencePtnBody :- S::pattern :& T::sequencePtnBody;
-# #( ?S ;.. ?T )# :: sequencePtnBody :- S::pattern :& T::sequencePtnBody;  
-# #( ?S ..; ?T )# :: sequencePtnBody :- S::pattern :& T::pattern;
-# #( ?S ;)#::sequencePtnBody :- S::pattern;
-# ?E :: sequencePtnBody :- E::pattern;
 -- Special hack to detect an anonymous record pattern
 # { identifier = ?Ptn; ?Rest} :: pattern :- Ptn::pattern :& Rest;*fieldPattern;
 # { identifier = ?Ptn} :: pattern :- Ptn::pattern;

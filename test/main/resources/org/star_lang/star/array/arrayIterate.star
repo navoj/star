@@ -17,12 +17,12 @@
  */
 arrayIterate is package{
   II has type list of integer;
-  II is iota(100,1,-1);
+  def II is iota(100,1,-1);
   
-  main() do {
-    XX is all I where I in II;
+  prc main() do {
+    def XX is all I where I in II;
     logMsg(info,"$XX");
-    YY is all (I,Ix) where (Ix->I) in II;
+    def YY is all (I,Ix) where (Ix->I) in II;
     logMsg(info,"$YY");
   }
 }

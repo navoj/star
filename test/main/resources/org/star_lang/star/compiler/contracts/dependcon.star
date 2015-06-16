@@ -23,7 +23,7 @@ dependcon is package{
   }
   
   implementation Iter over cons of %e determines %e is {
-    iter(nil,_,S) is S;
-    iter(cons(H,T),F,S) is iter(T,F,F(H,S));
+    fun iter(nil,_,S) is S
+     |  iter(cons(H,T),F,S) is iter(T,F,F(H,S))
   }
 }

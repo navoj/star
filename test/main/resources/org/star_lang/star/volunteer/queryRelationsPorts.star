@@ -54,7 +54,7 @@ queryRelationsPorts is package{
     notify P1 with user{name="gamma";balance=3} on DEFAULT;
     request P1's addUser to addUser(user{name="delta";balance=4});
     
-    U is user{name="fred"; balance=5};
+    def U is user{name="fred"; balance=5};
     request P1 to extend Users with U;
 
     logMsg(info,"$(query P1's Users with Users)");

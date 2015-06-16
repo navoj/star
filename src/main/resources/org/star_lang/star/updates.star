@@ -21,7 +21,7 @@ contract updates over %t determines %e is {
 };
 
 # update ?Ptn in ?Tgt with ?Exp :: action ==> let{
-    #$filter(Ptn) is Exp;
-    #$filter(#$X) default is #$X; 
+    fun #$filter(Ptn) is Exp
+    | #$filter(#$X) default is #$X; 
   } in _replace_(Tgt, #$filter);
 

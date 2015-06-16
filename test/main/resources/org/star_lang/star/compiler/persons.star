@@ -21,21 +21,21 @@ persons is package{
 		        name has type string;
 		        dob has type date;
 		        age has type ()=>long;
-		        age() default is timeDiff(today(),dob);
+		        fun age() default is timeDiff(today(),dob);
 		      };
 	
-  john is someone{
-    name is "john";
-	dob is today();
+  def john is someone{
+    def name is "john";
+	def dob is today();
   };
 	
-  sho(P) is
+  fun sho(P) is
 	"$name:$(age())" using P()'s name 'n age;
 	
-  disp(P) do
+  prc disp(P) do
 	  logMsg(info,"$name:$(age())") using P's name 'n age;
 	
-  main() do
+  prc main() do
   {
 	logMsg(info,sho(() => john));
 	disp(john);

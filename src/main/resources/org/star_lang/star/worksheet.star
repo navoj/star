@@ -53,45 +53,45 @@ private import folding;
   # ?S :: workStatement :- S::statement;
 
   # worksheet{ ?Dfs } ==> genMain(Dfs) ## {
-    collectActions(Rl matching <|show ?E|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|perform ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|ignore ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|assert ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|?L := ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|while ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|for ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|{ ?L }|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(Rl matching <|try ?L on abort ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-    collectActions(<|?L;?R|>,Coll) is collectActions(R,collectActions(L,Coll));
-    collectActions(Stmt,(Theta,Actions)) is (list of {Theta..;Stmt},Actions);
+    fun collectActions(Rl matching <|show ?E|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|perform ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|ignore ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|assert ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|?L := ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|while ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|for ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|{ ?L }|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(Rl matching <|try ?L on abort ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+     |  collectActions(<|?L;?R|>,Coll) is collectActions(R,collectActions(L,Coll))
+     |  collectActions(Stmt,(Theta,Actions)) is (list of {Theta..;Stmt},Actions);
     
-    convertAction(<|show ?E |>) is <|showExpression(?E,?__display_macro(E),?getLineNumber(__macro_location(E)))|>
-    convertAction(<|perform ?A |>) is <|performAction((procedure() do ?A),?__display_macro(A),?getLineNumber(__macro_location(A)))|>
-    convertAction(<|ignore ?A |>) is <|performAction((procedure() do ignore ?A),?__display_macro(A),?getLineNumber(__macro_location(A)))|>
-    convertAction(<|assert ?A |>) is <|assertCondition((function() is ?A),?__display_macro(A),?getLineNumber(__macro_location(A)))|>
-    convertAction(<|?L := ?R |>) is <|performAction((procedure() do { ?L := ?R}),"#(?__display_macro(L)) := #(?__display_macro(R))",?getLineNumber(__macro_location(L)))|>
-    convertAction(<|?L do ?R |>) is <| ?L do ?convertAction(R) |>
-    convertAction(<| { ?B } |>) is  <| { ?__mapSemi(B,convertAction) } |>
-    convertAction(<| try ?B on abort {?A} |>) is  <| try ?convertAction(B) on abort {?__mapSemi(A,convertCase)} |>
-    convertAction(A) is A;
+    fun convertAction(<|show ?E |>) is <|showExpression(?E,?__display_macro(E),?getLineNumber(__macro_location(E)))|>
+     |  convertAction(<|perform ?A |>) is <|performAction((() do ?A),?__display_macro(A),?getLineNumber(__macro_location(A)))|>
+     |  convertAction(<|ignore ?A |>) is <|performAction((() do ignore ?A),?__display_macro(A),?getLineNumber(__macro_location(A)))|>
+     |  convertAction(<|assert ?A |>) is <|assertCondition(() => ?A,?__display_macro(A),?getLineNumber(__macro_location(A)))|>
+     |  convertAction(<|?L := ?R |>) is <|performAction((() do { ?L := ?R}),"#(?__display_macro(L)) := #(?__display_macro(R))",?getLineNumber(__macro_location(L)))|>
+     |  convertAction(<|?L do ?R |>) is <| ?L do ?convertAction(R) |>
+     |  convertAction(<| { ?B } |>) is  <| { ?__mapSemi(B,convertAction) } |>
+     |  convertAction(<| try ?B on abort {?A} |>) is  <| try ?convertAction(B) on abort {?__mapSemi(A,convertCase)} |>
+     |  convertAction(A) is A;
     
-    convertCase(<| ?P do ?A|>) is <| ?P do ?convertAction(A) |>;
+    fun convertCase(<| ?P do ?A|>) is <| ?P do ?convertAction(A) |>;
     
-    getLineNumber(noWhere) is <|nonInteger|>;
-    getLineNumber(Lc) is integerAst(Lc,Lc.lineCount);
+    fun getLineNumber(noWhere) is <|nonInteger|>
+     |  getLineNumber(Lc) is integerAst(Lc,Lc.lineCount);
     
-    #genWkSht(D) is valof{
-      (Defs,Actions) is __foldSemi(D,collectActions,(list of {},list of {}));
-      Body is __wrapSemi(map(convertAction,Actions),<|nothing|>);
+    fun genWkSht(D) is valof{
+      def (Defs,Actions) is __foldSemi(D,collectActions,(list of {},list of {}));
+      def Body is __wrapSemi(map(convertAction,Actions),<|nothing|>);
       if Defs=list of {} then
         valis <| ?Body |>
       else
         valis <| let { ?__wrapSemi(Defs, <|{}|>) } in ?Body |>
     }
     
-    #genMain(D) is <| main() do ?genWkSht(D) |> 
+    #fun genMain(D) is <| prc main() do ?genWkSht(D) |> 
   }
   
-  showExpression(Val,Msg,Line) do logMsg(info,"",Msg++" -> $Val at $Line");
-  performAction(Prc,Msg,Line) do { Prc(); logMsg(info,"",Msg++" at $Line"); }
-  assertCondition(A,Msg,Line) do { if A() then logMsg(info,"",Msg++" ok at $Line") else logMsg(info,Msg++" failed at $Line") }
+  prc showExpression(Val,Msg,Line) do logMsg(info,"",Msg++" -> $Val at $Line");
+  prc performAction(Prc,Msg,Line) do { Prc(); logMsg(info,"",Msg++" at $Line"); }
+  prc assertCondition(A,Msg,Line) do { if A() then logMsg(info,"",Msg++" ok at $Line") else logMsg(info,Msg++" failed at $Line") }

@@ -16,34 +16,34 @@
  *
  */
 actorCoerce is package{
-  A is actor{
-    strFyA(X) is X as string;
+  def A is actor{
+    fun strFyA(X) is X as string;
   };
   
-  B is actor{
-    rr is {
-      strFyB(X) is X as string
+  def B is actor{
+    def rr is {
+      fun strFyB(X) is X as string
     }
   }
   
-  C() is actor{
-    cc is {
-      strFyC(X) is X as string
+  fun C() is actor{
+    def cc is {
+      fun strFyC(X) is X as string
     }
   }
   
-  main() do {
-    XX is query A's strFyA with strFyA(12);
+  prc main() do {
+    def XX is query A's strFyA with strFyA(12);
    
     logMsg(info,"XX=$XX");
     assert XX="12";
     
-    YY is query B's rr with rr.strFyB(12);
+    def YY is query B's rr with rr.strFyB(12);
     logMsg(info,"YY=$YY");
     
     assert YY="12";
     
-    ZZ is query C()'s cc with cc.strFyC(12);
+    def ZZ is query C()'s cc with cc.strFyC(12);
     logMsg(info,"ZZ=$ZZ");
     
     assert ZZ="12";

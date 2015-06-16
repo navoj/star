@@ -37,8 +37,8 @@ whilerev is package{
   }
 
   main() do {
-    L is cons of {1;2;3;4;5};
-    R is cons of {6;7;8};
+    def L is cons of {1;2;3;4;5};
+    def R is cons of {6;7;8};
     assert reverse(L)=cons of {5;4;3;2;1};
     
     assert conc(L,R) = cons of {1;2;3;4;5;6;7;8};

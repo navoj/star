@@ -270,11 +270,11 @@ public class Theta
       IAbstract lv = CafeSyntax.isDeclLval(def);
       IAbstract exp = CafeSyntax.isDeclValue(def);
 
-      declareArg(lv, AccessMode.readOnly, false, thetaDict, errors, definer, 0);
+      IContinuation succ = new JumpCont(next);
+      IContinuation fail = new ThrowContinuation("initialization failed");
 
       Expressions.compileExp(exp, errors, thetaDict, outer, inFunction, new PatternCont(lv, thetaDict, outer,
-          AccessMode.readOnly, mtd, endLabel, errors, new JumpCont(next),
-          new ThrowContinuation("initialization failed")), null, ccxt);
+          AccessMode.readOnly, mtd, endLabel, errors, succ, fail), null, ccxt);
 
       Utils.jumpTarget(mtd.instructions, next);
       hwm.reset(mark);
@@ -1433,7 +1433,7 @@ public class Theta
     }
   }
 
-  public static void declareArg(IAbstract term, AccessMode access, boolean isInited, CafeDictionary dict,
+  private static void declareArg(IAbstract term, AccessMode access, boolean isInited, CafeDictionary dict,
       ErrorReport errors, Definer definer, int varOffset)
   {
     if (Abstract.isIdentifier(term) && CafeSyntax.termHasType(term)) {
@@ -1447,6 +1447,8 @@ public class Theta
       definer.declareArg(loc, id, varOffset, varType, dict, access, isInited, errors);
     } else if (CafeSyntax.isConstructor(term) && !isInited)
       declareArgs(CafeSyntax.constructorArgs(term), access, isInited, dict, errors, definer);
+    else if (CafeSyntax.isPtnCall(term))
+      declareArg(CafeSyntax.ptnCallResult(term), access, isInited, dict, errors, definer, varOffset);
     else
       errors.reportError("expecting a variable, not " + term, term.getLoc());
   }

@@ -18,7 +18,7 @@
 -- this is temporary, until the task integration is complete
 private import macrosupport;
 
-#spawn { ?A ./ #(valis ?E)# } ==> __spawnExp((function() is valof {A}));
-#spawn {?A} ==> __spawnExp((function() is valof{ A; valis () }));
+#spawn { ?A ./ #(valis ?E)# } ==> __spawnExp(() => valof {A});
+#spawn {?A} ==> __spawnExp(() => valof{ A; valis () });
 
 #waitfor ?A ==> __waitforThread(A);

@@ -63,10 +63,11 @@ public class VarDeclaration extends Action
     DisplayType.display(disp, pattern.getType());
     disp.append(";\n");
     if (readOnly == AccessMode.readOnly) {
+      disp.appendWord(StandardNames.DEF);
       pattern.prettyPrint(disp);
       disp.appendWord(StandardNames.IS);
     } else {
-      disp.append("var ");
+      disp.appendWord(StandardNames.VAR);
       pattern.prettyPrint(disp);
       disp.append(" := ");
     }

@@ -20,34 +20,34 @@ doubler is package{
 
   dbl has type ((%t) =>%t) => ((%t) =>%t);
   
-  dbl(F) is let{
+  fun dbl(F) is let{
     -- ff has type (%t) =>%t;
-    ff(X) is F(F(X));
+    fun ff(X) is F(F(X));
   } in ff;
   
   compose has type ((%t)=>%u,(%s)=>%t)=>((%s)=>%u);
-  compose(F,G) is (function(X) is F(G(X)));
+  fun compose(F,G) is (X) => F(G(X));
 
   add has type (integer) => ((integer) =>integer);
-  add(I) is let{
+  fun add(I) is let{
     a has type (integer) =>integer;
-    a(X) is X+I;
+    fun a(X) is X+I;
   } in a;
   
   mul has type (integer) => ((integer)=>integer);
-  mul(I) is let{
+  fun mul(I) is let{
     m has type (integer) =>integer;
-    m(X) is X*I;
+    fun m(X) is X*I;
   } in m;
   
   pls has type (integer) => ((integer) =>integer);
-  pls(I) is (function(X) is X+I);
+  fun pls(I) is (X) => X+I;
   
   tms has type (integer) => ((integer)=>integer);
-  tms(I) is (function(X) is X*I);
+  fun tms(I) is (X) => X*I;
 
   main has type action();
-  main() do {
+  prc main() do {
     -- first a simple test of add
     logMsg(info, "add(3)(4) is $(add(3)(4))");
     -- now we test double

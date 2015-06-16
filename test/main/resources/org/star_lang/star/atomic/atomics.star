@@ -23,14 +23,14 @@ atomics is package{
   }
   
   implementation assignment over atomic of %t determines %t is {
-    _atomic(V) is atomic(V);
-    _get(A) is __atomic_reference(A);
-    _assign(A,V) do __atomic_assign(A,V);
+    fun _atomic(V) is atomic(V);
+    fun _get(A) is __atomic_reference(A);
+    prc _assign(A,V) do __atomic_assign(A,V);
   }
   
   implementation assignment over atomic_int determines integer is {
-    _atomic(integer(I)) is atomic_int(I);
-    _get(A) is integer(__atomic_int_reference(A));
-    _assign(A,integer(I)) do __atomic_int_assign(A,I);
+    fun _atomic(integer(I)) is atomic_int(I);
+    fun _get(A) is integer(__atomic_int_reference(A));
+    prc _assign(A,integer(I)) do __atomic_int_assign(A,I);
   }
 }

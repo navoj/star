@@ -26,10 +26,10 @@ pingpong is package{
   chatty(Who) is actor{
     private var lifeTime := 1000;
     Bx has type mbox of string;
-    private Bx is box();
-    private H is spawn{
+    private def Bx is box();
+    private def H is spawn{
       while true do{
-        Msg is Bx.grab();
+        def Msg is Bx.grab();
         notify Who() with Msg on ear;
       }
     };
@@ -45,8 +45,8 @@ pingpong is package{
  
   main() do {
     let{
-      ping is memo chatty(pong);
-      pong is memo chatty(ping);
+      def ping is memo chatty(pong);
+      def pong is memo chatty(ping);
     } in {notify ping() with "hello" on ear};
     sleep(1000l);
   }

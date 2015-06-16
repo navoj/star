@@ -18,12 +18,12 @@
 clashingNames is package {
   import actors;
   
-  foo() is actor {
+  fun foo() is actor {
     on x on bar do nothing;
   };
-  bar is actor{
+  def bar is actor{
     on x on DEFAULT do{
-      y is foo();
+      def y is foo();
     } 
   };    
 }

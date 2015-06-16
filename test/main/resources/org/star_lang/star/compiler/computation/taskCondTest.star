@@ -42,7 +42,7 @@ taskCondTest is package{
     __stop_here();
     t is task { Z := 21; valis 0; };
     __stop_here();
-    valis false ? valof t | Z;
+    valis false ? valof t : Z;
   };  
   
   main() do{

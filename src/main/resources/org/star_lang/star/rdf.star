@@ -76,14 +76,14 @@ import cons;
  type n3Concept is n3C(string,string) or n3S(string,string);
  
  implementation pPrint over n3Concept is {
-   ppDisp(n3C(G,C)) is ppSequence(0,cons of {ppStr(G);ppStr(":");ppStr(C)})
-   ppDisp(n3S(_,S)) is ppStr(display(S));
+   fun ppDisp(n3C(G,C)) is ppSequence(0,cons of {ppStr(G);ppStr(":");ppStr(C)})
+    |  ppDisp(n3S(_,S)) is ppStr(display(S));
  }
  
  implementation pPrint over n3Triple is {
- 	ppDisp(Tr) is displayTriple(Tr)
+ 	fun ppDisp(Tr) is displayTriple(Tr)
  } using {
- 	displayTriple(n3Triple(Subj,Pred,Obj)) is ppSequence(0,cons of {ppDisp(Subj); ppSpace; ppDisp(Pred); ppSpace; ppDisp(Obj); ppNl})
+ 	fun displayTriple(n3Triple(Subj,Pred,Obj)) is ppSequence(0,cons of {ppDisp(Subj); ppSpace; ppDisp(Pred); ppSpace; ppDisp(Obj); ppNl})
  }
               
  -- Macros to convert graph expressions into regular Star structures.
@@ -92,54 +92,54 @@ import cons;
 
   #triples(A) is wrapComma(mapSemi(triple,A));     
 
-  triple(SoFar,<| ?Sub ! ?VP |>) is SoFar++tripleJoin(trNounPhrase(list of [],Sub),trVerbPhrase(list of [],VP));
+  fun triple(SoFar,<| ?Sub ! ?VP |>) is SoFar++tripleJoin(trNounPhrase(list of [],Sub),trVerbPhrase(list of [],VP));
  
-  trVerbPhrase(SoFar,<| [ ?VPs ] |>) is SoFar++mapComma(trVerbPhrase,VPs); 
-  trVerbPhrase(SoFar,<| ?V $ ?O |>) is SoFar++pairJoin(trVerb(list of [],V),trNounPhrase(list of [],O));
+  fun trVerbPhrase(SoFar,<| [ ?VPs ] |>) is SoFar++mapComma(trVerbPhrase,VPs)
+   |  trVerbPhrase(SoFar,<| ?V $ ?O |>) is SoFar++pairJoin(trVerb(list of [],V),trNounPhrase(list of [],O));
   
-  trVerb(SoFar,<| [?Vs] |>) is SoFar++mapComma(trVerb,Vs);
-  trVerb(SoFar, C) is list of [SoFar..,trConcept(C)];
+  fun trVerb(SoFar,<| [?Vs] |>) is SoFar++mapComma(trVerb,Vs)
+   |  trVerb(SoFar, C) is list of [SoFar..,trConcept(C)];
   
-  trNounPhrase(SoFar,<| [ ?NPs ] |>) is SoFar++mapComma(trNounPhrase,NPs);
-  trNounPhrase(SoFar, N ) is list of {SoFar..;trConcept(N) };
+  fun trNounPhrase(SoFar,<| [ ?NPs ] |>) is SoFar++mapComma(trNounPhrase,NPs)
+   |  trNounPhrase(SoFar, N ) is list of {SoFar..;trConcept(N) };
       
-  trConcept(<| #(string?S)# : #(string?Lng)# |>) is <| n3S(?S,?Lng) |>; 
-  trConcept(<| #(identifier?G)# : #(identifier ? C)# |>) is <| n3C(?nameString(G), ?nameString(C)) |>;
-  trConcept(<| : #(identifier?C)# |>) is <| n3C("", ?nameString(C)) |>;
-  trConcept(<| string ?S |>) is <| n3S(?S,"") |>;
+  fun trConcept(<| #(string?S)# : #(string?Lng)# |>) is <| n3S(?S,?Lng) |>
+   |  trConcept(<| #(identifier?G)# : #(identifier ? C)# |>) is <| n3C(?nameString(G), ?nameString(C)) |>
+   |  trConcept(<| : #(identifier?C)# |>) is <| n3C("", ?nameString(C)) |>
+   |  trConcept(<| string ?S |>) is <| n3S(?S,"") |>;
   
-  nameString(nameAst(Lc,N)) is stringAst(Lc,N);
+  fun nameString(nameAst(Lc,N)) is stringAst(Lc,N);
   
-  unwrapSemi(<| ?L ; ?R |>,Lst) is unwrapSemi(R,unwrapSemi(L,Lst));
-  unwrapSemi(El,Lst) is list of [Lst..,El];
+  fun unwrapSemi(<| ?L ; ?R |>,Lst) is unwrapSemi(R,unwrapSemi(L,Lst))
+   |  unwrapSemi(El,Lst) is list of [Lst..,El];
  
-  showQ(A) is valof{
-    var R is unwrapSemi(A,list of []);
+  fun showQ(A) is valof{
+    def R is unwrapSemi(A,list of []);
     logMsg(info,"","Unwrap of $(display_quoted(A)) is");
     for E in R do
       logMsg(info,"",display_quoted(E));
     valis R
   };
 
-  wrapComma(list of [El]) is <| ?El |>;
-  wrapComma(list of [El,..More]) is <| ?El , ?wrapComma(More) |>;
+  fun wrapComma(list of [El]) is <| ?El |>
+   |  wrapComma(list of [El,..More]) is <| ?El , ?wrapComma(More) |>;
 
-  unwrapComma(<| ?L , ?R |>,Lst) is unwrapComma(R,unwrapComma(L,Lst));
-  unwrapComma(El,Lst) is list of [Lst..,El];   
+  fun unwrapComma(<| ?L , ?R |>,Lst) is unwrapComma(R,unwrapComma(L,Lst))
+   |  unwrapComma(El,Lst) is list of [Lst..,El];   
   
-  mapComma(F,A) is valof{
-    var R is leftFold(F,list of [],unwrapComma(A,list of []));
+  fun mapComma(F,A) is valof{
+    def R is leftFold(F,list of [],unwrapComma(A,list of []));
     logMsg(info,"","$R");
     valis R
   }
   
-  mapSemi(F,A) is valof{
-    var R is leftFold(F,list of [],unwrapSemi(A,list of []));
+  fun mapSemi(F,A) is valof{
+    def R is leftFold(F,list of [],unwrapSemi(A,list of []));
     logMsg(info,"","$R");
     valis R
   }
   
-  pairJoin(L1,L2) is list of { (E1,E2) where E1 in L1 and E2 in L2 };
+  fun pairJoin(L1,L2) is list of { (E1,E2) where E1 in L1 and E2 in L2 };
   
-  tripleJoin(L1,L2) is list of { <| n3Triple(?S,?V,?O) |> where S in L1 and (V,O) in L2 };
+  fun tripleJoin(L1,L2) is list of { <| n3Triple(?S,?V,?O) |> where S in L1 and (V,O) in L2 };
 };

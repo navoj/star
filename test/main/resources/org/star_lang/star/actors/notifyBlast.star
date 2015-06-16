@@ -20,8 +20,9 @@ notifyBlast is package{
   
   -- Test sending many notifies
   type pingType is alias of actor of {ping has type action(integer); count has type ref integer};
+  
   pinger has type ()=> pingType;
-  pinger() is actor{
+  fun pinger() is actor{
     var count := 0;
     on X on ping do {
       -- logMsg(info,"Got $X");
@@ -30,7 +31,7 @@ notifyBlast is package{
   };
 
   blast has type (integer,pingType)=>integer;
-  blast(Count,A) is valof{
+  fun blast(Count,A) is valof{
     var ix:=0;
     while ix<Count do{
       notify A with ix on ping;
@@ -39,10 +40,10 @@ notifyBlast is package{
     valis query A's count with count;
   }
 
-  main() do {
-    Pi is pinger();
+  prc main() do {
+    def Pi is pinger();
     
-    amnt is 50000000;
+    def amnt is 50000000;
     
     var time := nanos();
     assert blast(amnt,Pi)=amnt;

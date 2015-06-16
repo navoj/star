@@ -27,74 +27,74 @@ private import folding;
 private import option;
 
 implementation equality over (dictionary of (%k,%v) where equality over %k and equality over %v) is {
-  X=Y is hash_equal(X,Y);
+  fun X=Y is hash_equal(X,Y);
 } using {
-  hash_equal(X,Y) is __hash_equal(X,Y,(=));
+  fun hash_equal(X,Y) is __hash_equal(X,Y,(=));
 }
 
 implementation sizeable over dictionary of (%s,%t) is {
-  isEmpty(M) is __hash_empty(M);
-  size(R) is integer(__hash_size(R));
+  fun isEmpty(M) is __hash_empty(M);
+  fun size(R) is integer(__hash_size(R));
 }
 
 implementation pPrint over dictionary of (%k,%v) where pPrint over %k and pPrint over %v is {
-  ppDisp(M) is ppSequence(0,cons(ppStr("dictionary of {"),
+  fun ppDisp(M) is ppSequence(0,cons(ppStr("dictionary of {"),
 	cons(ppSequence(2,dispEntries(M)),cons(ppStr("}"),nil))))
 } using {
-  dispEntries(M) is cons of { all ppSequence(0,cons(ppDisp(K),cons(ppStr("->"),cons(ppDisp(V),cons(ppStr(";"),cons(ppNl,nil)))))) where
+  fun dispEntries(M) is cons of { all ppSequence(0,cons(ppDisp(K),cons(ppStr("->"),cons(ppDisp(V),cons(ppStr(";"),cons(ppNl,nil)))))) where
       K->V in M}
 }
 
 implementation indexable over dictionary of (%k,%v) determines (%k,%v) is {
-  _index(M,K) is __hashGet(M,K)
-  _set_indexed(M,K,V) is __hashUpdate(M,K,V);
-  _delete_indexed(M,K) is __hashDelete(M,K);
+  fun _index(M,K) is __hashGet(M,K)
+  fun _set_indexed(M,K,V) is __hashUpdate(M,K,V);
+  fun _delete_indexed(M,K) is __hashDelete(M,K);
 }
 
 implementation updateable over dictionary of (%k,%v) determines ((%k,%v)) is {
-  _extend(L,(K,V)) is __hashUpdate(L,K,V);
-  _merge(L,R) is __hash_merge(L,R);
-  _delete(R,P) is __delete_from_hash(R,P);
-  _update(R,M,F) is __update_into_hash(R,M,F);
+  fun _extend(L,(K,V)) is __hashUpdate(L,K,V);
+  fun _merge(L,R) is __hash_merge(L,R);
+  fun _delete(R,P) is __delete_from_hash(R,P);
+  fun _update(R,M,F) is __update_into_hash(R,M,F);
 };
 
 implementation sequence over dictionary of (%k,%v) determines ((%k,%v)) is {
-  _cons((K,V),H) is __hashUpdate(H,K,V);
-  _apnd(H,(K,V)) is __hashUpdate(H,K,V);
-  _nil() is __hashCreate();
-  _empty() from X where __hash_empty(X);
-  _pair((raise "not implemented"),(raise "not implemented")) from X;
-  _back((raise "not implemented"),(raise "not implemented")) from X;
+  fun _cons((K,V),H) is __hashUpdate(H,K,V);
+  fun _apnd(H,(K,V)) is __hashUpdate(H,K,V);
+  fun _nil() is __hashCreate();
+  ptn _empty() from X where __hash_empty(X);
+  ptn _pair((raise "not implemented"),(raise "not implemented")) from X;
+  ptn _back((raise "not implemented"),(raise "not implemented")) from X;
 }
 
 implementation iterable over dictionary of (%k,%v) determines %v is {
-  _iterate(M,F,S) is __hash_iterate(M,F,S);
+  fun _iterate(M,F,S) is __hash_iterate(M,F,S);
 }
 
 implementation indexed_iterable over dictionary of (%k,%v) determines (%k,%v) is {
-  _ixiterate(M,F,S) is __hash_ix_iterate(M,F,S);
+  fun _ixiterate(M,F,S) is __hash_ix_iterate(M,F,S);
 }
 
 implementation foldable over dictionary of (%k,%v) determines ((%k,%v)) is {
-  leftFold(F,I,A) is __hash_left_fold(A,F,I);
-  rightFold(F,I,A) is __hash_right_fold(A,F,I);
-  leftFold1(F,A) is __hash_left_fold1(A,F);
-  rightFold1(F,A) is __hash_right_fold1(A,F);
+  fun leftFold(F,I,A) is __hash_left_fold(A,F,I);
+  fun rightFold(F,I,A) is __hash_right_fold(A,F,I);
+  fun leftFold1(F,A) is __hash_left_fold1(A,F);
+  fun rightFold1(F,A) is __hash_right_fold1(A,F);
 }
 
 implementation concatenate over dictionary of (%k,%v) is {
-  M1++M2 is __hash_merge(M1,M2);
+  fun M1++M2 is __hash_merge(M1,M2);
 }
 
 implementation grouping over cons determines (dictionary, %k,%v) is {
-  L group by C is groupByCons(L,C,dictionary of {})
+  fun L group by C is groupByCons(L,C,dictionary of {})
 } using {
-  groupByCons(nil,_,M) is M
-  groupByCons(cons(H,T),C,M) is valof{
-    Key is C(H);
-    if M[Key] matches group then
-      valis groupByCons(T,C,M[with Key->cons(H,group)])
-    else
-      valis groupByCons(T,C,M[with Key->cons(H,nil)])
-  }
+  fun groupByCons(nil,_,M) is M
+   |  groupByCons(cons(H,T),C,M) is valof{
+        def Key is C(H);
+        if M[Key] has value group then
+          valis groupByCons(T,C,M[with Key->cons(H,group)])
+        else
+          valis groupByCons(T,C,M[with Key->cons(H,nil)])
+      }
 }

@@ -1166,8 +1166,8 @@ public class TypeParser
             args[ix] = DefFinder.isFound(nonDefaults, entry.getValue()) ? CompilerUtils.varPtn(new Name(loc,
                 argPtns[ix])) : CafeSyntax.anonymous(loc);
 
-          // Con#mem(F1,..,Fn) is <deflt>
-          IAbstract defFun = Abstract.binary(loc, StandardNames.IS, new Apply(loc, defName, args), entry.getValue());
+          // (F1,..,Fn) => <deflt>
+          IAbstract defFun = CompilerUtils.lambda(loc, Abstract.tupleTerm(loc, args), entry.getValue());
           defaultFuns.put(defName, Pair.pair(defFun, Freshen.generalizeType(TypeUtils.functionType(argTypes, conFace
               .getFieldType(member)))));
         }
@@ -1180,39 +1180,33 @@ public class TypeParser
   {
     for (IAbstract el : CompilerUtils.unWrap(content)) {
       Location loc = el.getLoc();
-      if (Abstract.isBinary(el, StandardNames.IS) && Abstract.isUnary(Abstract.binaryLhs(el), StandardNames.DEFAULT)) {
-        IAbstract def = Abstract.unaryArg(Abstract.binaryLhs(el));
-        def = Abstract.deParen(def);
-        if (CompilerUtils.isIdentifier(def)) {
-          String att = Abstract.getId(def);
-          if (members.contains(att))
-            defaults.put(att, Abstract.binaryRhs(el));
-          else
-            errors.reportError("no such member: " + att, loc);
-        } else if (def instanceof Apply) {
-          IAbstract op = ((Apply) def).getOperator();
-          if (CompilerUtils.isIdentifier(op)) {
-            String att = Abstract.getId(op);
-            if (members.contains(att))
-              defaults.put(att, Abstract.binary(loc, StandardNames.IS, new Apply(loc, StandardNames.FUNCTION,
-                  ((Apply) def).getArgs()), Abstract.binaryRhs(el)));
-            else
-              errors.reportError("no such member: " + att, loc);
-          }
+      if (CompilerUtils.isFunctionStatement(el) && CompilerUtils.isDefaultRule(CompilerUtils.functionRules(el))) {
+        String att = Abstract.getId(CompilerUtils.functionName(el));
+        if (members.contains(att)) {
+          // Convert the function to a lambda
+          defaults.put(att, CompilerUtils.convertToLambda(CompilerUtils.functionRules(el)));
         } else
-          errors.reportError("invalid declaration declaration of member type: " + el, loc);
-      } else if (Abstract.isBinary(el, StandardNames.ASSIGN)
-          && Abstract.isUnary(Abstract.binaryLhs(el), StandardNames.DEFAULT)) {
-        IAbstract def = Abstract.unaryArg(Abstract.binaryLhs(el));
+          errors.reportError("no such member: " + att, loc);
+      } else if (Abstract.isBinary(el, StandardNames.ASSIGN) && CompilerUtils.isDefaultRule(el)) {
+        IAbstract def = CompilerUtils.defaultRulePtn(el);
         def = Abstract.deParen(def);
         if (CompilerUtils.isIdentifier(def)) {
           String att = Abstract.getId(def);
           if (members.contains(att))
-            defaults.put(att, Abstract.unary(el.getLoc(), Cell.label, Abstract.binaryRhs(el)));
+            defaults.put(att, Abstract.unary(el.getLoc(), Cell.label, CompilerUtils.defaultRuleValue(el)));
           else
             errors.reportError("no such member: " + att, loc);
         } else
           errors.reportError("invalid declaration declaration of default: " + el, loc);
+      } else if (CompilerUtils.isDefaultRule(el)) {
+        IAbstract def = CompilerUtils.defaultRulePtn(el);
+        if (Abstract.isIdentifier(def)) {
+          String att = Abstract.getId(def);
+          if (members.contains(att))
+            defaults.put(att, CompilerUtils.defaultRuleValue(el));
+          else
+            errors.reportError("no such member: " + att, loc);
+        }
       }
     }
   }
@@ -1243,12 +1237,12 @@ public class TypeParser
         if (TypeUtils.isReferenceType(elType))
           fieldExp = CompilerUtils.shriekTerm(loc, fieldExp);
 
-        IAbstract nmDef = CompilerUtils.isStatement(loc, name, fieldExp);
+        IAbstract nmDef = CompilerUtils.defStatement(loc, name, fieldExp);
         els.add(nmDef);
       }
       els.add(CompilerUtils.assertion(loc, ass.get()));
       IAbstract test = CompilerUtils.blockTerm(loc, els);
-      IAbstract assertion = CompilerUtils.actionRule(loc, conName, args, test);
+      IAbstract assertion = CompilerUtils.actionRule(loc, Abstract.tupleTerm(loc, args), test);
 
       integrity.put(conName, assertion);
     }

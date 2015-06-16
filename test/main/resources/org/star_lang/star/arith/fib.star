@@ -16,27 +16,27 @@
  *
  */
 fib is package{
-  fib(0) is 1;
-  fib(1) is 1;
-  fib(N) is fib(N-1)+fib(N-2);
+  fun fib(0) is 1
+   |  fib(1) is 1
+   |  fib(N) is fib(N-1)+fib(N-2)
   
-  nfib(0) is 1;
-  nfib(1) is 1;
-  nfib(N) is nfib(N-1)+nfib(N-2)+1;
+  fun nfib(0) is 1
+   |  nfib(1) is 1
+   |  nfib(N) is nfib(N-1)+nfib(N-2)+1
   
-  ifib(0) is 1;
-  ifib(1) is 1;
-  ifib(N) is valof{
-    var prevPrev := 0;
-    var prev := 1;
-    var result := 0;
+  fun ifib(0) is 1
+   |  ifib(1) is 1
+   |  ifib(N) is valof{
+        var prevPrev := 0;
+        var prev := 1;
+        var result := 0;
     
-    for ix in iota(2,N,1) do{
-      result := prev+prevPrev;
-      prevPrev := prev;
-      prev := result;
-    }
+        for ix in iota(2,N,1) do{
+          result := prev+prevPrev;
+          prevPrev := prev;
+          prev := result;
+        }
     
-    valis result
-  }
+        valis result
+      }
 }  

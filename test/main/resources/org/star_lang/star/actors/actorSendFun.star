@@ -17,18 +17,18 @@
  */
 actorSendFun is  package {
   
-  A is actor {
+  def A is actor {
     sendMsg has type action((string)=>string);
     sendMsg(foo) do logMsg(info, "$(foo("hello"))");
   }
      
-  B is actor {
-    runMsg() do {
+  def B is actor {
+    prc runMsg() do {
       logMsg(info, "Hi");
       request A's sendMsg to sendMsg(id);
     }
   };
   
-  main() do
+  prc main() do
     request B's runMsg to runMsg();
 }

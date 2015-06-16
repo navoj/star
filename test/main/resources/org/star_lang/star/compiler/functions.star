@@ -18,16 +18,15 @@
 functions is package{
 
   dbl has type ((%t) =>%t) => ((%t) =>%t);
-  dbl(F) is let{
+  fun dbl(F) is let{
     -- ff has type (%t) =>%t;
-    ff(X) is F(F(X));
+    fun ff(X) is F(F(X));
   } in ff;
   
   sum has type (integer) =>integer;
-  sum(x) is x+x;
+  fun sum(x) is x+x;
   
-  main() do {
+  prc main() do {
     logMsg(info,"doubling sum: $(dbl(sum)(3))");
   }
-
 }

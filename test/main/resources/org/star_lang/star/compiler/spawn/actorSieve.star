@@ -24,7 +24,7 @@ actorSieve is package{
     {Nx := newPrime};
     
     private newPrime(X) is let{
-      Fx is filterActor(X);
+      def Fx is filterActor(X);
       
       filterPrime(XX) is task{ notify Fx with XX on input};
     } in task {
@@ -40,7 +40,7 @@ actorSieve is package{
     }
   }
 
-  S is filterActor(2);
+  def S is filterActor(2);
   
   main() do {
     perform task{

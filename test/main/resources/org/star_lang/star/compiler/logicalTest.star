@@ -17,10 +17,10 @@
  */
 logicalTest is package{
 
-  main() do
+  prc main() do
   {	
-	t is true;
-	f is false;
+	def t is true;
+	def f is false;
 	
 	assert t or f;
 	assert f or t;

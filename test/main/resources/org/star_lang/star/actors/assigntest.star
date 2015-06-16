@@ -23,16 +23,16 @@ assigntest is package {
     getA has type ()=>string; 
     m has type ref string;
   };   
-  A is actor {        
-    setA(a) do { m := a; };
-    getA() is m;
+  def A is actor {        
+    prc setA(a) do { m := a; };
+    fun getA() is m;
     var m := "";       
   };
   
-  main() do {
+  prc main() do {
     request A's setA to setA("hello");
-    m1 is query A's m with m;
-    m3 is query A's getA with getA();
+    def m1 is query A's m with m;
+    def m3 is query A's getA with getA();
     
     assert m1=m3;  
   }

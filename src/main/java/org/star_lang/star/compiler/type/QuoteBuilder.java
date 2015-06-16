@@ -238,7 +238,7 @@ public class QuoteBuilder
         eqns.add(equalityEqn);
     }
 
-    return CompilerUtils.tupleUp(loc, StandardNames.TERM, eqns);
+    return CompilerUtils.blockTerm(loc, eqns);
   }
 
   private static IAbstract specDeQuote(Location loc, String label, IAbstract term, IAbstract type)
@@ -434,7 +434,7 @@ public class QuoteBuilder
         eqns.add(equalityEqn);
     }
 
-    return CompilerUtils.tupleUp(loc, StandardNames.TERM, eqns);
+    return CompilerUtils.blockTerm(loc, eqns);
   }
 
   private static IAbstract specQuote(Location loc, String label, IAbstract term, IAbstract type)

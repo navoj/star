@@ -27,12 +27,12 @@ substTest is package{
     
     assert J.age=nonFloat;
     
-    K is J substitute { age := 10.0};
+    def K is J substitute { age := 10.0};
     
     assert K.age=10.0;
     assert J.age=nonFloat;
     
-    L is substAgeFun(J,10.0);
+    def L is substAgeFun(J,10.0);
     assert L = K;
   }
 }

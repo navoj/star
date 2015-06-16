@@ -40,34 +40,34 @@ contract bitstring over %t is {
 }
 
 implementation bitstring over integer is {
-  integer(L) .&. integer(R) is integer(__integer_bit_and(L,R));
-  integer(L) .|. integer(R) is integer(__integer_bit_or(L,R));
-  integer(L) .^. integer(R) is integer(__integer_bit_xor(L,R));
-  integer(L) .<<. integer(R) is integer(__integer_bit_shl(L,R));
-  integer(L) .>>. integer(R) is integer(__integer_bit_sar(L,R));
-  integer(L) .>>>. integer(R) is integer(__integer_bit_shr(L,R));
-  .~. integer(L) is integer(__integer_bit_neg(L));
-  .#. integer(L) is integer(__integer_bit_count(L));
+  fun integer(L) .&. integer(R) is integer(__integer_bit_and(L,R));
+  fun integer(L) .|. integer(R) is integer(__integer_bit_or(L,R));
+  fun integer(L) .^. integer(R) is integer(__integer_bit_xor(L,R));
+  fun integer(L) .<<. integer(R) is integer(__integer_bit_shl(L,R));
+  fun integer(L) .>>. integer(R) is integer(__integer_bit_sar(L,R));
+  fun integer(L) .>>>. integer(R) is integer(__integer_bit_shr(L,R));
+  fun .~. integer(L) is integer(__integer_bit_neg(L));
+  fun .#. integer(L) is integer(__integer_bit_count(L));
 }
 
 implementation bitstring over long is {
-  long(L) .&. long(R) is long(__long_bit_and(L,R));
-  long(L) .|. long(R) is long(__long_bit_or(L,R));
-  long(L) .^. long(R) is long(__long_bit_xor(L,R));
-  long(L) .<<. long(R) is long(__long_bit_shl(L,R));
-  long(L) .>>. long(R) is long(__long_bit_sar(L,R));
-  long(L) .>>>. long(R) is long(__long_bit_shr(L,R));
-  .~. long(L) is long(__long_bit_neg(L));
-  .#. long(L) is integer(__long_bit_count(L));
+  fun long(L) .&. long(R) is long(__long_bit_and(L,R));
+  fun long(L) .|. long(R) is long(__long_bit_or(L,R));
+  fun long(L) .^. long(R) is long(__long_bit_xor(L,R));
+  fun long(L) .<<. long(R) is long(__long_bit_shl(L,R));
+  fun long(L) .>>. long(R) is long(__long_bit_sar(L,R));
+  fun long(L) .>>>. long(R) is long(__long_bit_shr(L,R));
+  fun .~. long(L) is long(__long_bit_neg(L));
+  fun .#. long(L) is integer(__long_bit_count(L));
 }
   
-hashCode(X) is integer(__hashCode(X));
+fun hashCode(X) is integer(__hashCode(X));
 
-private showBits(X) is let{
-  showBit(0) is "0";
-  showBit(1) is "1";
-  
-  showBts(0) is "";
-  showBts(N) is showBts(N.>>>.1)++showBit(N.&.1);
+private fun showBits(X) is let{
+  fun showBit(0) is "0"
+   |  showBit(1) is "1"
+
+  fun showBts(0) is ""
+   |  showBts(N) is showBts(N.>>>.1)++showBit(N.&.1)
 } in showBts(X)++"B";  
  

@@ -52,7 +52,7 @@ type lvl2Constraint is l2Conj(lvl2Constraint, lvl2Constraint)
                               or l2Deflt(lvl2Constraint, lvl2Constraint);
 
 -- This should have a default value stuck in.
-AbQuery is lvl2Fun{
+def AbQuery is lvl2Fun{
       lhs = l2Ident("G");
       rhs = l2All(l2Dot(l2Ident("x"), "c1"),
                         l2In("x", l2Dot(l2Ident("G"), "table1")));
@@ -60,7 +60,7 @@ AbQuery is lvl2Fun{
 };
  
   main has type action();
-  main() do {
+  prc main() do {
          logMsg(info, "$AbQuery");
   };
 }

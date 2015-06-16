@@ -24,14 +24,14 @@ freeGreek is package{
   } implementing quotable
   
   
-  handler is actor{
+  def handler is actor{
     Check has type action(GreekData);
-    Check(data) do
+    prc Check(data) do
       logMsg(info,"I was asked to check $data");
   };
   
-  main() do {
-    X is 10;
+  prc main() do {
+    def X is 10;
     var input:=GreekData{s="inString";i=1}
     for count in  iota(1,X,1) do {
    	  input:=GreekData{s="inString";i=count};

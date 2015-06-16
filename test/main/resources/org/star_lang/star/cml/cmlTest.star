@@ -24,18 +24,18 @@ cmlTest is package {
   import cmlAtomicRef;
   
   testQueue1() do {
-    q1 is mk_queue((function (e) is true));
+    q1 is mk_queue((e) => true);
     expected is "Hello";
     (actual, _) is dequeue(enqueue(q1, expected))
     assert (actual = some(expected));
 
     -- dequeueMatch    
-    var q2 := mk_queue((function (e) is true));
+    var q2 := mk_queue((e) => true);
     q2 := enqueue(q2, 1);
     q2 := enqueue(q2, 2);
     q2 := enqueue(q2, 3);
     q2 := enqueue(q2, 4);
-    (actual2, _) is dequeue_match(q2, (function (e) is e = 2));
+    (actual2, _) is dequeue_match(q2, (e) => e = 2);
     
     (actual3, _) is dequeue(q2);
     assert(actual3 = some(1));
@@ -107,8 +107,8 @@ cmlTest is package {
 	  recv1 is recvRv(ch1);
 	  send1 is sendRv(ch1, 1);
 	  
-	  recv2 is wrapRv(recv1, (function (v) is taskReturn(v + 1)));
-	  send2 is wrapRv(send1, (function (_) is taskReturn(())));
+	  recv2 is wrapRv(recv1, (v) => taskReturn(v + 1));
+	  send2 is wrapRv(send1, (_) => taskReturn(()));
 	  
 	  choose1 is chooseRv(cons of { recv1; recv2 });
 
@@ -154,7 +154,7 @@ cmlTest is package {
     }));
     
     sleep(100L);
-    getHalf is wrapRv(recvRv(ch1), (function (n) is taskReturn(n/2)))
+    getHalf is wrapRv(recvRv(ch1), (n) => taskReturn(n/2))
     
     actual is executeTask(await(getHalf), raiser_fun);
     
@@ -179,11 +179,11 @@ cmlTest is package {
       logMsg(info, "sending first value..");
       x is executeTaskOnThreadPool(taskBind(await(
         wrapRv(sendRv(ch1, v1),
-             (function (_) is valof { logMsg(info, "first send successfull"); valis taskReturn(()); })))
-        , (function (r) is valof {
+             (_) => valof { logMsg(info, "first send successfull"); valis taskReturn(()); }))
+        ,  (r) => valof {
             logMsg(info, "first send sync returned");
             valis taskReturn(r);
-          }))
+          })
       , raiser_fun);
       logMsg(info, "sending second value..");
       y is executeTaskOnThreadPool(send(ch1, v2), raiser_fun);
@@ -195,18 +195,18 @@ cmlTest is package {
     -- if the wrapper function is evaluated in the sending/synchronizing context,
     -- then the second recv will not happen, as no second value will be sent.
     getPrv is wrapRv(recvRv(ch1),
-                   (function (n) is valof {
+                    (n) => valof {
                      logMsg(info, "received first value $(n)");
                      logMsg(info, "=========================");
                      sleep(2000L); -- eval of wrap-fun seems to prevent the completion of the first send
-                     receiveOr is (function (def) is chooseRv(cons of {
+                     receiveOr is (def) => chooseRv(cons of {
                         recvRv(ch1);
-                        wrapRv(timeoutRv(1000L), (function (_) is taskReturn(def))); }));
+                        wrapRv(timeoutRv(1000L), (_) => taskReturn(def)); });
                       
                      next is executeTaskOnThreadPool(await(receiveOr(0)), raiser_fun);
                      if next = 0 then logMsg(info, "timeout!!!") else logMsg(info, "received second value $(next)");
                      valis taskReturn(n+next); -- the 0 will make the assert below fail
-                     }));
+                     });
     
     logMsg(info, "starting receiver fiber");
     actual is executeTaskOnThreadPool(await(getPrv), raiser_fun);
@@ -223,7 +223,7 @@ cmlTest is package {
     
     sendRv1 is sendRv(ch1, expected);
     recvRv1 is recvRv(ch1);
-    recvOrTimeoutRv is chooseRv(cons of { recvRv1; wrapRv(timeoutRv(2000L), (function (_) is task { valis 0; })) });
+    recvOrTimeoutRv is chooseRv(cons of { recvRv1; wrapRv(timeoutRv(2000L), (_) => task { valis 0; }) });
     
     sending is task {
       -- we also need a delay here, so that the sending side will always (more likely) be the synchronizing side
@@ -302,7 +302,7 @@ cmlTest is package {
       valis 0;
     }));
     for i in iota(1, 1000, 1) do {
-      v is executeTask(await(chooseRv(cons of { wrapRv(neverRv, (function (_) is taskReturn(666)));
+      v is executeTask(await(chooseRv(cons of { wrapRv(neverRv, (_) => taskReturn(666));
                                               recvRv(ch) })), raiser_fun);
       assert(v = 42)
     }
@@ -319,7 +319,7 @@ cmlTest is package {
       x := 1;
       cvar_set(cvar1);
     }
-    v is prv_sync(wrapPrv(waitPrv(cvar1), (function (_) is taskReturn(x * 42))))
+    v is prv_sync(wrapPrv(waitPrv(cvar1), (_) => taskReturn(x * 42)))
     assert(v = 42)
   }
   */
@@ -328,7 +328,7 @@ cmlTest is package {
   serverTask(ch) is let {
     -- a 'tail call'!!!!
     { logMsg(info, "serving.."); }
-    rv1 is wrapRv(recvRv(ch), (function (v) is (v > 0) ? serverTask(ch) | taskReturn(42)));
+    rv1 is wrapRv(recvRv(ch), ((v) => (v > 0) ? serverTask(ch) : taskReturn(42)));
     
   } in await(rv1);
   

@@ -4,6 +4,6 @@ univRef is package {
     }
     ph(_,_) do nothing;
     main() do {
-        var r is t{parentAction := ph};
+        def r is t{parentAction := ph};
     }
 }

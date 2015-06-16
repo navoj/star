@@ -18,9 +18,9 @@
 simpleArrayTests is package{
   -- base test of list functions.
   
-  main() do {
+  prc main() do {
     -- create an list using the sequence notation:
-    A is list of ["alpha", "beta", "gamma"];
+    def A is list of ["alpha", "beta", "gamma"];
     
     assert size(A)=3;
     assert A=list of ["alpha", "beta", "gamma"];
@@ -35,23 +35,23 @@ simpleArrayTests is package{
     walkBack(A);
     
     L has type list of long;
-    L is iota(1L,10L,1L);
+    def L is iota(1L,10L,1L);
     assert L=list of [1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L];
     
     F has type list of float;
-    F is iota(5.0,1.0,-1.0);
+    def F is iota(5.0,1.0,-1.0);
     assert F=list of [5.0, 4.0, 3.0, 2.0, 1.0];
   }
   
-  walkOver(sequence of {}) do nothing;
-  walkOver(sequence of {H;..T}) do {
-    logMsg(info,"got $H");
-    walkOver(T);
-  };
+  prc walkOver(sequence of {}) do nothing
+   |  walkOver(sequence of {H;..T}) do {
+        logMsg(info,"got $H");
+        walkOver(T);
+      };
     
-  walkBack(sequence of {}) do nothing;
-  walkBack(sequence of {T..;H}) do {
-    logMsg(info,"got $H");
-    walkBack(T);
-  }
+  prc walkBack(sequence of {}) do nothing
+   |  walkBack(sequence of {T..;H}) do {
+        logMsg(info,"got $H");
+        walkBack(T);
+      }
 }

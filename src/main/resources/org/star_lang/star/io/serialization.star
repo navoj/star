@@ -54,15 +54,15 @@ serialization is package {
     _abort(_) is raise "no fail operation for shoverM";
     _handle(m, h) is raise "no handle operation for shoverM";
   } using {
-    shoverReturn(x) is shoverM((function (s) is task { valis (x, s) }));
-    shoverBind(shoverM(m), f) is shoverM((function (s) is
+    shoverReturn(x) is shoverM( (s) => task { valis (x, s) });
+    shoverBind(shoverM(m), f) is shoverM((s) =>
 	  task {
 	    (t1, s1) is valof m(s);
 	    shoverM(f1) is f(t1);
 	    /* work around starbug: valis valof f1(s1) */
 	    tmp is valof f1(s1);
 	    valis tmp;
-	  }));
+	  });
   };
 
 -- must be implemented, but is never called actually; will probably replaced by injection
@@ -76,7 +76,7 @@ serialization is package {
 /* helper function: put needed_bytes, but empty buffer first, if they don't fit */
   ensure_put has type (integer, (bytebuffer, %i) => bytebuffer) => ((ShoverState, %i) => task of ShoverState);
   ensure_put(needed_bytes, put) is
-      (function (s0 matching ShoverState{buffer=bb0;sStreamWriter=sStreamWriter0}, i) is valof {
+      (s0 matching ShoverState{buffer=bb0;sStreamWriter=sStreamWriter0}, i) => valof {
 	 s1 is (bytebuffer_remaining(bb0) >= needed_bytes
 	  ? s0
 	    | valof task {
@@ -86,7 +86,7 @@ serialization is package {
 	 valis task {
 	   bb is put(s1.buffer, i);
 	   valis s1 substitute {buffer = bb}
-	 }});
+	 }};
 /* -- compiler got the following wrong (alternative branch entered on true condition)
  -- that construct works in fillBufferAtLeast, though
  task {
@@ -106,31 +106,27 @@ serialization is package {
   shoveWordN(needed_bytes, bb_putWordN) is let {
     ensured_putWordN is ensure_put(needed_bytes, bb_putWordN);
   } in
-  (function (i) is shoverM(
-    (function (s1) is task {
+  ( (i) => shoverM(
+    ( (s1) => task {
        s2 is valof ensured_putWordN(s1, i);
        valis ((), s2);
      })));
 
 /* shove 8-bit word into bytebuffer */
   shoveWord8 has type (word8) => shover;
-  shoveWord8 is let { shover is shoveWordN(1, bytebuffer_putWord8); } in
-  (function(i) is shover(i));
+  shoveWord8 is let { shover is shoveWordN(1, bytebuffer_putWord8); } in (i) => shover(i);
 
 /* shove 16-bit word into bytebuffer */
   shoveWord16 has type (word16) => shover;
-  shoveWord16 is let { shover is shoveWordN(2, bytebuffer_putWord16); } in
-  (function(i) is shover(i));
+  shoveWord16 is let { shover is shoveWordN(2, bytebuffer_putWord16); } in (i) => shover(i);
   
 /* shove 32-bit word into bytebuffer */
   shoveWord32 has type (word32) => shover;
-  shoveWord32 is let { shover is shoveWordN(4, bytebuffer_putWord32); } in
-  (function(i) is shover(i));
+  shoveWord32 is let { shover is shoveWordN(4, bytebuffer_putWord32); } in (i) => shover(i);
 
 /* shove 64-bit word into bytebuffer */
   shoveWord64 has type (word64) => shover;
-  shoveWord64 is let { shover is shoveWordN(8, bytebuffer_putWord64); } in
-  (function(l) is shover(l));
+  shoveWord64 is let { shover is shoveWordN(8, bytebuffer_putWord64); } in (i) => shover(i);
 
 /* put contents of source bytebuffer into destination bytebuffer as is */
 /*
@@ -159,7 +155,7 @@ serialization is package {
  */
   shoveByteBuffer has type (bytebuffer) => shover;
   shoveByteBuffer(src0) is shoverM(
-   (function(s0 matching ShoverState{buffer=bb0;sStreamWriter=sStreamWriter0}) is
+   ((s0 matching ShoverState{buffer=bb0;sStreamWriter=sStreamWriter0}) =>
 	((bytebuffer_remaining(bb0) >= bytebuffer_remaining(src0))
 	 ? task { /* src0 fits in shove byte buffer */
 	     (bb1, _) is bytebuffer_putByteBuffer(bb0, src0); /* fill w/o stream writing */
@@ -231,13 +227,13 @@ serialization is package {
     _abort(_) is raise "no fail operation for yankerM";
     _handle(m, h) is raise "no handle operation for yankerM";
   } using {
-    yankerReturn(x) is yankerM((function (s) is task { valis (x, s) }));
-    yankerBind(yankerM(m), f) is yankerM((function (s0) is 
+    yankerReturn(x) is yankerM( (s) => task { valis (x, s) });
+    yankerBind(yankerM(m), f) is yankerM( (s0) => 
 	  task {
 	    (v1, s1) is valof m(s0);
 	    yankerM(f1) is f(v1);
 	    valis valof f1(s1);
-	  }));
+	  });
   };
 
 -- must be implemented, but is never called actually; will probably replaced by injection
@@ -248,22 +244,22 @@ serialization is package {
 /* read word of N bits (%i) from bytebuffer */
   yankWordN has type ((YankerState) => task of ((%i, YankerState))) => yanker of %i;
   yankWordN(bb_getN) is
-      yankerM((function (s1) is task {
+      yankerM( (s1) => task {
 	  (first, s2) is valof bb_getN(s1);
 	  valis (first, s2);
-	}));
+	});
   
   yankerEval has type (task of %t) => yanker of %t
-  yankerEval(t) is yankerM((function (s1) is task {
+  yankerEval(t) is yankerM( (s1) => task {
       v is valof t;
       valis (v, s1);
-    }))
+    })
 
 /* ensure a get operation for required_bytes can complete without buffer underflow by
  * calling the stream reader of the yanker. */
    ensure_get has type (integer, (bytebuffer) => (%i, bytebuffer)) => ((YankerState) => task of ((%i, YankerState)));
   ensure_get(required_bytes, getter) is
-      (function (s0 matching YankerState{buffer=bb0;sStreamReader=sStreamReader0}) is task {
+       (s0 matching YankerState{buffer=bb0;sStreamReader=sStreamReader0}) => task {
 	 s1 is (bytebuffer_remaining(s0.buffer) >= required_bytes
 	  ? s0
 	    | valof task {
@@ -273,7 +269,7 @@ serialization is package {
 	    });
 	 (v, bb) is getter(s1.buffer);
 	 valis (v, s1 substitute {buffer = bb});
-       });
+       };
 
 /* read word of 8 bits from bytebuffer */
   yankWord8 has type yanker of word8;
@@ -318,7 +314,7 @@ serialization is package {
  * a cost larger than expected).
  */
   yankByteBuffer has type (integer) => yanker of bytebuffer;
-  yankByteBuffer(sz) is yankerM((function(s0 matching YankerState{buffer=bb0;sStreamReader=sStreamReader0}) is
+  yankByteBuffer(sz) is yankerM((s0 matching YankerState{buffer=bb0;sStreamReader=sStreamReader0}) =>
 	(sz <= bytebuffer_capacity(bb0)
 	 ?  /* can use our own buffer */
 	   task {
@@ -335,7 +331,7 @@ serialization is package {
 	     SSRArgs(result_bb2, sStreamReader1) is valof fillBufferAtLeast(sz, SSRArgs(result_bb1, sStreamReader0));
 	     result_bb3 is bytebuffer_asReadOnlyBuffer(result_bb2); /* for consistency with other branch */
 	     valis (result_bb3, s0 substitute {buffer=bb1; sStreamReader=sStreamReader1});
-	   })));
+	   }));
 
 /* fill buffer with at least sz bytes, returning flipped bytebuffer */
 /* This is different from setting a byte buffer limit, as it allows reading more bytes. */
@@ -692,7 +688,7 @@ serialization is package {
       f is __float_of_bits(l);
       if __float_is_nan(f) then {
 	_word8(o) is valof yankWord8;
-	valis o = 0 ? nonFloat | f;
+	valis o = 0 ? nonFloat : f;
       } else {
 	valis f;
       }

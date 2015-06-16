@@ -19,9 +19,9 @@ testPlusCon is package{
   import plus;
   
   fooFun has type (%x,%x)=>%y where pluss over (%x,%x) determines %y;
-  fooFun(X,Y) is plus(X,Y);
+  fun fooFun(X,Y) is plus(X,Y);
   
-  main() do
+  prc main() do
   {
     assert fooFun(3,4)=7;
     logMsg(info,"fooFun(4.3,4.5)=$(fooFun(4.3,4.5))");

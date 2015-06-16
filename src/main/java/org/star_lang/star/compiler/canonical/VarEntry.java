@@ -201,6 +201,9 @@ public class VarEntry extends EnvironmentEntry
       RecordPtn record = (RecordPtn) ptn;
       for (Entry<String, IContentPattern> entry : record.getElements().entrySet())
         findDefined(entry.getValue(), defined);
+    } else if (ptn instanceof PatternApplication) {
+      PatternApplication apply = (PatternApplication) ptn;
+      findDefined(apply.getArg(), defined);
     } else if (!(ptn instanceof VoidExp))
       throw new IllegalArgumentException("cannot find vars in " + ptn);
   }

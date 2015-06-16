@@ -18,13 +18,13 @@
 freebug is package{
 
   -- outer has type (integer,(integer,integer))=>string;
-  outer(X,Y1) is let{
-    inner(U,Y) is case U in {
+  fun outer(X,Y1) is let{
+    fun inner(U,Y) is case U in {
       0 is Y;
     };
   } in inner(X,"alpha");
   
-  main() do {
+  prc main() do {
     assert outer(0,(1,2))="alpha";
   }
 }

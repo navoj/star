@@ -46,8 +46,8 @@ parsieve is package{
   } in primes; 
   
   natStream(S) is valof{
-    ch is channel();
-    _ is background task {
+    def ch is channel();
+    ignore background task {
       var counter := S;
       while true do {
         -- logMsg(info,"Sending integer $counter");
@@ -59,7 +59,7 @@ parsieve is package{
   }
   
   primes(N) is let{
-    s is sieve();
+    def s is sieve();
     
     loop(0,L) is reverse(L);
     loop(I,L) is loop(I-1,cons of {valof recv(s);..L});

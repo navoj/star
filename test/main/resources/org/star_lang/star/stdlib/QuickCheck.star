@@ -47,7 +47,7 @@ variant(val, Gen(m)) is
 generate has type (integer, StdGen, Gen of %a) => %a
 generate(n, rnd, Gen(m)) is m(size, rnd1)
 	using {
-		(size, rnd1) is randomR(0, n, rnd)
+		def (size, rnd1) is randomR(0, n, rnd)
 	};
 
 #left((genFMap), 1000);

@@ -17,21 +17,21 @@
  */
 letdefs is package{
 
-  multi() is let{
+  fun multi() is let{
     thisActor has type ()=>actor of {
       drop has type action()
     };
-    thisActor is memo actor{
-      drop() do
+    def thisActor is memo actor{
+      prc drop() do
         logMsg(info,"i am $(thisOne())")
     }
-    thisOne is memo thisActor;
+    def thisOne is memo thisActor;
   }
   in thisActor();
     
-  main() do {
-    M1 is multi();
-    M2 is multi();
+  prc main() do {
+    def M1 is multi();
+    def M2 is multi();
     
     request M1 to drop();
     request M2 to drop();

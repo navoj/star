@@ -6,16 +6,16 @@ sendToConc is package{
   }
 
   C has type concurrent actor of { tick has type occurrence of stockTick };
-  C is concurrent actor{
+  def C is concurrent actor{
     on X on tick do
       logMsg(info,"#(X.symbol) price: $(X.price)")
   }
 
-  sendMsg(A) do {
+  prc sendMsg(A) do {
     notify A with stockTick{ symbol="AAPL"; price=512.0} on tick
   }
 
-  main() do {
+  prc main() do {
     sendMsg(C);
   }
 }

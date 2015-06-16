@@ -43,7 +43,7 @@ binaryTrees is package{
   {
     N is 16;
     
-    maxDepth is (minDepth+2>N?minDepth|N);
+    maxDepth is (minDepth+2>N?minDepth:N);
     stretchDepth is maxDepth+1;
         
     longLivedTree is buildTree(0,maxDepth);

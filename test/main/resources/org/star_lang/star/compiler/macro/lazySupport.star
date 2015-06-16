@@ -3,7 +3,7 @@ lazySupport is package{
   
   macroSubstitute(Term,Excl,Sub) is let{
     subst(nameAst(Lc,Nm)) where present Excl[Nm] is nameAst(Lc,Nm);
-    subst(nameAst(Lc,Nm)) where Sub[Nm] matches Rep is Rep;
+    subst(nameAst(Lc,Nm)) where Sub[Nm] has value Rep is Rep;
     subst(A matching boolAst(_,_)) is A;
     subst(A matching charAst(_,_)) is A;
     subst(A matching integerAst(_,_)) is A;

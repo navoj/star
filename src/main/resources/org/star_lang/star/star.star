@@ -51,8 +51,8 @@ contract _project0 over %%c is {
 }
 
 implementation _project0 over list is {
-  __project0(A) is __array_project_0(A);
-  __unique(A,E) is __array_unique(A,E);
+  fun __project0(A) is __array_project_0(A);
+  fun __unique(A,E) is __array_unique(A,E);
 }
 
 contract iotaC over (%%r,%t) is {
@@ -60,26 +60,28 @@ contract iotaC over (%%r,%t) is {
 };
 
 implementation iotaC over (list,integer) is {
-  iota(integer(F),integer(T),integer(S)) is __integer_array_iota(F,T,S);
+  fun iota(integer(F),integer(T),integer(S)) is __integer_array_iota(F,T,S);
 }
 
 implementation iotaC over (list,long) is {
-  iota(long(F),long(T),long(S)) is __long_array_iota(F,T,S);
+  fun iota(long(F),long(T),long(S)) is __long_array_iota(F,T,S);
 }
 
 implementation iotaC over (list,float) is {
-  iota(float(F),float(T),float(S)) is __float_array_iota(F,T,S);
+  fun iota(float(F),float(T),float(S)) is __float_array_iota(F,T,S);
 }
 
 implementation iotaC over (cons,integer) is {
-  iota(F,T,S) where S>0 is iotaF(F,T,S);
-  iota(F,T,S) default is iotaB(F,T,S);
+  fun iota(F,T,S) where S>0 is iotaF(F,T,S)
+   |  iota(F,T,S) default is iotaB(F,T,S);
   
-  private iotaF(F,T,S) where F>T is nil;
-  iotaF(F,T,S) is cons(F,iotaF(F+S,T,S));
+  private
+  fun iotaF(F,T,S) where F>T is nil
+   |  iotaF(F,T,S) is cons(F,iotaF(F+S,T,S));
   
-  private iotaB(F,T,S) where F<T is nil;
-  iotaB(F,T,S) is cons(F,iotaB(F+S,T,S));
+  private
+  fun iotaB(F,T,S) where F<T is nil
+   |  iotaB(F,T,S) is cons(F,iotaB(F+S,T,S));
 }
 
 -- macro out common use case ...

@@ -46,8 +46,8 @@ stepping is package{
   
   main() do {
     C is eventually build {
-      var A is 1;
-      var B is 2;
+      def A is 1;
+      def B is 2;
       return A+B;
     };
     

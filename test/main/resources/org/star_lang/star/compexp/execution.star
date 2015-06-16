@@ -36,8 +36,7 @@ execution is package{
   # ?Tp build {?A} :: expression :- A;*execAction;
   
   #bind ?V to ?Exp :: execAction :- V::pattern :& Exp::expression;
-  #?V is ?Exp :: execAction :- V::pattern :& Exp::expression;
-  #var ?V is ?Exp :: execAction :- V::pattern :& Exp::expression;
+  #def ?V is ?Exp :: execAction :- V::pattern :& Exp::expression;
   #var ?V := ?Exp :: execAction :- V::pattern :& Exp::expression;
   #?V := ?Exp :: execAction :- V::pattern :& Exp::expression;
   #return ?Exp :: execAction :- Exp::expression;
@@ -54,8 +53,8 @@ execution is package{
     #act2exec(#(var ?V := ?Exp;?Next)#,?Tp) ==> _bind(_return(Exp), (function(V) is act2exec(Next,Tp)));
     #act2exec(#(var ?V is ?Exp;?Next)#,?Tp) ==> _bind(_return(Exp), (function(V) is act2exec(Next,Tp)));
     #act2exec(#(?V is ?Exp;?Next)#,?Tp) ==> _bind(_return(Exp), (function(V) is act2exec(Next,Tp)));
-    #act2exec(#(if ?Tst then ?Th else ?El)#,?Tp) ==> Tst?act2exec(Th,Tp)|act2exec(El,Tp);
-    #act2exec(#(if ?Tst then ?Th)#,?Tp) ==> Tst?act2exec(Th,Tp)|_zero();
+    #act2exec(#(if ?Tst then ?Th else ?El)#,?Tp) ==> Tst?act2exec(Th,Tp):act2exec(El,Tp);
+    #act2exec(#(if ?Tst then ?Th)#,?Tp) ==> Tst?act2exec(Th,Tp):_zero();
     #act2exec(#(?V := ?Exp)#,?Tp) ==> valof{ V := Exp; valis _zero() };
     #act2exec(#(?A1;?A2)#,?Tp)==> _combine(act2exec(A1,Tp),(function(unit) is act2exec(A2,Tp)));
     #act2exec(#(?A1;)#,?Tp) ==> act2exec(A1,Tp);

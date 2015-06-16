@@ -55,7 +55,8 @@ public class PatternAbstraction extends ProgramLiteral
   @Override
   public void prettyPrint(PrettyPrintDisplay disp)
   {
-    disp.appendWord(name);
+    disp.appendWord(StandardNames.PTN);
+    disp.appendId(name);
     result.prettyPrint(disp);
     disp.appendWord(StandardNames.FROM);
     match.prettyPrint(disp);

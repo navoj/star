@@ -24,11 +24,11 @@ contract monad over %%m is {
 };
 
 implementation monad over option is {
-  _return(x) is some(x);
-  _bind(m, f) is case m in {
+  fun _return(x) is some(x);
+  fun _bind(m, f) is case m in {
     none is none;
     some(v) is f(v);
   };
-  _fail() is none;
-  _perform(some(X)) is X;
+  fun _fail() is none;
+  fun _perform(some(X)) is X;
 };

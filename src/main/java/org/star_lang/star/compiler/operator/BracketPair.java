@@ -46,11 +46,11 @@ public class BracketPair implements PrettyPrintable
   {
     disp.append(StandardNames.META_HASH);
     disp.appendWord(StandardNames.BRACKETS);
-    disp.append("((");
-    disp.append(leftBracket);
-    disp.append("),(");
-    disp.append(rightBracket);
-    disp.append("),");
+    disp.append("(");
+    disp.appendQuoted(leftBracket);
+    disp.append(",");
+    disp.appendQuoted(rightBracket);
+    disp.append(",");
     disp.append(innerPriority);
     disp.append(")");
   }

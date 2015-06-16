@@ -59,20 +59,20 @@ queries is package{
 	
   main has type action();
   main() do {
-    DD is all (X,Z) where (X,Y) in R and (Z,Y) in S;
+    def DD is all (X,Z) where (X,Y) in R and (Z,Y) in S;
     
-    EE is all X where (X,Y) in R and ((Y,_) in N ? X in cons of {"a";"b"} | "none" matches X);
+    def EE is all X where (X,Y) in R and ((Y,_) in N ? X in cons of {"a";"b"} | "none" matches X);
     logMsg(info,"EE=$EE"); 
   
-    QQ is all (X,Y,U) where (X,Y) in N and (X>Y ? (U,X) in R | (U,Y) in S);
+    def QQ is all (X,Y,U) where (X,Y) in N and (X>Y ? (U,X) in R | (U,Y) in S);
   
-    QQQ is all (X,Y,U) where (X,U) in R and ((U,_) in N ? (Y,V) in S | "not there" matches Y);
+    def QQQ is all (X,Y,U) where (X,U) in R and ((U,_) in N ? (Y,V) in S | "not there" matches Y);
     logMsg(info,"DD is $DD");
     logMsg(info,"QQ is $QQ");
     logMsg(info,"QQQ is $QQQ");
     logMsg(info,"4 of S is $(4 of (X,Y) where (X,Y) in S)");
     
-    Four is 4 of (X,Y) where (X,Y) in S;
+    def Four is 4 of (X,Y) where (X,Y) in S;
     
    	logMsg(info,"Four=$Four");
     assert size(Four)<=4;
@@ -81,7 +81,7 @@ queries is package{
     
     logMsg(info,"all about parents = $(all (P,C,D) where {parent=P;child=C;dob=D} in parent)");
     
-    PS is anyof P where {parent=P;child="sam"} in parent;
+    def PS is anyof P where {parent=P;child="sam"} in parent;
     assert PS in list of ["fred", "jane"];
     
     logMsg(info,"parent of fred = $(anyof P where {parent=P;child="fred"} in parent default "not known")"); 
@@ -89,28 +89,28 @@ queries is package{
     
     ns has type ref list of ((integer));
     var ns := list of [1,6,5,3,8,5,7,3,5,4];
-	items is list of {all item{pos=E} where E in ns};
+	def items is list of {all item{pos=E} where E in ns};
 	
 --	logMsg(info,"items=$items, testf=$(testf(items,3))");
 	
 	assert I in testf(items,3) implies I matches item{pos=3};
 	
-	FP is all FF where FF in parent and FF.parent="fred";
+	def FP is all FF where FF in parent and FF.parent="fred";
 	logMsg(info,"fred parents: $FP");
 	
 	logMsg(info,"male is $male");
-	FFX is all X where X in male and F in FP and F.child=X
+	def FFX is all X where X in male and F in FP and F.child=X
 	logMsg(info,"$FFX");
 	
-	FFF is list of {all X where X in male and F in (all FF where FF in parent and FF.parent="fred") and F.child=X}
+	def FFF is list of {all X where X in male and F in (all FF where FF in parent and FF.parent="fred") and F.child=X}
 	logMsg(info,"$FFF");
 	assert FFF = list of ["sam"];
   };
   
   checkF(items) is valof{
-    F is testf(items,3);
+    def F is testf(items,3);
     logMsg(info,"F=$F");
-    B is (I in F implies I matches item{pos=3}?true|false);
+    def B is (I in F implies I matches item{pos=3}?true|false);
     logMsg(info,"checking $items:$B");
     valis B
   }

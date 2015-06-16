@@ -26,7 +26,7 @@ contract (computation) over %%c is {
   _combine has type for all %s, %t such that (%%c of %s,(%s)=>%%c of %t)=>%%c of %t
   _delay has type for all %t such that (()=>%%c of %t)=>%%c of %t;
   
-  _delay(F) default is _combine(_encapsulate(()),(function(_) is F()));
+  fun _delay(F) default is _combine(_encapsulate(()),(_) => F());
 }
 
 contract execution over %%c is {
@@ -38,13 +38,13 @@ contract injection over (%%m,%%n) is {
 }
  
 -- default exception handling function
-raiser_fun(X) is __raise(X);
+fun raiser_fun(X) is __raise(X);
 
 -- An implementation of 'regular' actions that lie lightly over the implicit monad
 
 type action of t is _delayed(()=>action of t) or _aborted(exception) or _done(t);
 
-runCombo(Act,C,H) is valof{
+fun runCombo(Act,C,H) is valof{
   var A := Act;
   
   while A matches _delayed(D) do
@@ -58,21 +58,21 @@ runCombo(Act,C,H) is valof{
 }
 
 implementation (computation) over action is {
-  _encapsulate(V) is _done(V);
-  _abort(E) is _aborted(E);
-  _handle(A,H) is _delayed((function() is runCombo(A,_encapsulate,H)));
+  fun _encapsulate(V) is _done(V);
+  fun _abort(E) is _aborted(E);
+  fun _handle(A,H) is _delayed(() => runCombo(A,_encapsulate,H));
   
-  _combine(A,C) is _delayed((function() is runCombo(A,C,_abort)));
+  fun _combine(A,C) is _delayed(() => runCombo(A,C,_abort));
   
-  _delay(F) is _delayed(F);
+  fun _delay(F) is _delayed(F);
 }
  
 implementation execution over action is {
-  _perform(A,H) is runCombo(A,id,H);
+  fun _perform(A,H) is runCombo(A,id,H);
 };
 
 implementation injection over (action,action) is {
-  _inject(C) is C;
+  fun _inject(C) is C;
 }
 
 #action{?A} :: expression :- A ;* action;

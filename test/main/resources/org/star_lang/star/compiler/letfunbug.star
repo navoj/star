@@ -76,7 +76,7 @@ type T2 is t2{
 };
  
  
-AbQuery is lvl2Fun{
+def AbQuery is lvl2Fun{
       lhs = l2Ident("G");
       rhs = l2All(l2Dot(l2Ident("x"), "c1"),
                         l2In("x", l2Dot(l2Ident("G"), "table1")));
@@ -85,37 +85,35 @@ AbQuery is lvl2Fun{
  
 abstosql has type (lvl2Fun) => string;
  
-abstosql(lvl2Fun{lhs=l2Ident(Pn); rhs=l2All(Tx,Cx)}) is
+fun abstosql(lvl2Fun{lhs=l2Ident(Pn); rhs=l2All(Tx,Cx)}) is
   let{
-    Res is constraintExp(dictionary of { Pn->"Port"},"", Cx);
-    CxEnv is first(Res);
-    CxTables is second(Res);
-    CxText is third(Res);
+    def Res is constraintExp(dictionary of { Pn->"Port"},"", Cx);
+    def CxEnv is first(Res);
+    def CxTables is second(Res);
+    def CxText is third(Res);
    
     first has type ((%s,%t,%u)) =>%s;
-    first((X,_,_)) is X;
+    fun first((X,_,_)) is X;
    
     second has type ((%s,%t,%u)) => %t;
-    second((_,X,_)) is X;
+    fun second((_,X,_)) is X;
    
     third has type ((%s,%t,%u)) => %u;
-    third((_,_,X)) is X;
+    fun third((_,_,X)) is X;
    
   } in
     "select $(transformExp(CxEnv,Tx)) from $CxTables where $CxText";
    
 transformExp has type (dictionary of (string,string),lvl2Exp) => string;
-transformExp(_,l2Dot(l2Ident(V),Att)) is "$V.$Att";
- 
+fun transformExp(_,l2Dot(l2Ident(V),Att)) is "$V.$Att";
  
 constraintExp has type (dictionary of (string,string),string,lvl2Constraint) =>
      (dictionary of (string,string),string,string);
-constraintExp(Env,Tables, l2In(Nm,Exp)) is (Env, "$Tables, $(transformExp(Env,Exp)) as Nm",
-                                                                  "");
+fun constraintExp(Env,Tables, l2In(Nm,Exp)) is (Env, "$Tables, $(transformExp(Env,Exp)) as Nm", "");
  
  
   main has type action();
-  main() do
+  prc main() do
   {
          logMsg(info, "SQL String for the defined metaModel is: $(abstosql(AbQuery))");
   };

@@ -16,10 +16,10 @@
  *
  */
 quoting is package{
-  main() do
+  prc main() do
   {
-    P is quote("Alpha");
-    Q is quote((query A with all X where (X,unquote(P)) in M));
+    def P is quote("Alpha");
+    def Q is quote((query A with all X where (X,unquote(P)) in M));
     
     logMsg(info,"$Q");
     
@@ -29,11 +29,11 @@ quoting is package{
     
     assert Q=quote((query A with all X where (X,unquote(P)) in M));
     
-    QS is <| "An interpolated $String" |>;
+    def QS is <| "An interpolated $String" |>;
     logMsg(info,"QS=$QS");
     
     assert Q=quote((query A with all X where (X,"Alpha") in M));
     
-    logMsg(info,"$(quote(#(var X is found())#))");
+    logMsg(info,"$(quote(#(def X is found())#))");
   }
 }

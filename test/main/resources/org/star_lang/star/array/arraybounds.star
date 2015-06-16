@@ -16,7 +16,7 @@
  *
  */
 arraybounds is package{
-  main() do {
+  prc main() do {
     logMsg(finer, "(list of {1})[2] = $((list of [1])[2])");
   }
 }

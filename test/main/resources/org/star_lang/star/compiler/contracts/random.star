@@ -26,7 +26,7 @@ random is package{
   implementation pPrint over StdGen is {
 	ppDisp = dispStdGen;
   } using {
-	dispStdGen(StdGen(s1,s2)) is ppSequence(0,cons of {ppDisp(s1);ppStr("~");ppDisp(s2)});
+	fun dispStdGen(StdGen(s1,s2)) is ppSequence(0,cons of {ppDisp(s1);ppStr("~");ppDisp(s2)});
   }
 
   contract Random over (%a,%g) where RandomGen over %g is {
@@ -34,56 +34,56 @@ random is package{
   };
 
   randomIvalInteger has type (integer, integer, %g) => (integer, %g) where RandomGen over %g;
-  randomIvalInteger(l, h, rng) where l > h is randomIvalInteger (h, l, rng)
-  randomIvalInteger(l, h, rng) default is
-	let {
-		k is h - l + 1
-        b is 2147483561
-        n is iLogBase(b, k)
+  fun randomIvalInteger(l, h, rng) where l > h is randomIvalInteger (h, l, rng)
+   |  randomIvalInteger(l, h, rng) default is
+	    let {
+		  def k is h - l + 1
+          def b is 2147483561
+          def n is iLogBase(b, k)
 
-        f(0, acc, g) is (acc, g)
-        f(n1, acc, g) is
-           	let {
-	   			(x, g1) is next(g)
-	  		} in
-	  			f(n1 - 1, x + acc * b, g1);
+          fun f(0, acc, g) is (acc, g)
+           |  f(n1, acc, g) is
+           	    let {
+	   			  def (x, g1) is next(g)
+	  		    } in
+	  			  f(n1 - 1, x + acc * b, g1)
 	  			
-	  	(v, rng1) is f(n, 1, rng)
-	} in
-		(l + v % k, rng1)
+	  	  def (v, rng1) is f(n, 1, rng)
+	    } in
+		  (l + v % k, rng1)
 
   iLogBase has type (integer, integer) => integer
-  iLogBase(b, i) is
-	 (i < b) ? 1 | 1 + iLogBase(b, i / b)
+  fun iLogBase(b, i) is
+	 (i < b) ? 1 : 1 + iLogBase(b, i / b)
 
-  min32Bound is -2**32;
-  max32Bound is 2**32-1;
-  int32Range is max32Bound - min32Bound
+  def min32Bound is -2**32
+  def max32Bound is 2**32-1
+  def int32Range is max32Bound - min32Bound
 
   implementation Random over (integer,StdGen) is {
-	randomR(lo, hi, g) is randomIvalInteger(lo, hi, g);
+	fun randomR(lo, hi, g) is randomIvalInteger(lo, hi, g)
   };
 
   implementation RandomGen over StdGen is {
 	next = stdNext;
   } using {
 	stdRange has type (StdGen) => (integer, integer);
-	stdRange(_) is (0, 2147483562);
+	fun stdRange(_) is (0, 2147483562);
 
 	stdNext has type (StdGen) => (integer, StdGen);
 	-- Returns values in the range stdRange
-	stdNext (StdGen(s1, s2))  is (z1, StdGen(s1_2, s2_2))
-		using {	
-			z1 is (z < 1 ? z + 2147483562 | z);
-			z  is s1_2 - s2_2;
+	fun stdNext (StdGen(s1, s2))  is (z1, StdGen(s1_2, s2_2))
+      using {	
+	    def z1 is (z < 1 ? z + 2147483562 : z);
+		def z  is s1_2 - s2_2;
 	
-			k    is s1 / 53668;
-			s1_1  is 40014 * (s1 - k * 53668) - k * 12211;
-			s1_2 is (s1_1 < 0 ? s1_1 + 2147483563 | s1_1);
+		def k    is s1 / 53668;
+		def s1_1  is 40014 * (s1 - k * 53668) - k * 12211;
+		def s1_2 is (s1_1 < 0 ? s1_1 + 2147483563 : s1_1);
 	    
-			k1   is s2 / 52774;
-			s2_1  is 40692 * (s2 - k1 * 52774) - k1 * 3791;
-			s2_2 is (s2_1 < 0 ? s2_1 + 2147483399 | s2_1);
-		};
+		def k1   is s2 / 52774;
+		def s2_1  is 40692 * (s2 - k1 * 52774) - k1 * 3791;
+		def s2_2 is (s2_1 < 0 ? s2_1 + 2147483399 : s2_1);
+	  };
   };
 }

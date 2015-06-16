@@ -21,7 +21,7 @@ worksheet{
 
   implementation distribution over discrete of (%k,%v) determines (%k,%v) 
      where coercion over (%v,float) is {
-    _update_data(D,K,V) where D.data[K] matches OV is discrete{data=D.data[K->V+OV]; total=D.total+V};
+    _update_data(D,K,V) where D.data[K] has value OV is discrete{data=D.data[K->V+OV]; total=D.total+V};
     _update_data(D,K,V) default is discrete{ data = D.data[K->V]; total = D.total+V }
     _prob(D,K) is (someValue(D.data[K]) as float)/(D.total as float);
   }

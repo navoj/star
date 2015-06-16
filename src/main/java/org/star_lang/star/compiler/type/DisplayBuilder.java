@@ -14,6 +14,7 @@ import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.util.ComboIterable;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.data.IValue;
@@ -46,12 +47,13 @@ import org.star_lang.star.operators.string.runtime.Number2String.Long2String;
  */
 public class DisplayBuilder
 {
-  private static boolean checkThetaForImplementation(String tpLabel, String contract, IAbstract theta, Dictionary dict)
+  private static boolean checkThetaForImplementation(String tpLabel, String contract, Iterable<IAbstract> theta,
+      Dictionary dict)
   {
     if (TypeUtils.implementsContract(tpLabel, contract, dict))
       return true;
     else
-      for (IAbstract stmt : CompilerUtils.unWrap(theta)) {
+      for (IAbstract stmt : theta) {
         if (CompilerUtils.isImplementationStmt(stmt)) {
           IAbstract con = CompilerUtils.implementedContract(stmt);
           if (Abstract.isName(con, contract)) {
@@ -63,10 +65,10 @@ public class DisplayBuilder
     return false;
   }
 
-  public static IAbstract checkForDisplay(IAbstract theta, Dictionary dict)
+  public static Iterable<IAbstract> checkForDisplay(Iterable<IAbstract> theta, Dictionary dict)
   {
     Map<String, IAbstract> printers = new HashMap<>();
-    for (IAbstract stmt : CompilerUtils.unWrap(theta)) {
+    for (IAbstract stmt : theta) {
       Visibility visibility = CompilerUtils.privacy(stmt);
       stmt = CompilerUtils.dePrivatize(stmt);
 
@@ -95,7 +97,7 @@ public class DisplayBuilder
           if (Abstract.isBinary(term, StandardNames.WHERE))
             term = Abstract.binaryLhs(term);
           if (CompilerUtils.isBraceTerm(term))
-            checkTypeAnnotations(CompilerUtils.braceArg(term), dict, printers, theta);
+            checkTypeAnnotations(CompilerUtils.contentsOfRecord(term), dict, printers, theta);
           else if (Abstract.isRoundTerm(term))
             for (IValue tp : Abstract.roundTermArgs(term))
               if (!CompilerUtils.isTypeVar((IAbstract) tp))
@@ -105,12 +107,14 @@ public class DisplayBuilder
     }
     checkTypeAnnotations(theta, dict, printers, theta);
 
-    for (IAbstract stmt : printers.values())
-      theta = Abstract.binary(stmt.getLoc(), StandardNames.TERM, stmt, theta);
-    return theta;
+    if (!printers.isEmpty())
+      return new ComboIterable<IAbstract>(theta, printers.values());
+    else
+      return theta;
   }
 
-  private static void lookForAnonTypes(IAbstract tp, Dictionary dict, IAbstract theta, Map<String, IAbstract> printers)
+  private static void lookForAnonTypes(IAbstract tp, Dictionary dict, Iterable<IAbstract> theta,
+      Map<String, IAbstract> printers)
   {
     if (Abstract.isBinary(tp, StandardNames.OF)) {
       IAbstract tpArgs = Abstract.binaryRhs(tp);
@@ -168,7 +172,8 @@ public class DisplayBuilder
     Location loc = tp.getLoc();
     String label = CompilerUtils.anonRecordTypeLabel(tp) + "$display";
 
-    IAbstract eqn = displayRecordContents(loc, label, tp, "", CompilerUtils.blockContent(tp));
+    IAbstract eqn = CompilerUtils.function(loc, displayRecordContents(loc, label, tp, "", CompilerUtils
+        .blockContent(tp)));
 
     IAbstract constraint = null;
     List<IAbstract> fieldTypes = new ArrayList<>();
@@ -192,8 +197,8 @@ public class DisplayBuilder
       implType = Abstract.binary(loc, StandardNames.WHERE, implType, constraint);
 
     if (eqn != null) {
-      IAbstract defn = CompilerUtils.letExp(loc, eqn, CompilerUtils.blockTerm(loc, CompilerUtils.equals(loc, new Name(
-          loc, StandardNames.PPDISP), new Name(loc, label))));
+      IAbstract defn = CompilerUtils.letExp(loc, CompilerUtils.blockTerm(loc, eqn), CompilerUtils.blockTerm(loc,
+          CompilerUtils.equals(loc, new Name(loc, StandardNames.PPDISP), new Name(loc, label))));
       printers.put(CompilerUtils.typeLabel(tp), CompilerUtils.privateStmt(loc, CompilerUtils.implementationStmt(loc,
           CompilerUtils.universalType(loc, tVars, Abstract.binary(loc, StandardNames.OVER, new Name(loc,
               StandardNames.PPRINT), implType)), defn)));
@@ -207,7 +212,7 @@ public class DisplayBuilder
     Location loc = tp.getLoc();
     String label = CompilerUtils.typeLabel(tp) + "$display";
 
-    IAbstract eqn = displayConstructor(loc, label, tp, tp);
+    IAbstract eqn = CompilerUtils.function(loc, displayConstructor(loc, label, tp, tp));
 
     IAbstract constraint = null;
     List<IAbstract> fieldTypes = new ArrayList<>();
@@ -228,18 +233,18 @@ public class DisplayBuilder
       implType = Abstract.binary(loc, StandardNames.WHERE, implType, constraint);
 
     if (eqn != null) {
-      IAbstract defn = CompilerUtils.letExp(loc, eqn, CompilerUtils.blockTerm(loc, Abstract.binary(loc,
-          StandardNames.EQUAL, new Name(loc, StandardNames.PPDISP), new Name(loc, label))));
+      IAbstract defn = CompilerUtils.letExp(loc, CompilerUtils.blockTerm(loc, eqn), CompilerUtils.blockTerm(loc,
+          Abstract.binary(loc, StandardNames.EQUAL, new Name(loc, StandardNames.PPDISP), new Name(loc, label))));
       printers.put(CompilerUtils.typeLabel(tp), CompilerUtils.privateStmt(loc, CompilerUtils.implementationStmt(loc,
           CompilerUtils.universalType(loc, tVars, Abstract.binary(loc, StandardNames.OVER, new Name(loc,
               StandardNames.PPRINT), implType)), defn)));
     }
   }
 
-  private static void checkTypeAnnotations(IAbstract env, Dictionary dict, Map<String, IAbstract> printers,
-      IAbstract theta)
+  private static void checkTypeAnnotations(Iterable<IAbstract> env, Dictionary dict, Map<String, IAbstract> printers,
+      Iterable<IAbstract> theta)
   {
-    for (IAbstract stmt : CompilerUtils.unWrap(env)) {
+    for (IAbstract stmt : env) {
       if (CompilerUtils.isTypeAnnotation(stmt)) {
         IAbstract type = CompilerUtils.typeAnnotation(stmt);
 
@@ -348,8 +353,8 @@ public class DisplayBuilder
     IAbstract arg = new Name(loc, GenSym.genSym("V$"));
     List<IAbstract> args = FixedList.create(arg);
 
-    IAbstract eqn = CompilerUtils.equation(loc, StandardNames.PPDISP, args, Abstract.binary(loc, "sequenceDisplay",
-        new StringLiteral(loc, tpLabel), arg));
+    IAbstract eqn = CompilerUtils.function(loc, CompilerUtils.equation(loc, StandardNames.PPDISP, args, Abstract
+        .binary(loc, "sequenceDisplay", new StringLiteral(loc, tpLabel), arg)));
 
     IAbstract defn = CompilerUtils.blockTerm(loc, eqn);
     return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
@@ -358,7 +363,6 @@ public class DisplayBuilder
   private static IAbstract specFunctions(Location loc, String label, IAbstract term, IAbstract type, IAbstract prtType)
   {
     List<IAbstract> eqns = new ArrayList<>();
-    eqns.add(CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), prtType));
 
     for (IAbstract el : CompilerUtils.unWrap(term, StandardNames.OR)) {
       IAbstract equalityEqn = specDisplay(loc, label, el, type);
@@ -366,7 +370,8 @@ public class DisplayBuilder
         eqns.add(equalityEqn);
     }
 
-    return CompilerUtils.tupleUp(loc, StandardNames.TERM, eqns);
+    return CompilerUtils.blockTerm(loc, CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), prtType),
+        CompilerUtils.function(loc, eqns));
   }
 
   private static IAbstract specDisplay(Location loc, String label, IAbstract term, IAbstract type)

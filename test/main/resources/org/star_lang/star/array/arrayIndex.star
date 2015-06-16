@@ -18,7 +18,7 @@
 arrayIndex is package{
   -- test indexing into arrays
   
-  main() do {
+  prc main() do {
     II has type ref list of string;
     var II := list of ["alpha", "beta", "gamma", "delta"];
     

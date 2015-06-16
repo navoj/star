@@ -3,7 +3,7 @@ recordMap is package{
     f has type ref dictionary of (string,integer)
   }
   
-  var R is r{ f := dictionary of {"alpha"->1} }
+  def R is r{ f := dictionary of {"alpha"->1} }
   
   main() do {
     R.f["beta"] := 2

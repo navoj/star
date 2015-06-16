@@ -4,14 +4,14 @@ routeActor is package {
     routesMap has type ref dictionary of (string, integer);
   }
     
-  routesActor is actor {
+  def routesActor is actor {
     rD has type ref arouteData;
     private var rD := arouteData{
       routesMap := dictionary of {};
     };
     on V on mapChannel do {
-      var key is "";
-      var value is rD.routesMap[key] or else 0;
+      def key is "";
+      def value is rD.routesMap[key] or else 0;
       rD.routesMap[key] := value+1;
     }
   }

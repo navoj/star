@@ -24,7 +24,7 @@ mbox is package{
 
   box() is mbox{
     private var Q := queue of {};
-    private lock is 1; -- value not important
+    private def lock is 1; -- value not important
      
     grab() is valof{
       sync(lock){

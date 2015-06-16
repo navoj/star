@@ -52,7 +52,8 @@ public class FunctionLiteral extends ProgramLiteral implements IRule<IContentExp
   @Override
   public void prettyPrint(PrettyPrintDisplay disp)
   {
-    disp.appendWord(name);
+    disp.appendWord(StandardNames.FUN);
+    disp.appendId(name);
     disp.append("(");
     String sep = "";
     for (int ix = 0; ix < args.length; ix++) {

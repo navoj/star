@@ -36,7 +36,7 @@ taskTest is package {
   testWait2() do {
     var ctrl := 0;
     t is taskWait((procedure (wakeup) do {
-      _ is __spawnExp((function () is valof {
+      def _ is __spawnExp((function () is valof {
         sync(ref ctrl) {
           when ctrl = 0 do ctrl := 1;
         }
@@ -47,7 +47,7 @@ taskTest is package {
     sync(ref ctrl) {
       assert(ctrl = 0); -- thread not started yet
     }
-    v is executeTask(t,raiser_fun); -- now thread will start, we wait for wakeup
+    def v is executeTask(t,raiser_fun); -- now thread will start, we wait for wakeup
     sync(ref ctrl) {
       assert(ctrl = 1);
     }
@@ -56,10 +56,10 @@ taskTest is package {
   
   
   testExn1() do {
-    err is taskFail(exception("","Something went wrong" cast any,__location__))
+    def err is taskFail(exception("","Something went wrong" cast any,__location__))
     var _failed := false;
     try {
-      r is executeTask(err,raiser_fun);
+      def r is executeTask(err,raiser_fun);
     } catch {
       _failed := true;
     }
@@ -67,15 +67,15 @@ taskTest is package {
   }
   
   testExn2() do {
-    err is taskFail(exception(nonString,"Something went wrong" cast any, __location__))
+    def err is taskFail(exception(nonString,"Something went wrong" cast any, __location__))
     var _failed := false;
     try {
       var _t_failed := false;
-      c is taskCatch(err, (function (e) is
+      def c is taskCatch(err, (function (e) is
         valof { -- logMsg(info, e); 
                 _t_failed := true; valis taskReturn(0); }));
       
-      r is executeTask(c,raiser_fun);
+      def r is executeTask(c,raiser_fun);
       assert(_t_failed);
       assert(r = 0);
     } catch {
@@ -85,10 +85,10 @@ taskTest is package {
   }
   
   testUtils() do {
-    t1 is taskLift((function () is 42));
+    def t1 is taskLift((function () is 42));
     assert(executeTask(t1,raiser_fun) = 42);
     
-    t2 is taskGuard((function () is taskReturn(42)));
+    def t2 is taskGuard((function () is taskReturn(42)));
     assert(executeTask(t2,raiser_fun) = 42);
   } 
 

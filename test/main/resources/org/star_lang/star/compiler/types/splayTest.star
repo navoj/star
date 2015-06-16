@@ -52,13 +52,13 @@ splayTest is package{
     for ix in iota(0,1000,1) do
       QQ := splayQ.insertQ((ix,"string $ix"),QQ);
     
-    var Start is nanos();
+    def Start is nanos();
     while not splayQ.isEmptyQ(QQ) do {
-      E is splayQ.firstEl(QQ);
+      def E is splayQ.firstEl(QQ);
       -- logMsg(info,"E is $E");
       QQ := splayQ.restQ(QQ);
     }
-    var End is nanos();
+    def End is nanos();
     logMsg(info,"took $(End-Start) nano seconds");
     logMsg(info,"took $(End-Start):999.000000; milli seconds");
     
@@ -66,13 +66,13 @@ splayTest is package{
     for ix in iota(0,1000,1) do
       RQ := splayQ.insertQ((ix,"string $ix"),RQ);
       
-    var RStart is nanos();
+    def RStart is nanos();
     for ix in iota(0,100000,1) do {
       -- logMsg(info,"head is $(splayQ.firstEl(RQ))");
       RQ := splayQ.insertQ((ix/*random(10000)*/,"next $ix"),splayQ.restQ(RQ));
     }
    
-    var REnd is nanos();
+    def REnd is nanos();
       
     logMsg(info,"queue took $(REnd-RStart) nano seconds");
     logMsg(info,"took $(REnd-RStart):999,999.000000; milli seconds");

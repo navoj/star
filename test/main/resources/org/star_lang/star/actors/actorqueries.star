@@ -18,43 +18,43 @@
 actorqueries is package{
   import person;
   
-   fred is someone{
+  def fred is someone{
     name = "fred";
     gender = male
   };
   
-  john is someone{
+  def john is someone{
     name = "john";
     gender = male
   };
   
-  jim is someone{
+  def jim is someone{
     name="jim";
     gender = male
   };
   
-  peter is someone{
+  def peter is someone{
     name="peter";
     gender = male;
   };
   
-  jane is someone{
+  def jane is someone{
     name="jane";
     gender = female;
   };
   
-  sue is someone{
+  def sue is someone{
     name="sue";
     gender = female;
   };
   
-  sally is someone{
+  def sally is someone{
     name="sally";
     gender = female;
   };
   
   repo has type repoActorType;
-  var repo is actor{
+  def repo is actor{
     var children := list of[
        { parent = fred; child = sue},
        { parent = fred; child = john},
@@ -65,7 +65,7 @@ actorqueries is package{
        { husband = john; wife = sally}
      ];
      
-     recordBirth(P,C) do {
+     prc recordBirth(P,C) do {
        extend children with {parent=P;child=C};
      }
    };
@@ -81,22 +81,22 @@ actorqueries is package{
     findSiblings has type action(person);
     recordBirth has type action(person,person,person);
   };
-  queryActor(R) is actor{
-    findUnmarried(P) do {
+  fun queryActor(R) is actor{
+    prc findUnmarried(P) do {
       logMsg(info,"finding unmarried children of $P");
-      QQ is query R's children'n married with 
+      def QQ is query R's children'n married with 
          list of {
            all S where {parent=PP;child=S} in children and PP=P and not ({husband=S} in married or {wife=S} in married)
          };
       logMsg(info,"QQ is $QQ");
     };
     
-    findSiblings(W) do {
+    prc findSiblings(W) do {
       logMsg(info,"siblings of $W");
       logMsg(info,"siblings of $W are $(query R's children with all S where {parent=P;child=S} in children and {parent=P;child=W} in children and W!=S)");
     };
     
-    recordBirth(F,M,C) do{
+    prc recordBirth(F,M,C) do{
       request R's recordBirth to {
         recordBirth(F,C);
         recordBirth(M,C);
@@ -104,13 +104,13 @@ actorqueries is package{
     }
   };
    
-  main() do {    
-    QQ is query repo's children 'n married with
+  prc main() do {    
+    def QQ is query repo's children 'n married with
       all C where { parent=S; child=C} in children and S.name="fred" and not ({ husband = C} in married or { wife=C} in married);
     
     logMsg(info,"fred has unmarried children $QQ");
     
-    qA is queryActor(repo);
+    def qA is queryActor(repo);
     
     request qA's findUnmarried to findUnmarried(fred);
     

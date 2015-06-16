@@ -30,20 +30,20 @@ cmlPerformanceTest is package {
     -- throw-catch
     task1 has type (integer, integer) => task of integer
     task1(0, v) is taskReturn(v)
-    task1(loops, v) default is taskBind(throwit(v+1), (function(_) is taskBind(catchit, (function(v2) is task1(loops-1, v2)))))
+    task1(loops, v) default is taskBind(throwit(v+1), (_) => taskBind(catchit, (v2) => task1(loops-1, v2)))
     
     -- catch-throw
     task2 has type (integer) => task of integer
     task2(0) is taskReturn(42)
-    task2(loops) default is taskBind(catchit, (function(v) is taskBind(throwit(v+1), (function(_) is task2(loops-1)))))
+    task2(loops) default is taskBind(catchit, (v) => taskBind(throwit(v+1), (_) => task2(loops-1)))
     
     -- start both in background and wait for them
     start1 is backgroundF(task1(nloops, 0))
     start2 is backgroundF(task2(nloops))
-    op is taskBind(start1, (function (compl1) is
-       taskBind(start2, (function (compl2) is
-         taskBind(compl1, (function (r1) is
-         taskBind(compl2, (function (r2) is taskReturn((2*nloops + 42) = (r1+r2))))))))));
+    op is taskBind(start1, (compl1) =>
+       taskBind(start2, (compl2) =>
+         taskBind(compl1, (r1) =>
+         taskBind(compl2, (r2) => taskReturn((2*nloops + 42) = (r1+r2))))));
   } in valof op;
   
   task_ping_pong(nops) do assert(task_ping_pong_(nops))

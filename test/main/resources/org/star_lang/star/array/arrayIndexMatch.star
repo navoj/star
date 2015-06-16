@@ -16,13 +16,13 @@
  *
  */
 arrayIndexMatch is package{
-  A is list of [ "alpha", "beta", "gamma", "delta" ];
+  def A is list of [ "alpha", "beta", "gamma", "delta" ];
   
-  B is cons of [ "alpha", "beta", "gamma", "delta" ];
+  def B is cons of [ "alpha", "beta", "gamma", "delta" ];
   
-  consIndex(L[Ix]) from (L,Ix) where Ix>=0 and Ix<size(L);
+  ptn consIndex(L[Ix]) from (L,Ix) where Ix>=0 and Ix<size(L);
   
-  main() do {
+  prc main() do {
   	assert (A,0) matches __array_index(E);
   	
   	if (A,0) matches __array_index(E) then

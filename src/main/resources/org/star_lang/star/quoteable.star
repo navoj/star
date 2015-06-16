@@ -27,75 +27,75 @@ private import arrays;
 private type possible of %t is impossible or exactly(%t);
 
 implementation coercion over (quoted, list of %t) where coercion over (quoted,%t) is{
-  coerce(R) is dequoteRel(R)
+  fun coerce(R) is dequoteRel(R)
 } using {
   dequoteRel has type (quoted) => list of %t where coercion over (quoted,%t);
-  dequoteRel(<| list of { ?Q } |>) is let{
-    dequoteSemi(<| ?L ; ?R |>) is dequoteSemi(L)++dequoteSemi(R);
-    dequoteSemi(El) is list of {El as %t}
-  } in dequoteSemi(Q);
-  dequoteRel(Q) is valof{
-    logMsg(info,"Cannot dequote $Q");
-    valis list of {}
-  }
+  fun dequoteRel(<| list of { ?Q } |>) is let{
+        fun dequoteSemi(<| ?L ; ?R |>) is dequoteSemi(L)++dequoteSemi(R)
+         |  dequoteSemi(El) is list of {El as %t}
+      } in dequoteSemi(Q)
+   |  dequoteRel(Q) is valof{
+        logMsg(info,"Cannot dequote $Q");
+        valis list of {}
+      }
 }
 
 implementation coercion over (quoted,()) is {
-  coerce(<|()|>) is ()
+  fun coerce(<|()|>) is ()
 }
 
 implementation coercion over ((),quoted) is {
-  coerce(()) is <|()|>
+  fun coerce(()) is <|()|>
 }
 
 implementation coercion over (((%t)),quoted) where coercion over (%t,quoted) is {
-  coerce(((X))) is <| (( ?xCoerce(X) )) |>
+  fun coerce(((X))) is <| (( ?xCoerce(X) )) |>
 } using {
-  xCoerce(X) is X as quoted;
+  fun xCoerce(X) is X as quoted;
 }
 
 implementation coercion over (quoted,((%t))) where coercion over (quoted,%t) is {
-  coerce(<|((?X))|>) is (( xCoerce(X) ))
+  fun coerce(<|((?X))|>) is (( xCoerce(X) ))
 } using {
-  xCoerce(X) is X as %t;
+  fun xCoerce(X) is X as %t;
 }
 
 implementation coercion over ((%l,%r),quoted) where coercion over (%l,quoted) and coercion over (%r,quoted) is {
-  coerce((L,R)) is <| (?xCoerce(L), ?xCoerce(R)) |>;
+  fun coerce((L,R)) is <| (?xCoerce(L), ?xCoerce(R)) |>;
 } using {
-  xCoerce(X) is X as quoted;
+  fun xCoerce(X) is X as quoted;
 }
 
 implementation coercion over (quoted, (%l,%r)) where coercion over (quoted,%l) and coercion over (quoted, %r) is {
-  coerce(<|(?L,?R)|>) is (lCoerce(L),rCoerce(R))
+  fun coerce(<|(?L,?R)|>) is (lCoerce(L),rCoerce(R))
 } using {
-  lCoerce(X) is X as %l;
-  rCoerce(X) is X as %r;
+  fun lCoerce(X) is X as %l;
+  fun rCoerce(X) is X as %r;
 }
 
-dequoteField(Q,Name) is let{
-  findQF(_,E matching exactly(_)) is E;
-  findQF(<| ?L ; ?R |>,M) is findQF(R,findQF(L,M));
-  findQF(<| ?F = ?V |>,_) where F matches nameAst(_,Nm) and Nm=Name is exactly(V);
-  findQF(_,_) default is impossible;
+fun dequoteField(Q,Name) is let{
+  fun findQF(_,E matching exactly(_)) is E
+   |  findQF(<| ?L ; ?R |>,M) is findQF(R,findQF(L,M))
+   |  findQF(<| ?F = ?V |>,_) where F matches nameAst(_,Nm) and Nm=Name is exactly(V)
+   |  findQF(_,_) default is impossible;
 
-  unpack(exactly(S)) is S;
-  unpack(impossible) is raise "$Name is not present";
+  fun unpack(exactly(S)) is S
+   |  unpack(impossible) is raise "$Name is not present";
 } in unpack(findQF(Q,impossible));
 
 implementation coercion over (list of %t,quoted) where coercion over (%t,quoted) is{
-  coerce(R) is quoteList(R)
+  fun coerce(R) is quoteList(R)
 } using {
   quoteList has type (list of %t) => quoted where coercion over (t,%quoted);
-  quoteList(R) where isEmpty(R) is <| list of {} |>;
-  quoteList(R) is <| list of { ?quoteSeq(R) } |>;
+  fun quoteList(R) where isEmpty(R) is <| list of {} |>
+   |  quoteList(R) is <| list of { ?quoteSeq(R) } |>;
 };
 
 quoteSeq has type (%s)=>quoted where iterable over %s determines %t and coercion over (%t,quoted);
-quoteSeq(S) is valof{
+fun quoteSeq(S) is valof{
   var El := <| () |>;
   for E in S do{
-    QEl is E as quoted;
+    def QEl is E as quoted;
     if El = <| () |> then
       El := QEl
     else
@@ -115,17 +115,17 @@ quoteSeq(S) is valof{
 
 #implement_quotable(?Ptn,?Spec) ==> #(
  implementation #*dequoteTemplate(Ptn) is {
-   coerce(X) is dequote(X)
+   fun coerce(X) is dequote(X)
  } using {
-   #*genDequote(Spec)
+   fun #*genDequote(Spec)
  };
  implementation #*quoteTemplate(Ptn) is {
-   coerce(Q) is quoted(Q)
+   fun coerce(Q) is quoted(Q)
  } using {
-   #*genQuote(Spec)
+   fun #*genQuote(Spec)
  }
  )# ## {
-  # genQuote(?L or ?R) ==> #( genQuote(L) ; genQuote(R) )#;
+  # genQuote(?L or ?R) ==> genQuote(L) | genQuote(R);
   # genQuote(?ConSpec) ==> genQuoteCon(ConSpec);
 
   # genQuoteCon(#(?H)#{?A}) ==>
@@ -150,7 +150,7 @@ quoteSeq(S) is valof{
 
   #q ==> #(quote)#;
 
-  # genDequote(?L or ?R) ==> #( genDequote(L) ; genDequote(R) )#;
+  # genDequote(?L or ?R) ==> #( genDequote(L) | genDequote(R) )#;
   # genDequote(?ConSpec) ==> genDequoteCon(ConSpec);
 
   # genDequoteCon(#(?H)#{?A}) ==>
@@ -200,11 +200,11 @@ quoteSeq(S) is valof{
   }
   
   #glom(?AA,?BB) ==> glue(AA,BB) ## {
-    #glue(X,Y) is glm(X,Y);
+    #fun glue(X,Y) is glm(X,Y);
     
-    glm(A,<|()|>) is A;
-    glm(<|()|>,A) is A;
-    glm(<|?L;?R|>,A) is <|?L;?glm(R,A)|>;
-    glm(A,B) is <|?A;?B|>;
+    fun glm(A,<|()|>) is A
+     |  glm(<|()|>,A) is A
+     |  glm(<|?L;?R|>,A) is <|?L;?glm(R,A)|>
+     |  glm(A,B) is <|?A;?B|>;
   };
 }

@@ -1026,7 +1026,7 @@ public class OpGrammar implements PrettyPrintable
           reportError("bracket pair priority must be between 0 and " + MAX_PRIORITY, term.getLoc());
       } else if (Abstract.isBinary(stmt, StandardNames.MACRORULE) || Abstract.isBinary(stmt, StandardNames.WFF_RULE)
           || Abstract.isBinary(stmt, StandardNames.WFF_DEFINES) || Abstract.isBinary(stmt, StandardNames.FMT_RULE)
-          || Abstract.isBinary(stmt, StandardNames.IS))
+          || CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isIsStatement(stmt))
         return true;
       else
         reportError("cannot understand meta statement:: " + term, term.getLoc());

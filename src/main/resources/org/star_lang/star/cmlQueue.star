@@ -27,8 +27,8 @@ private import strings;
 -- private import casting;
 
 -- tuning parameters for the queue cleanup frequency
-private _cmlQueue_config_k1 is 10_;
--- not possible (inlined): private _cmlQueue_config_k2 is 1.5_;
+private def _cmlQueue_config_k1 is 10_;
+private def _cmlQueue_config_k2 is 1.5_;
 
 type cml_queue of %a is _CMLQueue {
   q has type queue of %a;
@@ -39,7 +39,7 @@ type cml_queue of %a is _CMLQueue {
 
 private
 queueFoldLeft has type ((%b, %a) => %b, %b, queue of %a) => %b
-queueFoldLeft(f, s, q) is valof {
+fun queueFoldLeft(f, s, q) is valof {
   var qq := q;
   var r := s;
   while qq matches queuePair(e, rest) do {
@@ -49,16 +49,17 @@ queueFoldLeft(f, s, q) is valof {
   valis r;
 }
 
-private queueAdjoin(queue { front=F; back=B }, E) is queue{front=F;back=cons(E,B)}
-private queueCons(H, queue { front=F; back=B }) is queue{front=cons(H,F);back=B}
+private fun queueAdjoin(queue { front=F; back=B }, E) is queue{front=F;back=cons(E,B)}
+private fun queueCons(H, queue { front=F; back=B }) is queue{front=cons(H,F);back=B}
 
-private emptyQueue is queue { front=nil; back=nil }
-
-private queueIsEmpty(queue{front=nil; back=nil}) is true
-queueIsEmpty(_) default is false
+private def emptyQueue is queue { front=nil; back=nil }
 
 private
-reverseCons(L) is valof{
+fun queueIsEmpty(queue{front=nil; back=nil}) is true
+ |  queueIsEmpty(_) default is false
+
+private
+fun reverseCons(L) is valof{
     var R := nil;
     var LL := L;
   
@@ -72,26 +73,25 @@ reverseCons(L) is valof{
 
 
 private queuePair has type (%e,queue of %e)<=queue of %e;
-queuePair(E,queue{front=F;back=B}) from queue{front = cons(E,F); back = B};
-queuePair(E,queue{front=B;back=nil}) from queue{front=nil; back=Bk} where reverseCons(Bk) matches cons(E,B);
+ptn queuePair(E,queue{front=F;back=B}) from queue{front = cons(E,F); back = B}
+ |  queuePair(E,queue{front=B;back=nil}) from queue{front=nil; back=Bk} where reverseCons(Bk) matches cons(E,B)
 
 -- Filter elements out, and return new size
 _filter_size has type (((%a) => boolean), queue of %a) => (integer_, queue of %a)
-_filter_size(pred, que) is
+fun _filter_size(pred, que) is
   queueFoldLeft(
-    (function ((sz, res), e) is
-      pred(e) ? (__integer_plus(sz, 1_), queueAdjoin(res, e)) | (sz, res)),
+    ( (sz, res), e) =>
+      (pred(e) ? (__integer_plus(sz, 1_), queueAdjoin(res, e)) : (sz, res)),
     (0_, emptyQueue),
     que)
 
 -- we need to remove 'dead' elements from time to time
 _cleanup has type (cml_queue of %a) => cml_queue of %a
-_cleanup(cq) is let {
-  (nsize, res) is _filter_size(cq.isAlive, cq.q);
-  -- 1.5 = _cmlQueue_config_k2
-  nth is __integer_max(
+fun _cleanup(cq) is let {
+  def (nsize, res) is _filter_size(cq.isAlive, cq.q);
+  def nth is __integer_max(
     __integer_plus(nsize, _cmlQueue_config_k1),
-    __float_integer(__float_floor(__float_times(1.5_, __integer_float(nsize)))));
+    __float_integer(__float_floor(__float_times(_cmlQueue_config_k2, __integer_float(nsize)))));
 } in _CMLQueue {
   q := res;
   size := nsize;
@@ -101,7 +101,7 @@ _cleanup(cq) is let {
 }
 
 _maybeCleanup has type (cml_queue of %a) => cml_queue of %a
-_maybeCleanup(q) is valof {
+fun _maybeCleanup(q) is valof {
   if __integer_ge(q.size, q.cleanup_threshold) then
     valis _cleanup(q)
   else
@@ -109,8 +109,8 @@ _maybeCleanup(q) is valof {
 }
 
 enqueue has type (cml_queue of %a, %a) => cml_queue of %a
-enqueue(q0, v) is let {
-  q1 is _maybeCleanup(q0);
+fun enqueue(q0, v) is let {
+  def q1 is _maybeCleanup(q0);
 } in _CMLQueue {
   q := queueAdjoin(q1.q, v);
   size := __integer_plus(q1.size, 1_);
@@ -119,11 +119,11 @@ enqueue(q0, v) is let {
 }
 
 dequeue has type (cml_queue of %a) => (option of %a, cml_queue of %a)
-dequeue(cq) is valof {
+fun dequeue(cq) is valof {
   if queue_isEmpty(cq)
   then valis (none, cq)
   else {
-    queuePair(r, rest) is cq.q;
+    def queuePair(r, rest) is cq.q;
     valis (some(r), _CMLQueue {
       q := rest;
       size := __integer_minus(cq.size, 1_);
@@ -135,14 +135,14 @@ dequeue(cq) is valof {
 
 -- dequeue the first entry matching the predicate
 dequeue_match has type (cml_queue of %a, (%a) => boolean) => (option of %a, cml_queue of %a)
-dequeue_match(cq, pred) is valof {
+fun dequeue_match(cq, pred) is valof {
   var noMatch := nil;
   var _q := cq.q;
   var nsize := cq.size;
   var res := none;
   var found := false;
   while (not found) and (not queueIsEmpty(_q)) do {
-    queuePair(r, rest) is _q;
+    def queuePair(r, rest) is _q;
     _q := rest;
     if pred(r) then {
       res := some(r)
@@ -167,7 +167,7 @@ dequeue_match(cq, pred) is valof {
 }
 
 undequeue has type (cml_queue of %a, %a) => cml_queue of %a
-undequeue(cq, v) is _CMLQueue {
+fun undequeue(cq, v) is _CMLQueue {
   q := queueCons(v, cq.q)
   size := __integer_plus(cq.size, 1_);
   cleanup_threshold := cq.cleanup_threshold;
@@ -175,7 +175,7 @@ undequeue(cq, v) is _CMLQueue {
 }
 
 mk_queue has type ((%a) => boolean) => cml_queue of %a
-mk_queue(isAlive) is _CMLQueue {
+fun mk_queue(isAlive) is _CMLQueue {
   q := emptyQueue;
   size := 0_;
   cleanup_threshold := _cmlQueue_config_k1;
@@ -183,5 +183,5 @@ mk_queue(isAlive) is _CMLQueue {
 }
 
 queue_isEmpty has type (cml_queue of %a) => boolean
-queue_isEmpty(q) is __integer_eq(q.size, 0_)
+fun queue_isEmpty(q) is __integer_eq(q.size, 0_)
  

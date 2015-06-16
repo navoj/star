@@ -35,7 +35,7 @@ mapseq is package{
   }
   
   main() do {
-    XX is mapseq(list of [1,2,3], (function(X) is X*2));
+    def XX is mapseq(list of [1,2,3], (function(X) is X*2));
     
     logMsg(info,"XX=$XX");
     

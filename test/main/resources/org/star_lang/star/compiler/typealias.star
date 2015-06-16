@@ -25,19 +25,19 @@ typealias is package{
   type jar of %t is alias of foo of list of %t;
 
   F1 has type (foo of integer) => integer;
-  F1(foo(_,X)) is X;
+  fun F1(foo(_,X)) is X;
 
   F2 has type (bar) => integer;
-  F2(foo(_,X)) is X;
+  fun F2(foo(_,X)) is X;
 
   XX has type jar of integer;
-  XX is foo("hi",list of [1,2,3]);
+  def XX is foo("hi",list of [1,2,3]);
 
   FF has type (jar of %s) =>%s;
-  FF(foo(_,list of [X])) is X;
+  fun FF(foo(_,list of [X])) is X;
 
   main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"$(FF(foo("",list of [2])))");
   };
 }

@@ -285,18 +285,6 @@ public class TypeChecker
           }
         }
 
-        // privateLoop: for (Iterator<IStatement> it = definitions.iterator(); it.hasNext();) {
-        // IStatement def = it.next();
-        // if (def instanceof VarEntry && def.getVisibility() == Visibility.priVate) {
-        // VarEntry var = (VarEntry) def;
-        // for (Variable v : var.getDefined()) {
-        // if (freePkgVars.contains(v))
-        // continue privateLoop;
-        // }
-        // it.remove();
-        // }
-        // }
-
         SortedMap<String, IContentExpression> elements = new TreeMap<>();
 
         for (IStatement entry : exportedDefs) {
@@ -346,7 +334,7 @@ public class TypeChecker
       }
     };
 
-    return typeChecker.checkTheta(pkgTerm, dict, baseDict, pkgFace, pkgChecker);
+    return typeChecker.checkTheta(loc, CompilerUtils.contentsOfTheta(pkgTerm), dict, baseDict, pkgFace, pkgChecker);
   }
 
   private static String pkgUniqName(ResourceURI uri)
@@ -534,14 +522,12 @@ public class TypeChecker
         return typeOfExp(term, expectedType, dict, outer);
     } else if (Abstract.isTupleTerm(term)) {
       return typeOfTuple(term, expectedType, dict, outer);
-    } else if (isFunctionStmt(term))
-      return typeOfFunction(term, expectedType, dict);
-    else if (CompilerUtils.isLambdaExp(term))
+    } else if (CompilerUtils.isLambdaExp(term))
       return typeOfLambda(term, expectedType, dict);
-    else if (isProcedureStmt(term))
-      return typeOfProcedure(Abstract.getId(CompilerUtils.procedureName(term)), term, expectedType, dict);
-    else if (isPatternLambda(term))
-      return typeOfPtnAbstraction(StandardNames.PATTERN, term, expectedType, dict);
+    else if (CompilerUtils.isProcLambda(term))
+      return typeOfLambdaProc(term, expectedType, dict);
+    else if (CompilerUtils.isLambdaPattern(term))
+      return typeOfLambdaPtn(term, expectedType, dict);
     else if (CompilerUtils.isMemoExp(term))
       return typeOfMemo(term, expectedType, dict, outer);
     else if (CompilerUtils.isAnonAggConLiteral(term)) {
@@ -628,7 +614,7 @@ public class TypeChecker
                   .get(name), "\nbecause", e.getWords()), loc);
             }
           } else
-            errors.reportError(StringUtils.msg("invalid member of aggregate value: ", el), el.getLoc());
+            errors.reportError(StringUtils.msg("invalid member of aggregate value: ", el), loc, el.getLoc());
         }
 
         checkContractImplementations(loc, constraintMap, dict, els);
@@ -698,7 +684,7 @@ public class TypeChecker
 
       return new RecordSubstitute(loc, expectedType, agg, sub);
     } else if (CompilerUtils.isLetTerm(term)) {
-      IAbstract defs = CompilerUtils.letDefs(term);
+      List<IAbstract> defs = CompilerUtils.letDefs(term);
       final IAbstract inRhs = CompilerUtils.letBound(term);
 
       BoundChecker<IContentExpression> checker = new BoundChecker<IContentExpression>() {
@@ -717,7 +703,7 @@ public class TypeChecker
             return new LetTerm(loc, bndExp, definitions);
         }
       };
-      return checkTheta(defs, dict.fork(), dict, new TypeVar(), checker);
+      return checkTheta(term.getLoc(), defs, dict.fork(), dict, new TypeVar(), checker);
     } else if (CompilerUtils.isQuoted(term)) {
       try {
         Subsume.subsume(StandardTypes.astType, expectedType, loc, dict);
@@ -1021,7 +1007,7 @@ public class TypeChecker
       }
 
       if (StandardNames.isKeyword(operator))
-        errors.reportError(StringUtils.msg("unexpected keyword: ", operator, " in expression"), apply.getLoc());
+        errors.reportError(StringUtils.msg("unexpected keyword: ", operator, " in expression"), operator.getLoc());
 
       IType argTypes[] = new IType[args.size()];
 
@@ -1923,7 +1909,7 @@ public class TypeChecker
         }
       };
 
-      return checkTheta(CompilerUtils.recordContent(term), thetaCxt, dict, face, checker);
+      return checkTheta(loc, CompilerUtils.contentsOfRecord(term), thetaCxt, dict, face, checker);
     }
   }
 
@@ -2025,7 +2011,7 @@ public class TypeChecker
       }
     };
 
-    return checkTheta(CompilerUtils.blockContent(term), thetaCxt, dict, evidenceType, checker);
+    return checkTheta(loc, CompilerUtils.contentsOfBlock(term), thetaCxt, dict, evidenceType, checker);
   }
 
   private static IType fieldType(Location loc, IType rType, String field, IType expectedType, Dictionary dict,
@@ -2193,7 +2179,6 @@ public class TypeChecker
     Location loc = proc.getLoc();
     Dictionary prcCxt = cxt.fork();
     final IType argTypes[];
-    int arity = arityOfProcedure(proc);
 
     // We cannot just use freshenForEvidence because we have to be careful about keeping type
     // information intact
@@ -2207,6 +2192,8 @@ public class TypeChecker
         prcCxt.defineType(new TypeExists(loc, tv.getVarName(), tv));
       }
     } else {
+      int arity = CompilerUtils.arityOfActionRule(CompilerUtils.firstRule(proc));
+
       argTypes = new IType[arity];
       for (int ix = 0; ix < argTypes.length; ix++)
         argTypes[ix] = new TypeVar();
@@ -2218,7 +2205,7 @@ public class TypeChecker
       }
     }
 
-    for (IAbstract rule : CompilerUtils.unWrap(proc, StandardNames.FATBAR)) {
+    for (IAbstract rule : CompilerUtils.unWrap(proc, StandardNames.PIPE)) {
       Location eqnLoc = rule.getLoc();
 
       if (Abstract.isBinary(rule, StandardNames.DO)) {
@@ -2283,9 +2270,94 @@ public class TypeChecker
     return MatchCompiler.generateFunction(rules, deflt, programType, prcCxt.getFreeVars(), name, loc, cxt, cxt, errors);
   }
 
+  private IContentExpression typeOfLambdaProc(IAbstract rule, IType programType, Dictionary cxt)
+  {
+    List<Triple<IContentPattern[], ICondition, IContentExpression>> rules = new ArrayList<>();
+    Triple<IContentPattern[], ICondition, IContentExpression> deflt = null;
+    Location loc = rule.getLoc();
+    Dictionary prcCxt = cxt.fork();
+    final IType argTypes[];
+
+    // We cannot just use freshenForEvidence because we have to be careful about keeping type
+    // information intact
+
+    if (TypeUtils.isProcedureType(programType = TypeUtils.deRef(programType))) {
+      Map<String, TypeVar> funTypeVars = new HashMap<>();
+      TypeExp funCon = (TypeExp) TypeUtils.unwrap(programType, funTypeVars);
+      argTypes = TypeUtils.getFunArgTypes(funCon);
+      for (Entry<String, TypeVar> entry : funTypeVars.entrySet()) {
+        TypeVar tv = entry.getValue();
+        prcCxt.defineType(new TypeExists(loc, tv.getVarName(), tv));
+      }
+    } else {
+      int arity = CompilerUtils.procLambdaArity(rule);
+
+      argTypes = new IType[arity];
+      for (int ix = 0; ix < argTypes.length; ix++)
+        argTypes[ix] = new TypeVar();
+      try {
+        Subsume.subsume(programType, TypeUtils.procedureType(argTypes), loc, cxt);
+      } catch (TypeConstraintException e) {
+        errors.reportError(StringUtils.msg("expected type ", programType, " of ", rule, " is not a procedure type"),
+            loc);
+      }
+    }
+
+    if (Abstract.isBinary(rule, StandardNames.DO)) {
+      Wrapper<ICondition> condition = Wrapper.create(CompilerUtils.truth);
+      Dictionary eqCxt = prcCxt.fork();
+
+      IAbstract lhs = Abstract.binaryLhs(rule);
+      IAbstract rhs = Abstract.binaryRhs(rule);
+      IAbstract cond = null;
+
+      if (Abstract.isUnary(lhs, StandardNames.DEFAULT)) {
+        lhs = Abstract.unaryArg(lhs);
+      }
+
+      if (Abstract.isBinary(lhs, StandardNames.WHERE)) {
+        cond = Abstract.getArg(lhs, 1);
+        lhs = Abstract.getArg(lhs, 0);
+      }
+
+      if (Abstract.isTupleTerm(lhs)) {
+        IList argTuple = Abstract.tupleArgs(lhs);
+        IContentPattern args[] = new IContentPattern[argTuple.size()];
+
+        if (argTuple.size() != argTypes.length)
+          errors.reportError(StringUtils.msg("arity of actual rule: ", argTuple.size(),
+              " not consistent with expected arity: ", argTypes.length), loc);
+        else {
+          ptnTypeTpl(argTuple, argTypes, args, condition, eqCxt, cxt, new RuleVarHandler(cxt, errors));
+          if (cond != null) {
+            Triple<ICondition, List<Variable>, List<Variable>> condInfo = typeOfCondition(cond, eqCxt, cxt);
+            CompilerUtils.extendCondition(condition, condInfo.left());
+          }
+
+          List<IContentAction> bodyActions = new ArrayList<>();
+          bodyActions.addAll(checkAction(rhs, actionType, unitType, eqCxt, cxt));
+          bodyActions.add(new ValisAction(loc, new VoidExp(loc)));
+          IContentExpression body = new ValofExp(loc, unitType, bodyActions);
+
+          rules.add(Triple.create(args, condition.get(), body));
+        }
+      } else
+        errors.reportError(StringUtils.msg(lhs, " is not a valid head of an action rule"), loc);
+    } else
+      errors.reportError(StringUtils.msg(rule, " is not a valid action rule"), loc);
+
+    IContentPattern[] args = new IContentPattern[argTypes.length];
+    for (int ix = 0; ix < args.length; ix++)
+      args[ix] = Variable.anonymous(loc, new TypeVar());
+    deflt = Triple.create(args, CompilerUtils.truth, (IContentExpression) new VoidExp(loc));
+
+    return MatchCompiler.generateFunction(rules, deflt, programType, prcCxt.getFreeVars(), GenSym
+        .genSym(StandardNames.PRC), loc, cxt, cxt, errors);
+  }
+
   private IContentExpression typeOfFunction(IAbstract fun, IType programType, Dictionary cxt)
   {
-    String name = Abstract.getId(CompilerUtils.functionName(fun));
+    String name = Abstract.getId(CompilerUtils.nameOfFunction(fun));
     List<Triple<IContentPattern[], ICondition, IContentExpression>> equations = new ArrayList<>();
     Triple<IContentPattern[], ICondition, IContentExpression> deflt = null;
     Location loc = fun.getLoc();
@@ -2307,7 +2379,7 @@ public class TypeChecker
         funCxt.defineType(new TypeExists(loc, tv.getVarName(), tv));
       }
     } else if (programType instanceof TypeVar) {
-      int funArity = arityOfFunction(fun);
+      int funArity = CompilerUtils.arityOfEquation(CompilerUtils.firstRule(fun));
       argTypes = new IType[funArity];
       for (int ix = 0; ix < argTypes.length; ix++)
         argTypes[ix] = new TypeVar();
@@ -2323,9 +2395,10 @@ public class TypeChecker
     }
 
     int errorCount = errors.errorCount();
-    int eqnCount = CompilerUtils.count(fun, StandardNames.FATBAR);
 
-    for (IAbstract eqn : CompilerUtils.unWrap(fun, StandardNames.FATBAR)) {
+    int eqnCount = CompilerUtils.count(fun, StandardNames.PIPE);
+
+    for (IAbstract eqn : CompilerUtils.unWrap(fun, StandardNames.PIPE)) {
       Location eqnLoc = eqn.getLoc();
 
       if (Abstract.isBinary(eqn, StandardNames.IS)) {
@@ -2475,7 +2548,8 @@ public class TypeChecker
     Location loc = ptn.getLoc();
     Dictionary funCxt = cxt.fork();
     final IType resultType, matchType;
-    int arity = arityOfPattern(ptn);
+
+    IAbstract ptnRules = CompilerUtils.patternRules(ptn);
 
     if (TypeUtils.isPatternType(programType)) {
       List<TypeVar> funTypeVars = new ArrayList<>();
@@ -2485,6 +2559,8 @@ public class TypeChecker
       resultType = TypeUtils.deRef(TypeUtils.getTypeArg(funCon, 0));
       matchType = TypeUtils.getTypeArg(funCon, 1);
     } else if (programType instanceof TypeVar) {
+      int arity = CompilerUtils.arityOfPatternRule(CompilerUtils.firstRule(ptnRules));
+
       IType[] argTypes = new IType[arity];
       for (int ix = 0; ix < argTypes.length; ix++)
         argTypes[ix] = new TypeVar();
@@ -2504,7 +2580,7 @@ public class TypeChecker
     }
 
     if (errors.isErrorFree()) {
-      for (IAbstract rl : CompilerUtils.unWrap(ptn, StandardNames.FATBAR)) {
+      for (IAbstract rl : CompilerUtils.unWrap(ptnRules, StandardNames.PIPE)) {
         Location ruleLoc = rl.getLoc();
 
         IAbstract head = CompilerUtils.patternRuleHead(rl);
@@ -2545,72 +2621,83 @@ public class TypeChecker
     return new VoidExp(loc);
   }
 
-  private static int arityOfFunction(IAbstract fun)
+  private IContentExpression typeOfLambdaPtn(IAbstract ptn, IType programType, Dictionary cxt)
   {
-    if (CompilerUtils.isPrivate(fun))
-      return arityOfFunction(CompilerUtils.privateTerm(fun));
-    else if (Abstract.isBinary(fun, StandardNames.FATBAR))
-      return arityOfFunction(Abstract.getArg(fun, 0));
-    else if (Abstract.isBinary(fun, StandardNames.IS)) {
-      IAbstract lhs = Abstract.getArg(fun, 0);
-      if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-        lhs = Abstract.unaryArg(lhs);
+    List<Triple<IContentPattern[], ICondition, IContentExpression>> rules = new ArrayList<>();
+    Location loc = ptn.getLoc();
+    Dictionary funCxt = cxt.fork();
+    final IType resultType, matchType;
 
-      if (Abstract.isBinary(lhs, StandardNames.WHERE))
-        lhs = Abstract.getArg(lhs, 0);
-      if (lhs instanceof Apply) {
-        return (((Apply) lhs).getArgs()).size();
+    if (TypeUtils.isPatternType(programType)) {
+      List<TypeVar> funTypeVars = new ArrayList<>();
+      TypeExp funCon = (TypeExp) TypeUtils.unwrap(programType, funTypeVars);
+      for (TypeVar tv : funTypeVars)
+        funCxt.defineType(new TypeExists(loc, tv.getVarName(), tv));
+      resultType = TypeUtils.deRef(TypeUtils.getTypeArg(funCon, 0));
+      matchType = TypeUtils.getTypeArg(funCon, 1);
+    } else if (programType instanceof TypeVar) {
+      int arity = CompilerUtils.arityOfPatternLambda(CompilerUtils.firstRule(ptn));
+
+      IType[] argTypes = new IType[arity];
+      for (int ix = 0; ix < argTypes.length; ix++)
+        argTypes[ix] = new TypeVar();
+
+      resultType = TypeUtils.tupleType(argTypes);
+      matchType = new TypeVar();
+      IType patternType = TypeUtils.patternType(resultType, matchType);
+      try {
+        TypeUtils.unify(patternType, programType, loc, cxt);
+      } catch (TypeConstraintException e) {
+        errors.reportError(StringUtils.msg(patternType, " not consistent with expected type: ", programType), loc);
+      }
+    } else {
+      errors.reportError(StringUtils.msg("expected type ", programType, " of ", ptn, " is not a pattern type"), loc);
+      resultType = new TypeVar();
+      matchType = new TypeVar();
+    }
+
+    if (errors.isErrorFree()) {
+      for (IAbstract rl : CompilerUtils.unWrap(ptn, StandardNames.PIPE)) {
+        Location ruleLoc = rl.getLoc();
+
+        IAbstract head = CompilerUtils.patternRuleHead(rl);
+        IAbstract body = CompilerUtils.patternRuleBody(rl);
+
+        Wrapper<ICondition> condition = new Wrapper<>((ICondition) new TrueCondition(loc));
+        Dictionary eqCxt = funCxt.fork();
+
+        IContentPattern match = typeOfPtn(body, matchType, condition, eqCxt, cxt, new RuleVarHandler(cxt, errors));
+
+        IList argTuple = Abstract.tupleArgs(head);
+
+        List<IType> resTypes = new ArrayList<>();
+        List<IContentExpression> results = new ArrayList<>();
+
+        for (IValue arg : argTuple) {
+          IType argType = new TypeVar();
+          resTypes.add(argType);
+          results.add(typeOfExp((IAbstract) arg, argType, eqCxt, cxt));
+        }
+
+        IType resType = TypeUtils.tupleType(resTypes);
+
+        try {
+          TypeUtils.unify(resultType, resType, ruleLoc, eqCxt);
+        } catch (TypeConstraintException e) {
+          errors.reportError(StringUtils.msg("result type: ", resultType, " not consistent with types ", resType,
+              "\nbecause ", e.getWords()), merge(ruleLoc, e.getLocs()));
+        }
+
+        rules.add(Triple.create(new IContentPattern[] { match }, condition.get(),
+            (IContentExpression) new ConstructorTerm(ruleLoc, results)));
       }
     }
-    throw new IllegalArgumentException("invalid form of function to compute arity of");
-  }
 
-  private int arityOfProcedure(IAbstract proc)
-  {
-    if (CompilerUtils.isPrivate(proc))
-      return arityOfProcedure(CompilerUtils.privateTerm(proc));
-    else if (Abstract.isBinary(proc, StandardNames.FATBAR))
-      return arityOfProcedure(Abstract.getArg(proc, 0));
-    else if (Abstract.isUnary(proc, StandardNames.FATBAR))
-      return arityOfProcedure(Abstract.unaryArg(proc));
-    else if (Abstract.isBinary(proc, StandardNames.DO)) {
-      IAbstract lhs = Abstract.getArg(proc, 0);
-      if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-        lhs = Abstract.unaryArg(lhs);
-
-      if (Abstract.isBinary(lhs, StandardNames.WHERE))
-
-        lhs = Abstract.getArg(lhs, 0);
-      if (lhs instanceof Apply)
-        return ((Apply) lhs).getArgs().size();
-    } else if (CompilerUtils.isBraceTerm(proc) && CompilerUtils.braceLabel(proc) instanceof Apply)
-      return Abstract.arity(CompilerUtils.braceLabel(proc));
-
-    errors.reportError(StringUtils.msg("cannot determine arity of invalid procedure: ", proc), proc.getLoc());
-    return 0;
-  }
-
-  private int arityOfPattern(IAbstract stmt)
-  {
-    if (CompilerUtils.isPrivate(stmt))
-      return arityOfPattern(CompilerUtils.privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR))
-      return arityOfPattern(Abstract.getArg(stmt, 0));
-    else if (Abstract.isUnary(stmt, StandardNames.FATBAR))
-      return arityOfPattern(Abstract.unaryArg(stmt));
-    else {
-      IAbstract lhs = CompilerUtils.patternRuleHead(stmt);
-      if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
-        lhs = Abstract.unaryArg(lhs);
-
-      if (Abstract.isBinary(lhs, StandardNames.WHERE))
-        lhs = Abstract.getArg(lhs, 0);
-      if (lhs instanceof Apply)
-        return ((Apply) lhs).getArgs().size();
+    if (errors.isErrorFree()) {
+      return MatchCompiler.compileMatch(loc, GenSym.genSym(StandardNames.PATTERN), rules, programType, funCxt
+          .getFreeVars(), cxt, cxt, errors);
     }
-
-    errors.reportError(StringUtils.msg("cannot determine arity of invalid pattern: ", stmt), stmt.getLoc());
-    return 0;
+    return new VoidExp(loc);
   }
 
   /**
@@ -4404,7 +4491,7 @@ public class TypeChecker
             return new LetAction(loc, definitions, bndAction);
         }
       };
-      return FixedList.create(checkTheta(CompilerUtils.letDefs(action), thetaCxt, cxt, new TypeVar(), checker));
+      return FixedList.create(checkTheta(loc, CompilerUtils.letDefs(action), thetaCxt, cxt, new TypeVar(), checker));
     } else if (Abstract.isUnary(action, StandardNames.VALIS)) {
       IContentExpression value = typeOfExp(Abstract.unaryArg(action), resultType, cxt, outer);
 
@@ -4841,17 +4928,15 @@ public class TypeChecker
         Dictionary dict);
   }
 
-  private <T> T checkTheta(IAbstract theta, final Dictionary thetaDict, Dictionary dict, IType face,
-      BoundChecker<T> checker)
+  private <T> T checkTheta(Location loc, Iterable<IAbstract> theta, final Dictionary thetaDict, Dictionary dict,
+      IType face, BoundChecker<T> checker)
   {
     List<IStatement> thetaElements = new ArrayList<>();
     List<IContentAction> localActions = new ArrayList<>();
 
     if (theta != null) {
-      final Location loc = theta.getLoc();
-
-      IAbstract eqTheta = EqualityBuilder.checkForEqualities(theta, dict);
-      IAbstract dispTheta = DisplayBuilder.checkForDisplay(eqTheta, dict);
+      Iterable<IAbstract> eqTheta = EqualityBuilder.checkForEqualities(theta, dict);
+      Iterable<IAbstract> dispTheta = DisplayBuilder.checkForDisplay(eqTheta, dict);
       // IAbstract quoteTheta = QuoteBuilder.checkForQuoting(dispTheta, dict);
 
       Pair<List<IAbstract>, List<IAbstract>> parts = splitOffImports(dispTheta);
@@ -4913,7 +4998,7 @@ public class TypeChecker
           break;
 
         case contract:
-          defineContracts(group, thetaElements, thetaDict, dict);
+          checkContracts(group, thetaElements, thetaDict, dict);
           break;
 
         case implementation:
@@ -4953,12 +5038,12 @@ public class TypeChecker
     }
   }
 
-  private Pair<List<IAbstract>, List<IAbstract>> splitOffImports(IAbstract theta)
+  private Pair<List<IAbstract>, List<IAbstract>> splitOffImports(Iterable<IAbstract> theta)
   {
     List<IAbstract> imports = new ArrayList<>();
     List<IAbstract> others = new ArrayList<>();
 
-    for (IAbstract stmt : CompilerUtils.unWrap(theta)) {
+    for (IAbstract stmt : theta) {
       if (CompilerUtils.isImport(stmt) || CompilerUtils.isNamedImport(stmt) || CompilerUtils.isJavaStmt(stmt))
         imports.add(stmt);
       else
@@ -5379,7 +5464,7 @@ public class TypeChecker
 
               FunctionLiteral javaWrapper = JavaImport.javaWrapper(jvName, javaInfo, loc, errors);
               if (javaWrapper != null) {
-                Variable wrapperVar = new Variable(loc, javaWrapper.getType(), javaWrapper.getName());
+                Variable wrapperVar = new Variable(loc, javaWrapper.getType(), jvName);
                 stmts.add(VarEntry.createVarEntry(loc, wrapperVar, javaWrapper, readOnly, visibility));
                 dict.declareVar(wrapperVar.getName(), wrapperVar, readOnly, visibility, true);
               }
@@ -5494,7 +5579,7 @@ public class TypeChecker
 
     for (Definition def : group) {
       // Process the statement(s) looking for a type to declare
-      for (IAbstract tpStmt : CompilerUtils.unWrap(def.getDefinition(), StandardNames.FATBAR)) {
+      for (IAbstract tpStmt : CompilerUtils.unWrap(def.getDefinition(), StandardNames.PIPE)) {
         Location loc = tpStmt.getLoc();
         if (CompilerUtils.isTypeAlias(tpStmt)) {
           TypeAlias alias = TypeParser.parseTypeAlias(tpStmt, dict, errors);
@@ -5533,8 +5618,6 @@ public class TypeChecker
     for (Definition def : group) {
       Visibility visibility = def.getVisibility();
 
-      assert !Abstract.isBinary(def.getDefinition(), StandardNames.FATBAR);
-
       IAbstract tpStmt = def.getDefinition();
       Location loc = tpStmt.getLoc();
 
@@ -5570,8 +5653,8 @@ public class TypeChecker
           for (Entry<String, IAbstract> intPair : integrities.entrySet()) {
             String vrName = intPair.getKey();
             IAbstract fun = intPair.getValue();
-            ProgramLiteral intFun = (ProgramLiteral) typeOfExp(fun, TypeUtils.procedureType(desc.getType()), tmpCxt,
-                dict);
+            ProgramLiteral intFun = (ProgramLiteral) typeOfLambdaProc(fun, TypeUtils.procedureType(desc.getType()),
+                tmpCxt);
             VarEntry integrityVar = VarEntry.createVarEntry(vrName, intFun.getType(), fun.getLoc(), intFun, visibility);
             dict.declareVar(vrName, integrityVar.getVariable(), readOnly, visibility, true);
             thetaElements.add(integrityVar);
@@ -5583,7 +5666,7 @@ public class TypeChecker
             IAbstract defFun = entry.getValue().left();
             IType defType = entry.getValue().right();
 
-            IContentExpression defltExp = typeOfExp(defFun, defType, funCxt, dict);
+            IContentExpression defltExp = typeOfExp(defFun, Freshen.freshenForEvidence(defType), funCxt, dict);
             if (defltExp instanceof ProgramLiteral) // can happen if there is a syntax error
             {
               ProgramLiteral dFun = (ProgramLiteral) defltExp;
@@ -5672,7 +5755,7 @@ public class TypeChecker
     }
   }
 
-  private void defineContracts(List<Definition> group, List<IStatement> thetaElements, Dictionary dict, Dictionary outer)
+  private void checkContracts(List<Definition> group, List<IStatement> thetaElements, Dictionary dict, Dictionary outer)
   {
     Dictionary tmpCxt = dict.fork();
 
@@ -5703,18 +5786,14 @@ public class TypeChecker
             IAbstract defFun = entry.getValue().left();
             IType defType = entry.getValue().right();
 
-            IContentExpression defltExp = typeOfExp(defFun, defType, dict, outer);
-            if (defltExp instanceof ProgramLiteral) // may not happen if syntax error in default
-            {
-              ProgramLiteral dFun = (ProgramLiteral) defltExp;
+            IContentExpression defltExp = typeOfLambda(defFun, Freshen.freshenForEvidence(defType), dict);
 
-              VarEntry defltVar = VarEntry.createVarEntry(defFun.getLoc(), Variable.create(defFun.getLoc(), defType,
-                  defName), dFun, readOnly, visibility);
-              defltVar = (VarEntry) Over.overload(errors, defltVar, dict);
+            VarEntry defltVar = VarEntry.createVarEntry(defFun.getLoc(), Variable.create(defFun.getLoc(), defType,
+                defName), defltExp, readOnly, visibility);
+            defltVar = (VarEntry) Over.overload(errors, defltVar, dict);
 
-              thetaElements.add(defltVar);
-              dict.declareVar(defltVar.getVariable().getName(), defltVar.getVariable(), readOnly, visibility, true);
-            }
+            thetaElements.add(defltVar);
+            dict.declareVar(defltVar.getVariable().getName(), defltVar.getVariable(), readOnly, visibility, true);
           }
           TypeUtils.defineTypeContract(dict, contract);
         }
@@ -5794,7 +5873,7 @@ public class TypeChecker
     else if (CompilerUtils.isBlockTerm(term)) {
       return CompilerUtils.braceTerm(loc, Abstract.name(loc, label), CompilerUtils.blockContent(term));
     } else if (CompilerUtils.isLetTerm(term)) {
-      IAbstract inLhs = CompilerUtils.letDefs(term);
+      IAbstract inLhs = CompilerUtils.blockTerm(loc, CompilerUtils.letDefs(term));
       IAbstract inRhs = CompilerUtils.letBound(term);
       return CompilerUtils.letExp(loc, inLhs, adjustContractImplementationRecord(inRhs, label));
     } else if (Abstract.isBinary(term, StandardNames.USING) && CompilerUtils.isBlockTerm(Abstract.getArg(term, 1))) {
@@ -5847,11 +5926,11 @@ public class TypeChecker
 
       IType ptnType = new TypeVar();
 
-      if (isFunctionStmt(stmt))
+      if (CompilerUtils.isFunctionStatement(stmt))
         lhsPtns.add(typeOfPtn(CompilerUtils.nameOfFunction(stmt), ptnType, condition, tmpCxt, thetaCxt, varHandler));
-      else if (isProcedureStmt(stmt))
+      else if (CompilerUtils.isProcedureStatement(stmt))
         lhsPtns.add(typeOfPtn(CompilerUtils.nameOfProcedure(stmt), ptnType, condition, tmpCxt, thetaCxt, varHandler));
-      else if (isPatternStmt(stmt))
+      else if (CompilerUtils.isPatternStatement(stmt))
         lhsPtns.add(typeOfPtn(CompilerUtils.nameOfPattern(stmt), ptnType, condition, tmpCxt, thetaCxt, varHandler));
       else if (CompilerUtils.isVarDeclaration(stmt))
         lhsPtns.add(typeOfPtn(CompilerUtils.varDeclarationPattern(stmt), TypeUtils.referenceType(ptnType), condition,
@@ -5961,20 +6040,20 @@ public class TypeChecker
 
     int mark = errors.errorCount();
 
-    if (isFunctionStmt(stmt)) {
-      IContentExpression fun = typeOfFunction(stmt, defPtn.getType(), cxt);
+    if (CompilerUtils.isFunctionStatement(stmt)) {
+      IContentExpression fun = typeOfFunction(CompilerUtils.functionRules(stmt), defPtn.getType(), cxt);
 
       if (errors.noNewErrors(mark)) {
         defs.add(VarEntry.createVarEntry(fun.getLoc(), defPtn, Over.resolve(cxt, errors, fun), access, visibility));
       }
-    } else if (isProcedureStmt(stmt)) {
-      IContentExpression proc = typeOfProcedure(Abstract.getId(CompilerUtils.procedureName(stmt)), stmt, defPtn
-          .getType(), cxt);
+    } else if (CompilerUtils.isProcedureStatement(stmt)) {
+      IContentExpression proc = typeOfProcedure(Abstract.getId(CompilerUtils.procedureName(stmt)), CompilerUtils
+          .procedureRules(stmt), defPtn.getType(), cxt);
 
       if (errors.noNewErrors(mark)) {
         defs.add(VarEntry.createVarEntry(proc.getLoc(), defPtn, Over.resolve(cxt, errors, proc), access, visibility));
       }
-    } else if (isPatternStmt(stmt)) {
+    } else if (CompilerUtils.isPatternStatement(stmt)) {
       IContentExpression pttrn = typeOfPtnAbstraction(Abstract.getId(CompilerUtils.patternName(stmt)), stmt, defPtn
           .getType(), cxt);
 
@@ -6046,7 +6125,9 @@ public class TypeChecker
       RecordPtn record = (RecordPtn) lhs;
       for (IContentPattern ptn : record.getElements().values())
         declareVar(ptn, thetaCxt, access, visibility);
-    } else
+    } else if (lhs instanceof PatternApplication)
+      declareVar(((PatternApplication) lhs).getArg(), thetaCxt, access, visibility);
+    else
       errors.reportError(StringUtils.msg("cannot declare variables in ", lhs), lhs.getLoc());
   }
 
@@ -6102,7 +6183,8 @@ public class TypeChecker
       } else
         return var;
     } else {
-      errors.reportError(StringUtils.msg("(internal) unexpected form of lhs of statement: ", lhs), lhs.getLoc());
+      // errors.reportError(StringUtils.msg("(internal) unexpected form of lhs of statement: ",
+      // lhs), lhs.getLoc());
       return lhs;
     }
   }
@@ -6138,15 +6220,12 @@ public class TypeChecker
   {
     Location loc = stmt.getLoc();
 
-    if (isFunctionStmt(stmt) || isProcedureStmt(stmt) || isPatternStmt(stmt)) {
+    if (CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isProcedureStatement(stmt)
+        || CompilerUtils.isPatternStatement(stmt)) {
       accessMode = accessPolicy(loc, readOnly, accessMode);
-    } else if (Abstract.isBinary(stmt, StandardNames.IS)) {
+    } else if (CompilerUtils.isIsStatement(stmt)) {
       accessMode = accessPolicy(loc, readOnly, accessMode);
-    } else if (Abstract.isUnary(stmt, StandardNames.VAR)
-        && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.IS)) {
-      accessMode = accessPolicy(loc, readOnly, accessMode);
-    } else if (Abstract.isUnary(stmt, StandardNames.VAR)
-        && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.ASSIGN)) {
+    } else if (CompilerUtils.isVarDeclaration(stmt)) {
       accessMode = accessPolicy(loc, readWrite, accessMode);
     } else if (CompilerUtils.isPrivate(stmt))
       return variablePolicy(CompilerUtils.privateTerm(stmt), accessMode);
@@ -6154,64 +6233,6 @@ public class TypeChecker
       errors.reportError(StringUtils.msg("cannot understand program statement: ", stmt), loc);
 
     return accessMode;
-  }
-
-  private boolean isFunctionStmt(IAbstract stmt)
-  {
-    if (Abstract.isBinary(stmt, StandardNames.IS))
-      return CompilerUtils.isProgramHeadPtn(Abstract.getArg(stmt, 0));
-    else if (CompilerUtils.isPrivate(stmt))
-      return isFunctionStmt(CompilerUtils.privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR)) {
-      boolean left = isFunctionStmt(Abstract.binaryLhs(stmt));
-      boolean right = isFunctionStmt(Abstract.binaryRhs(stmt));
-      if (left != right)
-        errors.reportError(StringUtils.msg("cannot mix equations with action rules with same name"), stmt.getLoc());
-      return left;
-    } else
-      return false;
-  }
-
-  private boolean isProcedureStmt(IAbstract stmt)
-  {
-    if (Abstract.isBinary(stmt, StandardNames.DO))
-      return CompilerUtils.isProgramHeadPtn(Abstract.getArg(stmt, 0));
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR)) {
-      boolean left = isProcedureStmt(Abstract.getArg(stmt, 0));
-      boolean right = isProcedureStmt(Abstract.getArg(stmt, 1));
-      if (left != right)
-        errors.reportError(StringUtils.msg("cannot mix action rules with equations with same name"), stmt.getLoc());
-      return left;
-    } else
-      return false;
-  }
-
-  private boolean isPatternStmt(IAbstract stmt)
-  {
-    if (CompilerUtils.isPatternRule(stmt))
-      return true;
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR)) {
-      boolean left = isPatternStmt(Abstract.getArg(stmt, 0));
-      boolean right = isPatternStmt(Abstract.getArg(stmt, 1));
-      if (left != right)
-        errors.reportError(StringUtils.msg("cannot different types of definitions of the same name"), stmt.getLoc());
-      return left;
-    } else
-      return false;
-  }
-
-  private boolean isPatternLambda(IAbstract stmt)
-  {
-    if (CompilerUtils.isPatternRule(stmt))
-      return CompilerUtils.patternRuleName(stmt).equals(StandardNames.PATTERN);
-    else if (Abstract.isBinary(stmt, StandardNames.FATBAR)) {
-      boolean left = isPatternLambda(Abstract.binaryLhs(stmt));
-      boolean right = isPatternLambda(Abstract.binaryRhs(stmt));
-      if (left != right)
-        errors.reportError(StringUtils.msg("cannot different types of definitions of the same name"), stmt.getLoc());
-      return left;
-    } else
-      return false;
   }
 
   private void checkContractImplementations(Location loc, Map<String, ContractConstraint> constraintMap,

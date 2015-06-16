@@ -247,29 +247,29 @@ delta is package {
   
   main() do {  
 	-- diff for lists
-	s1 is list of ["a", "b", "c", "d"];
-	s2 is list of ["x", "Y"];
-	dltaL is diff(s2, s1, "MyList");
+	def s1 is list of ["a", "b", "c", "d"];
+	def s2 is list of ["x", "Y"];
+	def dltaL is diff(s2, s1, "MyList");
 	
 	logMsg(info, "\n\nDelta of given Lists is ==> $dltaL");
 	logMsg(info, "diff of [str] => $(showChanges(dltaL, s2))");
 	
 	-- diff for relations
-  	r1 is relation {40; 20; 10; 30;0; 50};
-  	r2 is relation {3;1; 2};
-	sr1 is sortRel(r1);
-	sr2 is sortRel(r2);
+  	def r1 is relation {40; 20; 10; 30;0; 50};
+  	def r2 is relation {3;1; 2};
+	def sr1 is sortRel(r1);
+	def sr2 is sortRel(r2);
 	-- logMsg(info, "diff of Sorted-rels: => $(showChanges(diff(sr1, sr2, "MyRel"), sr1))");
-	dltaR is diff(r1, r2, "MyRel");
+	def dltaR is diff(r1, r2, "MyRel");
 	logMsg(info, "\n\nDelta of given Relations ===> $dltaR");
 	logMsg(info, "diff of rels: => $(showChanges(dltaR, r1))");
  	
 	-- diff for Maps...
 	var m1 := dictionary of {1->1; 2->2; 3->3};
     var m2 := dictionary of {1->1; 2->2; 4->4; 5->5};
-    -- d is diff(m1, m2, "MyMap");
+    -- def d is diff(m1, m2, "MyMap");
   	-- logMsg(info, "diff(m1, m2) ==> $d");
-  	dltaM is diff(m1, m2, "MyMap");
+  	def dltaM is diff(m1, m2, "MyMap");
   	logMsg(info, "\n\nDelta of given Maps is ==> $dltaM");
   	logMsg(info, "diffing m1 & m2 =>$(showChanges(dltaM, m1))");
 

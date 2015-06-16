@@ -20,16 +20,16 @@ actionRules is package{
   type weekday is sunday or monday or tuesday or wednesday or thursday or friday or saturday;
   
   showDay has type action(weekday);
-  showDay(sunday) do logMsg(info,"sunday");
-  showDay(monday) do logMsg(info,"monday");
-  showDay(tuesday) do logMsg(info,"tuesday");
-  showDay(wednesday) do logMsg(info,"wednesday");
-  showDay(thursday) do logMsg(info,"thursday");
-  showDay(friday) do logMsg(info,"friday");
-  showDay(saturday) do logMsg(info,"saturday");
-  showDay(Other) default do logMsg(info,"some day $Other");
+  prc showDay(sunday) do logMsg(info,"sunday")
+   |  showDay(monday) do logMsg(info,"monday")
+   |  showDay(tuesday) do logMsg(info,"tuesday")
+   |  showDay(wednesday) do logMsg(info,"wednesday")
+   |  showDay(thursday) do logMsg(info,"thursday")
+   |  showDay(friday) do logMsg(info,"friday")
+   |  showDay(saturday) do logMsg(info,"saturday")
+   |  showDay(Other) default do logMsg(info,"some day $Other")
   
-  main() do {
+  prc main() do {
     showDay(wednesday);
     showDay(saturday);
     showDay(sunday);

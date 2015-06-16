@@ -21,5 +21,5 @@ tokenContract is package {
   };
 
   token has type () => ((%t) => string) where token over %t;
-  token() is tokenToString;
+  fun token() is tokenToString;
 }

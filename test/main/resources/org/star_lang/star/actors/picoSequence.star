@@ -22,27 +22,27 @@ picoSequence is package{
     history has type ()=>list of ((string,integer));
     clearHistory has type action();
   }
-  listener is actor{
+  def listener is actor{
     on Ev on msg do
       append(Ev);
     
-    history() is txs;
-    clearHistory() do clear();
+    fun history() is txs;
+    prc clearHistory() do clear();
   } using {
     var txs := list of [];
     
-    append(Ev) do extend txs with Ev;
-    clear() do txs :=list of [];
+    prc append(Ev) do extend txs with Ev;
+    prc clear() do txs :=list of [];
   };
   
-  events is list of {all ("event number $Ix",Ix) where Ix in range(1,10,1)}; 
+  def events is list of {all ("event number $Ix",Ix) where Ix in range(1,10,1)}; 
  
-  showHistory() do {
-    H is query listener's history with history();
+  prc showHistory() do {
+    def H is query listener's history with history();
     logMsg(info,"history has $(size(H)) elements");
   } 
   
-  main() do {
+  prc main() do {
     for count in iota(0,100,1) do{
       request listener's clearHistory to clearHistory();
       
@@ -53,12 +53,12 @@ picoSequence is package{
       -- sleep(100L);
     
       showHistory();
-      listenerHistory is query listener's history with history();
+      def listenerHistory is query listener's history with history();
     
       assert listenerHistory=events;
     }
   }
   
-  select(P,L) is all e where (_,P(e)) in L;
+  fun select(P,L) is all e where (_,P(e)) in L;
 }
      

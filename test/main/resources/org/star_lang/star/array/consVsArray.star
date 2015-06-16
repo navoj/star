@@ -17,7 +17,7 @@
  */
 consVsArray is package{
 
-  buildCons(F,T) is valof{
+  fun buildCons(F,T) is valof{
     var L := nil;
     var Ix := F;
     while Ix<T do{
@@ -27,7 +27,7 @@ consVsArray is package{
     valis L
   }
   
-   buildList(F,T) is valof{
+  fun buildList(F,T) is valof{
     var L := list of [];
     var Ix := F;
     while Ix<T do{
@@ -37,7 +37,7 @@ consVsArray is package{
     valis L
   }
   
-  buildQueue(F,T) is valof{
+  fun buildQueue(F,T) is valof{
     var L := queue of [];
     var Ix := F;
     while Ix<T do{
@@ -47,7 +47,7 @@ consVsArray is package{
     valis L
   }
 
-  walkOver(S) do {
+  prc walkOver(S) do {
     var SS := S;
     while SS matches sequence of [H,..T] do{
       -- logMsg(info,"got $H");
@@ -55,7 +55,7 @@ consVsArray is package{
     };
   };
   
-  walkBack(S) do {
+  prc walkBack(S) do {
     var SS := S;
     while SS matches sequence of {T..;H} do{
       -- logMsg(info,"got $H");
@@ -63,57 +63,56 @@ consVsArray is package{
     };
   }; 
   
-  main() do {
-    var count is 1000;
-    startBase is nanos();
-    CL is buildCons(1,count);
-    consMark is nanos();
+  prc main() do {
+    def count is 1000;
+    def startBase is nanos();
+    def CL is buildCons(1,count);
+    def consMark is nanos();
         
-    LL is buildList(1,count);
-    listMark is nanos();
-    QL is buildQueue(1,count);
-    queueMark is nanos();
+    def LL is buildList(1,count);
+    def listMark is nanos();
+    def QL is buildQueue(1,count);
+    def queueMark is nanos();
     
-    consBuildTime is consMark-startBase;
-    listBuildTime is listMark-consMark;
-    queueBuildTime is queueMark-listMark;
+    def consBuildTime is consMark-startBase;
+    def listBuildTime is listMark-consMark;
+    def queueBuildTime is queueMark-listMark;
     
     logMsg(info,"cons build time is $consBuildTime");
     logMsg(info,"list build time is $listBuildTime");
     logMsg(info,"queue build time is $queueBuildTime");
     
-    mark is nanos();
+    def mark is nanos();
     walkOver(CL);
-    mark2 is nanos();
+    def mark2 is nanos();
     walkOver(LL);
-    mark4 is nanos();
+    def mark4 is nanos();
     walkOver(QL);
-    mark5 is nanos();
+    def mark5 is nanos();
     
-    bmark is nanos();
+    def bmark is nanos();
     walkBack(CL);
-    bmark2 is nanos();
+    def bmark2 is nanos();
     walkBack(QL);
-    bmark3 is nanos();
+    def bmark3 is nanos();
     
     walkBack(LL); -- cant walk backwards over lists
-    bmark4 is nanos();
-
+    def bmark4 is nanos();
     
-    consWalkTime is (mark2-mark) as float;
-    consWalkbackTime is (bmark2-bmark) as float;
+    def consWalkTime is (mark2-mark) as float;
+    def consWalkbackTime is (bmark2-bmark) as float;
     
     logMsg(info,"cons walk time is $consWalkTime");
     logMsg(info,"cons walk back time is $consWalkbackTime");
     
-    listWalkTime is (mark4-mark2) as float;
-    listWalkbackTime is (bmark4-bmark3) as float;
+    def listWalkTime is (mark4-mark2) as float;
+    def listWalkbackTime is (bmark4-bmark3) as float;
     
     logMsg(info,"list walk time is $listWalkTime");
     logMsg(info,"list walk back time is $listWalkbackTime");
  
-    queueWalkTime is (mark5-mark4) as float;
-    queueWalkbackTime is (bmark3-bmark2) as float;
+    def queueWalkTime is (mark5-mark4) as float;
+    def queueWalkbackTime is (bmark3-bmark2) as float;
     
     logMsg(info,"queue walk time is $queueWalkTime");
     logMsg(info,"queue walk back time is $queueWalkbackTime");

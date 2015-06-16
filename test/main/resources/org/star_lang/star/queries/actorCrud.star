@@ -16,7 +16,7 @@
  *
  */
 actorCrud is package{
-  A is actor{
+  def A is actor{
     var R := list of [];
   };
   

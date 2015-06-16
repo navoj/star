@@ -30,44 +30,40 @@ type rList of t is
     zList(rList of ((t,t))) or
     oList(t,rList of ((t,t)));
 
-emptyRlist is eList;
+def emptyRlist is eList;
 
 implementation sizeable over rList of %t is {
-  isEmpty(eList) is true;
-  isEmpty(_) default is false;
+  fun isEmpty(eList) is true
+   |  isEmpty(_) default is false
 
-  size(A) is rSize(A);
+  fun size(A) is rSize(A);
 } using {
   rSize has type for all tt such that (rList of tt)=>integer;
-  rSize(eList) is 0;
-  rSize(zList(P)) is 2*rSize(P);
-  rSize(oList(_,P)) is 2*rSize(P)+1;
+  fun rSize(eList) is 0
+   |  rSize(zList(P)) is 2*rSize(P)
+   |  rSize(oList(_,P)) is 2*rSize(P)+1
 }
 
 rCons has type for all t such that (t,rList of t) => rList of t;
-rCons(x,eList) is oList(x,eList);
-rCons(x,zList(P)) is oList(x,P);
-rCons(x,oList(y,ps)) is zList(rCons((x,y),ps));
+fun rCons(x,eList) is oList(x,eList)
+ |  rCons(x,zList(P)) is oList(x,P)
+ |  rCons(x,oList(y,ps)) is zList(rCons((x,y),ps))
 
 rHead has type for all t such that (rList of t)=>t;
-rHead(X) is valof{
-  var (x,_) is uncons(X);
+fun rHead(X) is valof{
+  def (x,_) is uncons(X);
   valis x;
 }
 rTail has type for all t such that (rList of t)=>rList of t;
-rTail(X) is valof{
-  var (_,t) is uncons(X);
+fun rTail(X) is valof{
+  def (_,t) is uncons(X);
   valis t;
 }
 
 private uncons has type for all t such that (rList of t)=>(t,rList of t);
-uncons(oList(x,eList)) is (x,eList);
-uncons(oList(x,ps)) is (x,zList(ps));
-uncons(zList(ps)) is valof{
-  var ((x,y),ps1) is uncons(ps);
-  valis (x,oList(y,ps1))
-}
-
-
-
-
+fun uncons(oList(x,eList)) is (x,eList)
+ |  uncons(oList(x,ps)) is (x,zList(ps))
+ |  uncons(zList(ps)) is valof{
+      def ((x,y),ps1) is uncons(ps);
+      valis (x,oList(y,ps1))
+    }

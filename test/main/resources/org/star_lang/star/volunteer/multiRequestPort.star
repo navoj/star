@@ -22,7 +22,7 @@ multiRequestPort is package{
   var Acount := 0;
   var Bcount := 0;
   
-  S2 is {
+  def S2 is {
     AA((A has type string),B) do  {
       logMsg(info,"AA: A=$A,B=$B");
       Acount := Acount+B;
@@ -34,13 +34,13 @@ multiRequestPort is package{
     };
   }
   
-  Port_In is port{
+  def Port_In is port{
     _notify(Fn) do Fn(S2);
     _request(Fn,Qt,Fr) do Fn(S2);
     _query(Fn,Qt,Fr) is Fn(S2);
   };
   
-  P1 is connectPort_Out(Port_In);
+  def P1 is connectPort_Out(Port_In);
   
   main() do {
     P1._request((procedure(Schema) do { Schema.AA("P1 sends greetings",1); Schema.BB("P1 sends more greetings",2)}) ,

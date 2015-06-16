@@ -21,7 +21,7 @@ arrayUpdates is package{
   AA has type ref list of integer;
   var AA := iota(1,10,1);
   
-  main() do {
+  prc main() do {
     update (X where X%2=0) in AA with -1;
     
     logMsg(info,"AA=$AA");

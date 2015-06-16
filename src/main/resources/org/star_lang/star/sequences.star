@@ -83,14 +83,6 @@ contract sliceable over s determines k is {
 
 # #(?M)#[?Ix] ==> _index(M,Ix);
   
-# prefix((present),500);
-# present #(?M)#[?Ix] :: expression :- M::expression :& Ix::expression;
-# present #(?M)# . #(?F)# [?Ix] ==> _index(M.F,Ix) matches some(_);
-# present #(?M)#[?Ix] ==> _index(M,Ix) matches some(_);
-
-# ?O. #(?M)#[?K] matches ?V ==> _index(O.M,K) matches some(V);
-# #(?M)#[?K] matches ?V ==> _index(M,K) matches some(V);
-  
 contract sorting over %c determines %t is {
   sort has type (%c,(%t,%t)=>boolean)=>%c
 }

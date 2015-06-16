@@ -22,14 +22,14 @@ orderedTest is package {
   contract ordered over %t where equality over %t is {
     compare has type (%t, %t) => ordering;
     minimum has type (%t, %t) => %t;
-    minimum(x, y) default is
+    fun minimum(x, y) default is
 	  case compare(x, y) in {
 	    lt is x;
 	    eq is x;
 	    gt is y;
 	  };
     maximum has type (%t, %t) => %t;
-    maximum(x, y) default is
+    fun maximum(x, y) default is
  	  case compare(x, y) in {
 	    lt is y;
 	    eq is x;
@@ -38,15 +38,15 @@ orderedTest is package {
   };
   
   implementation ordered over integer is {
-    compare(X,X) is eq;
-    compare(X,Y) where X>Y is gt;
-    compare(_,_) default is lt;
+    fun compare(X,X) is eq
+     |  compare(X,Y) where X>Y is gt
+     |  compare(_,_) default is lt
   };
 
   foo has type (%t) => boolean where ordered over %t;
-  foo(x) is x = x;
+  fun foo(x) is x = x;
 
-  main() do {
+  prc main() do {
     assert minimum(3,4)=3;
   }
 }

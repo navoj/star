@@ -22,7 +22,7 @@ chatty is package{
   type talker is alias of actor of {ear has type occurrence of string};
   
   chatty has type (()=>talker)=>talker;
-  chatty(Who) is actor{
+  fun chatty(Who) is actor{
     private var lifeTime := 100; 
     on Msg on ear do{
       logMsg(info,"I hear #Msg");
@@ -33,10 +33,10 @@ chatty is package{
     };
   };
   
-  main() do
+  prc main() do
     let{
-      ping is memo chatty(pong);
-      pong is memo chatty(ping);
+      def ping is memo chatty(pong);
+      def pong is memo chatty(ping);
     } in {notify ping() with "hello" on ear};
 }
   

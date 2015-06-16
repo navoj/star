@@ -25,27 +25,27 @@ ring is package{
   main() do {
     HowMany is 4;
     Count is 100;
-    var Lch is channel();
-    var Rch is channel();
+    def Lch is channel();
+    def Rch is channel();
 
-    First is background ring(1,Lch,Rch);
+    def First is background ring(1,Lch,Rch);
 
     var P := First;
     var C := Rch;
 
     for ix in range(2,HowMany,1) do {
-      var Ch is channel();
-      Next is background ring(ix,C,Ch);
+      def Ch is channel();
+      def Next is background ring(ix,C,Ch);
       C := Ch;
     };
 
-    Last is background ring(HowMany,C,Lch);
+    def Last is background ring(HowMany,C,Lch);
 
     perform wait for put Count on Lch;
 
     case valof recv(exitChnnl) in {
       Id do 
-	logMsg(info,"Ended at $Id");
+	    logMsg(info,"Ended at $Id");
     }
   }
 }

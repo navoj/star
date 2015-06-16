@@ -18,17 +18,17 @@
 love is package {
   type Love of %c is Everywhere or Only(%c);
 
-  herLove is Everywhere;
+  def herLove is Everywhere;
 
   contract Sailor over %c is {
     sail has type (%c) => Love of %c;
   };
 
   loveIsAllAround has type (Love of %c) => boolean where Sailor over %c;
-  loveIsAllAround(Everywhere) is true;
-  loveIsAllAround(_) default is false;
+  fun loveIsAllAround(Everywhere) is true
+   |  loveIsAllAround(_) default is false
 
-  main() do {
+  prc main() do {
     logMsg(info, "$(loveIsAllAround(herLove))");
   }
 }

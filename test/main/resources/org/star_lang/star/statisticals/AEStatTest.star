@@ -118,9 +118,9 @@ statTest is package{
   
   mig1 has type [] => ((windowBuffer of Statistical) => MIGCondition);
   mig1() is let{
-    Afun is Average(12h);
-    Bfun is StdDev(1h);
-    Cfun is StdDev(12h);
+    def Afun is Average(12h);
+    def Bfun is StdDev(1h);
+    def Cfun is StdDev(12h);
     
     evaluator has type (windowBuffer of Statistical) => MIGCondition;
     evaluator(Buffer) is let{
@@ -145,8 +145,8 @@ statTest is package{
     
     evaluator has type (windowBuffer of Statistical) => MIGCondition;
     evaluator(Buffer) is let{
-      A is Afun(Buffer);
-      B is Bfun(Buffer);
+      def A is Afun(Buffer);
+      def B is Bfun(Buffer);
     } in
       (A>2*B ?
          MIGCondition{
@@ -165,7 +165,7 @@ statTest is package{
     
     evaluator has type (windowBuffer of Statistical) => MIGCondition;
     evaluator(Buffer) is let{
-      A is Afun(Buffer);
+      def A is Afun(Buffer);
     } in
       (A>0?
          MIGCondition{
@@ -256,8 +256,7 @@ statTest is package{
     };
     
     addAve has type action(Statistical);
-    addAve(Pkt)
-    {
+    addAve(Pkt) do {
       -- logMsg(info,"adding $Pkt");
       lastSum := lastSum+Pkt.Sum;
       lastCount := lastCount + Pkt.Count;

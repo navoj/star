@@ -19,12 +19,11 @@
 * verbatim extract from Prelude.srule of what is used in FingerList,
 * but renamed List -> cons */
 
-private unwrapInt(integer(i)) is i;
-private ZERO is unwrapInt(0);
-private ONE is unwrapInt(1);
+private def ZERO is 0_;
+private def ONE is 1_;
   
 array_foldRight has type ((%a, %b) => %b, %b, list of %a) => %b;
-array_foldRight(f, a, arr) is valof {
+fun array_foldRight(f, a, arr) is valof {
   var res := a;
   var r := arr;
   var sz := __array_size(arr);
@@ -37,7 +36,7 @@ array_foldRight(f, a, arr) is valof {
 };
 
 array_foldLeft has type ((%b, %a) => %b, %b, list of %a) => %b;
-array_foldLeft(f, a, arr) is valof {
+fun array_foldLeft(f, a, arr) is valof {
   var res := a;
   var r := arr;
   var i := ZERO;
@@ -50,7 +49,7 @@ array_foldLeft(f, a, arr) is valof {
 };
 
 array_int_foldLeft has type ((integer_,%a)=>integer_,integer_,list of %a)=>integer_;
-array_int_foldLeft(f, a, arr) is valof {
+fun array_int_foldLeft(f, a, arr) is valof {
   var res := a;
   var r := arr;
   var i := ZERO;
@@ -63,7 +62,7 @@ array_int_foldLeft(f, a, arr) is valof {
 };
 
 array_mapcar has type ((%a) => %b, list of %a) => list of %b;
-array_mapcar(f, arr) is valof {
+fun array_mapcar(f, arr) is valof {
   var res := __array_nil();
   var i := ZERO;
   var sz := __array_size(arr);

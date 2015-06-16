@@ -21,8 +21,7 @@ anytest is package{
     KK has type any;
   };
   
-  
-  main() do {
+  prc main() do {
     I has type ref any;
     var I := 12 cast any;
     
@@ -32,5 +31,5 @@ anytest is package{
   }
   
   unpack has type (any)=>integer;
-  unpack(X cast integer) is X;
+  fun unpack(X cast integer) is X;
 }

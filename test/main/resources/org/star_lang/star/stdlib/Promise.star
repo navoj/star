@@ -10,7 +10,7 @@ makePromise(farg) is
 	} in (function () is
 			case hold in {
 				Left(f) is valof {
-					val is f()
+					def val is f()
 					hold := Right(val);
 					valis val;
 				}

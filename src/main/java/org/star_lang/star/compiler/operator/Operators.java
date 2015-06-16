@@ -43,7 +43,7 @@ public class Operators implements PrettyPrintable
   public static final int OF_PRIORITY = 840;
   public static final int REF_PRIORITY = 900;
   public static final int PTN_TYPE_PRIORITY = 900;
-  public static final int FUN_TYPE_PRIORITY = 905;
+  public static final int FUN_TYPE_PRIORITY = 910;
 
   public final static int STATEMENT_PRIORITY = 2000;
   public final static int EXPRESSION_PRIORITY = 1200;
@@ -72,7 +72,6 @@ public class Operators implements PrettyPrintable
   static {
     // Define the standard operators
     defineRight(StandardNames.TERM, STATEMENT_PRIORITY);
-    defineRight(StandardNames.FATBAR, STATEMENT_PRIORITY);
     definePostfix(StandardNames.TERM, STATEMENT_PRIORITY);
 
     defineInfix(StandardNames.CONS, STATEMENT_PRIORITY - 1);
@@ -97,6 +96,7 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.FMT_INCREMENT, 1340);
     defineInfix(StandardNames.WFF_STAR, 1340);
     defineInfix(StandardNames.WFF_TERM, 1340);
+    defineInfix(StandardNames.WFF_RULES, 1340);
     defineInfix(StandardNames.WFF_DEFINES, 1341);
 
     definePrefixAssoc(StandardNames.PRIVATE, 1320);
@@ -111,11 +111,17 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.CONTRACT, 1300);
     definePrefix(StandardNames.IMPLEMENTATION, 1300);
 
+    definePrefix(StandardNames.DEF, 1300);
     definePrefix(StandardNames.VAR, 1300);
     definePrefix(StandardNames.FUN, 1300);
+    definePrefix(StandardNames.PRC, 1300);
+    definePrefix(StandardNames.PTN, 1300);
 
     definePrefix(StandardNames.JAVA, 1300);
     definePrefix(StandardNames.OPEN, 1300);
+    
+    defineRight(StandardNames.PIPE, 1290);
+
 
     defineRight(StandardNames.DO, 1200);
 
@@ -184,12 +190,14 @@ public class Operators implements PrettyPrintable
 
     definePrefix(StandardNames.MEMO, 999);
 
-    defineRight(StandardNames.PIPE, 980);
     defineInfix(StandardNames.QUESTION, 950);
 
     definePrefix(StandardNames.SPAWN, 950);
     definePrefix(StandardNames.WAITFOR, 950);
     definePrefix(StandardNames.WHEN, 950);
+    
+    defineRight(StandardNames.COLON, 940);
+    definePostfix(StandardNames.COLON, 940);
 
     defineInfix(StandardNames.DOTSLASH, 999);
 
@@ -206,7 +214,8 @@ public class Operators implements PrettyPrintable
     defineRight(StandardNames.IMPLIES, 920);
 
     definePrefix(StandardNames.NOT, 910);
-
+    
+    definePrefix(StandardNames.LET, 909);
     defineLeft(StandardNames.USING, 908);
     defineInfix(StandardNames.IN, 908);
     defineInfix(StandardNames.DOWN, 908);
@@ -279,8 +288,6 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.CAST, 420);
     defineInfix(StandardNames.AS, 420);
 
-    defineRight(StandardNames.COLON, 400);
-    definePostfix(StandardNames.COLON, 400);
     definePrefix(StandardNames.UNIQUE, 400);
     definePrefix(StandardNames.ALL, 400);
     definePrefix(StandardNames.ANYOF, 400);

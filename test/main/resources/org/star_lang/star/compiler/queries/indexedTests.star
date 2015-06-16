@@ -38,7 +38,7 @@ indexedTests is package{
     assert ("d",5) in R;
     assert (all X where ("d",X) in R) = array of {5};
     
-    X is _fold(R, (function((U,V),S) is S+V), 0);
+    def X is _fold(R, (function((U,V),S) is S+V), 0);
     logMsg(info,"X=$X");
     assert X=15; 
   }

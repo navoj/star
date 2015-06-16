@@ -21,30 +21,30 @@ peopleAgents is package{
                                addSon has type action(string,string);
                                addChild has type action(string,string);
                               };
-  repo is actor{
+  def repo is actor{
     parent has type ref list of ((string,string));
     
     var parent := list of [("J","S"), ("P","S"), ("J","T"), ("P","T")];
     var males := list of [ "J", "T"];
     
-    addSon(P,C) do {
+    prc addSon(P,C) do {
       extend parent with (P,C);    
       extend males with C;
     }
     
-    addChild(P,C) do
+    prc addChild(P,C) do
       extend parent with (P,C);
   }
 
   parentOf has type (repoType,string) => list of string;
-  parentOf(Ac,P) is query Ac's parent with all X where (X,P) in parent order by X;
+  fun parentOf(Ac,P) is query Ac's parent with all X where (X,P) in parent order by X;
   
   qActor has type (repoType)=>actor of{ parentOf has type (string)=>list of string};
-  qActor(O) is actor{
-     parentOf(P) is query O's parent with list of { all X where (X,P) in parent };
+  fun qActor(O) is actor{
+     fun parentOf(P) is query O's parent with list of { all X where (X,P) in parent };
   };
   
-  main() do {
+  prc main() do {
     logMsg(info,"Q parents of S are $(query repo's parent with all X where (X,"S") in parent order by X)");
     logMsg(info,"parents of S are $(parentOf(repo,"S"))");
     assert "J" in parentOf(repo,"S");

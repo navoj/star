@@ -18,7 +18,7 @@
 whileTest is package{
 
   main has type action();
-  main() do
+  prc main() do
   {
     var LL := list of {(1,true);(2,false);(3,true);(4,false)};
     

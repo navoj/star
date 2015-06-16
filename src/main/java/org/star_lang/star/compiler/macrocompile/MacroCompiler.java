@@ -164,7 +164,7 @@ public class MacroCompiler
   private static final MacroDict intrinsicMacroFuns = intrinsicMap();
 
   private static void compileRule(IAbstract rule, ErrorReport errors, MacroDict dict, Set<String> vars,
-      Map<String, Pair<String, List<IAbstract>>> macros)
+      Map<String, Pair<String, IAbstract>> macros, List<IAbstract> macroRules)
   {
     assert CompilerUtils.isMacroDef(rule);
 
@@ -209,7 +209,7 @@ public class MacroCompiler
         locationVar, replaceVar, outerVar);
 
     if (!counterVar.isEmpty()) {
-      IAbstract defn = CompilerUtils.isStatement(loc, counterVar.get(), Abstract.unary(loc, GenerateSym.name,
+      IAbstract defn = CompilerUtils.defStatement(loc, counterVar.get(), Abstract.unary(loc, GenerateSym.name,
           new StringLiteral(loc, "")));
       repl = CompilerUtils.valofValis(loc, repl, defn);
     }
@@ -226,41 +226,40 @@ public class MacroCompiler
           + " result --> "), Abstract.unary(loc, DisplayValue.displayQuoted, tmpVar));
 
       IAbstract traceAction = Abstract.unary(loc, SimpleLog.name, dispTerm);
-      IAbstract decl = CompilerUtils.isStatement(loc, tmpVar, repl);
+      IAbstract decl = CompilerUtils.defStatement(loc, tmpVar, repl);
       repl = CompilerUtils.valofValis(loc, genReplace(loc, replaceVar, tmpVar, vars, dict), fireAction, decl,
           traceAction);
     } else
       repl = genReplace(loc, replaceVar, repl, vars, dict);
 
     if (errors.noNewErrors(errorState))
-      addRuleEquation(loc, key, ptn, cond, repl, locationVar, replaceVar, outerVar, macros);
+      addRuleEquation(loc, key, ptn, cond, repl, locationVar, replaceVar, outerVar, macros, macroRules);
   }
 
   private static void addRuleEquation(Location loc, String key, IAbstract ptn, Wrapper<IAbstract> cond, IAbstract repl,
-      IAbstract locationVar, IAbstract replaceVar, IAbstract outerVar, Map<String, Pair<String, List<IAbstract>>> macros)
+      IAbstract locationVar, IAbstract replaceVar, IAbstract outerVar, Map<String, Pair<String, IAbstract>> macros,
+      List<IAbstract> macroRules)
   {
     List<IAbstract> args = stdMacroArgs(ptn, locationVar, replaceVar, outerVar);
 
-    Pair<String, List<IAbstract>> ruleset = macros.get(key);
+    Pair<String, IAbstract> ruleset = macros.get(key);
     if (ruleset == null) {
-      List<IAbstract> rules = new ArrayList<>();
       String macroName = macroRuleName(key);
       IAbstract macroRule = CompilerUtils.equation(loc, macroName, args, cond.get(), repl);
 
-      rules.add(macroRule);
-      macros.put(key, Pair.pair(macroName, rules));
+      macros.put(key, Pair.pair(macroName, macroRule));
     } else {
-      List<IAbstract> rules = ruleset.right;
       String nextName = GenSym.genSym(key);
-      rules.add(fallbackRule(loc, ruleset.left, new Name(loc, GenSym.genSym("_")), locationVar, replaceVar, outerVar,
-          new Name(loc, nextName)));
-      rules.add(CompilerUtils.equation(loc, nextName, args, cond.get(), repl));
-      macros.put(key, Pair.pair(nextName, rules));
+
+      macroRules.add(CompilerUtils.function(loc, ruleset.right, fallbackRule(loc, ruleset.left, new Name(loc, GenSym
+          .genSym("_")), locationVar, replaceVar, outerVar, new Name(loc, nextName))));
+
+      macros.put(key, Pair.pair(nextName, CompilerUtils.equation(loc, nextName, args, cond.get(), repl)));
     }
   }
 
   private static void compileMacroVar(IAbstract rule, IAbstract replaceVar, IAbstract outerVar, ErrorReport errors,
-      MacroDict dict, Set<String> vars, Map<String, Pair<String, List<IAbstract>>> macros)
+      MacroDict dict, Set<String> vars, Map<String, Pair<String, IAbstract>> macros)
   {
     assert CompilerUtils.isMacroVar(rule);
 
@@ -281,7 +280,7 @@ public class MacroCompiler
         new Name(loc, Location.nowhere), replaceVar, outerVar);
 
     if (!counterVar.isEmpty()) {
-      IAbstract defn = CompilerUtils.isStatement(loc, counterVar.get(), Abstract.unary(loc, GenerateSym.name,
+      IAbstract defn = CompilerUtils.defStatement(loc, counterVar.get(), Abstract.unary(loc, GenerateSym.name,
           new StringLiteral(loc, "")));
       repl = CompilerUtils.valofValis(loc, repl, defn);
     }
@@ -290,14 +289,11 @@ public class MacroCompiler
 
     if (errors.noNewErrors(errorState)) {
 
-      Pair<String, List<IAbstract>> ruleset = macros.get(key);
+      Pair<String, IAbstract> ruleset = macros.get(key);
       if (ruleset == null) {
-        List<IAbstract> rules = new ArrayList<>();
         String macroName = macroRuleName(key);
-        IAbstract macroRule = CompilerUtils.equation(loc, new Name(loc, macroName), repl);
-
-        rules.add(macroRule);
-        macros.put(key, Pair.pair(macroName, rules));
+        IAbstract macroRule = CompilerUtils.varIsDeclaration(loc, new Name(loc, macroName), repl);
+        macros.put(key, Pair.pair(macroName, macroRule));
       } else {
         errors.reportError(StringUtils.msg("cannot have multiple defs for macro ", key), loc);
       }
@@ -411,16 +407,17 @@ public class MacroCompiler
         IAbstract termArg = Abstract.name(loc, GenSym.genSym("T"));
 
         if (CompilerUtils.isTrivialFunction(replacer))
-          pkgStmts.add(CompilerUtils.equation(loc, Abstract.unary(loc, macroDriver, termArg), termArg));
+          pkgStmts.add(CompilerUtils.function(loc, CompilerUtils.equation(loc, Abstract
+              .unary(loc, macroDriver, termArg), termArg)));
         else {
           List<IAbstract> pkgRules = genWalker(loc, replacer, replaceVar, walker);
 
-          IAbstract driver = CompilerUtils.letExp(loc, CompilerUtils.tupleUp(loc, StandardNames.TERM, pkgRules),
-              Abstract.unary(loc, walker, termArg));
+          IAbstract driver = CompilerUtils.letExp(loc, CompilerUtils.blockTerm(loc, pkgRules), Abstract.unary(loc,
+              walker, termArg));
 
           IAbstract topLevel = CompilerUtils.equation(loc, Abstract.unary(loc, macroDriver, termArg), driver);
 
-          pkgStmts.add(topLevel);
+          pkgStmts.add(CompilerUtils.function(loc, topLevel));
         }
 
         return CompilerUtils.tupleUp(loc, StandardNames.TERM, pkgStmts);
@@ -439,7 +436,7 @@ public class MacroCompiler
     if (!CompilerUtils.isTrivialFunction(replacer)) {
 
       // Construct the walker boilerplate:
-      // pkg%walk(astApply(Loc,Op,Args)) is astApply(Loc,replacer(Op,pkg%walk),Args//replacer);
+      // fun pkg%walk(astApply(Loc,Op,Args)) is astApply(Loc,replacer(Op,pkg%walk),Args//replacer);
       //
       IAbstract argsArg = Abstract.name(loc, GenSym.genSym("A"));
       IAbstract opArg = Abstract.name(loc, GenSym.genSym("op"));
@@ -451,9 +448,9 @@ public class MacroCompiler
 
       IAbstract walkerRl1 = CompilerUtils.equation(loc, head, Abstract.ternary(loc, Apply.name, locArg, opRepl,
           Abstract.binary(loc, ArrayMap.name, argsArg, replaceVar)));
-      pkgRules.add(walkerRl1);
       IAbstract walkerRl2 = CompilerUtils.equation(loc, Abstract.unary(loc, driver, argsArg), argsArg);
-      pkgRules.add(walkerRl2);
+
+      pkgRules.add(CompilerUtils.function(loc, walkerRl1, walkerRl2));
     }
 
     return pkgRules;
@@ -520,25 +517,36 @@ public class MacroCompiler
         }
       } else if (!topLevel && CompilerUtils.isCodeMacro(rl)) {
         rl = CompilerUtils.codeMacroEqn(rl);
-        IAbstract lhs = CompilerUtils.equationLhs(rl);
-        String funName = Abstract.getOp(lhs);
-        String key = patternKey(lhs, errors);
-        if (!subDict.defines(key) /* && keyRefs.contains(key) */) {
-          MacroDescriptor desc = new MacroDescriptor(key, funName, MacroRuleType.quotedFun, CompilerUtils
-              .arityOfEquation(rl));
+        final String funName;
+        final String key;
+        final int arity;
+        if (CompilerUtils.isFunctionStatement(rl)) {
+          IAbstract lhs = CompilerUtils.functionHead(rl);
+          funName = Abstract.getOp(lhs);
+          key = patternKey(lhs, errors);
+          arity = Abstract.arity(lhs);
+        } else {
+          IAbstract lhs = CompilerUtils.equationLhs(rl);
+          funName = Abstract.getOp(lhs);
+          key = patternKey(lhs, errors);
+          arity = 0;
+        }
+
+        if (!subDict.defines(key)) {
+          MacroDescriptor desc = new MacroDescriptor(key, funName, MacroRuleType.quotedFun, arity);
           subDict.define(key, desc);
         }
       } else if (CompilerUtils.isImport(rl))
         handler.handleImport(rl, subDict);
     }
 
-    Map<String, Pair<String, List<IAbstract>>> macros = new HashMap<>();
+    Map<String, Pair<String, IAbstract>> macros = new HashMap<>();
 
     for (IAbstract rl : defs) {
       if (CompilerUtils.isMacroVar(rl) && !topLevel)
         compileMacroVar(rl, replaceVar, driver, errors, subDict, vars, macros);
       else if (CompilerUtils.isMacroDef(rl))
-        compileRule(rl, errors, subDict, vars, macros);
+        compileRule(rl, errors, subDict, vars, macros, rules);
       else if (CompilerUtils.isCodeMacro(rl))
         otherRules.add(CompilerUtils.codeMacroEqn(rl));
       else
@@ -579,21 +587,22 @@ public class MacroCompiler
         d = (MacroDict) d.getOuter();
       }
 
-      for (Entry<String, Pair<String, List<IAbstract>>> entry : macros.entrySet()) {
-        Pair<String, List<IAbstract>> e = entry.getValue();
+      for (Entry<String, Pair<String, IAbstract>> entry : macros.entrySet()) {
+        Pair<String, IAbstract> e = entry.getValue();
 
-        List<IAbstract> rools = e.right;
-        rules.addAll(rools);
-        IAbstract last = rools.get(rools.size() - 1);
-        if (!(CompilerUtils.isIsStatement(last) && CompilerUtils.isIdentifier(CompilerUtils.isStmtPattern(last))))
-          rules.add(defaultRule(loc, entry.getKey(), e.left, new Name(loc, GenSym.genSym("outer")), subDict));
+        IAbstract last = e.right;
+        if (!CompilerUtils.isVarDeclaration(last) && !CompilerUtils.isIsStatement(last))
+          rules.add(CompilerUtils.function(loc, last, defaultRule(loc, entry.getKey(), e.left, new Name(loc, GenSym
+              .genSym("outer")), subDict)));
+        else
+          rules.add(last);
       }
 
       // Add in special rule for meta-rules
       caseMap.put("#()", CompilerUtils.caseRule(loc, new StringLiteral(loc, "#()"), termArg));
       // Add in special rule for quoted terms
-      caseMap.put(StandardNames.QUOTE + "()", CompilerUtils.caseRule(loc, new StringLiteral(loc, StandardNames.QUOTE
-          + "()"), termArg));
+      String quoteKey = StandardNames.QUOTE + "()";
+      caseMap.put(quoteKey, CompilerUtils.caseRule(loc, new StringLiteral(loc, quoteKey), termArg));
 
       List<IAbstract> cases = new ArrayList<>(caseMap.values());
 
@@ -616,15 +625,15 @@ public class MacroCompiler
 
       List<IAbstract> localArgs = new ArrayList<>();
       localArgs.add(termArg);
-      return handler.generateResult(rules, otherRules, CompilerUtils.equation(loc, replaceVar.getId(), localArgs,
-          replacer), replaceVar, subDict);
+      return handler.generateResult(rules, otherRules, CompilerUtils.function(loc, CompilerUtils.equation(loc,
+          replaceVar.getId(), localArgs, replacer)), replaceVar, subDict);
     } else {
       // If no local macros then simply return the term
       IAbstract termArg = new Name(loc, GenSym.genSym("T"));
       List<IAbstract> localArgs = new ArrayList<>();
       localArgs.add(termArg);
-      return handler.generateResult(rules, otherRules, CompilerUtils.equation(loc, replaceVar.getId(), localArgs,
-          termArg), replaceVar, subDict);
+      return handler.generateResult(rules, otherRules, CompilerUtils.function(loc, CompilerUtils.equation(loc,
+          replaceVar.getId(), localArgs, termArg)), replaceVar, subDict);
     }
   }
 
@@ -843,8 +852,8 @@ public class MacroCompiler
 
     IAbstract pttrnName = new Name(loc, GenSym.genSym(StandardNames.PATTERN));
 
-    IAbstract let = CompilerUtils.letExp(loc, CompilerUtils.patternRule(loc, Abstract.unary(loc, pttrnName, reslt),
-        match), pttrnName);
+    IAbstract let = CompilerUtils.letExp(loc, CompilerUtils.blockTerm(loc, CompilerUtils.pattern(loc, CompilerUtils
+        .patternRule(loc, Abstract.unary(loc, pttrnName, reslt), match))), pttrnName);
 
     return Pair.pair(let, reslt);
   }
@@ -976,7 +985,7 @@ public class MacroCompiler
             localRules.addAll(macroRules);
             localRules.addAll(otherRules);
 
-            return CompilerUtils.letExp(loc, CompilerUtils.tupleUp(loc, StandardNames.TERM, localRules), lRepl);
+            return CompilerUtils.letExp(loc, CompilerUtils.blockTerm(loc, localRules), lRepl);
           }
         };
 

@@ -22,18 +22,18 @@ private import compute;
 type maybe of %t is possible(%t) or impossible(exception);
 
 implementation (computation) over maybe is {
-  _encapsulate(X) is possible(X);
+  fun _encapsulate(X) is possible(X)
     
-  _combine(possible(X),F) is F(X);
-  _combine(impossible(E),_) is impossible(E);
+  fun _combine(possible(X),F) is F(X)
+   |  _combine(impossible(E),_) is impossible(E)
     
-  _abort(R) is impossible(R);
+  fun _abort(R) is impossible(R)
     
-  _handle(impossible(R),EF) is EF(R);
-  _handle(M,EF) is M;
+  fun _handle(impossible(R),EF) is EF(R)
+   |  _handle(M,EF) is M
 }
   
 implementation execution over maybe is {
-    _perform(possible(X),_) is X;
-    _perform(impossible(R),F) is F(R);
+    fun _perform(possible(X),_) is X
+     |  _perform(impossible(R),F) is F(R)
 }

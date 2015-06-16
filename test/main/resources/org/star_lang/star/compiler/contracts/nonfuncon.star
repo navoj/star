@@ -25,16 +25,16 @@ nonfuncon is package{
   }
   
   implementation Arb over string is {
-    arb is Gen((function(Ix) is display(Ix)));
+    def arb is Gen((Ix) => display(Ix));
   }
   
   XX has type Gen of string;
-  XX is arb;
+  def XX is arb;
   
   xGen has type (Gen of string,integer)=>string;
-  xGen(Gen(F),Ix) is F(Ix);
+  fun xGen(Gen(F),Ix) is F(Ix);
   
-  main() do {    
+  prc main() do {    
     assert xGen(arb,3)="3";
   }
 }

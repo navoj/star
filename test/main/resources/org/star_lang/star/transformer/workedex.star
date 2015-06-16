@@ -75,9 +75,9 @@ workedex is package{
   var fullDeps := dictionary of {};
   
   genIndex(R,key,ref index) is valof{
-    H is key(R);
-    Id is nextId();
-    Ix is index[H] or else cons of {};
+    def H is key(R);
+    def Id is nextId();
+    def Ix is index[H] or else cons of {};
     index[H] := cons of {(Id,R);..Ix};
     valis Id;
   }
@@ -88,11 +88,11 @@ workedex is package{
   getAccountIndex(Act) is any of Id where (Id,_) in accountIndex[idKey(Act)] default nonLong;
   
   addAccount(Act) do {
-    Id is genAccountIndex(Act); -- pick up a unique id for the new tuple
+    def Id is genAccountIndex(Act); -- pick up a unique id for the new tuple
     accounts[Id] := Act;
     SnglAc is dictionary of {(Id,Act)};
     for (F,D) in fullAcGen(transactions,SnglAc) do{
-      FId is nextId();
+      def FId is nextId();
       full[FId] := F;
       fullDeps[FId] := D;
       updateActFollow(D,FId);

@@ -17,7 +17,7 @@
  */
 casescopes is package{
   test(X) is valof{
-    var a is 1;
+    def a is 1;
     
     case X in {
       a do valis "yep";

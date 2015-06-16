@@ -19,18 +19,18 @@ uniqueQuery is package{
   main() do {
     var l:=list of [12,113,8,45,113];
    
-    m is 3 of X where X in l order by X;
+    def m is 3 of X where X in l order by X;
   
-   logMsg(info,"m=$m");
-   assert m = list of [8, 12, 45];
+    logMsg(info,"m=$m");
+    assert m = list of [8, 12, 45];
   
-   q is all X where X in l;
-   logMsg(info,"q=$q");
+    def q is all X where X in l;
+    logMsg(info,"q=$q");
    
-   assert q=list of [12,113,8,45,113];
+    assert q=list of [12,113,8,45,113];
   
-   p is unique X where X in l;
-   logMsg(info,"p=$p");
-   assert p=list of [12, 113, 8, 45];
+    def p is unique X where X in l;
+    logMsg(info,"p=$p");
+    assert p=list of [12, 113, 8, 45];
   }
 }

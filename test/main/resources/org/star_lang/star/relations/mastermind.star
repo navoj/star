@@ -42,9 +42,9 @@ mastermind is package{
     var P := choices;
     var Scores := list of {};
     while true do{
-      Guess is someValue(P[0]);
+      def Guess is someValue(P[0]);
     
-      Sc is score(Guess,Secret);
+      def Sc is score(Guess,Secret);
       logMsg(info,"guess = $Guess, score=$Sc");
       Scores := list of {(Guess,Sc);..Scores};
       P := filterPerms(Scores,P);
@@ -54,10 +54,10 @@ mastermind is package{
   }
   
   main() do {    
-    Secret is someValue(choices[random(size(choices))]);
+    def Secret is someValue(choices[random(size(choices))]);
     logMsg(info,"secret is $Secret");
     
-    Find is guessSecret(Secret);
+    def Find is guessSecret(Secret);
     
     logMsg(info,"found $Find");
   }

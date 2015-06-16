@@ -22,15 +22,15 @@ unravel is package{
     sequence over %left determines %l and
     sequence over %right determines %r;
 
-  unravel(LL) is let{
-    unravl(sequence of {},L,R) is (L,R);
-    unravl(sequence of {(El,Er);..M},L,R) is unravl(M,sequence of {L..;El},sequence of {R..;Er})
+  fun unravel(LL) is let{
+    fun unravl(sequence of {},L,R) is (L,R)
+     |  unravl(sequence of {(El,Er);..M},L,R) is unravl(M,sequence of {L..;El},sequence of {R..;Er})
   } in unravl(LL,sequence of {},sequence of {});
     
-  main() do {
-    Lin is list of [(1,"alpha"), (2,"beta"), (3,"gamma")];
+  prc main() do {
+    def Lin is list of [(1,"alpha"), (2,"beta"), (3,"gamma")];
     
-    var (Lf,Rg) is unravel(Lin);
+    def (Lf,Rg) is unravel(Lin);
     
     assert Lf = list of [1,2,3];
     assert Rg = list of ["alpha","beta","gamma"];

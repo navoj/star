@@ -15,5 +15,5 @@ worksheet{
     functionCall(a) is a;
   };
 
-  var tmp is temporalAddElementToState(node{f="fgh"});
+  def tmp is temporalAddElementToState(node{f="fgh"});
 }
