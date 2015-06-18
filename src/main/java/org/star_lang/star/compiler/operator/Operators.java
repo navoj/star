@@ -190,15 +190,15 @@ public class Operators implements PrettyPrintable
 
     definePrefix(StandardNames.MEMO, 999);
 
-    defineInfix(StandardNames.QUESTION, 950);
+    defineRight(StandardNames.COLON, 960);
+    definePostfix(StandardNames.COLON, 960);
+
+    defineRight(StandardNames.QUESTION, 950);
 
     definePrefix(StandardNames.SPAWN, 950);
     definePrefix(StandardNames.WAITFOR, 950);
     definePrefix(StandardNames.WHEN, 950);
     
-    defineRight(StandardNames.COLON, 940);
-    definePostfix(StandardNames.COLON, 940);
-
     defineInfix(StandardNames.DOTSLASH, 999);
 
     defineLeft(StandardNames.GROUPBY, 960);

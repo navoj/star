@@ -18,7 +18,7 @@
 mainOverride is package{
   import A;
   
-  main() do {
+ prc main() do {
     logMsg(info,"This is correct");
   }
 }

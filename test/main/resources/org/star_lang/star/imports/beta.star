@@ -18,5 +18,5 @@
 beta is package{
   import alpha;
   
-  beta(X) is X;
+  fun beta(X) is X;
 }

@@ -18,12 +18,12 @@
 formats is package{
  -- test the various formatting capabilities
  
-  main() do {
-    val is 123004.564;
-    neg is -val;
+  prc main() do {
+    def val is 123004.564;
+    def neg is -val;
     
-    large is 5.4561e20;
-    small is -large;
+    def large is 5.4561e20;
+    def small is -large;
    
     assert "--$val:P999999.99P;--"="-- 123004.56 --";
     assert "--$neg:P999999.99P;--"="--(123004.56)--";

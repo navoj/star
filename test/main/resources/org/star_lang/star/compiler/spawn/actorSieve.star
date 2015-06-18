@@ -18,15 +18,16 @@
 -- implement sieve of erastosthenes -- using concurrent actors
 actorSieve is package{
  
-  filterActor(P) is concurrent actor{
-    private var Nx := (function(_) is task{});
+  fun filterActor(P) is concurrent actor{
+    private var Nx := ((_) => task{});
     
     {Nx := newPrime};
     
-    private newPrime(X) is let{
+    private 
+    fun newPrime(X) is let{
       def Fx is filterActor(X);
       
-      filterPrime(XX) is task{ notify Fx with XX on input};
+      fun filterPrime(XX) is task{ notify Fx with XX on input};
     } in task {
       logMsg(info,"new prime $X");
       Nx := filterPrime;
@@ -42,7 +43,7 @@ actorSieve is package{
 
   def S is filterActor(2);
   
-  main() do {
+  prc main() do {
     perform task{
       for Ix in iota(3,1000,2) do{
         -- logMsg(info,"next number is $Ix");

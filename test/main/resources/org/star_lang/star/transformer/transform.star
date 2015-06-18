@@ -79,7 +79,7 @@ transform is package{
     
     # genTemplate((?Nm,?Deps),?SoFar) ==> ((Nm,gen_#+Nm#@#<Deps>#),SoFar);
     
-    # genRuleFun(#(?Exp in ?Nm if ?Cond)#,?SoFar) ==> glom(#(findTemplate(Nm) is support of { all Exp where Cond })#,#*SoFar);
+    # genRuleFun(#(?Exp in ?Nm if ?Cond)#,?SoFar) ==> glom(#(fun findTemplate(Nm) is support of { all Exp where Cond })#,#*SoFar);
     # genRuleFun(?Rl,?SoFar) ==> SoFar;
     
     # glom(?A,{}) ==> A;

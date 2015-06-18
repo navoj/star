@@ -100,9 +100,9 @@ type occurrence of %t is alias of action(%t);
 #request ?A to merge ?Tgt with ?Exp  ==>
         perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _merge(#(#$"XX")#.Tgt,Exp)}),(() => <|merge ?Tgt with ?Exp|>),(() => freeVarMap(Exp)));
 #request ?A to delete ?Ptn in ?Tgt  ==>
-        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(pattern() from Ptn))}),(() => <|delete ?Ptn in ?Tgt|>),(() => dictionary of {}));
+        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(() from Ptn))}),(() => <|delete ?Ptn in ?Tgt|>),(() => dictionary of {}));
 #request ?A to update ?Ptn in ?Tgt with ?Exp  ==>
-        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _update(#(#$"XX")#.Tgt,(pattern() from Ptn), (Ptn) => Exp)}),(() => <|update ?Ptn in ?Tgt with ?Exp|>),() => freeVarMap(Exp,Ptn));
+        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _update(#(#$"XX")#.Tgt,(() from Ptn), (Ptn) => Exp)}),(() => <|update ?Ptn in ?Tgt with ?Exp|>),() => freeVarMap(Exp,Ptn));
 
 #request ?A's ?Ex to ?Act  ==> perform _request(A,((#$"XX") do {Act using #$"XX"'s Ex}),(() => quote(Act)),(() => freeVarMap(Act,Ex)));
 #request ?A to ?Act ==> perform _request(A,((#$"XX") do {let{ open #$"XX" } in Act}),(() => quote(Act)),(() => freeVarMap(Act,())));

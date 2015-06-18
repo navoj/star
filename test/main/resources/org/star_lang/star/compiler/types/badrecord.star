@@ -17,6 +17,6 @@
 badrecord is package{
   type p is p{a has type integer; b has type string};
   
-  badFun(p(A,X)) is A;
+  fun badFun(p(A,X)) is A;
 }
  

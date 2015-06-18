@@ -17,12 +17,12 @@
  */
 except is package{
   -- Test exception handling  
-  first(cons(H,_)) is H;
+  fun first(cons(H,_)) is H
   
-  simpleExcept() do
+  prc simpleExcept() do
   {
     try{
-      A is first(nil); -- Should raise an exception
+      def A is first(nil); -- Should raise an exception
       logMsg(info,"A is $A");
     } catch {
       logMsg(info,"Had an exception");
@@ -30,10 +30,10 @@ except is package{
     logMsg(info,"end simple except");
   }
   
-  simpleNoExcept() do
+  prc simpleNoExcept() do
   {
     try{
-      A is first(cons of {"alpha"}); -- Should not raise an exception
+      def A is first(cons of ["alpha"]); -- Should not raise an exception
       logMsg(info,"A is $A");
     } catch {
       logMsg(info,"Had an exception");
@@ -41,7 +41,7 @@ except is package{
     logMsg(info,"end simple noexcept");
   }
   
-  main() do
+  prc main() do
   {
     simpleExcept();
     simpleNoExcept();

@@ -17,15 +17,15 @@
  */
 overDefActor is package{
 
-  plus(X) is X+X;
+  fun plus(X) is X+X;
   
-  f(X) is let{
-    A is actor{
-      pl is plus(X);
+  fun f(X) is let{
+    def A is actor{
+      def pl is plus(X);
     }
   } in (query A's pl with pl);
   
-  main() do {
+  prc main() do {
     assert f(2)=4;
   }
 }    

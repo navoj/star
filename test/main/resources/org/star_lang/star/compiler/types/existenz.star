@@ -21,32 +21,32 @@ existenz is package{
   type xrec of %t is nox or xrec{ elem has kind type; val has type (elem)=>%t };
  
   grp has type grp;
-  grp is { 
+  def grp is { 
     type integer counts as elem;
     op has type (integer,integer)=>integer;
-    op(X,Y) is X+Y;
+    fun op(X,Y) is X+Y;
   }
   
   GF has type grp;
-  GF is {
+  def GF is {
     type elem = float;
     op = (+);
   };
   
-  XX is xrec{ type integer counts as elem; val(I) is I };
+  def XX is xrec{ type integer counts as elem; fun val(I) is I };
   
   YY has type {elem has kind type where pPrint over elem; op has type (elem,elem)=>elem; pp has type (elem)=>elem };
-  YY is {
+  def YY is {
     open grp;
     
     -- open xrec{ type string counts as elem; val("") is 3}
-    pp(X) is op(X,X);
+    fun pp(X) is op(X,X);
   }
     
-  main() do {
+  prc main() do {
     logMsg(info,"grp=$grp");
     
-    Y1 is YY.pp(2 cast YY.elem);
+    def Y1 is YY.pp(2 cast YY.elem);
     logMsg(info,"Y1=$Y1");
     
     logMsg(info,"G1 = $(GF.op(1.0 cast GF.elem,2.0 cast GF.elem))");

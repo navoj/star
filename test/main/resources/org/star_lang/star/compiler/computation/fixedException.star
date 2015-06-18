@@ -16,11 +16,11 @@
  *
  */
 fixedExeption is package{
-  main() do {
-        try {
-            errorCode is 99;
-            raise "My Exception":errorCode;
-        } on abort {
+  prc main() do {
+    try {
+      def errorCode is 99;
+      raise "My Exception":errorCode;
+    } on abort {
            exception (errText, errCode, errLocation) do {
                 logMsg(info, "Caught Exception\nerrText: $errText, errCode: $errCode, errLocation: $errLocation");                
             }

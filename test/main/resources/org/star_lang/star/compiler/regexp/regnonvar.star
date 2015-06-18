@@ -16,10 +16,10 @@
  *
  */
 regnonvar is package{
-  main() do {
-    X is "mySymbol.myVenue";
+  prc main() do {
+    def X is "mySymbol.myVenue";
        
-    found is (X matches `(.*:symbol)\.(.*:venue)`);
+    def found is (X matches `(.*:symbol)\.(.*:venue)`);
     logMsg(info, "$found $symbol $venue"); -- this will raise a compile error
   }
 }

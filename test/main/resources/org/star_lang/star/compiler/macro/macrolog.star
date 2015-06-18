@@ -18,7 +18,7 @@
 macrolog is package{
   #testLog(?X) ==> _macro_log("Apply "++$$X,X);
   
-  main() do {
+  prc main() do {
     assert testLog(2)=2
   }
 }

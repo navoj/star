@@ -17,8 +17,8 @@
  */
 URITestFile4 is package {
   import "star:starviewinc.com/URITestFile3";
-  main() do {
-    x is makeFun();
+  prc main() do {
+    def x is makeFun();
     assert x() = 3;
     logMsg(info, "succeeded");
   }

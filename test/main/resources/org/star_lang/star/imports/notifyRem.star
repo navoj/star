@@ -16,7 +16,7 @@
  *
  */
 notifyRem is package {
-  notes(foo) is {
-    bar() do notify foo with 1 on x;
+  fun notes(foo) is {
+    prc bar() do notify foo with 1 on x;
   }
 }

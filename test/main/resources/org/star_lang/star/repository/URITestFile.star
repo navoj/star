@@ -16,9 +16,9 @@
  *
  */
 URITestFile is package {
-	x is 42;
-	main() do {
-	       logMsg(info, "test", "URITestFile");
-		assert x = 42;
-	}
+  def x is 42;
+  prc main() do {
+	logMsg(info, "test", "URITestFile");
+	assert x = 42;
+  }
 }

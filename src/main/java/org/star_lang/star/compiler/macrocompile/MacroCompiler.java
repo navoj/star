@@ -526,8 +526,8 @@ public class MacroCompiler
           key = patternKey(lhs, errors);
           arity = Abstract.arity(lhs);
         } else {
-          IAbstract lhs = CompilerUtils.equationLhs(rl);
-          funName = Abstract.getOp(lhs);
+          IAbstract lhs = CompilerUtils.isStmtPattern(rl);
+          funName = Abstract.getId(lhs);
           key = patternKey(lhs, errors);
           arity = 0;
         }
@@ -956,7 +956,7 @@ public class MacroCompiler
         case quotedFun:
         case builtin:
         default:
-          return new Apply(loc, desc.getInvokeName(loc), astName(loc, locationVar, key));
+          return astName(loc, locationVar, key);
         }
       } else
         return astName(loc, locationVar, key);

@@ -16,5 +16,5 @@
  *
  */
 alpha is package{
-  alpha(X) is X;
+  fun alpha(X) is X;
 }

@@ -16,14 +16,14 @@
  *
  */
 mapeq is package{
-  main() do
+  prc main() do
   {
     M1 has type dictionary of (string,integer);
-    M1 is dictionary of{"alpha"->1; "beta"->2; "gamma"->3};
+    def M1 is dictionary of{"alpha"->1; "beta"->2; "gamma"->3};
     
-    L1 is list of ["alpha", "beta", "gamma"];
+    def L1 is list of ["alpha", "beta", "gamma"];
     
-    M2 is valof{
+    def M2 is valof{
       var M := dictionary of{};
       for Ix in iota(1,3,1) do
         M[someValue(L1[Ix-1])]:= Ix;

@@ -5,10 +5,10 @@ lambda is package{
   
   # ?T >\ ?E :: expression :- T:*id :& E::expression;
   
-  # identifier ? T >\ ?E ==> (function(T) is E);
-  # tuple?T >\ ?E ==> (function#@T is E);
+  # identifier ? T >\ ?E ==> (T) => E;
+  # tuple?T >\ ?E ==> T => E;
   
-  main() do {
+  prc main() do {
     def iden is X>\X;
     
     def PP is X >\ Y >\ X+Y;

@@ -19,17 +19,17 @@ taskExpTest is package{
   import task;
   
   equal has type (integer,integer)=>boolean;
-  equal(A,B) is valof{
+  fun equal(A,B) is valof{
     logMsg(info,"is $A=$B, $(A=B)");
     valis A=B;
   };
   
-  tt(X) is task{
+  fun tt(X) is task{
     def Y is 2;
     valis X+Y;
   }
   
-  uu(X) is task{
+  fun uu(X) is task{
     logMsg(info,"We got $X");
     var Y := 1;
     Y:=Y*2;
@@ -38,7 +38,7 @@ taskExpTest is package{
     valis X*Y;
   };
   
-  ww is task {
+  def ww is task {
     var v := 1;
  --   logMsg(info, "v is $v");
     if equal(v,2) then {
@@ -48,7 +48,7 @@ taskExpTest is package{
     valis v;
   };
   
-  main() do {
+  prc main() do {
     def XX is valof tt(3);
     assert XX=5;
     

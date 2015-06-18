@@ -20,32 +20,32 @@ voidTests is package {
   -- TEST 1
   
   apply_x has type (() => %a) => %a
-  apply_x(f) is f()
+  fun apply_x(f) is f()
 
-  test1() do {
-    apply_x((procedure() do nothing)); 
+  prc test1() do {
+    apply_x((() do nothing)); 
   }
   
   -- TEST 2
   
   type t of %a is t { f has type (integer) => %a }
   
-  make_t(get_res) is
-    t { f = (function (v) is get_res(v)) }
+  fun make_t(get_res) is
+    t { f = ( (v) => get_res(v)) }
     
-  t0 is make_t((function (i) is 42))
-  t1 is make_t((procedure (i) do nothing)) 
-  t2 is make_t((function (i) is ()))
+  def t0 is make_t(( (i) => 42))
+  def t1 is make_t(( (i) do nothing)) 
+  def t2 is make_t(( (i) => ()))
   
-  call_t(tv) is tv.f(13)
+  fun call_t(tv) is tv.f(13)
   
-  test2() do {
-    _ is call_t(t0); -- ok
+  prc test2() do {
+    ignore call_t(t0); -- ok
     
     call_t(t2);
   }
   
-  main() do {
+  prc main() do {
     test1();
     test2(); 
   }

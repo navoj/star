@@ -24,10 +24,9 @@ tableInserts is package{
   ];
   
   check has type (string,list of ((string,integer))) =>boolean;
-  check(S,Rl) is ((SS,_) where SS=S) in Rl;
+  fun check(S,Rl) is ((SS,_) where SS=S) in Rl;
   
-  main has type action();
-  main() do {
+  prc main() do {
     assert not ("b",2) in R;
     extend R with ("b",2);
     assert ("b",2) in R;

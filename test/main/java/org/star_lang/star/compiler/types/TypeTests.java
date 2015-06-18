@@ -190,7 +190,7 @@ public class TypeTests extends SRTest
   @Test
   public void testMutualAlias()
   {
-    exception.expectMessage("[args, state_func] are mutually recursive type aliases, which is not permitted");
+    exception.expectMessage("are mutually recursive type aliases, which is not permitted");
     runStar("mutualAlias.star");
   }
 

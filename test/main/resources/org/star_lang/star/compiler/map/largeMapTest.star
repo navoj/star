@@ -4,22 +4,22 @@ largeMapTest is package{
     count has type ref integer;
   }
   
-  limit is 1000000;
+  def limit is 1000000;
   
-  main() do {
+  prc main() do {
     var M := dictionary of {};
     
-    start is nanos();
+    def start is nanos();
     for Ix in range(0,limit,1) do{
-      Cx is random(limit);
+      def Cx is random(limit);
       if M[Cx] has value R then
         R.count := R.count+1
       else{
-        count is counter{count := 1;}
+        def count is counter{count := 1;}
         M[Cx] := count;
       }
     }
-    amnt is nanos()-start;
+    def amnt is nanos()-start;
     logMsg(info,"Took $(amnt as float/1.0e9) seconds to do $limit updates, map has $(size(M)) elements")
   }
 }

@@ -17,11 +17,11 @@
  */
 casebug is package {
   myStatus has type outletStatus;
-  myStatus is oPen;
+  def myStatus is oPen;
   
   type outletStatus is oPen or closed or underRepair or unknown;
 
-  main () do {
+  prc main () do {
     case myStatus in {
       oPen do logMsg(info,"it is open");
       _ default do nothing;

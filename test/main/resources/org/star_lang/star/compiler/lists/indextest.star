@@ -17,9 +17,9 @@
  */
 -- test the list indexing functions
 indextest is package{
-  LL is list of ["a","b","c","d","e","f"];
+  def LL is list of ["a","b","c","d","e","f"]
   
-  Ag is agg{
+  def Ag is agg{
     LL = list of ["a","b","c","d","e","f"];
   };
   
@@ -27,28 +27,27 @@ indextest is package{
     LL has type list of string;
   };
   
-  CC is cons of ["a","b","c","d"];
+  def CC is cons of ["a","b","c","d"];
   
-  MM is dictionary of {"a"->1;"b"->2;"c"->3};
+  def MM is dictionary of {"a"->1;"b"->2;"c"->3};
   
-  main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"$LL");
-    XX is LL[size(LL)-1];
+    def XX is LL[size(LL)-1];
     assert XX has value "f";
     logMsg(info,"LL[\$]=$XX");
     
-    EE is someValue(LL[size(LL)-2]);
+    def EE is someValue(LL[size(LL)-2]);
     logMsg(info,"EE = $EE");
     
-    AA is LL[0];
+    def AA is LL[0];
     logMsg(info,"AA = $AA");
     assert AA has value "a";
         
-    BB is Ag.LL[1];
+    def BB is Ag.LL[1];
     logMsg(info,"BB=$BB");
     
-    DD is Ag.LL[size(LL)-3];
+    def DD is Ag.LL[size(LL)-3];
     logMsg(info,"DD=$DD");
     
     assert (LL[10] or else "none") = "none";

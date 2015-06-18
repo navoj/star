@@ -25,9 +25,9 @@ actorgen is package{
   #genRules(#(?L;?R)#) ==> #(genRules(L);genRules(R))#;
   #genRules(KK(?E,?C,?A)) ==> on E on C do A;
   
-  gen is genActor(#(KK(A,C,logMsg(info,"Got $A on C"));KK(B,D,logMsg(info,"hello")))#);
+  def gen is genActor(#(KK(A,C,logMsg(info,"Got $A on C"));KK(B,D,logMsg(info,"hello")))#);
   
-  main() do {
+  prc main() do {
     notify gen with 1 on C;
     notify gen with 2 on D;
   }

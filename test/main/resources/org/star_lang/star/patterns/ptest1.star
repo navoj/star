@@ -17,10 +17,10 @@
  */
 ptest1 is package{
   
-  R is list of [("fred",1),("fred",3),("Bob",3)];
-  TM is pattern(X) from ("fred",X);
+  def R is list of [("fred",1),("fred",3),("Bob",3)];
+  def TM is ((X) from ("fred",X));
   
-  main() do {
+  prc main() do {
   	
   	if ("fred",3) in R then {
   		logMsg(info, "(\"fred\",3) is in R");  

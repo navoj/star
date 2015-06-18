@@ -21,7 +21,7 @@ mapFoldTest is package{
   def L is leftFold((A,(K,V))=>(A+V),0,H);
   def R is rightFold(((K,V),A)=>(A*V),1,H);
   
-  main() do {
+  prc main() do {
     assert L=10;
     assert R=24;
   }

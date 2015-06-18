@@ -18,10 +18,10 @@
 foldingtest is package{
   -- test the folding stuff
   
-  main() do {
-    L is cons of {1;2;3;4};
+  prc main() do {
+    def L is cons of [1, 2, 3, 4];
     
-    T is dictionary of {1 -> "one"; 2->"two"; 3->"three"};
+    def T is dictionary of [1 -> "one", 2->"two", 3->"three"];
     
     assert rightFold((+),0,L) = leftFold((+),0,L)
     

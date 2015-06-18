@@ -22,7 +22,7 @@ mergerelation is package{
     {name="p"; amount=2},
     {name="m"; amount=0}
   ];      
-  main() do {
+  prc main() do {
     logMsg(info, "Test the merge relation function");
     merge Scores with list of [{name="X"; amount=9}];
     

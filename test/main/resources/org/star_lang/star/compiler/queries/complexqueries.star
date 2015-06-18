@@ -19,7 +19,7 @@ complexqueries is package{
   -- test out indexing and equality queries
   
   R has type indexed of((string,integer));
-  R is indexed {
+  def R is indexed {
     ("a",1);
     ("b",2);
     ("c",3);
@@ -53,18 +53,18 @@ complexqueries is package{
     ("b",2);
   };
   
-  S is list of [
+  def S is list of [
     ("a",10),
     ("b",2),
     ("d",3)
   ];
   
-  T is list of [
+  def T is list of [
     10,
     12
    ];
    
-  U is indexed{
+  def U is indexed{
     ("a",10);
     ("a",12);
     ("a",0)
@@ -72,19 +72,19 @@ complexqueries is package{
   
   -- DD is all (X,Y) where (X,Y) in S and (X,Y) in R;
   
-  DD is all (X,Y) where  (X,Y) in R and (X,Y) in S;
+  def DD is all (X,Y) where  (X,Y) in R and (X,Y) in S;
   
-  QQ is all (X,Z) where (X,Y) in R and ((X,Z) in S otherwise Z in T) and (X,Z) in U;
+  def QQ is all (X,Z) where (X,Y) in R and ((X,Z) in S otherwise Z in T) and (X,Z) in U;
   
   compTples has type ((string,integer),(string,integer)) =>boolean;
-  compTples((A1,N1),(A2,N2)) where A1<A2 is true;
-  compTples((A1,N1),(A2,N2)) where A1=A2 and N1<N2 is true;
-  compTples(_,_) default is false;
+  fun compTples((A1,N1),(A2,N2)) where A1<A2 is true
+   |  compTples((A1,N1),(A2,N2)) where A1=A2 and N1<N2 is true
+   |  compTples(_,_) default is false;
   
-  SS is all (X,Z) where (X,Z) in R order by (X,Z) using compTples;
+  def SS is all (X,Z) where (X,Z) in R order by (X,Z) using compTples;
   
   main has type action();
-  main() do {
+  prc main() do {
     assert size(SS)=size(R);
     
     logMsg(info,"`all (X,Y) where  (X,Y) in R and (X,Y) in S' is $DD");

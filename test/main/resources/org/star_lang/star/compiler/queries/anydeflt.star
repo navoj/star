@@ -22,20 +22,20 @@ anydeflt is package{
     value has type float
   }
   
-  gold is list of [ toolData{name="alpha"; value=1.0},
+  def gold is list of [ toolData{name="alpha"; value=1.0},
                     toolData{name="beta"; value = 2.0} ];
   
-  getValue(N) is anyof V where R in gold and R matches toolData{name=N; value=V} default 0.0;
+  fun getValue(N) is anyof V where R in gold and R matches toolData{name=N; value=V} default 0.0;
 
-  main() do {
+  prc main() do {
     assert getValue("alpha")=1.0;
     
     assert getValue("beta")=2.0;
     
     assert getValue("gamma")=0.0;
     
-    N is "alpha";
-    goldValue is anyof V where R in gold and R matches toolData{name=N; value=V};
+    def N is "alpha";
+    def goldValue is anyof V where R in gold and R matches toolData{name=N; value=V};
     assert goldValue = 1.0;
   }
 }

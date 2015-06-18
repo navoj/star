@@ -18,7 +18,7 @@
 macrolog is package{
   #testIntern(?X) ==> #~#("Apply"#+$$X)#;
   
-  main() do {
+  prc main() do {
     def Apply2 is 2;
     
     assert testIntern(2)=2

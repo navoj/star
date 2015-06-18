@@ -16,7 +16,7 @@
  *
  */
 splices is package {
-  main () do {
+  prc main () do {
     logMsg(info,"testing list splices");
     var a := list of [0,1];
     a[2:2] := list of [99];

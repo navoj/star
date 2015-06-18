@@ -37,22 +37,23 @@ Person is package{
     (>) = Person_gt;
     (>=) = Person_ge;
   } using {
-    Person_less(noone,someone{}) is true;
-    Person_less(someone{name=N1},someone{name=N2}) is N1<N2;
-    Person_less(_,_) default is false;
+    fun Person_less(noone,someone{}) is true
+     |  Person_less(someone{name=N1},someone{name=N2}) is N1<N2
+     |  Person_less(_,_) default is false
     
-    Person_le(X,X) is true;
-    Person_le(X,Y) default is Person_less(X,Y);
+    fun Person_le(X,X) is true
+     |  Person_le(X,Y) default is Person_less(X,Y)
     
-    Person_gt(X,Y) is Person_less(Y,X);
-    Person_ge(X,Y) is Person_le(Y,X);
+    fun Person_gt(X,Y) is Person_less(Y,X)
+    
+    fun Person_ge(X,Y) is Person_le(Y,X);
   }
   
   implementation equality over Person is {
     (=) = Person_eq;
   } using {
-    Person_eq(someone{name=N1},someone{name=N2}) is N1=N2;
-    Person_eq(noone,noone) is true;
-    Person_eq(_,_) default is false;
+    fun Person_eq(someone{name=N1},someone{name=N2}) is N1=N2
+     |  Person_eq(noone,noone) is true
+     |  Person_eq(_,_) default is false;
   }
 }

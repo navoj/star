@@ -17,13 +17,13 @@
  */
 lettype is package{ 
 
-  test() do let{
+  prc test() do let{
     type testType is One or Two;
   } in {
     logMsg(info, "Tested");
   };
 
-  main() do {
+  prc main() do {
     logMsg(info, "Testing ...");
     test();
   };

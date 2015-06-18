@@ -20,13 +20,13 @@ eqgenerate is package {
         name has type string;
         children has type list of Node;
     };
-    main() do {
-        node is Node{name=""; children=list of []};
+    prc main() do {
+        def node is Node{name=""; children=list of []};
         assert node=node;
-        node2 is Node{name="2"; children=list of [node]};
+        def node2 is Node{name="2"; children=list of [node]};
         assert node!=node2;
         assert node2=node2;
-        node3 is Node{name="3";children=list of [node]};
+        def node3 is Node{name="3";children=list of [node]};
         assert node2!=node3 and node3=node3;
     }
  }

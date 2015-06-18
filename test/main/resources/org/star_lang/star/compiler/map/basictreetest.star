@@ -18,7 +18,7 @@
 basictreetest is package{
   import treemap;
   
-  main() do {
+  prc main() do {
     var M := trEmpty;
     
     M[9] := "nine";

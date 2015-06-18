@@ -16,8 +16,8 @@
  *
  */
 forLoopTest is package{
-  L is list of {1;2;3;4};
-  main() do {
+  def L is list of [1, 2, 3, 4];
+  prc main() do {
     for Ix in L do
       logMsg(info,"Ix=$Ix");
   }

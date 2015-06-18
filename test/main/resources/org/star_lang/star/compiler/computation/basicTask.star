@@ -18,23 +18,23 @@
 basicTask is package{
   -- import tasking;
    
-  tt(X) is task{
-    Y is 2;
+  fun tt(X) is task{
+    def Y is 2;
     valis X+Y;
   }
   
-  uu(X) is task{
+  fun uu(X) is task{
     logMsg(info,"We got $X");
     var Y := 1;
     Y:=Y+2;
     valis X+Y;
   };
   
-  main() do {
-    XX is valof tt(3);
+  prc main() do {
+    def XX is valof tt(3);
     assert XX=5;
     
-    YY is valof uu(3);
+    def YY is valof uu(3);
     assert YY=6;
   }
 }

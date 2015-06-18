@@ -16,10 +16,10 @@
  *
  */
 funproc is package {
-  writeMsg(msg) is
+  fun writeMsg(msg) is
     logMsg(info, display(msg))
 
-  main () do {
+  prc main () do {
     writeMsg("msg");
   }
 }

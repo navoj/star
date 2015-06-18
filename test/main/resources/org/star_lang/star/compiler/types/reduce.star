@@ -21,19 +21,19 @@ reduce is package {
   };
 
   implementation Reduce over cons is {
-    reducer is reduceCons;
+    def reducer is reduceCons;
   } using {
-    reduceCons(f, nil, b) is b;
-    reduceCons(f, cons(head, tail), b) is f(head, reducer(f, tail, b))
-    using {
-      f1(aa, bb) is reducer(f, aa, bb);
-    };
+    fun reduceCons(f, nil, b) is b
+     |  reduceCons(f, cons(head, tail), b) is f(head, reducer(f, tail, b))
+        using {
+          fun f1(aa, bb) is reducer(f, aa, bb);
+        };
   };
   
-  main() do {
-    L is cons of {1;2;3;4};
+  prc main() do {
+    def L is cons of {1;2;3;4};
     
-    K is reducer((function(X,Y) is X+Y), L, 0);
+    def K is reducer(((X,Y) => X+Y), L, 0);
     
     logMsg(info,"K=$K");
     

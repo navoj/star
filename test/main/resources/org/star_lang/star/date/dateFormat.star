@@ -16,15 +16,15 @@
  *
  */
 dateFormat is package{
-  main() do {
-    D is "3/12/2012 00:00 AM" as date;
+  prc main() do {
+    def D is "3/12/2012 00:00 AM" as date;
     logMsg(info,"$D");
     logMsg(info,"$(__display(D))");
-    DD is parse_date("3/12/2012","MM/dd/yyyy")
+    def DD is parse_date("3/12/2012","MM/dd/yyyy")
     logMsg(info,"$(__display(DD))");
     assert D=DD;
     
-    SS is format_date(D,"MM/dd/yyyy");
+    def SS is format_date(D,"MM/dd/yyyy");
     logMsg(info,"SS=$SS");
     assert SS="03/12/2012";
     

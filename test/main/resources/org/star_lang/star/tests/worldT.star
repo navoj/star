@@ -18,7 +18,7 @@
 world is package{
   import hello;
   
-  main() do {
+  prc main() do {
     logMsg(info,"$(helloF()) to the world");
     assert helloF()="hi";
   }

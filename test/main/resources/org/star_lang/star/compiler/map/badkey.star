@@ -16,7 +16,7 @@
  *
  */
 badkey is package{
-  M is dictionary of {1->"alpha"; 2->"beta"; 3->"gamma"};
+  def M is dictionary of [1->"alpha", 2->"beta", 3->"gamma"]
   
-  badKey() where V[K] in M is K;
+  fun badKey() where K->V in M is K
 }

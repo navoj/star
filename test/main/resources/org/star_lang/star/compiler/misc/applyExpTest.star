@@ -18,12 +18,12 @@
 applyExpTest is package{
  
   add has type (integer,integer)=>integer;
-  add(X,Y) is X+Y;
+  fun add(X,Y) is X+Y;
   
-  pr(X) is (X,X);
+  fun pr(X) is (X,X);
   
-  main() do {
-    X is 10;
+  prc main() do {
+    def X is 10;
     
     logMsg(info,"X=$X");
     

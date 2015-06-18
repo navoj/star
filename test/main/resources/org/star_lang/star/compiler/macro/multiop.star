@@ -18,9 +18,9 @@
 multiop is package{
   #infix("this op",700);
   
-  X this op Y is X+Y;
+  fun X this op Y is X+Y;
   
-  main() do
+  prc main() do
   {
     assert 2 this op 3 = 5;
   }

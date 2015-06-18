@@ -16,16 +16,16 @@
  *
  */
 floatHash is package{
-  main () do {
-    a is dictionary of {17000.0 -> 1.81};
-    b is dictionary of {17000.0 -> 1.81};
+  prc main () do {
+    def a is dictionary of {17000.0 -> 1.81};
+    def b is dictionary of {17000.0 -> 1.81};
     assert a=b;
     assert a=a;
     assert 17000.0 = 17000.0;
     assert 1.81 = 1.81;
 
-    c is dictionary of {170000 -> 181};
-    d is dictionary of {170000 -> 181};
+    def c is dictionary of {170000 -> 181};
+    def d is dictionary of {170000 -> 181};
     assert c=d;
   }
 }

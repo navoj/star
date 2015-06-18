@@ -28,7 +28,7 @@ dotacc is package{
     def Ap is people;
   };
   
-  main() do {
+  prc main() do {
     def F is list of { all P where P in people and P.name="fred" };
     logMsg(info,"F=$F");
     

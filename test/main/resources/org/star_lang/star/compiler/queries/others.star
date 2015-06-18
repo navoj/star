@@ -16,7 +16,7 @@
  *
  */
 others is package{
- ttVal is valof{
+  def ttVal is valof{
         if ((true matches true) otherwise (true matches true)) then {
             valis true; 
         } else {
@@ -24,7 +24,7 @@ others is package{
         };
     };
     
-  main() do {
+  prc main() do {
     logMsg(info,"$ttVal");
     assert ttVal;
   }

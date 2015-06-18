@@ -18,47 +18,33 @@
 testPP is package{  
   import person;
   
-/*  implementation pPrint over gender is {
-    ppDisp(male) is ppStr("male");
-    ppDisp(female) is ppStr("female");
-  }
-   
-  implementation pPrint over person is {
-    ppDisp = dispPerson
-  } using {
-    dispPerson(noone) is ppStr("noone");
-    dispPerson(someone{name=N;spouse=S;gender=G;age=A}) is 
-      ppSequence(2,cons of {ppStr("someOne"); ppStr("{"); ppNl; ppDisp(N); ppDisp(S); ppDisp(G); ppDisp(A); ppStr("}")});
-  }
- */
- 
   type fooPair is foo((string,integer));
   
   implementation pPrint over ((%a,%b)) where pPrint over %a and pPrint over %b is {
-    ppDisp is dispPair;
+    def ppDisp is dispPair;
   } using {
-    dispPair((L,R)) is ppSequence(2,cons of { ppStr("!("); ppDisp(L); ppStr(", "); ppDisp(R); ppStr(")")});
+    fun dispPair((L,R)) is ppSequence(2,cons of { ppStr("!("); ppDisp(L); ppStr(", "); ppDisp(R); ppStr(")")});
   }
   
   type tree of %t is empty or node(tree of %t,%t,tree of %t);
   
   implementation pPrint over tree of %t where pPrint over %t is {
-    ppDisp(T) is ppSequence(2,cons of {ppStr("{"); treeDisplay(T); ppStr("}")});
+    fun ppDisp(T) is ppSequence(2,cons of {ppStr("{"); treeDisplay(T); ppStr("}")});
   } using {
-    treeDisplay(empty) is ppSpace;
-    treeDisplay(node(L,Lb,R)) is ppSequence(0,cons of {treeDisplay(L); ppDisp(Lb); treeDisplay(R) });
+    fun treeDisplay(empty) is ppSpace
+     |  treeDisplay(node(L,Lb,R)) is ppSequence(0,cons of {treeDisplay(L); ppDisp(Lb); treeDisplay(R) })
   } 
   
-  main() do {
-    Jack is someone{name="Jack"; gender=male};
+  prc main() do {
+    def Jack is someone{name="Jack"; gender=male};
     
-    DD is ppDisp(Jack);
+    def DD is ppDisp(Jack);
     logMsg(info,"pp = $DD");
     logMsg(info,"flat = #(display(Jack))");
     
     logMsg(info,"foo = $(foo(("alpha",56)))");
     
-    TT is node(node(empty,"alpha",empty),"beta",node(empty,"gamma",empty));
+    def TT is node(node(empty,"alpha",empty),"beta",node(empty,"gamma",empty));
     logMsg(info,"TT = $(ppDisp(TT))");
     logMsg(info,"TT = $TT");
   }

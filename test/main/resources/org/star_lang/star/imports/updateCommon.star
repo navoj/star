@@ -18,6 +18,6 @@
 updateCommon is package{
   import common;
   
-  updateX() is 
+  fun updateX() is 
     commonUpdate(45);
 }

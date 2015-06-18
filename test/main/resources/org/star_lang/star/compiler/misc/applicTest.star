@@ -18,16 +18,16 @@
 applicTest is package{
   -- test the apply notation
   
-  foo(X,Y,Z) is X+Y*Z;
+  fun foo(X,Y,Z) is X+Y*Z;
   
-  main() do {
-    Args is (1,2,3);
+  prc main() do {
+    def Args is (1,2,3);
     
-    R is foo(1,2,3);
+    def R is foo(1,2,3);
     
     assert R=7;
     
-    S is foo@Args;
+    def S is foo@Args;
     assert S=7;
   }
 }

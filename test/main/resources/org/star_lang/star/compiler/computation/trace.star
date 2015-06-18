@@ -25,20 +25,20 @@ trace is package{
   type trace of %t is xx(%t) or drop(exception) or zz(()=>%t);
   
   implementation (computation) over trace is {
-    _encapsulate(x) is valof{ logMsg(info,"encap $x"); valis xx(x)};
-    _combine(m, f) is case m in {
+    fun _encapsulate(x) is valof{ logMsg(info,"encap $x"); valis xx(x)};
+    fun _combine(m, f) is case m in {
       drop(S) is drop(S);
       xx(v) is f(v);
     };
-    _abort(S) is drop(S);
+    fun _abort(S) is drop(S);
     
-    _handle(drop(M),EF) is valof{logMsg(info,"drop: $M"); valis EF(M)};
-    _handle(R,_) is R;
+    fun _handle(drop(M),EF) is valof{logMsg(info,"drop: $M"); valis EF(M)}
+     |  _handle(R,_) is R;
     
   }
   
   implementation execution over trace is {
-    _perform(xx(X),_) is X;
-    _perform(drop(MSG),EF) is EF(MSG);
+    fun _perform(xx(X),_) is X
+     |  _perform(drop(MSG),EF) is EF(MSG)
   }
 }

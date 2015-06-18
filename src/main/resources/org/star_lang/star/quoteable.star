@@ -87,8 +87,8 @@ implementation coercion over (list of %t,quoted) where coercion over (%t,quoted)
   fun coerce(R) is quoteList(R)
 } using {
   quoteList has type (list of %t) => quoted where coercion over (t,%quoted);
-  fun quoteList(R) where isEmpty(R) is <| list of {} |>
-   |  quoteList(R) is <| list of { ?quoteSeq(R) } |>;
+  fun quoteList(R) where isEmpty(R) is <| list of [] |>
+   |  quoteList(R) is <| list of [ ?quoteSeq(R) ] |>;
 };
 
 quoteSeq has type (%s)=>quoted where iterable over %s determines %t and coercion over (%t,quoted);
@@ -99,7 +99,7 @@ fun quoteSeq(S) is valof{
     if El = <| () |> then
       El := QEl
     else
-      El := <| ?QEl ; ?El |>
+      El := <| ?QEl , ?El |>
   }
   valis El;
 };
@@ -163,7 +163,7 @@ fun quoteSeq(S) is valof{
       #genFields( #( assert ?C)# ,?Arg) ==> ();
     };
   # genDequoteCon(identifier ? I) ==> #( dequote(<| I |>) is I )#;
-  # genDequoteCon( #(?O #@ ?A)#) ==> #( dequote(<| Con |>) is Term; dequote(XX) is raise "cannot dequote $XX" )# ##{
+  # genDequoteCon( #(?O #@ ?A)#) ==> #( dequote(<| Con |>) is Term | dequote(XX) is raise "cannot dequote $XX" )# ##{
      #gnArgs((?A1,?R1)) ==> ((#(?)#(#$A),first(Rgs)), ((#$A as A1),second(Rgs))) ## {
        #Rgs ==> #*gnArgs(R1);
      }

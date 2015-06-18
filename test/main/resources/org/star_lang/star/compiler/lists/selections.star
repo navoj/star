@@ -17,12 +17,11 @@
  */
 selections is package{
 
-  testList is list of [1,2,3,4,5,6,7];
+  def testList is list of [1,2,3,4,5,6,7]
   
-  selected is all X where X in testList and X<4;
+  def selected is all X where X in testList and X<4
   
-  main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"selected is $selected");
 
     assert selected=list of [1,2,3]

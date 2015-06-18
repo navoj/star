@@ -15,20 +15,18 @@
  * @author fgm
  *
  */
-disjRegexp is package{
+worksheet{
 
-  mentionsFruit(C) is C matches `(.*apple.*|.*orange.*)`;
+  fun mentionsFruit(C) is C matches `(.*apple.*|.*orange.*)`;
   
-  mentionsFruit2(C) is C matches `.*apple.*` or C matches `.*orange.*`;
+  fun mentionsFruit2(C) is C matches `.*apple.*` or C matches `.*orange.*`;
   
-  matchFruit() from `(.*apple.*|.*orange.*)`;
+  ptn matchFruit() from `(.*apple.*|.*orange.*)`;
   
-  content is "A Granny Smith is an apple and is green." 
+  def content is "A Granny Smith is an apple and is green." 
   
-  main() do {
-    assert mentionsFruit(content);
-    assert mentionsFruit2(content);
+  assert mentionsFruit(content);
+  assert mentionsFruit2(content);
     
-    assert content matches matchFruit();
-  }
+  assert content matches matchFruit();
 }

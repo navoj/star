@@ -41,15 +41,12 @@ import org.star_lang.star.compiler.canonical.IContentAction;
 import org.star_lang.star.compiler.canonical.IContentExpression;
 import org.star_lang.star.compiler.canonical.IContentPattern;
 import org.star_lang.star.compiler.canonical.IsTrue;
-import org.star_lang.star.compiler.canonical.LetTerm;
 import org.star_lang.star.compiler.canonical.MethodVariable;
 import org.star_lang.star.compiler.canonical.Negation;
 import org.star_lang.star.compiler.canonical.NullAction;
-import org.star_lang.star.compiler.canonical.ProgramLiteral;
 import org.star_lang.star.compiler.canonical.Scalar;
 import org.star_lang.star.compiler.canonical.ScalarPtn;
 import org.star_lang.star.compiler.canonical.TrueCondition;
-import org.star_lang.star.compiler.canonical.VarEntry;
 import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.canonical.VoidExp;
 import org.star_lang.star.compiler.standard.StandardNames;
@@ -57,7 +54,6 @@ import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.TypeContracts;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.type.Visibility;
-import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Wrapper;
 import org.star_lang.star.data.IList;
@@ -539,26 +535,26 @@ public class CompilerUtils
 
   public static boolean isConditional(IAbstract term)
   {
-    return Abstract.isBinary(term, StandardNames.QUESTION)
-        && Abstract.isBinary(Abstract.binaryRhs(term), StandardNames.COLON);
+    return Abstract.isBinary(term, StandardNames.COLON)
+        && Abstract.isBinary(Abstract.binaryLhs(term), StandardNames.QUESTION);
   }
 
   public static IAbstract conditionalTest(IAbstract term)
   {
     assert isConditional(term);
-    return Abstract.binaryLhs(term);
+    return Abstract.binaryLhs(Abstract.binaryLhs(term));
   }
 
   public static IAbstract conditionalThen(IAbstract term)
   {
     assert isConditional(term);
-    return Abstract.binaryLhs(Abstract.binaryRhs(term));
+    return Abstract.binaryRhs(Abstract.binaryLhs(term));
   }
 
   public static IAbstract conditionalElse(IAbstract term)
   {
     assert isConditional(term);
-    return Abstract.binaryRhs(Abstract.binaryRhs(term));
+    return Abstract.binaryRhs(term);
   }
 
   public static boolean isComputational(IContentExpression exp)
@@ -849,7 +845,8 @@ public class CompilerUtils
   {
     List<IAbstract> stmts = new ArrayList<>();
 
-    checkBlockTerm(term, stmts);
+    if (term != null)
+      checkBlockTerm(term, stmts);
 
     return stmts;
   }
@@ -2437,6 +2434,24 @@ public class CompilerUtils
   public static IAbstract varIsDeclaration(Location loc, IAbstract ptn, IAbstract exp)
   {
     return Abstract.unary(loc, StandardNames.DEF, Abstract.binary(loc, StandardNames.IS, ptn, exp));
+  }
+
+  public static boolean isIsForm(IAbstract term)
+  {
+    return Abstract.isBinary(term, StandardNames.IS);
+  }
+
+  public static IAbstract isFormPattern(IAbstract term)
+  {
+    assert isIsForm(term);
+
+    return Abstract.binaryLhs(term);
+  }
+
+  public static IAbstract isFormValue(IAbstract term)
+  {
+    assert isIsForm(term);
+    return Abstract.binaryRhs(term);
   }
 
   public static boolean isMacroVar(IAbstract term)

@@ -17,16 +17,16 @@
  */
 regexpSearch is package{
 
-  fooPattern is (pattern () from (S matching `.*foo.*`));
+  def fooPattern is ( () from (S matching `.*foo.*`));
 
   subjectPatterns has type list of ((string, () <= string));
-  subjectPatterns is list of [
+  def subjectPatterns is list of [
     ("foo", fooPattern)
   ];
 
-  testResult is all D where (D, _) in subjectPatterns;
+  def testResult is all D where (D, _) in subjectPatterns;
   
-  main() do {
+  prc main() do {
     logMsg(info,"$testResult");
     assert testResult=list of ["foo"];
   }

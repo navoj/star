@@ -17,5 +17,5 @@
  */
 expecting is package{
   expect has type () => ((%a) => boolean);
-  expect() is (function (a) is a matches (0,0));
+  fun expect() is ( (a) => a matches (0,0));
 }

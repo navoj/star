@@ -21,17 +21,17 @@ recordalias is package {
   }
   
   f has type action(ty of integer)
-  f(v) do {
+  prc f(v) do {
     v.v := _cons(1, v.v);
   }
 
   g has type action(ty of integer, integer)
-  g(x, v) do {
+  prc g(x, v) do {
     x.v := _cons(v, x.v);
   }
   
-  main() do {
-    x is ct { v := queue of {}; };
+  prc main() do {
+    def x is ct { v := queue of {}; };
     f(x);
     g(x, 5);
   }

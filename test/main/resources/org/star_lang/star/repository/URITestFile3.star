@@ -16,5 +16,5 @@
  *
  */
 URITestFile3 is package {
-  makeFun() is (function() is 3);
+  fun makeFun() is (() => 3);
 };

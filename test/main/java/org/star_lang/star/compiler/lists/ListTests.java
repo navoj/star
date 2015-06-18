@@ -139,7 +139,7 @@ public class ListTests extends SRTest
   @Test
   public void testSequences()
   {
-    runStar("sequences.star");
+    runStar("sequencetests.star");
   }
 
   @Test

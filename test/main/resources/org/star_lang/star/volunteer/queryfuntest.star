@@ -20,20 +20,20 @@ import ports;
 
 queryfuntest is package{
 
-  R1 is p0rt{
+  def R1 is p0rt{
     testFun1 has type(string) => integer;
-    testFun1(S) is size(S);
+    fun testFun1(S) is size(S);
   }
     
-  R2 is p0rt{
+  def R2 is p0rt{
     testFun2 has type(string) => string;
-    testFun2(S) is S++S;
+    fun testFun2(S) is S++S;
   }
   
-  Or is connectOr(R1,R2);
+  def Or is connectOr(R1,R2);
   
-  main() do {
-    A is query Or's testFun1 'n testFun2 with testFun1(testFun2("fred"));
+  prc main() do {
+    def A is query Or's testFun1 'n testFun2 with testFun1(testFun2("fred"));
     logMsg(info,"A=$A");
     assert A=8;
   }

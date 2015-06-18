@@ -24,12 +24,12 @@ monad is package {
   };
 
   implementation monad over option is {
-    return(x) is some(x);
-    bind(m, f) is
+    fun return(x) is some(x);
+    fun bind(m, f) is
 			case m in {
 			  none is none;
 			  some(v) is f(v);
 			 };
-    fail() is none;
+    fun fail() is none;
   };
 }

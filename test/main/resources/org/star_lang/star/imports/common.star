@@ -18,9 +18,9 @@
 common is package{
   private var X := 0;
   
-  commonX() is X;
+  fun commonX() is X;
   
-  commonUpdate(XX) is valof{
+  fun commonUpdate(XX) is valof{
     X := XX;
     valis X
   }

@@ -16,10 +16,10 @@
  *
  */
 tplPtns is package{
-  expect(future, past) is
+  fun expect(future, past) is
     (future, past) matches (13, 14);
     
-  main() do {
+  prc main() do {
      assert expect(13,14);
      assert not expect(12,23);
   }

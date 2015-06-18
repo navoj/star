@@ -17,45 +17,44 @@
  */
 listtests is package{
 
-  testLists is list of [1,2,3,4,5,6];
+  def testLists is list of [1,2,3,4,5,6];
   
 
   dummyAction has type action(integer, list of integer);
-  dummyAction(i, list of [s,..ss]) do {
+  prc dummyAction(i, list of [s,..ss]) do {
     logMsg(info,"dummy head $s, tail is $ss");
   };
   
   discardOdds has type (list of integer)=>list of integer;
-  discardOdds(list of []) is list of [];
-  discardOdds(list of [X,..L]) where odd(X) is discardOdds(L);
-  discardOdds(list of [X,..L]) default is list of [X,..discardOdds(L)];
+  fun discardOdds(list of []) is list of []
+   |  discardOdds(list of [X,..L]) where odd(X) is discardOdds(L)
+   |  discardOdds(list of [X,..L]) default is list of [X,..discardOdds(L)]
   
   odd has type (integer)=>boolean;
-  -- odd(X) is not even(X);
-  odd(X) is X%2!=0;
+  -- fun odd(X) is not even(X);
+  fun odd(X) is X%2!=0
   
   even has type (integer)=>boolean;
-  even(X) is X%2=0;
+  fun even(X) is X%2=0;
   
-  L1 is list of [1, 2, 3];
+  def L1 is list of [1, 2, 3];
   var L2 := L1;
   
-  filter_(_empty(),_) is _nil();
-  filter_(_pair(H,T),P) where P(H) is _cons(H,filter_(T,P));
-  filter_(_pair(_,T),P) is filter_(T,P);
+  fun filter_(_empty(),_) is _nil()
+   |  filter_(_pair(H,T),P) where P(H) is _cons(H,filter_(T,P))
+   |  filter_(_pair(_,T),P) is filter_(T,P)
   
   onlyEven has type (list of integer)=>list of integer;
-  onlyEven(L) is filter_(L,even);
+  fun onlyEven(L) is filter_(L,even)
   
-  evenIndices(L) is all Ix where (Ix->e) in L and even(e);
+  fun evenIndices(L) is all Ix where (Ix->e) in L and even(e)
     
-  secondToLast(L) is L[size(L)-2];
+  fun secondToLast(L) is L[size(L)-2]
 
   -- using the filterable contract
-  evens(L) is filter(even,L);
+  fun evens(L) is filter(even,L)
     
-  main has type action();
-  main() do {
+  prc main() do {
     assert testLists matches list of [1,..X] and X=list of [2,3,4,5,6];
     
     assert testLists matches list of [1,2,3,..X] and X=list of [4,5,6];

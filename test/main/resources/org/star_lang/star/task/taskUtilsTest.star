@@ -18,17 +18,17 @@
 taskUtilsTest is package {
   import task;
   
-  testBackground() do {
-    completorT is backgroundF(taskReturn(21));
-    t is taskBind(completorT,
-      (function (completor) is 
+  prc testBackground() do {
+    def completorT is backgroundF(taskReturn(21));
+    def t is taskBind(completorT,
+      ( (completor) =>
         taskBind(completor,
-          (function (v) is taskReturn(v*2)))));
-    res is executeTask(t, raiser_fun);
+          ((v) => taskReturn(v*2)))));
+    def res is executeTask(t, raiser_fun);
     assert(res = 42);
   }
 
-  main() do {
+  prc main() do {
     testBackground();
   }
 }

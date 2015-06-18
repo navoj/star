@@ -24,7 +24,7 @@ account is package{
   }
   
   idKey has type (%t)=>long where %t implements { id has type long };
-  idKey(R) is R.id;
+  fun idKey(R) is R.id;
   
   type txId is alias of long;
   type actId is alias of long;
@@ -38,9 +38,9 @@ account is package{
   }
   
   implementation equality over account is {
-    X = Y is same_account(X,Y);
+    fun X = Y is same_account(X,Y);
   } using {
-    same_account(account{id=N1},account{id=N2}) is N1=N2;
-    same_account(_,_) default is false;
+    fun same_account(account{id=N1},account{id=N2}) is N1=N2
+     |  same_account(_,_) default is false;
   }
 }

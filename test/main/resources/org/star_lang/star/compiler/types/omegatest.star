@@ -23,8 +23,8 @@ omegatest is package{
   }
   
   implementation coll over cons is {
-    transform (nil,_) is nil;
-    transform (cons(A,L),F) is cons(F(A),transform (L,F));
+    fun transform (nil,_) is nil
+     |  transform (cons(A,L),F) is cons(F(A),transform (L,F))
   }
   
   contract lifter over %%c is {
@@ -32,36 +32,36 @@ omegatest is package{
   }
   
   implementation lifter over cons is {
-    lift(F) is let{
-      lft(nil) is nil;
-      lft(cons(H,T)) is cons(F(H),lft(T));
+    fun lift(F) is let{
+      fun lft(nil) is nil
+       |  lft(cons(H,T)) is cons(F(H),lft(T))
     } in lft;
   }
   
   int2String has type (integer)=>string;
-  int2String(I) is I as string;
+  fun int2String(I) is I as string;
   
-  double(I) is I+I;
+  fun double(I) is I+I;
   
-  dbl is lift(double);
+  def dbl is lift(double);
   
-  testPlus(I) is valof{
+  fun testPlus(I) is valof{
     if I+I=I+I then
       valis true
     else
       valis false
   };
   
-  main() do {
-    L is cons of {1;2;3};
-    S is transform (L,int2String);
+  prc main() do {
+    def L is cons of {1;2;3};
+    def S is transform (L,int2String);
     logMsg(info,"S is $S");
     assert S=cons of {"1";"2";"3"};
-    II is transform (L,double);
+    def II is transform (L,double);
     logMsg(info,"II is $II");
     assert II=cons of {2;4;6};
     
-    D is dbl(L);
+    def D is dbl(L);
     logMsg(info,"D is $D");
     assert D=II;
     

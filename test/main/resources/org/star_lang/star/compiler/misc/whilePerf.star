@@ -17,7 +17,7 @@
  */
 whilePerf is package{
 
-  unboxed() do {
+  prc unboxed() do {
     var myStr := ""_;
     var i := 0_;
     var startTime := smallest;
@@ -30,7 +30,7 @@ whilePerf is package{
 	  }
 	  if __integer_eq(i, 999999_) then {
 		stopTime := nanos();
-		timeToProcess is (stopTime - startTime) / 1000000L;
+		def timeToProcess is (stopTime - startTime) / 1000000L;
 		logMsg(info,"Process time: $timeToProcess milliseconds");
 		keepLooping := false;
 	  }			
@@ -39,7 +39,7 @@ whilePerf is package{
     }
   }
 	
-  boxed() do {
+  prc boxed() do {
     var myStr := "";
     var i := 0;
     var startTime := smallest;
@@ -52,7 +52,7 @@ whilePerf is package{
 	  }
 	  if i = 999999 then {
 		stopTime := nanos();
-		timeToProcess is (stopTime - startTime) / 1000000L;
+		def timeToProcess is (stopTime - startTime) / 1000000L;
 		logMsg(info,"Process time: $timeToProcess milliseconds");
 		keepLooping := false;
 	  }			
@@ -61,7 +61,7 @@ whilePerf is package{
     }
   }
   
-  main() do {
+  prc main() do {
     boxed();
     unboxed();
   }

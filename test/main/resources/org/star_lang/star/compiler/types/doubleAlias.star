@@ -23,12 +23,12 @@ doubleAlias is package{
     news has type string;
   }
   
-  main() do {
-    N is NewsEvent{
-      time is 6.5;
-      symbol is "AAA";
-      sentiment is nonLong;
-      news is "no news is good news"
+  prc main() do {
+    def N is NewsEvent{
+      def time is 6.5;
+      def symbol is "AAA";
+      def sentiment is nonLong;
+      def news is "no news is good news"
     };
     
     assert N.time=6.5;

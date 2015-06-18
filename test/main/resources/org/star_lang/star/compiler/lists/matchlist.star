@@ -17,10 +17,10 @@
  */
 matchlist is package{
 
-  singletons(R) is list of { all X where (X matching (list of [_])) in R};
+  fun singletons(R) is list of { all X where (X matching (list of [_])) in R}
   
-  main() do {
-    RR is list of [ list of [1], list of [2], list of [3]];
+  prc main() do {
+    def RR is list of [ list of [1], list of [2], list of [3]];
     assert singletons(RR) = RR;
   }
 }

@@ -68,7 +68,7 @@ public class ValidationTest extends SRTest
   @Test
   public void testStatementValidation()
   {
-    validatorTest("john is 34", "statement");
+    validatorTest("def john is 34", "statement");
   }
 
   @Test

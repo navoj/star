@@ -46,13 +46,13 @@ import org.star_lang.star.resource.catalog.CatalogException;
 public class QueryTest
 {
   private static final String SAMPLE_TYPE = "{names has type list of string}";
-  private static final String SAMPLE_DATA = "{ names=list of [\"fred\",\"george\"]}";
+  private static final String SAMPLE_DATA = "{names=list of [\"fred\",\"george\"]}";
 
-  private static final String PORT_DATA = "{Query(Fn,Qt,Fr) is Fn(" + SAMPLE_DATA + ")}";
+  private static final String PORT_DATA = "{fun Query(Fn,Qt,Fr) is Fn(" + SAMPLE_DATA + ")}";
   private static final String PORT_TYPE = "{Query has type ((" + SAMPLE_TYPE
       + ")=>%t,()=>quoted,()=>dictionary of (string,any))=>%t}";
 
-  private static final String dataSet = "$pkg is package{\n  $imprt$var has type #($type)#;\n  $var is #($exp)#;\n}\n";
+  private static final String dataSet = "$pkg is package{\n  $imprt$var has type #($type)#;\n  def $var is #($exp)#;\n}\n";
 
   protected static IValue parseDataSet(String exp, String imprt, String type, CodeRepository repository)
   {
@@ -151,7 +151,7 @@ public class QueryTest
 
   private static final String PAIR_DATA = "{ names=list of [(\"fred\",\"george\"), (\"fred\",\"alfred\")]}";
   private static final String PAIR_TYPE = "{names has type list of ((string,string))}";
-  private static final String PAIR_PORT_DATA = "{Query(Fn,Qt,Fr) is Fn(" + PAIR_DATA + ")}";
+  private static final String PAIR_PORT_DATA = "{fun Query(Fn,Qt,Fr) is Fn(" + PAIR_DATA + ")}";
   private static final String PAIR_PORT_TYPE = "{Query has type ((" + PAIR_TYPE
       + ")=>%t,()=>quoted,()=>dictionary of (string,any))=>%t}";
 

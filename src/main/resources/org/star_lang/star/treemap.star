@@ -70,7 +70,7 @@ fun look(K,T) is valof{
     case Tr in {
       trLeaf(H1,Els) where __integer_eq(H1,H) do valis _index(Els,K);
       trNode{maskLen=Ln;mask=M;left=L;right=R} do{
-        CM is commonMask(H,Ln);
+        def CM is commonMask(H,Ln);
 
 	    if __integer_eq(CM,M) then{
 	      if nthBit(H,Ln) then
@@ -116,7 +116,7 @@ fun commonMask(M1,ML) is valof{
   if __integer_eq(ML,0_) then
     valis 0_
   else{
-    CML is __integer_minus(ThirtyTwo,ML);
+    def CML is __integer_minus(ThirtyTwo,ML);
     valis __integer_bit_and(__integer_bit_shl(__integer_bit_shr(mOne,CML),CML),M1);
   }
 } 
@@ -140,7 +140,8 @@ fun maskLen(trEmpty) is ThirtyTwo
  |  maskLen(trLeaf(H,_)) is ThirtyTwo
  |  maskLen(trNode{maskLen=ML}) is ML;
 
-private nthBit(M,L) is valof{
+private 
+fun nthBit(M,L) is valof{
   def Nth is __integer_bit_shr(MSB,L);
   valis __integer_eq(__integer_bit_and(M,Nth),Nth);
 }
@@ -159,7 +160,7 @@ fun mergeLeafs(trLeaf(H,L1),trLeaf(H,L2)) is trLeaf(H,_merge(L1,L2))
       if nthBit(H1,CML) then
         valis trNode{mask=CM;maskLen=CML;left=T2;right=T1}
       else
-        valis rNode{mask=CM;maskLen=CML;left=T1;right=T2}
+        valis trNode{mask=CM;maskLen=CML;left=T1;right=T2}
     };
 
 mergeNodes has type (treemap of (%k,%v), treemap of (%k,%v)) => treemap of (%k,%v) where equality over %k;

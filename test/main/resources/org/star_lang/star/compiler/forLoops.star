@@ -18,13 +18,13 @@
 forLoops is package{
   -- test out various for loops
     
-  L is list of {1;2;3;4;5};
+  def L is list of [1, 2, 3, 4, 5]
   
-  C is cons of {1;2;3;4;5};
+  def C is cons of [1, 2, 3, 4, 5]
     
-  M is dictionary of {1->"1"; 2->"2"; 3->"3"; 4->"4"; 5->"5"};
+  def M is dictionary of [1->"1",  2->"2",  3->"3",  4->"4",  5->"5"]
   
-  main() do {
+  prc main() do {
     -- basic loops
  
     for l in L do

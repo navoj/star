@@ -18,15 +18,15 @@
 injectTest is package{
   import task;
   
-  aa(X) is action computation{
+  fun aa(X) is action computation{
       valis X+2;
   }
 
-  tt(X) is task{
+  fun tt(X) is task{
     valis valof aa(X);
   }
   
-  uu(X) is task{
+  fun uu(X) is task{
     logMsg(info,"We got $X");
     var Y := 1;
     Y:=Y+valof tt(3);
@@ -34,8 +34,8 @@ injectTest is package{
     valis X+Y;
   };
   
-  main() do {    
-    YY is valof uu(3);
+  prc main() do {    
+    def YY is valof uu(3);
     assert YY=9;
   }
 }

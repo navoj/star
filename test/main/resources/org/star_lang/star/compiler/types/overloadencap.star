@@ -27,16 +27,16 @@ overloadencap is package{
   };
   
   less has type (integer,integer)=>boolean;
-  less(X,Y) is X<Y;
+  fun less(X,Y) is X<Y;
   
-  main() do{
-    C is combo{
+  prc main() do{
+    def C is combo{
       type integer counts as t1;
       type integer counts as t2;
-      ast1(X) is X;
-      ast2(X) is X;
+      fun ast1(X) is X;
+      fun ast2(X) is X;
       cmp has type (integer,integer)=>boolean;
-      cmp is (<);
+      def cmp is (<);
     }
     
     assert C.cmp(C.ast1(1),C.ast2(2));

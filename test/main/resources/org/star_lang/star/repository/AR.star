@@ -18,8 +18,8 @@
 A is package {
   import B;
 
-  main() do {
-	funcB({funcA() do logMsg(info,"funcA called")});
+  prc main() do {
+	funcB({prc funcA() do logMsg(info,"funcA called")});
 	
 	assert executedB();
   }

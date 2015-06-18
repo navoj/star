@@ -30,12 +30,12 @@ support is package{
     onDelete default is doNothing;
   }
   
-  private doNothing(_,_) do nothing;
+  private prc doNothing(_,_) do nothing;
   
-  counter is let{
+  def counter is let{
     var count := 0;
     
-    next() is valof{
+    fun next() is valof{
       count := count+1;
       valis count;
     }

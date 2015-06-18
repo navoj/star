@@ -2,42 +2,40 @@ parmap is package{
 	
   -- this is 'fast' takeuchi, optimizing by hand integer arithmetic
   
-  takI(x,y,z) where __integer_lt(y,x) is takI(takI(__integer_minus(x,1_),y,z),takI(__integer_minus(y,1_),z,x),takI(__integer_minus(z,1_),x,y));
-  takI(x,y,z) default is y;
+  fun takI(x,y,z) where __integer_lt(y,x) is takI(takI(__integer_minus(x,1_),y,z),takI(__integer_minus(y,1_),z,x),takI(__integer_minus(z,1_),x,y))
+   |  takI(x,y,z) default is y
   
-  takk(integer(x),integer(y),integer(z)) is integer(takI(x,y,z));
+  fun takk(integer(x),integer(y),integer(z)) is integer(takI(x,y,z))
    
-  longTak(X) is takk(18,12,6);
+  fun longTak(X) is takk(18,12,6)
     
-  parmap(F,L) is let{
-	spread(list of {}) is list of {};
-	spread(list of {X;..Y}) is list of {
-		background task{valis F(X)} ;.. spread(Y)}
+  fun parmap(F,L) is let{
+	fun spread(list of []) is list of []
+	 |  spread(list of [X,..Y]) is list of [
+		  background task{valis F(X)} ,.. spread(Y)]
 			
-	collect(list of {}) is list of {}
-	collect(list of {T;..Ts}) is list of {valof T;..collect(Ts)}
+	fun collect(list of []) is list of []
+	 |  collect(list of [T,..Ts]) is list of [valof T,..collect(Ts)]
   } in collect(spread(L));
 	
-  pmap(F,L) is let{
-	  spread() is list of { all (background task{ valis F(X) }) where X in L }
-	  collect(LL) is list of { all (valof X) where X in LL }
+  fun pmap(F,L) is let{
+	  fun spread() is list of { all (background task{ valis F(X) }) where X in L }
+	  fun collect(LL) is list of { all (valof X) where X in LL }
 	} in collect(spread());
 	    
+  fun listmap(F,list of {}) is list of {}
+   |  listmap(F,list of {X;..Y}) is list of {F(X);..listmap(F,Y)}
 	
-  listmap(F,list of {}) is list of {};
-  listmap(F,list of {X;..Y}) is list of {F(X);..listmap(F,Y)}
-	
-	
-  main() do {
+  prc main() do {
 	L1 has type list of integer;
-	L1 is iota(1,50,1);
+	def L1 is iota(1,50,1);
 		
-	start1 is nanos();
-	L2 is listmap(longTak, L1)
-	end1 is nanos();
+	def start1 is nanos();
+	def L2 is listmap(longTak, L1)
+	def end1 is nanos();
 		
-	L3 is parmap(longTak, L1)
-	end2 is nanos();
+	def L3 is parmap(longTak, L1)
+	def end2 is nanos();
 		
 	assert L2=L3;
 		

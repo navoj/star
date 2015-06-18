@@ -18,12 +18,12 @@
 parsieve is package{
   -- parallel implementation of naive sieve of eratosthenes, based on Reppy's implementation
   
-  filter(P,inCh) is let{
-    outCh is channel();
+  fun filter(P,inCh) is let{
+    def outCh is channel();
     
-    loop() is task{
+    fun loop() is task{
       while true do {
-        I is valof (wait for incoming inCh);
+        def I is valof (wait for incoming inCh);
         if not I%P=0 then
           perform send(outCh,I);
       }
@@ -32,11 +32,11 @@ parsieve is package{
     { ignore background loop() }
   } in outCh;
   
-  sieve() is let{
-    primes is channel();
+  fun sieve() is let{
+    def primes is channel();
     
-    head(ch) is task{
-      p is valof recv(ch);
+    fun head(ch) is task{
+      def p is valof recv(ch);
       logMsg(info,"next prime is $p");
       perform send(primes,p);
       perform head(filter(p,ch));
@@ -45,7 +45,7 @@ parsieve is package{
     { ignore background head(natStream(2)) }
   } in primes; 
   
-  natStream(S) is valof{
+  fun natStream(S) is valof{
     def ch is channel();
     ignore background task {
       var counter := S;
@@ -58,22 +58,22 @@ parsieve is package{
     valis ch;
   }
   
-  primes(N) is let{
+  fun primes(N) is let{
     def s is sieve();
     
-    loop(0,L) is reverse(L);
-    loop(I,L) is loop(I-1,cons of {valof recv(s);..L});
-  } in loop(N,cons of {});
+    fun loop(0,L) is reverse(L)
+     |  loop(I,L) is loop(I-1,cons of [valof recv(s),..L])
+  } in loop(N,cons of []);
   
   consumer has type (channel of integer)=>task of (());
-  consume(inCh) is task {
+  fun consume(inCh) is task {
     while true do {
-      M is valof recv(inCh);
+      def M is valof recv(inCh);
       logMsg(info,"We got $M");
     }
   }
   
-  main() do {
+  prc main() do {
     logMsg(info,"primes up 100 = $(primes(100))");
   
     -- logMsg(info,"primes up 1000 = $(primes(1000))");

@@ -18,15 +18,15 @@
 remActor is package{
   import notifyRem;
   
-  N is notes(foo);
+  def N is notes(foo);
 
   foo has type actor of { x has type occurrence of integer};
-  foo is actor {
+  def foo is actor {
     on a on x do
       logMsg(info, "$a");
   }
 
-  main() do {
+  prc main() do {
     N.bar();
   }
 }

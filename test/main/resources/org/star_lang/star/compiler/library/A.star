@@ -16,7 +16,7 @@
  *
  */
 A is package{
-  main() do {
+  prc main() do {
     logMsg(info,"this is not correct");
     assert false;
   }

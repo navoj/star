@@ -1,6 +1,6 @@
 tupleAssign is package{
 
-  main() do {
+  prc main() do {
     var T := 1;
     var A := "one"
     

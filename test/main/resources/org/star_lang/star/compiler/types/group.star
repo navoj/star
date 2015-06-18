@@ -26,54 +26,54 @@ group is package{
     el has type for all %t such that (%t)=>elem;
   };
   
-  modGroup(K) is group{
+  fun modGroup(K) is group{
     type integer counts as elem;
-    zero is 0;
+    def zero is 0;
     
-    inv(X) is K-X;
+    fun inv(X) is K-X;
     
-    op(X,Y) is (X+Y)%K;
+    fun op(X,Y) is (X+Y)%K;
     
-    el(X) is X cast elem;
+    fun el(X) is X cast elem;
     
-    pPrint\#elem is pPrint\#integer;
+    def pPrint\#elem is pPrint\#integer;
   };
   
   double has type (group)=>group;
-  double(G) is group{
+  fun double(G) is group{
     type G.elem counts as elem;
     
-    zero is G.zero;
+    def zero is G.zero;
     
-    inv(X) is G.inv(X);
+    fun inv(X) is G.inv(X);
     
-    op(X,Y) is G.op(G.op(X,X),G.op(Y,Y));
+    fun op(X,Y) is G.op(G.op(X,X),G.op(Y,Y));
     
-    el(X) is G.el(X);
+    fun el(X) is G.el(X);
     
-    pPrint\#elem is G.pPrint\#elem
+    def pPrint\#elem is G.pPrint\#elem
   }
   
-  invGroup(G) is group{
+  fun invGroup(G) is group{
     type G.elem counts as elem;
     
-    zero is G.zero;
+    def zero is G.zero;
     
-    inv is G.inv;
+    def inv is G.inv;
     
-    op(X,Y) is G.inv(G.op(G.inv(X),G.inv(Y)));
+    fun op(X,Y) is G.inv(G.op(G.inv(X),G.inv(Y)));
     
-    el is G.el
+    def el is G.el
     
-    pPrint\#elem is G.pPrint\#elem
+    def pPrint\#elem is G.pPrint\#elem
   }
   
-  main() do {
-    K is modGroup(7);
+  prc main() do {
+    def K is modGroup(7);
     logMsg(info,"K.zero=#(__display(K.zero))");
     logMsg(info,"3+5=#(__display(K.op(K.el(3),K.el(5))))");
     
-    D is double(K);
+    def D is double(K);
     logMsg(info,"D.zero = #(__display(D.zero))");
     logMsg(info,"3+5=#(__display(D.op(D.el(3),D.el(5))))");
   }

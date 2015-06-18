@@ -22,6 +22,6 @@ weights is package {
  type graph is alias of intmap of intmap of weight;
 
  weight has type (graph, vertex, vertex) => option of weight;
- weight(g, i, j) where g[i] has value gI is gI[j]
- weight(_,_,_) default is none
+ fun weight(g, i, j) where g[i] has value gI is gI[j]
+  |  weight(_,_,_) default is none
 }

@@ -21,7 +21,7 @@ nodecontract is package{
   }
   
   implementation foo over integer is {
-    bar(X) is X*2;
+    fun bar(X) is X*2;
   }
   
   type tree is node{
@@ -31,14 +31,14 @@ nodecontract is package{
     B has type (tt)=>integer;
   };
   
-  main() do {
-    N is node{
+  prc main() do {
+    def N is node{
       type tt is alias of integer;
-      XX is 23;
-      B(X) is bar(X);
+      def XX is 23;
+      fun B(X) is bar(X);
     };
     
-    B is N.B(N.XX);
+    def B is N.B(N.XX);
     logMsg(info,"B=$B");
     assert B=46;
   }

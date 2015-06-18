@@ -13,8 +13,8 @@ optionChaining is package{
     phone has type list of string
   }
   
-  main() do {
-    A is address{
+  prc main() do {
+    def A is address{
       line1 = "1 Main St"
       line2 = none
       city = "Market"
@@ -22,7 +22,7 @@ optionChaining is package{
       phone = ["alpha","beta"]
     }
     
-    P is person{
+    def P is person{
       name = "fred"
       address = some(A)
       call = some(()=>"fred")

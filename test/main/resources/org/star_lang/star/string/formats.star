@@ -18,7 +18,7 @@
 formats is package{
  -- test the various formatting capabilities
  
-  main() do {
+  prc main() do {
     def val is 123456;
     def neg is -val;
     

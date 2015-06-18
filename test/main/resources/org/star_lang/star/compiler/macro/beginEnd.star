@@ -27,6 +27,6 @@ beginEnd is package{
   #begin end :: action;
   
   
-  #procedure #( #(?Tmpl)# begin ?body./#(return ?E)# end )#==> Tmpl is valof {body./#(valis E)#}; 
-  #procedure #( #(?Tmpl)# begin ?body end)# ==> Tmpl do body ; 
+  #procedure #( #(?Tmpl)# begin ?body./#(return ?E)# end )#==> fun Tmpl is valof {body./#(valis E)#}; 
+  #procedure #( #(?Tmpl)# begin ?body end)# ==> prc Tmpl do body ; 
 }

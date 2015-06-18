@@ -5,7 +5,7 @@ modules is package{
   };
   
   implementation foo over cons of integer determines integer is {
-    f(L) is L[0] or else nonInteger;
+    fun f(L) is L[0] or else nonInteger;
   }
   
   type m of t is m{
@@ -15,14 +15,14 @@ modules is package{
     ff has type (k of t)=>t;
   };
   
-  M is m{
+  def M is m{
     type cons counts as k;
-    c is cons of {1;2;3};
-    poot(L,E) is cons of {E;..L};
-    ff is f;
+    def c is cons of {1;2;3};
+    fun poot(L,E) is cons of {E;..L};
+    def ff is f;
   }
   
-  main() do let{
+  prc main() do let{
     open M;
   } in 
     { assert f(c)=1 };

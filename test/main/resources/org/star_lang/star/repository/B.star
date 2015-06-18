@@ -16,10 +16,10 @@
  *
  */
 B is package {
-  executedB() is execB;
+  fun executedB() is execB;
   
   var execB := false;
-  funcB(p) do { 
+  prc funcB(p) do { 
     execB := true;
     p.funcA();
   }

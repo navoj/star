@@ -18,10 +18,10 @@
 badfield is package{
   type foo is bar{ baz has type string};
   
-  FF is bar{baz="hi"};
+  def FF is bar{baz="hi"};
   
-  main() do {
-    KK is FF.foo;  -- should report an error
+  prc main() do {
+    def KK is FF.foo;  -- should report an error
     
     logMsg(info,KK);
   }

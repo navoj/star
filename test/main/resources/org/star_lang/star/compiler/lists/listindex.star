@@ -16,8 +16,8 @@
  *
  */
 listindex is package{
-  main() do {
-    LL is list of {1; 2; 3; 4; 5; 6; 7};
+  prc main() do {
+    def LL is list of {1; 2; 3; 4; 5; 6; 7};
     var KL := LL;
     
     assert LL[0] has value 1;
@@ -36,7 +36,7 @@ listindex is package{
     assert KL=list of {-1;2;3;4;10;20;7};
     assert KL[4:6] = list of {10;20};
     
-    CC is cons of {1; 2; 3; 4; 5; 6; 7};
+    def CC is cons of {1; 2; 3; 4; 5; 6; 7};
     var KC := CC;
     
     assert CC[0] has value 1;

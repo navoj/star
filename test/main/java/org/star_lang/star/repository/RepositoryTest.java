@@ -93,10 +93,10 @@ public class RepositoryTest extends SRTest
       LanguageException
   {
     String CatScheme = "cat";
-    String v0 = "v is package{ version is 0.0}";
-    String v1 = "v is package{ version is 1.0}";
-    String v2 = "v is package{ version is 1.1}";
-    String q = "q is package{ import v; main() do { logMsg(info,\"version $version\"); assert version=1.1} }";
+    String v0 = "v is package{ def version is 0.0}";
+    String v1 = "v is package{ def version is 1.0}";
+    String v2 = "v is package{ def version is 1.1}";
+    String q = "q is package{ import v; prc main() do { logMsg(info,\"version $version\"); assert version=1.1} }";
 
     ResourceURI u0 = URIUtils.createQuotedURI("v", v0, StandardNames.VERSION + "=0.0");
     ResourceURI u1 = URIUtils.createQuotedURI("v", v1, StandardNames.VERSION + "=1.0");

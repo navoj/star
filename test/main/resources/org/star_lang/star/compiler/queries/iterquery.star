@@ -16,46 +16,46 @@
  *
  */
 iterquery is package{  
-  S is list of [("alpha",1), ("beta",2), ("gamma",3) ];
-  T is list of [("aleph",1), ("delta",5), ("eta",7)];
-  O is list of [1, 3, 5];
+  def S is list of [("alpha",1), ("beta",2), ("gamma",3) ];
+  def T is list of [("aleph",1), ("delta",5), ("eta",7)];
+  def O is list of [1, 3, 5];
   
-  Size is 20000;
+  def Size is 20000;
   
-  In is all ("$Ix",Ix) where Ix in (iota(1,Size,1) has type list of integer);
+  def In is all ("$Ix",Ix) where Ix in (iota(1,Size,1) has type list of integer);
   
   Od has type list of integer;
-  Od is iota(1,Size,2);
+  def Od is iota(1,Size,2);
     
-  sho(M,X) is valof{
+  fun sho(M,X) is valof{
     logMsg(info,M);
     valis X;
   };
     
-  main() do {
+  prc main() do {
     logMsg(info,"O=$O");
-    XX is all X where ("beta",X) in S;
+    def XX is all X where ("beta",X) in S;
     logMsg(info,"$XX");
     assert XX=list of [2];
     
-    YY is 3 of X where ("alpha",X) in S;
+    def YY is 3 of X where ("alpha",X) in S;
     logMsg(info,"$YY");
     assert YY=list of [1];
     
-    ZZ is list of {all N where (N,X) in S and X in O};
+    def ZZ is list of {all N where (N,X) in S and X in O};
     logMsg(info,"$ZZ");
     assert ZZ=list of ["alpha", "gamma"];
     
-    UU is all N where (N,X) in S and not X in O;
+    def UU is all N where (N,X) in S and not X in O;
     logMsg(info,"UU=$UU");
     assert UU = list of ["beta"];
 
-    VV is all N where o in O and ((N,o) in S otherwise (N,o) in T);
+    def VV is all N where o in O and ((N,o) in S otherwise (N,o) in T);
     logMsg(info,"$VV");
 
-    start is nanos();
-    EE is all N where (N,o) in In and not o in Od;
-    time is nanos()-start;
+    def start is nanos();
+    def EE is all N where (N,o) in In and not o in Od;
+    def time is nanos()-start;
     logMsg(info,"query took $((time as float)/1.0e9) seconds"); 
   }
 }

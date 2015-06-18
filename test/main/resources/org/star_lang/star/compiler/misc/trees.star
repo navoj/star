@@ -25,30 +25,30 @@ trees is package{
   type weekday is monday or tuesday or wednesday or thursday or friday or saturday or sunday;
   
   leaves has type (tree of %t) => list of %t;
-  leaves(nul) is list of [];
-  leaves(labeled(L,Lb,R)) is leaves(L)++list of [Lb,..leaves(R)];
+  fun leaves(nul) is list of []
+   |  leaves(labeled(L,Lb,R)) is leaves(L)++list of [Lb,..leaves(R)]
   
-  insert has type (tree of %t, %t ) => tree of %t where comparable over %t;
-  insert(nul,T) is labeled(nul,T,nul);
-  insert(labeled(L,B,R),T) where B>T is labeled(insert(L,T),B,R);
-  insert(labeled(L,B,R),T) where B<T is labeled(L,B,insert(R,T));
+  insert has type (tree of %t, %t ) => tree of %t where comparable over %t
+  fun insert(nul,T) is labeled(nul,T,nul)
+   |  insert(labeled(L,B,R),T) where B>T is labeled(insert(L,T),B,R)
+   |  insert(labeled(L,B,R),T) where B<T is labeled(L,B,insert(R,T))
   
-  rotate has type (tree of %t) => tree of %t;
-  rotate(nul) is nul;
+  rotate has type (tree of %t) => tree of %t
+  fun rotate(nul) is nul
   
-  locate(nul,_) is false;
-  locate(labeled(_,Lb,_),Lb) is true;
-  locate(labeled(L,Lb,_),LL) where LL<Lb is locate(L,LL);
-  locate(labeled(_,Lb,R),LL) where LL>Lb is locate(R,LL);
+  fun locate(nul,_) is false
+   |  locate(labeled(_,Lb,_),Lb) is true
+   |  locate(labeled(L,Lb,_),LL) where LL<Lb is locate(L,LL)
+   |  locate(labeled(_,Lb,R),LL) where LL>Lb is locate(R,LL)
   
-  find has type (list of ((%s,%t)),%s ) =>option of %t where equality over %s;
-  find(_,_) default is none;
-  find(list of [(K,V),.._],Ky) where K=Ky is some(V);
-  find(list of [_,..R],Ky) is find(R,Ky);
+  find has type (list of ((%s,%t)),%s ) =>option of %t where equality over %s
+  fun find(_,_) default is none
+   |  find(list of [(K,V),.._],Ky) where K=Ky is some(V)
+   |  find(list of [_,..R],Ky) is find(R,Ky)
   
-  main() do
+  prc main() do
   {
-    T is insert(insert(insert(insert(nul,"alpha"),"gamma"),"beta"),"delta");
+    def T is insert(insert(insert(insert(nul,"alpha"),"gamma"),"beta"),"delta");
     logMsg(info,"T is $T");
     
     assert locate(T,"alpha");

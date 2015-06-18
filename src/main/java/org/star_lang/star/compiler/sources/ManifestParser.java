@@ -118,10 +118,10 @@ public class ManifestParser implements CodeParser
     term = parser.parse(uri, rdr, null);
 
     // Check for name is manifest...
-    if (term != null && CompilerUtils.isIsStatement(term)
-        && CompilerUtils.isPackageIdentifier(CompilerUtils.isStmtPattern(term))
-        && CompilerUtils.isBraceTerm(CompilerUtils.isStmtValue(term), MANIFEST)) {
-      String manifestName = CompilerUtils.getPackageIdentifier(CompilerUtils.isStmtPattern(term));
+    if (term != null && CompilerUtils.isIsForm(term)
+        && CompilerUtils.isPackageIdentifier(CompilerUtils.isFormPattern(term))
+        && CompilerUtils.isBraceTerm(CompilerUtils.isFormValue(term), MANIFEST)) {
+      String manifestName = CompilerUtils.getPackageIdentifier(CompilerUtils.isFormPattern(term));
       List<ITypeDescription> types = new ArrayList<ITypeDescription>();
       List<ITypeAlias> aliases = new ArrayList<ITypeAlias>();
       Map<String, TypeContract> contracts = new HashMap<String, TypeContract>();
@@ -133,7 +133,7 @@ public class ManifestParser implements CodeParser
       ResourceURI manifestURI = null;
       Dictionary cxt = Dict.baseDict();
 
-      for (IAbstract stmt : CompilerUtils.unWrap(CompilerUtils.braceArg(CompilerUtils.isStmtValue(term)))) {
+      for (IAbstract stmt : CompilerUtils.unWrap(CompilerUtils.braceArg(CompilerUtils.isFormValue(term)))) {
         if (CompilerUtils.isTypeAlias(stmt)) {
           TypeAlias alias = TypeParser.parseTypeAlias(stmt, cxt.fork(), errors);
           aliases.add(alias);
@@ -194,22 +194,18 @@ public class ManifestParser implements CodeParser
 
           if (!TypeUtils.isTypeInterface(pkgType))
             errors.reportError("expecting a package specification, not " + pkgType, term.getLoc());
-        } else if (CompilerUtils.isIsStatement(stmt) && Abstract.isIdentifier(CompilerUtils.isStmtPattern(stmt))) {
-          String manifestKey = Abstract.getId(CompilerUtils.isStmtPattern(stmt));
-          IAbstract manifestValue = CompilerUtils.isStmtValue(stmt);
-          if (manifestKey.equals("uri")) {
-            if (manifestValue instanceof StringLiteral) {
-              String uriSpec = Abstract.getString(manifestValue);
+        } else if (CompilerUtils.isIsForm(stmt) && Abstract.isIdentifier(CompilerUtils.isFormPattern(stmt), "uri")) {
+          IAbstract manifestValue = CompilerUtils.isFormValue(stmt);
+          if (manifestValue instanceof StringLiteral) {
+            String uriSpec = Abstract.getString(manifestValue);
 
-              try {
-                manifestURI = ResourceURI.parseURI(uriSpec);
-              } catch (ResourceException e) {
-                errors.reportError("illegal uri spec: " + uriSpec, stmt.getLoc());
-              }
-            } else
-              errors.reportError("illegal uri spec " + manifestValue, stmt.getLoc());
+            try {
+              manifestURI = ResourceURI.parseURI(uriSpec);
+            } catch (ResourceException e) {
+              errors.reportError("illegal uri spec: " + uriSpec, stmt.getLoc());
+            }
           } else
-            errors.reportError("unknown manifest variable: " + stmt + " in manifest", stmt.getLoc());
+            errors.reportError("illegal uri spec " + manifestValue, stmt.getLoc());
         } else
           errors.reportError("unknown statement type: " + stmt + " in manifest", stmt.getLoc());
       }

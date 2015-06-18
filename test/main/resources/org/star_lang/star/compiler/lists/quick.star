@@ -19,33 +19,31 @@
 
 quick is package{
 
-  quick has type (list of %s,((%s,%s) =>boolean)) => list of %s;
-  quick(list of [X],_) is list of [X];
-  quick(list of [],_) is list of [];
-   
-  quick(L,C) where size(L)>1 is let{
-    var lftHalf := list of [];
-    rgtHalf has type ref list of %s;
-    var rgtHalf := list of [];
-    pivot is someValue(L[0]);
+  quick has type (list of %s,((%s,%s) =>boolean)) => list of %s
+  fun quick(list of [X],_) is list of [X]
+   |  quick(list of [],_) is list of []
+   |  quick(L,C) where size(L)>1 is let{
+        var lftHalf := list of [];
+        rgtHalf has type ref list of %s;
+        var rgtHalf := list of [];
+        def pivot is someValue(L[0]);
     
-    split has type action();
-    split() do {
-	  -- logMsg(info,"pivot is $pivot");
-      for Ix->el in L do
-      {
-        if Ix>0 then{
-          if C(el,pivot) then
-            lftHalf := lftHalf++list of [el] -- list concatenate
-          else
-            rgtHalf := rgtHalf++list of [el];
+        split has type action();
+        prc split() do {
+	      -- logMsg(info,"pivot is $pivot");
+          for Ix->el in L do {
+            if Ix>0 then{
+              if C(el,pivot) then
+                lftHalf := lftHalf++list of [el] -- list concatenate
+              else
+                rgtHalf := rgtHalf++list of [el];
+            };
+	        -- logMsg(info,"left half is $lftHalf");
+            -- logMsg(info,"right half is $rgtHalf");
+          }
         };
-	    -- logMsg(info,"left half is $lftHalf");
-        -- logMsg(info,"right half is $rgtHalf");
+      } in valof{
+        split();
+        valis quick(lftHalf,C)++list of [pivot,..quick(rgtHalf,C)];
       }
-    };
-  } in valof{
-      split();
-      valis quick(lftHalf,C)++list of [pivot,..quick(rgtHalf,C)];
-    }
 }

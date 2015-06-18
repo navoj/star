@@ -93,8 +93,8 @@ public class FormatTest extends SRTest
   @Test
   public void testPort()
   {
-    String original = "CPUEventsIn is respond {\n        /* This event rule fires with the CPU usage is > 95% */\n        on (V where V.Usage > 95) on DATA do {\n            logMsg(info,\"CPU Alert $V\");\n            notify CPUAlerts with (V cast any) on DATA;\n        }\n    };";
-    String expected = "CPUEventsIn is respond {\n/* This event rule fires with the CPU usage is > 95% */\n  on (V where\n      V.Usage > 95) on DATA do {\n    logMsg(info,\"CPU Alert $V\");\n    notify CPUAlerts with (V cast any) on DATA;\n  }\n};\n";
+    String original = "def CPUEventsIn is respond {\n        /* This event rule fires with the CPU usage is > 95% */\n        on (V where V.Usage > 95) on DATA do {\n            logMsg(info,\"CPU Alert $V\");\n            notify CPUAlerts with (V cast any) on DATA;\n        }\n    };";
+    String expected = "def CPUEventsIn is respond {\n/* This event rule fires with the CPU usage is > 95% */\n  on (V where\n      V.Usage > 95) on DATA do {\n    logMsg(info,\"CPU Alert $V\");\n    notify CPUAlerts with (V cast any) on DATA;\n  }\n};\n";
 
     formatTest(original, expected);
   }

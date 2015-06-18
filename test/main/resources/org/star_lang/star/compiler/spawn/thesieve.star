@@ -1,5 +1,5 @@
 worksheet{
-  sieve(inChannel,Max) is valof {
+  fun sieve(inChannel,Max) is valof {
     def nxPrime is valof (wait for recvRv(inChannel));
     -- logMsg(info,"next prime is $nxPrime");
     if nxPrime<Max then
@@ -22,9 +22,9 @@ worksheet{
     }
   } in natChannel;
   
-  filter(P,inChannel) is let{
+  fun filter(P,inChannel) is let{
     def outChannel is channel();
-    loop() is task{
+    fun loop() is task{
       while true do {
         def I is valof (wait for recvRv(inChannel));
         if I%P!=0 then -- not a multiple, pass it on

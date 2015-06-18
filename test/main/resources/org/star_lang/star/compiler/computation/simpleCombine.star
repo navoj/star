@@ -18,15 +18,15 @@
 simpleCombine is package{
   import task;
   
-  tst is task { valis 0; }
+  def tst is task { valis 0; }
   
-  mona is task {
-    b is 42;
-    c is valof tst;
+  def mona is task {
+    def b is 42;
+    def c is valof tst;
     valis b;
   }
   
-  main() do {
+  prc main() do {
     assert valof mona = 42
   }
 }

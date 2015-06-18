@@ -19,10 +19,10 @@ macroGen is package{
   # generate(?Xp) ==> pickup(Xp) ## {
     # foo ==> #$XX;
     # pickup(?X./bar) ==> pickup(X./foo);
-    # pickup(?X) ==> { foo is 3; logMsg(info,"X=$(X)"); assert (any of U where U in X)=3 };
+    # pickup(?X) ==> { def foo is 3; logMsg(info,"X=$(X)"); assert (any of U where U in X)=3 };
   };
   
-  main() do {
+  prc main() do {
     generate(list of {bar; bar; foo; foo});
   }
 }

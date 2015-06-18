@@ -4,14 +4,14 @@ pureStack is package{
     pop has type ()=>(t,stack of t)
   }
   
-  ss(L) is stack{
-    push(X) is ss(list of {X;..L});
-    pop() where L matches list of {X;..LL} is (X,ss(LL))
+  fun ss(L) is stack{
+    fun push(X) is ss(list of {X;..L});
+    fun pop() where L matches list of {X;..LL} is (X,ss(LL))
   }
   
-  emptyStack is ss(list of {})
+  def emptyStack is ss(list of {})
   
-  main() do {
+  prc main() do {
     assert emptyStack.push(1).pop() matches (1,_)
   }
 }

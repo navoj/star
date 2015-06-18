@@ -30,7 +30,7 @@ indexedTests is package{
     {name="peter"; dept="b"};
   }
   
-  main() do {
+  prc main() do {
     logMsg(info,"R=$R");
     logMsg(info,"S=$S");
     

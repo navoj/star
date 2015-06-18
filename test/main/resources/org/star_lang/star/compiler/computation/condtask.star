@@ -16,11 +16,11 @@
  *
  */
 condtask is package{  
-  tt(X) is task{
+  fun tt(X) is task{
     valis X+2;
   }
    
-  uu(X) is task{
+  fun uu(X) is task{
  --   logMsg(info,"We got $X");
     var Y := 1;
 
@@ -32,8 +32,8 @@ condtask is package{
     valis X+Y;
   };
   
-  main() do {
-    YY is valof uu(3);
+  prc main() do {
+    def YY is valof uu(3);
     logMsg(info,"YY=$YY");
     assert YY=6;
   }

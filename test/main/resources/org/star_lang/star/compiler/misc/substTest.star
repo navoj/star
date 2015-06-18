@@ -18,9 +18,9 @@
 substTest is package{
   import person;
   
-  substAgeFun(X,V) is X substitute{ age := V }; 
+  fun substAgeFun(X,V) is X substitute{ age := V }; 
   
-  main() do {
+  prc main() do {
     var J := someone{
       name = "Joe";
     }

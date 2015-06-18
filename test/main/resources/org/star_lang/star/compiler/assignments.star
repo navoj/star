@@ -33,7 +33,7 @@ assignments is package{
   
   var PP := list of [ someone{name:="a"}, someone{name:="b"}, someone{name:="c"}];
   
-  main() do {
+  prc main() do {
     var F := family{ parents=list of [someone{name:="p"}, someone{name:="m"}] };
     
     var X := 0;

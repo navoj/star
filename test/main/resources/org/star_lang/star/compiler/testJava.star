@@ -19,7 +19,7 @@
   java org.star_lang.star.compiler.SimpleFuns;
   java (java).lang.System;
     
-  main() do {
+  prc main() do {
     logMsg(info,"invoking javaFoo(23,45): $(javaFoo(23,45))");
     logMsg(info,"invoking javaString(34): $(javaString(34))");
     doSomething("hello",34.56D);

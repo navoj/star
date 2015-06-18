@@ -16,7 +16,7 @@
  *
  */
 mapLoopTest is package {
-  comp(H1, H2) do {
+  prc comp(H1, H2) do {
     var counter := 0;
     
     for(K1->V1 in H1) do {
@@ -32,7 +32,7 @@ mapLoopTest is package {
     }
   }
 
-  main() do {
+  prc main() do {
     def H1 is dictionary of {"A"->"0"};
     def H2 is dictionary of {"C"->"0";"D"->"1";"C"->"2"};
     comp(H1, H2);

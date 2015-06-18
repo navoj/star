@@ -18,18 +18,18 @@
 listEx is package{
   -- test out example cons expressions
   
-  main() do {
-    L0 is cons of {};
+  prc main() do {
+    def L0 is cons of {};
     
-    L1 is cons of {1};
+    def L1 is cons of {1};
     
-    L2 is cons of {1;2;3;4};
+    def L2 is cons of {1;2;3;4};
     
-    L3 is cons of {-1;-2;..L2}
+    def L3 is cons of {-1;-2;..L2}
     
-    L4 is cons of {L2..;5;6;7}
+    def L4 is cons of {L2..;5;6;7}
     
-    L5 is cons of {-2;-1;..L2..;5;6;7}
+    def L5 is cons of {-2;-1;..L2..;5;6;7}
     
     logMsg(info,"L5=$L5");
     assert L5=cons of {-2;-1;1;2;3;4;5;6;7};

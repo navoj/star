@@ -19,26 +19,26 @@ splayTest is package{
   import splay;
 
   intPairOrder has type ordering of ((integer,string));
-  intPairOrder is ordering{
-    lt((X,_),(Y,_)) is X<Y;
-    le((X,_),(Y,_)) is X<=Y;
-    eq((X,_),(Y,_)) is X=Y;
-    ge((X,_),(Y,_)) is X>Y;
-    gt((X,_),(Y,_)) is X>=Y;
+  def intPairOrder is ordering{
+    fun lt((X,_),(Y,_)) is X<Y;
+    fun le((X,_),(Y,_)) is X<=Y;
+    fun eq((X,_),(Y,_)) is X=Y;
+    fun ge((X,_),(Y,_)) is X>Y;
+    fun gt((X,_),(Y,_)) is X>=Y;
   };
 
-  splayQ is splayHeap(intPairOrder);
+  def splayQ is splayHeap(intPairOrder);
 
-  main() do {
-    S0 is splayQ.emptyQ;
+  prc main() do {
+    def S0 is splayQ.emptyQ;
 
     logMsg(info,"S0=$S0");
     
-    S1 is splayQ.insertQ((1,"alpha"),S0);
+    def S1 is splayQ.insertQ((1,"alpha"),S0);
     
-    S2 is splayQ.insertQ((3,"gamma"),S1);
+    def S2 is splayQ.insertQ((3,"gamma"),S1);
     
-    S3 is splayQ.insertQ((2,"beta"),S2);
+    def S3 is splayQ.insertQ((2,"beta"),S2);
     
     logMsg(info,"S3=$S3");
     

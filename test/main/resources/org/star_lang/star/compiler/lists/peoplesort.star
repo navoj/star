@@ -28,11 +28,11 @@ peoplesort is package{
   import quick;
   
   peopleComp has type (person,person) =>boolean;
-  peopleComp(someone{name=A},someone{name=B}) is A<B;
+  fun peopleComp(someone{name=A},someone{name=B}) is A<B;
     
   main has type action();
-  main() do {
-    people is list of[someone{name="peter"}, someone{name="john"; spouse=noone}, someone{name="fred"}, someone{name="fred"},someone{name="andy"}];
+  prc main() do {
+    def people is list of[someone{name="peter"}, someone{name="john"; spouse=noone}, someone{name="fred"}, someone{name="fred"},someone{name="andy"}];
     
     logMsg(info,"The list of people is $people");
     logMsg(info,"The sorted list of people is $(quick(people, peopleComp))");
@@ -40,8 +40,8 @@ peoplesort is package{
     assert inOrder(quick(people,peopleComp),peopleComp);
   }
   
-  inOrder(list of [],_) is true;
-  inOrder(list of[X],_) is true;
-  inOrder(list of [X,Y,..R],C) where not C(Y,X) is inOrder(list of [Y,..R],C);
-  inOrder(_,_) default is false;
+  fun inOrder(list of [],_) is true
+   |  inOrder(list of[X],_) is true
+   |  inOrder(list of [X,Y,..R],C) where not C(Y,X) is inOrder(list of [Y,..R],C)
+   |  inOrder(_,_) default is false
 }

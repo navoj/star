@@ -17,7 +17,7 @@
  */
 mapmerge is package {  
   import treemap;
-  main() do {
+  prc main() do {
     var t := trEmpty;
     for x in iota(1, 10, 1) do {
       t[x] := x;
@@ -26,7 +26,7 @@ mapmerge is package {
     logMsg(info,"depth of t is $(tree_depth(t))");
     
     var u := trEmpty;
-    w is _merge(u, t);
+    def w is _merge(u, t);
     
     logMsg(info,"depth of w is $(tree_depth(w))");
   }

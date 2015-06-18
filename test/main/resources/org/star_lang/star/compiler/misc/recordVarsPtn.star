@@ -28,15 +28,15 @@ recordVarsPtn is package {
   };
 
   x has type (integer, Tree) => (Foo, integer);
-  x(y, node1{c=z}) is (foo{a=1;b=2}, z);
-  x(y, node2{d=z}) is let {
-    (foo{a=bb;b=cc}, aa) is x(y, node1{c=42});
-    newZ is aa;
-  } in (foo{a=1;b=2}, newZ);
+  fun x(y, node1{c=z}) is (foo{a=1;b=2}, z)
+   |  x(y, node2{d=z}) is let {
+        def (foo{a=bb;b=cc}, aa) is x(y, node1{c=42})
+        def newZ is aa;
+      } in (foo{a=1;b=2}, newZ);
   
-  main() do {
-    dd is node1{c is 30};
-    ee is node2{d is 31};
+  prc main() do {
+    def dd is node1{def c is 30};
+    def ee is node2{def d is 31};
     assert x(2, dd) = (foo{a=1;b=2}, 30);
     assert x(3, ee) = (foo{a=1;b=2}, 42);
   }

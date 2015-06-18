@@ -21,34 +21,34 @@ import user;
 
 queryRelationsPorts is package{
   
-  Port_In is p0rt{
+  def Port_In is p0rt{
     on U on DEFAULT do addUser(U);
     
     Users has type ref list of user;
     var Users := list of [];
     
 --    addUser has type action(user);
-    addUser(U) do{
+    prc addUser(U) do{
       logMsg(info,"New user: $U");
       extend Users with U;
     };
     
-    calcTotal() do
+    prc calcTotal() do
       logMsg(info,"total balance is $(total(all U.balance where U in Users))");
        
-    getBalance(N) is anyof B where user{name=N;balance=B} in Users;
+    fun getBalance(N) is anyof B where user{name=N;balance=B} in Users;
   };
   
-  total(R) is valof{
+  fun total(R) is valof{
     var T := 0;
     for r in R do
       T := T+r;
     valis T;
   };
 
-  P1 is connectPort_Out(Port_In);
+  def P1 is connectPort_Out(Port_In);
   
-  main() do {
+  prc main() do {
     notify P1 with user{name="alpha";balance=1} on DEFAULT;
     notify P1 with user{name="beta";balance=2} on DEFAULT;
     notify P1 with user{name="gamma";balance=3} on DEFAULT;

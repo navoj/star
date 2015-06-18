@@ -18,40 +18,40 @@
 taskCondTest is package{
   import task;
   
-  tt(X) is task{
+  fun tt(X) is task{
     valis X+2;
   }
   
-  cc(X) is task{
+  fun cc(X) is task{
     valis X<10;
   }
   
-  ww(X) is task{
+  fun ww(X) is task{
     var C:=0;
     
     while valof tt(C)<10 do{
-      XX is valof tt(X);
+      def XX is valof tt(X);
       C := XX+C;
      --  logMsg(info,"C=$C");
     }
     valis C+1;
   }
   
-  vv() is task {
+  fun vv() is task {
     var Z := 42;
     __stop_here();
-    t is task { Z := 21; valis 0; };
+    def t is task { Z := 21; valis 0; };
     __stop_here();
     valis false ? valof t : Z;
   };  
   
-  main() do{
-   ZZ is valof ww(1);
+  prc main() do{
+   def ZZ is valof ww(1);
    logMsg(info,"ZZ=$ZZ");
      
    assert ZZ = 10;
    
-   VV is valof vv();
+   def VV is valof vv();
    logMsg(info,"VV=$VV");
    assert VV=42;
   }

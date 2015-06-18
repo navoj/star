@@ -7,14 +7,14 @@ worksheet{
 		tasks has type list of {emp has type string; tsk has type string}
     }
     
-    O is Org{
-      depts is list of [
+    def O is Org{
+      def depts is list of [
       	  {dpt = “Product”},
       	  {dpt = “Quality”},
       	  {dpt = “Research”},
       	  {dpt = “Sales”}
       	 ]; 
-      employees is list of [
+      def employees is list of [
         {dpt = “Product”; emp = “Alex”},
         {dpt = “Product”; emp = “Bert”},
         {dpt = “Research”; emp = “Cora”},
@@ -22,7 +22,7 @@ worksheet{
         {dpt = “Research”; emp = “Edna”},
         {dpt = “Sales”; emp = “Fred”}
       ];
-      tasks is list of [
+      def tasks is list of [
         {emp = “Alex”; tsk = “build”},
         {emp = “Bert”; tsk = “build”},
         {emp = “Cora”; tsk = “abstract”},
@@ -37,9 +37,9 @@ worksheet{
       ]
     }
     
-    U is "abstract"
+    def U is "abstract"
     
-    Q is list of { all D.dpt where D in O.depts and (E in O.employees and E.dpt=D.dpt) implies (T in O.tasks and T.emp=E.emp and T.tsk=U) }
+    def Q is list of { all D.dpt where D in O.depts and (E in O.employees and E.dpt=D.dpt) implies (T in O.tasks and T.emp=E.emp and T.tsk=U) }
     
     assert Q = list of [ "Quality", "Research" ] 
 }

@@ -18,7 +18,7 @@
 world is package{
   import helloAfternoon;
   
-  main() do {
+  prc main() do {
         logMsg(info, hello("Debu",true));
         logMsg(info, hello("Tim",false)); 
     }

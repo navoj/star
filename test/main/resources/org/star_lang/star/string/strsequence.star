@@ -18,24 +18,24 @@
 strsequence is package{
 
   shChar has type (char,IterState of cons of char)=>IterState of cons of char;
-  shChar(X,ContinueWith(st)) is valof{
+  fun shChar(X,ContinueWith(st)) is valof{
     logMsg(info,"char: $X");
     valis ContinueWith(cons(X,st))
   };
   
-  concat(sequence of {},X) is X;
-  concat(sequence of {H;..T},X) is sequence of {H;..concat(T,X)};
+  fun concat([],X) is X
+   |  concat([H,..T],X) is [H,..concat(T,X)];
   
-  main() do {
-    SS is "a string";
+  prc main() do {
+    def SS is "a string";
     
-    R is __string_iter(SS,shChar,ContinueWith(nil));
+    def R is __string_iter(SS,shChar,ContinueWith(nil));
     
     logMsg(info,"R=$R");
     
     assert R=ContinueWith(cons of {'g'; 'n'; 'i'; 'r'; 't'; 's'; ' '; 'a'});
     
-    TT is concat(SS," and more");
+    def TT is concat(SS," and more");
     assert TT="a string and more";
   }
 }

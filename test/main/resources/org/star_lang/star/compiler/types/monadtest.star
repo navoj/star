@@ -22,33 +22,33 @@ monadtest is package{
     step has type for all e, f such that (%%c of e, %%c of f) => %%c of f;
     fail has type for all a such that (string) => %%c of a;
     
-    step(M,N) default is bind(M, (function(_) is N));
+    fun step(M,N) default is bind(M, ((_) => N));
   }
   
   implementation monad over cons is {
-    ret(X) is cons of {X};
-    bind(Ll,F) is let{
-      apply(nil,A) is flat(A,nil);
-      apply(cons(E,L), A) is apply(L,cons(F(E),A));
+    fun ret(X) is cons of {X};
+    fun bind(Ll,F) is let{
+      fun apply(nil,A) is flat(A,nil)
+       |  apply(cons(E,L), A) is apply(L,cons(F(E),A))
       
       private
-      flat(nil,A) is A;
-      flat(cons(E,L),A) is flat(L,concat(E,A));
+      fun flat(nil,A) is A
+       |  flat(cons(E,L),A) is flat(L,concat(E,A))
       
-      private concat(nil,A) is A;
-      concat(cons(E,X),Y) is cons(E,concat(X,Y));
+      private
+      fun concat(nil,A) is A
+       |  concat(cons(E,X),Y) is cons(E,concat(X,Y))
     } in apply(Ll,nil);
     
-    fail(S) is nil;
+    fun fail(S) is nil;
   }
   
-  main() do {
-    X0 is cons of {"alpha"; "beta"};
+  prc main() do {
+    def X0 is cons of ["alpha", "beta"];
     logMsg(info,"X0=$X0");
-    X1 is bind(X0,(function(X) is cons of {X;X}));
+    def X1 is bind(X0,((X) => cons of {X;X}));
     logMsg(info,"X1=$X1");
-    assert X1=cons of {"alpha";"alpha";"beta";"beta"}
+    assert X1=cons of ["alpha", "alpha", "beta", "beta"]
   }
-  
 }
     

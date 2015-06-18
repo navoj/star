@@ -16,7 +16,6 @@
  *
  */
 complexorder is package {
-  -- import actors;
   
   type EventItem is event{
     createdTimestamp has type long;
@@ -28,14 +27,14 @@ complexorder is package {
       locale has type string;
     };
     
-    LocalizedActualEventItems is list of [
+    def LocalizedActualEventItems is list of [
       { containerId = "first"; event=event{createdTimestamp=0L}; locale="somewhere"},
       { containerId = "second"; event=event{createdTimestamp=1L}; locale="nowhere"}
     ];
 --  };
     
-  main() do {
-    QQ is -- query AA's LocalizedActualEventItems with
+  prc main() do {
+   def  QQ is -- query AA's LocalizedActualEventItems with
       all x.event where x in LocalizedActualEventItems order by x.event.createdTimestamp;
       
     logMsg(info,"$QQ");

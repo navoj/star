@@ -16,14 +16,14 @@
  *
  */
 stringReverse is package{
-  main() do {
-    S0 is "12345";
+  prc main() do {
+    def S0 is "12345";
     
     assert reverse(S0)="54321";
     
     assert not reverse(S0)=S0;
     
-    S1 is "";
+    def S1 is "";
     logMsg(info,"reverse of S1 = $(reverse(S1))");
     
     assert reverse(S1)=S1;

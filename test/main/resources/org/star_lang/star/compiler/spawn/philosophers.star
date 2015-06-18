@@ -21,11 +21,11 @@ philoshopers is package{
   -- Dining philosophers using concurrency primitives
   
   
-  table(Count) do let{
-      T is semaphore(3);
+  prc table(Count) do let{
+    def T is semaphore(3);
       
-      phil has type (integer, sem, sem)=>task of (());
-      phil(n,L,R) is task{
+    phil has type (integer, sem, sem)=>task of (());
+    fun phil(n,L,R) is task{
         for Ix in range(0,Count,1) do{
           -- sleep(random(15L));
           perform T.grab();  -- get permission first
@@ -42,15 +42,15 @@ philoshopers is package{
         logMsg(info,"Phil $n ate for $(Count) times");
       };
     } in {
-      fork1 is semaphore(1);
-      fork2 is semaphore(1);
-      fork3 is semaphore(1);
-      fork4 is semaphore(1);
+      def fork1 is semaphore(1);
+      def fork2 is semaphore(1);
+      def fork3 is semaphore(1);
+      def fork4 is semaphore(1);
     
-      phil1 is background phil(1,fork1,fork2);
-      phil2 is background phil(2,fork2,fork3);
-      phil3 is background phil(3,fork3,fork4);
-      phil4 is background phil(4,fork4,fork1);
+      def phil1 is background phil(1,fork1,fork2);
+      def phil2 is background phil(2,fork2,fork3);
+      def phil3 is background phil(3,fork3,fork4);
+      def phil4 is background phil(4,fork4,fork1);
     
       perform phil1;
       perform phil2;
@@ -58,7 +58,7 @@ philoshopers is package{
       perform phil4;
     };
     
-  main() do {
+  prc main() do {
     table(10000);
   }
 }

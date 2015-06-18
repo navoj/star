@@ -16,18 +16,18 @@
  *
  */
 consUnique is package {
-  R is list of [{ F="U"}]
+  def R is list of [{ F="U"}]
 
   constCons has type ((%a) => cons of string);
-  constCons(l) is cons of {"a"};
+  fun constCons(l) is cons of {"a"};
 
-  foo is
+  def foo is
     let {
-      routeOperationNames is unique x.F where x in R order by x.F;
+      def routeOperationNames is unique x.F where x in R order by x.F;
     } in 
       constCons(routeOperationNames);
   
-  main() do {
+  prc main() do {
     logMsg(info,"$foo");
   }
 }

@@ -28,7 +28,7 @@ anonRefRecord is package{
       linkTable = list of [];
   };
   
-  main() do {
+  prc main() do {
     assert socialNetwork.nodeTable = list of []
   }
 }

@@ -17,5 +17,5 @@
  */
 hello is package{
   #hi ==> "hi";
-  helloF() is hi;
+  fun helloF() is hi;
 }

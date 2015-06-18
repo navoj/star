@@ -16,10 +16,10 @@
  *
  */
 unsorted is package {
-  lot_U8AGS_00 is 1 ;
-  lot_U8AH4_00 is 2 ;
+  def lot_U8AGS_00 is 1 ;
+  def lot_U8AH4_00 is 2 ;
   
-  main() do {
+  prc main() do {
     assert lot_U8AGS_00=1;
     assert lot_U8AH4_00=2;
   }

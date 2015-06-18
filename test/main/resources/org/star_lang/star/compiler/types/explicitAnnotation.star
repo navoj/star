@@ -22,9 +22,9 @@ explicitAnnotation is package{
    or RBT(Color, RedBlackTree of %a, %a, RedBlackTree of %a);
 
   rbEmpty has type RedBlackTree of %a;
-  rbEmpty is RBE;
+  def rbEmpty is RBE;
   
-  main() do {
+  prc main() do {
     assert rbEmpty=RBE;
   }
 }

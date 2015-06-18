@@ -20,7 +20,7 @@ displayAnon is package{
   
   def RR is list of [ {name="john"; age=23}, {name="peter"; age=34}];
   
-  main() do {
+  prc main() do {
     def R is {name="john"; age=23};
     logMsg(info,"$R");
     logMsg(info,"$RR");

@@ -22,8 +22,8 @@ importTest is package{
     id has type Id; -- from idType;
   }
   
-  main() do {
-    XX is another{id=Id("fred")}
+  prc main() do {
+    def XX is another{id=Id("fred")}
    
     assert XX.id = Id("fred")
     logMsg(info,"$XX");

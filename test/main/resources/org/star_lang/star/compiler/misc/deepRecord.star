@@ -27,15 +27,15 @@ deepRecord is package{
     val has type integer;
   }
   
-  main() do {
-    O is outer{ name="fred"; inner=inner{val=10}};
+  prc main() do {
+    def O is outer{ name="fred"; inner=inner{val=10}};
     
     assert O.name="fred";
     assert O.inner.val=10;
     
-    R is list of [ O];
+    def R is list of [ O];
     
-    XX is anyof X.name where X in R and X.inner.val=10;
+    def XX is anyof X.name where X in R and X.inner.val=10;
     assert XX = "fred"
   }
 }

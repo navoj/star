@@ -18,14 +18,14 @@
 freeInArg is package{
   -- test case where free variable is argument
   
-  outer(X) is let{
-      inner((U,V)) is case X in {
+  fun outer(X) is let{
+    fun inner((U,V)) is case X in {
         (A,B) is ((U+A),(V+B))
       }
   } in inner;
 
   
-  main() do {
+  prc main() do {
     assert outer((1,2))((3,2))=(4,4);
   }
 }

@@ -40,8 +40,8 @@ import org.star_lang.star.resource.catalog.CatalogException;
  */
 public class ParseQuery
 {
-  private static final String expTemplate = "$pkg is package{\n  $imprt"
-      + "$fn(#($v has type $schema)#) is let{ open $v } in #($exp)#;\n}\n";
+  private static final String expTemplate = "$pkg is package{\n  $imprt\n"
+      + "fun $fn(#($v has type $schema)#) is let{ open $v } in #($exp)#;\n}\n";
 
   public static IFunction parseExpression(String query, String imprt, String face, CodeRepository repository)
       throws LanguageException
@@ -114,9 +114,10 @@ public class ParseQuery
    * </pre>
    */
 
-  private static final String queryTemplate = "$pkg is package{\n  $imprt$fn($freeVars) is (function($prt) is"
-      + "  $prt.Query((function(#(v has type $schema)#) is let{ open v } in #($exp)#),\n"
-      + "             (function() is quote(#($exp)#)),\n" + "             (function() is dictionary of {$freeHash})));"
+  private static final String queryTemplate = "$pkg is package{\n  $imprt fun $fn($freeVars) is (($prt) =>"
+      + "  $prt.Query(((#(v has type $schema)#) => let{ open v } in #($exp)#),\n"
+      + "             (() => quote(#($exp)#)),\n"
+      + "             (() => dictionary of {$freeHash})));"
       + "\n}\n";
 
   public static IFunction parseQuery(String query, Map<String, IValue> free, String imprt, String face,

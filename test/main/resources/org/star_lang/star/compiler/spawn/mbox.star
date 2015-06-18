@@ -22,11 +22,11 @@ mbox is package{
     grab has type ()=>%t;
   }
 
-  box() is mbox{
+  fun box() is mbox{
     private var Q := queue of {};
     private def lock is 1; -- value not important
      
-    grab() is valof{
+    fun grab() is valof{
       sync(lock){
         when Q matches _back(F,E) do{
           Q := F;
@@ -34,7 +34,7 @@ mbox is package{
         }
       }
     }; 
-    post(M) do {
+    prc post(M) do {
       sync(lock) {
         Q := _cons(M,Q);
       }

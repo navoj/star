@@ -37,7 +37,7 @@ recordqueries is package{
                            foo{name="beta"; gender=female; add=street{street="union st"; unit=100; city="ny"}},
                            foo{name="gamma"; gender=male; add=street{street="water st"; unit=110; city="ny"}}];
                                    
-  main() do {
+  prc main() do {
     assert foo{name="alpha"} in persons;
     
     logMsg(info,"$(all P where P in persons and P.name>="alpha" order by P.add.unit)");

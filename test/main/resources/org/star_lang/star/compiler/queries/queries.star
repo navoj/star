@@ -18,7 +18,7 @@
 queries is package{
   -- test out some of the basic tables and relations stuff
   
-  N is list of [
+  def N is list of [
     (1,2),
     (2,1),
     (1,3),
@@ -28,28 +28,28 @@ queries is package{
   ]
 
   R has type list of ((string,integer));
-  R is list of [
+  def R is list of [
     ("a",1),
     ("b",2),
     ("c",3),
     ("a",4)
   ];
   
-  S is list of [
+  def S is list of [
     ("a",1),
     ("b",2),
     ("d",3),
     ("a",4),
     ("b",3),
     ("e",2)
-  ];
+  ]
   
   type testType is item{
     pos has type integer;
   } or noItem;
 
   testf has type (list of testType, integer) => list of testType;
-  testf(Is, P) is list of {all X where (X matching item{pos=P}) in Is};
+  fun testf(Is, P) is list of {all X where (X matching item{pos=P}) in Is};
   
   var parent := list of [
     {parent="fred"; child="sam"; dob=1}, {parent="fred";child="sue"; dob=2},
@@ -58,15 +58,15 @@ queries is package{
   var male := list of [ "fred", "sam"];
 	
   main has type action();
-  main() do {
+  prc main() do {
     def DD is all (X,Z) where (X,Y) in R and (Z,Y) in S;
     
-    def EE is all X where (X,Y) in R and ((Y,_) in N ? X in cons of {"a";"b"} | "none" matches X);
+    def EE is all X where (X,Y) in R and ((Y,_) in N ? X in cons of {"a";"b"} : "none" matches X);
     logMsg(info,"EE=$EE"); 
   
-    def QQ is all (X,Y,U) where (X,Y) in N and (X>Y ? (U,X) in R | (U,Y) in S);
+    def QQ is all (X,Y,U) where (X,Y) in N and (X>Y ? (U,X) in R : (U,Y) in S);
   
-    def QQQ is all (X,Y,U) where (X,U) in R and ((U,_) in N ? (Y,V) in S | "not there" matches Y);
+    def QQQ is all (X,Y,U) where (X,U) in R and ((U,_) in N ? (Y,V) in S : "not there" matches Y);
     logMsg(info,"DD is $DD");
     logMsg(info,"QQ is $QQ");
     logMsg(info,"QQQ is $QQQ");
@@ -107,10 +107,10 @@ queries is package{
 	assert FFF = list of ["sam"];
   };
   
-  checkF(items) is valof{
+  fun checkF(items) is valof{
     def F is testf(items,3);
     logMsg(info,"F=$F");
-    def B is (I in F implies I matches item{pos=3}?true|false);
+    def B is (I in F implies I matches item{pos=3}?true:false);
     logMsg(info,"checking $items:$B");
     valis B
   }

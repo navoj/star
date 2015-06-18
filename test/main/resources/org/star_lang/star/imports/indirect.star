@@ -20,7 +20,7 @@ indirect is package{
  import beta;
  import gamma;
  
- main() do {
+ prc main() do {
    assert alpha(3)=3;
  }
 }

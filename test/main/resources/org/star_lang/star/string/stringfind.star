@@ -18,9 +18,9 @@
 stringfind is package{
   -- test string find
   
-  TT is "the lazy dog jumped over the quick brown fox";
+  def TT is "the lazy dog jumped over the quick brown fox";
   
-  main() do {
+  prc main() do {
     assert findstring(TT,"the",0)=0;
     assert findstring(TT,"over",0)=20;
     assert findstring(TT,"the",5)=25;

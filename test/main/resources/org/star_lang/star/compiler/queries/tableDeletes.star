@@ -30,13 +30,13 @@ tableDeletes is package{
   var RR := list of [ ("a",1), ("b",2), ("c",3)];
   
   check has type (string,list of ((string,integer))) =>boolean;
-  check(S,Rr) is (S,_) in Rr;
+  fun check(S,Rr) is (S,_) in Rr;
 
-  pairCheck(A,B) is (A,B) in R;
+  fun pairCheck(A,B) is (A,B) in R;
 
   
   main has type action();
-  main() do {
+  prc main() do {
 	  assert pairCheck("a", 1);
 	  assert pairCheck("a", 2);
 	  assert pairCheck("a", 3);

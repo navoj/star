@@ -17,7 +17,7 @@
  */
 siblings is package{
 
-  siblings is list of [
+  def siblings is list of [
     ("john", "peter"),
     ("john", "mary"),
     ("mary", "peter"),
@@ -26,17 +26,17 @@ siblings is package{
     ("peter","mary")];
   
   ages has type list of ((string,integer));
-  ages is list of [
+  def ages is list of [
     ("john",10),
     ("peter",12),
     ("mary",8)
   ];
   
-  JS is all A where ("john",S) in siblings and (S,A) in ages order by A;
+  def JS is all A where ("john",S) in siblings and (S,A) in ages order by A;
   
-  JSS is all (S,A) where ("john",S) in siblings and (S,A) in ages order by A using (<);
+  def JSS is all (S,A) where ("john",S) in siblings and (S,A) in ages order by A using (<);
   
-  main() do {
+  prc main() do {
     logMsg(info,"John's siblings' ages are: $JS");
     logMsg(info,"John's siblings are: $JSS");
   }

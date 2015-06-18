@@ -18,18 +18,18 @@
 reftype is package{
   -- test simple variants of the reference type
   
-  apply(P,X,Y) do P(X,Y);
+  prc apply(P,X,Y) do P(X,Y);
   
-  assign(ref X,Y) do X:=Y;
+  prc assign(ref X,Y) do X:=Y;
   
   type person is someone{
     name has type string;
     age has type ref integer;
   };
   
-  ageRef(P) is ref P.age;
+  fun ageRef(P) is ref P.age;
   
-  main() do {
+  prc main() do {
     var A := 3;
     
     assign(ref A, A+2);
@@ -40,7 +40,7 @@ reftype is package{
     
     assert A=7;
     
-    P is someone{ name="fred"; age := 23 };
+    def P is someone{ name="fred"; age := 23 };
     
     assert P.age=23;
     
@@ -55,7 +55,7 @@ reftype is package{
     
     assert P.age = 56;
     
-    AR is ageRef(P);
+    def AR is ageRef(P);
     AR := 74;
     
     assert P.age=74;

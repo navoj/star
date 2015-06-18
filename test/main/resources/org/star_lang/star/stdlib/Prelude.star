@@ -3,22 +3,22 @@ Prelude is package {
 type Unit is Unit;
 
 isJust has type (option of %a) => boolean;
-isJust(none) is false;
-isJust(some(_)) is true;
+fun isJust(none) is false
+ |  isJust(some(_)) is true
 
 expectJust has type (option of %a) => %a
-expectJust(some(x)) is x
+fun expectJust(some(x)) is x
 
 expectJust1 has type (option of %a) => %a
-expectJust1(some(x)) is x
+fun expectJust1(some(x)) is x
 
 type Either of (%a, %b) is Left(%a) or Right(%b)
 
 fst has type ((%a, %b)) => %a
-fst((a, _)) is a;
+fun fst((a, _)) is a;
 
 snd has type ((%a, %b)) => %b;
-snd((_, b)) is b;
+fun snd((_, b)) is b;
 
 type Ordering is LT or GT or EQ;
 
@@ -27,36 +27,36 @@ type List of %a is
  or Cons(%a, List of %a);
 
 isNull has type (List of %a) => boolean;
-isNull(Null) is true;
-isNull(_) default is false;
+fun isNull(Null) is true
+ |  isNull(_) default is false
 
 head has type (List of %a) => %a;
-head(Cons(x, _)) is x;
+fun head(Cons(x, _)) is x
 
 tail has type (List of %a) => List of %a;
-tail(Cons(_, xs)) is xs;
+fun tail(Cons(_, xs)) is xs
 
 List1 has type (%a) => List of %a;
-List1(x) is Cons(x, Null);
+fun List1(x) is Cons(x, Null)
 
 List2 has type (%a, %a) => List of %a;
-List2(x1, x2) is Cons(x1, Cons(x2, Null));
+fun List2(x1, x2) is Cons(x1, Cons(x2, Null))
 
 List3 has type (%a, %a, %a) => List of %a;
-List3(x1, x2, x3) is Cons(x1, Cons(x2, Cons(x3, Null)));
+fun List3(x1, x2, x3) is Cons(x1, Cons(x2, Cons(x3, Null)))
 
 List4 has type (%a, %a, %a, %a) => List of %a;
-List4(x1, x2, x3, x4) is Cons(x1, Cons(x2, Cons(x3, Cons(x4, Null))));
+fun List4(x1, x2, x3, x4) is Cons(x1, Cons(x2, Cons(x3, Cons(x4, Null))))
 
 List5 has type (%a, %a, %a, %a, %a) => List of %a;
-List5(x1, x2, x3, x4, x5) is Cons(x1, Cons(x2, Cons(x3, Cons(x4, Cons(x5, Null)))));
+fun List5(x1, x2, x3, x4, x5) is Cons(x1, Cons(x2, Cons(x3, Cons(x4, Cons(x5, Null)))))
 
 length has type (List of %a) => integer where equality over %a;
-length(lis) is valof {
+fun length(lis) is valof {
 	var r := lis;
 	var l := 0;
 	while r != Null do {
-		Cons(_, xs) is r;
+		def Cons(_, xs) is r;
 		l := l + 1;
 		r := xs;
 	};
@@ -66,9 +66,9 @@ length(lis) is valof {
 implementation equality over (List of %a where equality over %a) is {
 	(=) = listEq;
 } using {
-	listEq(Null,Null) is true;
-	listEq(Cons(H1,L1),Cons(H2,L2)) where H1=H2 is listEq(L1,L2);
-	listEq(_,_) default is false;
+	fun listEq(Null,Null) is true
+	 |  listEq(Cons(H1,L1),Cons(H2,L2)) where H1=H2 is listEq(L1,L2)
+	 |  listEq(_,_) default is false
 }
 
 implementation sizeable over (List of %a where equality over %a) is {
@@ -77,43 +77,43 @@ implementation sizeable over (List of %a where equality over %a) is {
 };
 
 forEach has type action(action(%a), List of %a) where equality over %a;
-forEach(p, l) do {
+prc forEach(p, l) do {
 	var r := l;
 	while r != Null do {
-		Cons(x, xs) is r
+		def Cons(x, xs) is r
 		p(x);
 		r := xs;
 	}
 }
 
 reverse has type (List of %a) => List of %a where equality over %a;
-reverse(l) is 
+fun reverse(l) is 
 	valof {
 		var r := Null;
-		forEach((procedure(x) do { r := Cons(x, r) }), l)
+		forEach(((x) do { r := Cons(x, r) }), l)
 		valis r
 	};
 	
 append has type (List of %a, List of %a) => List of %a  where equality over %a;
-append(Null, lis2) is lis2;
-append(lis1, Null) is lis1;
-append(lis1, lis2) default is valof {
-  var r:= reverse(lis1);
-  var res := lis2;
-  while r != Null do {
-	Cons(x, xs) is r;
-	res := Cons(x, res);
-	r := xs;
-  };
-  valis res;
-};
+fun append(Null, lis2) is lis2
+ |  append(lis1, Null) is lis1
+ |  append(lis1, lis2) default is valof {
+      var r:= reverse(lis1);
+      var res := lis2;
+      while r != Null do {
+	    def Cons(x, xs) is r;
+	    res := Cons(x, res);
+	    r := xs;
+      };
+      valis res;
+    };
 
 conc has type (List of List of %a) => List of %a  where equality over %a;
-conc(lis) is valof {
+fun conc(lis) is valof {
   var r := reverse(lis);
   var res := Null;
   while r != Null do {
-	Cons(x, xs) is r;
+	def Cons(x, xs) is r;
 	res := append(x, res);
 	r := xs;
   }
@@ -121,10 +121,10 @@ conc(lis) is valof {
 };
 
 hasAny has type ((%a) => boolean, List of %a) => boolean where equality over %a;
-hasAny(p, lis) is valof {
+fun hasAny(p, lis) is valof {
 	var r := lis;
 	while r != Null do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		if p(x) then valis true; 
 		r := xs;
 	}
@@ -132,10 +132,10 @@ hasAny(p, lis) is valof {
 };
 
 hasEvery has type ((%a) => boolean, List of %a) => boolean where equality over %a;
-hasEvery(p, lis) is valof {
+fun hasEvery(p, lis) is valof {
 	var r := lis;
 	while r != Null do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		if not p(x) then valis false; 
 		r := xs;
 	}
@@ -143,10 +143,10 @@ hasEvery(p, lis) is valof {
 };
 
 find has type ((%a) => boolean, List of %a) => option of %a where equality over %a;
-find(p, lis) is valof {
+fun find(p, lis) is valof {
 	var r:= lis;
 	while r != Null do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		if p(x) then valis some(x);
 		r := xs;
 	}
@@ -156,10 +156,10 @@ find(p, lis) is valof {
 /* find an element matching a given some predicate, and return what that returns */
 
 findAndApply has type ((%a) => option of %b, List of %a) => option of %b where equality over %a;
-findAndApply(f, lis) is valof {
+fun findAndApply(f, lis) is valof {
   var r:= lis;
   while r != Null do {
-	Cons(x, xs) is r;
+	def Cons(x, xs) is r;
 	case f(x) in {
 	  none do nothing;
 	  a matching some(y) do valis a;
@@ -170,10 +170,10 @@ findAndApply(f, lis) is valof {
 };
 
 member has type ((%a, %a) => boolean, %a, List of %a) => boolean where equality over %a;
-member(eq, y, lis) is valof {
+fun member(eq, y, lis) is valof {
 	var r:= lis;
 	while r != Null do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		if eq(x, y) then valis true;
 		r := xs;
 	}
@@ -181,11 +181,11 @@ member(eq, y, lis) is valof {
 };
 
 assoc has type ((%a, %a) => boolean, %a, List of ((%a, %b))) => option of ((%a, %b)) where equality over %a and equality over %b;
-assoc(eq, y, lis) is valof {
+fun assoc(eq, y, lis) is valof {
   var r := lis;
   while r != Null do {
-	Cons(p, xs) is r;
-	(x, _) is p;
+	def Cons(p, xs) is r;
+	def (x, _) is p;
 	if eq(x, y) then valis some(p);
 	r := xs;
   };
@@ -193,29 +193,29 @@ assoc(eq, y, lis) is valof {
 };
 
 filter has type ((%a) => boolean, List of %a) => List of %a where equality over %a;
-filter(p, lis) is
-	foldLeft((function (r, x) is p(x) ? Cons(x, r) | r), Null,
+fun filter(p, lis) is
+	foldLeft((r, x) => (p(x) ? Cons(x, r) : r), Null,
 			 reverse(lis));
 
 filterMap has type ((%a) => option of %b, List of %a) => List of %b where equality over %a and equality over %b;
-filterMap(p, lis) is
-	foldLeft((function (r, x) is 
-				case p(x) in {
+fun filterMap(p, lis) is
+	foldLeft(( (r, x) => 
+				(case p(x) in {
 					none is r
 					some(y) is Cons(y, r)
-				}),
+				})),
 			 Null,
 			 reverse(lis));
 
 -- returns list of yeses, then list of nos
 -- #### type declaration triggers Star compiler bug
 -- partition has type ((%a) => boolean, List of %a) => (List of %a, List of %a);
-partition(p, lis) is valof {
+fun partition(p, lis) is valof {
 	var r := lis;
 	var yeses := Null;
 	var nos := Null;
 	while r != Null do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		if p(x)
 		then yeses := Cons(x, yeses)
 		else nos := Cons(x, nos);
@@ -225,19 +225,19 @@ partition(p, lis) is valof {
 };
 
 removeAll has type ((%a ) => boolean, List of %a) => List of %a where equality over %a;
-removeAll(p, lis) is
-	foldLeft((function (r, x) is p(x) ? r | Cons(x, r)), Null,
+fun removeAll(p, lis) is
+	foldLeft((r, x) => (p(x) ? r : Cons(x, r)), Null,
 			 reverse(lis));
 
 -- #### type declaration triggers Star compiler bug
 zip has type (List of %a, List of %b) => List of ((%a, %b)) where equality over %a and equality over %b;
-zip(lis1, lis2) is valof {
+fun zip(lis1, lis2) is valof {
   var r1 := lis1;
   var r2 := lis2;
   var res := Null;
   while r1 != Null do {
-	Cons(x, xs) is r1;
-	Cons(y, ys) is r2;
+	def Cons(x, xs) is r1;
+	def Cons(y, ys) is r2;
 	res := Cons((x, y), res);
 	r1 := xs;
 	r2 := ys;
@@ -246,15 +246,15 @@ zip(lis1, lis2) is valof {
 };
 
 zip3 has type (List of %a, List of %b, List of %c) => List of ((%a, %b, %c)) where equality over %a and equality over %b and equality over %c;
-zip3(lis1, lis2, lis3) is valof {
+fun zip3(lis1, lis2, lis3) is valof {
   var r1 := lis1;
   var r2 := lis2;
   var r3 := lis3;
   var res := Null;
   while r1 != Null do {
-	Cons(x, xs) is r1;
-	Cons(y, ys) is r2;
-	Cons(z, zs) is r3;
+	def Cons(x, xs) is r1;
+	def Cons(y, ys) is r2;
+	def Cons(z, zs) is r3;
 	res := Cons((x, y, z), res);
 	r1 := xs;
 	r2 := ys;
@@ -264,49 +264,48 @@ zip3(lis1, lis2, lis3) is valof {
 };
 
 foldRight has type ((%a, %b) => %b, %b, List of %a) => %b;
-foldRight(f, a, Null) is a;
-foldRight(f, a, Cons(x, xs)) is f(x, foldRight(f, a, xs));
+fun foldRight(f, a, Null) is a
+ |  foldRight(f, a, Cons(x, xs)) is f(x, foldRight(f, a, xs))
 
 foldLeft has type ((%b, %a) => %b, %b, List of %a) => %b where equality over %a and equality over %b;
-foldLeft(f, a, l) is valof {
+fun foldLeft(f, a, l) is valof {
 	var res := a;
-	forEach((procedure(x) do res := f(res, x)), l);
+	forEach(((x) do res := f(res, x)), l);
 	valis res;
 }
 
 -- map is a keyword
 mapcar has type ((%a) => (%b), List of %a) => List of %b where equality over %a and equality over %b;
-mapcar(f, l) is reverse(
-	foldLeft((function (r, x) is Cons(f(x), r)), Null, l)); 
+fun mapcar(f, l) is reverse(
+	foldLeft(( (r, x) => Cons(f(x), r)), Null, l)); 
  
 -- combine is supposed to be associative
 -- the idea is that all of this could be done in parallel
 mapCombine has type ((%a) => %b, List of %a, (%b, %b) => %b, %b) => %b where equality over %a and equality over %b;
-mapCombine(f, lis, combine, nill) is
-	foldLeft((function (b, x) is
-				combine(b, f(x))),
+fun mapCombine(f, lis, combine, nill) is
+	foldLeft(((b, x) => combine(b, f(x))),
 			 nill, lis);
 
 nth has type (List of %a, integer) => %a where equality over %a;
-nth(lis, n) is valof {
+fun nth(lis, n) is valof {
 	var r := lis;
 	var i := 0;
 	while (i < n) do {
 		assert r != Null;
-		Cons(_, xs) is r
+		def Cons(_, xs) is r
 		r := xs
 		i := i + 1;
 	}
-	Cons(x, _) is r;
+	def Cons(x, _) is r;
 	valis x
 }
 
 findIndexAndApply has type ((%a) => option of %b, List of %a) => option of ((integer, %b)) where equality over %a;
-findIndexAndApply(f, lis) is valof {
+fun findIndexAndApply(f, lis) is valof {
   var r := lis;
   var i := 0;
   while r != Null do {
-	Cons(x, xs) is r;
+	def Cons(x, xs) is r;
 	case f(x) in {
 	  none do nothing;
 	  some(y) do
@@ -319,12 +318,12 @@ findIndexAndApply(f, lis) is valof {
 };
 
 -- replaceAtIndex has type (List of %a, integer, %a) => List of %a;
-replaceAtIndex(lis, i, new) is valof {
+fun replaceAtIndex(lis, i, new) is valof {
   var r := lis;
   var j := 0;
   var rev := Null;
   while r != Null do {
-	Cons(x, xs) is r;
+	def Cons(x, xs) is r;
 	if j = i
 	then valis append(reverse(rev), Cons(new, xs));
 	rev := Cons(x, rev);
@@ -337,11 +336,11 @@ replaceAtIndex(lis, i, new) is valof {
 
 -- type declaration triggers bug in Star
 -- takeNDropWhile has type ((%a) => boolean, List of %a) => (List of %a, List of %a);
-takeNDropWhile(p, lis) is valof {
+fun takeNDropWhile(p, lis) is valof {
 	var r := lis;
 	var b := Null;
 	while (r != Null) do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		if not p(x)
 		then valis (reverse(b), r);
 		r := xs;
@@ -352,21 +351,21 @@ takeNDropWhile(p, lis) is valof {
 	
 -- "unique" is a keyword 
 uniqueElements has type ((%a, %a) => boolean, List of %a) => List of %a where equality over %a;
-uniqueElements(eq, lis) is valof {
+fun uniqueElements(eq, lis) is valof {
 	var r := lis;
 	var res := Null;
 	while r != Null do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		res := Cons(x, res);
-		r := filter((function (y) is not eq(x, y)), xs);
+		r := filter(( (y) => not eq(x, y)), xs);
 	};
 	valis reverse(res);
 };
 
 List_to_list has type ((List of %a) => list of %a) where equality over %a;
-List_to_list(l) is valof { 
+fun List_to_list(l) is valof { 
     var res := list of [];
-	forEach( (procedure(x) do { res := res++list of [x] }) , l);
+	forEach( ((x) do { res := res++list of [x] }) , l);
 	valis res;
 }
 
@@ -389,58 +388,58 @@ type Iteratee of (%val, %seed) is alias of
 	((%seed, %val) => Either of (%seed, %seed));
 
 emptyEnumerator has type CollEnumerator of (%val, %seed);
-emptyEnumerator(it, seed) is seed;
+fun emptyEnumerator(it, seed) is seed;
 
 enumeratorFilter has type
 	((%val) => boolean, CollEnumerator of (%val, %seed)) => CollEnumerator of (%val, %seed);
-enumeratorFilter(f, enum) is
-	(function (it, seed) is
-		enum((function (seed1, val) is
-				f(val) ? it(seed1, val) | Right(seed1)), 
+fun enumeratorFilter(f, enum) is
+	( (it, seed) =>
+		enum((seed1, val) =>
+				(f(val) ? it(seed1, val) : Right(seed1)), 
 			 seed));
 				
 enumeratorFilterMap has type
 	((%val1) => option of %val2, CollEnumerator of (%val1, %seed))
 		=> CollEnumerator of (%val2, %seed);
-enumeratorFilterMap(f, enum) is	
-	(function (it, seed) is
-		enum((function (seed1, val1) is
-				case f(val1) in {
+fun enumeratorFilterMap(f, enum) is	
+	( (it, seed) =>
+		enum(( (seed1, val1) =>
+				(case f(val1) in {
 					none is Right(seed1);
 					some(val2) is it(seed1, val2);
-				}),
+				})),
 			 seed));
 
 enumeratorCount has type (CollEnumerator of (%val, integer)) => integer;
-enumeratorCount(en) is
-  en((function (c, _) is Right(c + 1)), 0);
+fun enumeratorCount(en) is
+  en(( (c, _) => Right(c + 1)), 0);
 
 enumeratorConcatenate has type
   (CollEnumerator of (CollEnumerator of (%val, Either of (%seed, %seed)), %seed))
 	=> CollEnumerator of (%val, %seed);
-enumeratorConcatenate(outerEnum) is
-  (function (it, seed1) is
-	outerEnum((function (seed2, innerEnum) is
-				innerEnum((function (seed3, val) is
-							case seed3 in {
+fun enumeratorConcatenate(outerEnum) is
+  ( (it, seed1) =>
+	outerEnum(( (seed2, innerEnum) =>
+				innerEnum(( (seed3, val) =>
+							(case seed3 in {
 							  Right(seed4) is
 								(case it(seed4, val) in {
 								  v matching Left(_) is Left(v);
 								  v matching Right(_) is Right(v);
 								})
-							}),
+							})),
 						  Right(seed2))),
 			  seed1));
 
 ListEnumerator has type (List of %val) => CollEnumerator of (%val, %seed) where equality over %val
-ListEnumerator(l) is
-	(function(iteratee, seed) is
+fun ListEnumerator(l) is
+	((iteratee, seed) =>
 		valof {
 			var r := l;
 			var acc := seed;
 
 			while r != Null do {
-				Cons(x, xs) is r
+				def Cons(x, xs) is r
 				case iteratee(acc, x) in {
 					Left(new) do valis new
 					Right(new) do {
@@ -453,10 +452,10 @@ ListEnumerator(l) is
 		});
 		
 displayList has type ((%a) => string, List of %a) => string;
-displayList(dis, lis) is "[" ++ d(lis) ++ "]" using {
-	d(Null) is "";
-	d(Cons(x, Null)) is dis(x);
-	d(Cons(x, xs)) default is dis(x) ++ ", " ++ d(xs);
+fun displayList(dis, lis) is "[" ++ d(lis) ++ "]" using {
+	fun d(Null) is ""
+	 |  d(Cons(x, Null)) is dis(x)
+	 |  d(Cons(x, xs)) default is dis(x) ++ ", " ++ d(xs)
 }
 
 /* Oleg has this:
@@ -479,10 +478,10 @@ type CFoldLeft1Maker of (%coll, %val, %seed) is alias of
 */	
 
 LSetSubset has type ((%a, %a) => boolean, List of %a, List of %a) => boolean where equality over %a;
-LSetSubset(eq, lis1, lis2) is valof {
+fun LSetSubset(eq, lis1, lis2) is valof {
 	var r:= lis1;
 	while r != Null do {
-		Cons(x, xs) is r;
+		def Cons(x, xs) is r;
 		if not member(eq, x, lis2) then valis false;
 		r := xs;
 	}
@@ -490,12 +489,12 @@ LSetSubset(eq, lis1, lis2) is valof {
 };
 
 LSetEqual has type ((%a, %a) => boolean, List of %a, List of %a) => boolean where equality over %a;
-LSetEqual(eq, lis1, lis2) is
+fun LSetEqual(eq, lis1, lis2) is
 	LSetSubset(eq, lis1, lis2) and LSetSubset(eq, lis2, lis1);
 
 /* Left means stop, Right means go on */
 iterAte has type (%a, (%a) => Either of (%b, %a)) => %b;
-iterAte(theST, step) is valof {
+fun iterAte(theST, step) is valof {
 	var st := theST;
 	while true do {
 	  case step(st) in {
@@ -513,8 +512,8 @@ contract Bounded over %a is {
 };
 
 implementation Bounded over boolean is {
-	minBound = (function () is false);
-	maxBound = (function () is true);
+	minBound = ( () => false);
+	maxBound = ( () => true);
 };
 
 contract Enum over %a is {
@@ -530,12 +529,12 @@ implementation Enum over boolean is {
 	toEnum = boolToEnum;
 	fromEnum = boolFromEnum;
 } using {
-	boolSucc(false) is true;
-	boolPred(true) is false;
-	boolToEnum(0) is false;
-	boolToEnum(1) is true;
-	boolFromEnum(false) is 0;
-	boolFromEnum(true) is 1;
+	fun boolSucc(false) is true
+	fun boolPred(true) is false
+	fun boolToEnum(0) is false
+	 |  boolToEnum(1) is true
+	fun boolFromEnum(false) is 0
+	 |  boolFromEnum(true) is 1;
 };
 
 implementation Enum over integer is {
@@ -544,9 +543,9 @@ implementation Enum over integer is {
 	toEnum = intId;
 	fromEnum = intId;
 } using {
-	intSucc(n) is n + 1;
-	intPred(n) is n - 1;
-	intId(n) is n;
+	fun intSucc(n) is n + 1;
+	fun intPred(n) is n - 1;
+	fun intId(n) is n;
 };
 
 

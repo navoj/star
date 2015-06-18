@@ -18,14 +18,14 @@
 abortTak is package{
   import task;
   
-  aa(X) is task {
+  fun aa(X) is task {
     if X > 10 then
       raise "too large"
     else
       valis X*2;
   }
   
-  aa2(X) is taskWait((procedure(wakeup) do {
+  fun aa2(X) is taskWait(((wakeup) do {
     if X > 10 then
       wakeup(taskFail(exception(nonString,"too large" cast any,__location__)))
     else
@@ -33,16 +33,16 @@ abortTak is package{
   })); 
 
   bb has type (integer, (integer) => task of integer) => task of integer
-  bb(X, f) is task {
+  fun bb(X, f) is task {
     try {
-      v is valof f(X);
+      def v is valof f(X);
       valis v;
     } on abort {
       _ do valis X;
     }
   }
 
-  main() do {
+  prc main() do {
     assert valof bb(5, aa) = 10;
     assert valof bb(15, aa) = 15;
     

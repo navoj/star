@@ -18,16 +18,16 @@
 treemapUpdate is package {
   private import treemap
 
-  main () do {
-    tm0 is trEmpty["b"->3]
+  prc main () do {
+    def tm0 is trEmpty["b"->3]
     logMsg(info,"tm0=$(__display(tm0))");
 
-    tm1 is tm0["t"->3]["m"->3]
+    def tm1 is tm0["t"->3]["m"->3]
     logMsg(info,"tm1=$(__display(tm1))");
 
-    tm2 is tm0["b"->5]
+    def tm2 is tm0["b"->5]
     logMsg(info,"tm2=$(__display(tm2))");
-    tm3 is tm1["b"->5]
+    def tm3 is tm1["b"->5]
     logMsg(info,"tm3=$(__display(tm3))");
 
     logMsg(info, "tm0[b] = $(tm0["b"])");

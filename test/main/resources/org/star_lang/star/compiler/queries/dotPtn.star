@@ -20,11 +20,11 @@ dotPtn is package{
     country has type string;
   }
   
-  countries is list of ["usa", "uk", "japan"];
+  def countries is list of ["usa", "uk", "japan"];
   
-  includeStore(X) is (X.country) in countries;
+  fun includeStore(X) is (X.country) in countries;
   
-  main() do {
+  prc main() do {
     assert includeStore(address{country="usa"});
     assert includeStore(address{country="japan"});
     

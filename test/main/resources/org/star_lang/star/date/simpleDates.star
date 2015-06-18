@@ -18,10 +18,10 @@
 simpleDates is package{
   -- test simple dates and coercion
   
-  N is now();
-  T is today();
+  def N is now();
+  def T is today();
   
-  main() do {
+  prc main() do {
     logMsg(info,"now is #N");
     logMsg(info,"diff is $(timeDiff(N,T))");
     

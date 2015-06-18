@@ -17,16 +17,16 @@
  */
 stringcases is package{
 
-  Alpha is "dog";
+  def Alpha is "dog";
   
   -- test has type integer;
-  test is case Alpha in {
+  def test is case Alpha in {
       "dog" is 1;
       "pup" is 2;
       _ default is -1;
       };
 
-  main() do {   
+  prc main() do {   
     logMsg(info,"$test");
   }
 }

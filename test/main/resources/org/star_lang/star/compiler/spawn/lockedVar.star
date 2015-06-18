@@ -18,14 +18,14 @@
 lockedVar is package{
   type cell of %t is cell(%t);
   
-  getLocked(C) is valof{
+  fun getLocked(C) is valof{
     sync(C){
       valis deRef(C);
     }
   }
   
-  getLockedV2(C) is valof{
-    XX is valof{
+  fun getLockedV2(C) is valof{
+    def XX is valof{
       sync(C){
         valis C
       }
@@ -33,10 +33,10 @@ lockedVar is package{
     valis deRef(XX);
   }
   
-  deRef(cell(X)) is X;
+  fun deRef(cell(X)) is X;
   
-  main() do {
-    C is cell(34);
+  prc main() do {
+    def C is cell(34);
     
     assert getLocked(C)=34;
     

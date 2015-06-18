@@ -20,7 +20,7 @@ macrotest is package{
   
   import macro;
   
-  main() do {
+  prc main() do {
     logMsg(info,"macro key of $(quote(alpha)) is $(macroKey(quote(alpha)))");
     logMsg(info,"macro key of $(quote(quote(alpha))) is $(macroKey(quote(quote(alpha))))");
     logMsg(info,"macro key of $(quote((quote(alpha)))) is $(macroKey(quote((quote(alpha)))))");

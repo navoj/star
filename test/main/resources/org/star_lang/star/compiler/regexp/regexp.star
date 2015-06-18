@@ -18,9 +18,8 @@
 regexp is package{
   -- Test some of the regexp matching stuff
     
-  main has type action();
-  main() do {
-    testStr is "alphabeta";
+  prc main() do {
+    def testStr is "alphabeta";
     
     assert testStr matches "alphabeta";
 
@@ -49,12 +48,12 @@ regexp is package{
   }
 
   -- DO NOT use this as a template for string length :)
-  lengthString(Str) where Str matches `.(.*:X)` is lengthString(X)+1;
-  lengthString("") is 0;
+  fun lengthString(Str) where Str matches `.(.*:X)` is lengthString(X)+1
+   |  lengthString("") is 0;
 
-   DateStr is "12-21-2009 12:13:14";
+   def DateStr is "12-21-2009 12:13:14";
    
-   MINUTES is (DateStr matches `.*\:([0-9][0-9]:X)\:.*` ? X as integer | -1);
-   SECONDS is (DateStr matches `.*\d[0-9][\u003A;][0-9][0-9][\u003A;]([0-9][0-9]:X)` ? X as integer | -1);
+   def MINUTES is (DateStr matches `.*\:([0-9][0-9]:X)\:.*` ? X as integer : -1);
+   def SECONDS is (DateStr matches `.*\d[0-9][\u003A;][0-9][0-9][\u003A;]([0-9][0-9]:X)` ? X as integer : -1);
 }
       

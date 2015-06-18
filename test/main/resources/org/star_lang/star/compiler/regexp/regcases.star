@@ -16,8 +16,8 @@
  *
  */
 regcases is package{
-  main() do {
-    X is "a string";
+  prc main() do {
+    def X is "a string";
     
     case X in {
       `.*(s.*i:M).*` do{

@@ -22,16 +22,16 @@ matchingQuery is package{
     ssn has type string;
   }
   
-  Joe is empl{ name="joe"; id=0; ssn="001-01-0001"};
-  Peter is empl{ name="peter"; id=1; ssn="002-02-0002"};
-  John is empl{ name="john";id=2;ssn="003-03-0003"};
+  def Joe is empl{ name="joe"; id=0; ssn="001-01-0001"};
+  def Peter is empl{ name="peter"; id=1; ssn="002-02-0002"};
+  def John is empl{ name="john";id=2;ssn="003-03-0003"};
   
-  E is list of [ Joe,  Peter, John ];
+  def E is list of [ Joe,  Peter, John ];
                   
-  findEmpl(N,I,S,EE) is 
+  fun findEmpl(N,I,S,EE) is 
     list of { all Em where Em matching empl{ name = Nm; id = ID; ssn = SSN} in EE and (N=Nm or N=nonString) and (ID=I or I=nonInteger) and (SSN=S or S=nonString)};
      
-  main() do {
+  prc main() do {
     assert findEmpl("joe",nonInteger,nonString,E) = list of { Joe };
     assert findEmpl(nonString,1,nonString,E) = list of {Peter};
     assert findEmpl(nonString,4,nonString,E) = list of {}

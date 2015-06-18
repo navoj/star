@@ -17,9 +17,9 @@
  */
 voidfun is package{
   f has type () => ();
-  f() is ();
+  fun f() is ();
   
-  main() do {
+  prc main() do {
     assert f()=();
   }
 }

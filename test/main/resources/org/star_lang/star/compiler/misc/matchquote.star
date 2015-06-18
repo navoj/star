@@ -17,8 +17,8 @@
  */
 matchquote is package{
 
-  main() do {
-    P is quote(Alpha in Beta);
+  prc main() do {
+    def P is quote(Alpha in Beta);
     
     assert P matches applyAst(L1, nameAst(L2, "in"), list of {X;Y}) and
            X matches nameAst(_,"Alpha") and

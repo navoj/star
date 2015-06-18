@@ -90,7 +90,7 @@ import cons;
  # graph{} ==> list of [] has type n3Graph;
  # graph{?Graph} ==> list of [triples(Graph) ] ## {
 
-  #triples(A) is wrapComma(mapSemi(triple,A));     
+  #fun triples(A) is wrapComma(mapSemi(triple,A));     
 
   fun triple(SoFar,<| ?Sub ! ?VP |>) is SoFar++tripleJoin(trNounPhrase(list of [],Sub),trVerbPhrase(list of [],VP));
  

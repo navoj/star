@@ -17,12 +17,12 @@
  */
 badmapTest is package{
   fooPattern has type () <= string;
-  fooPattern is (pattern () from (S matching `.*foo.*`));
+  def fooPattern is (() from (S matching `.*foo.*`));
 
   Y has type dictionary of ((string, () <= string));
-  Y is dictionary of {
+  def Y is dictionary of {
         "foo" -> fooPattern;
   };
 
-  main() do { logMsg(info, "Y is $Y"); };
+  prc main() do { logMsg(info, "Y is $Y"); };
 }

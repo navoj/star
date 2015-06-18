@@ -17,20 +17,19 @@
  */
 strings is package{
   conc has type (string,string) =>string;
-  conc(A,B) is A++B;
+  fun conc(A,B) is A++B;
   
   foo has type () => string;
-  foo() is let{
-    AA is "one";
-    BB is "two";
+  fun foo() is let{
+    def AA is "one";
+    def BB is "two";
   } in 
    valof{
      logMsg(info,"conc(AA,BB)=$(conc(AA,BB))");
      valis AA;
    }
   
-  main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"strings test: $(foo())");
     assert conc("one","two")="onetwo";
   };

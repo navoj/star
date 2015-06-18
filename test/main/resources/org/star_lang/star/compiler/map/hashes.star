@@ -18,9 +18,9 @@
 hashes is package{  
   -- trial data
   
-  M is dictionary of {("a",1); ("b",2); ("c",3)};
+  def M is dictionary of {("a",1); ("b",2); ("c",3)};
   
-  main() do {
+  prc main() do {
     logMsg(info,"M=$M");
     -- test indexable
     assert M["a"] has value 1;
@@ -37,7 +37,7 @@ hashes is package{
     logMsg(info,"Showing M: $M");
     
     -- test iterate
-    FF is _iterate(M,(function(V,ContinueWith(SS)) is ContinueWith(V+SS)),ContinueWith(0));
+    def FF is _iterate(M,(V,ContinueWith(SS)) => ContinueWith(V+SS),ContinueWith(0));
     assert FF=ContinueWith(6);
   }
 }

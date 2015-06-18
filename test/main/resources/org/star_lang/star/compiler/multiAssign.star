@@ -17,9 +17,9 @@
  */
 multiAssign is package{
 
-  t2(A,B) is (A,B);
+  fun t2(A,B) is (A,B);
   
-  main() do {    
+  prc main() do {    
     -- test multiple assignment
     var A := "fred";
     var B := 2;

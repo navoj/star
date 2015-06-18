@@ -18,7 +18,7 @@
 maybeTest is package{
   import maybe;
   
-  ff(K,L) is maybe computation{
+  fun ff(K,L) is maybe computation{
     for (KK,V) in L do{
       if K=KK then
         valis V;
@@ -26,16 +26,16 @@ maybeTest is package{
     raise "not found";
   };
   
-  id(X) is X;
+  fun id(X) is X;
   
-  main() do {
-    MM is list of {(1,"alpha"); (2,"beta"); (3,"gamma"); (4,"delta")};
+  prc main() do {
+    def MM is list of {(1,"alpha"); (2,"beta"); (3,"gamma"); (4,"delta")};
     
     logMsg(info,"value of ff(2,MM) is $(valof ff(2,MM))");
     
     assert valof ff(2,MM) = "beta"
     
-    R2 is valof ff(5,MM) on abort (function(exception(_,E,_)) is E cast string);
+    def R2 is valof ff(5,MM) on abort ((exception(_,E,_)) => E cast string);
     
     logMsg(info,"value of ff(5,MM) is $(R2)");
 

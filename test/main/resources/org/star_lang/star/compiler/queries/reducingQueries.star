@@ -16,7 +16,7 @@
  *
  */
 reducingQueries is package{
-  N is list of[
+  def N is list of[
     (1,2),
     (2,1),
     (1,3),
@@ -25,7 +25,7 @@ reducingQueries is package{
     (3,1)
   ];
   
-  C is list of[
+  def C is list of[
     (1,2),
     (2,1),
     (1,3),
@@ -34,12 +34,12 @@ reducingQueries is package{
     (3,1)
   ];
   
-  plus(X,Y) is valof{
+  fun plus(X,Y) is valof{
     logMsg(info,"Add $X to $Y");
     valis X+Y;
   }
   
-  main() do {
+  prc main() do {
   	assert reduction plus of { all X where (X,_) in N } = 12;
   	
   	assert reduction plus of { all X where (X,_) in C } = 13;

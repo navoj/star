@@ -318,11 +318,7 @@ public class Dependencies
   {
     if (term != null) {
       for (IAbstract el : CompilerUtils.unWrap(term)) {
-        if (CompilerUtils.isEquals(el)) {
-          IAbstract lhs = CompilerUtils.equalityLhs(el);
-          if (CompilerUtils.isIdentifier(lhs))
-            exclusion.push(Abstract.getId(lhs));
-        } else if (CompilerUtils.isFunctionStatement(el)) {
+        if (CompilerUtils.isFunctionStatement(el)) {
           for (IAbstract eqn : CompilerUtils.unWrap(CompilerUtils.functionRules(el), StandardNames.PIPE))
             addPatternToExclusions(CompilerUtils.equationLhs(eqn), exclusion);
         } else if (CompilerUtils.isProcedureStatement(el)) {

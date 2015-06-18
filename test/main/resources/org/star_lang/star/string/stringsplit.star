@@ -18,10 +18,10 @@
 splitstring is package{
 
   match has type (string,string) => boolean;
-  match(K,S) is K in splitString(S,"[|]");
+  fun match(K,S) is K in splitString(S,"[|]");
   
   main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"splitting on |: $(splitString("BG|BG1|WB|MOLD","\\\\|"))");
     
     logMsg(info,"is foo in bar|foo|bar? $(match("foo","bar|foo|bar"))");

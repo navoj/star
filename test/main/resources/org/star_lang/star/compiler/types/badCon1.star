@@ -21,8 +21,8 @@ badCon1 is package {
   };
 
   bar has type (%%c of %a) => cons of %a where foo over %%c;
-  bar(s) is f1(s, nil) using {
+  fun bar(s) is f1(s, nil) using {
     -- f1 has type (%c,%%c of %a) => cons of %a;
-    f1(a0,b0) is fool((function(a,b) is cons(a, b)), a0, b0);
+    fun f1(a0,b0) is fool((a,b) => cons(a, b), a0, b0);
   };
 }

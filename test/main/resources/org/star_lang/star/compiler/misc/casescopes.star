@@ -16,7 +16,7 @@
  *
  */
 casescopes is package{
-  test(X) is valof{
+  fun test(X) is valof{
     def a is 1;
     
     case X in {
@@ -25,8 +25,7 @@ casescopes is package{
     }
   };
   
-  
-  main() do {
+  prc main() do {
     assert test(1)="yep";
     assert test(2)="no";
   }

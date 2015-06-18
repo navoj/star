@@ -4,7 +4,7 @@ tplAlias is package {
       f8 has type tup of (string, string);
   }
   
-  main() do {
+  prc main() do {
     def tmp is ("q", "Qr");
     def tmp2 is ((tmp));
     tt has type t;

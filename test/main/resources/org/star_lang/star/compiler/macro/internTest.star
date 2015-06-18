@@ -19,7 +19,7 @@ internTest is package {
 
  # makeEmpty(#(#(?F)#{?init})#(?X)) ==> let {
    #$empty has type #~#(F#+"State")# of X;
-   #$empty is #(#~#("empty"#+F)#)#{init}; }
+   def #$empty is #(#~#("empty"#+F)#)#{init}; }
  in #$empty;
 
  type initializedIdentityState of %t is initIdentity {
@@ -29,10 +29,10 @@ internTest is package {
    res has type %t;
  };
 
- main() do {
+ prc main() do {
    foo has type initializedIdentityState of integer;
-   foo is emptyinitializedIdentity{res=10};
-   e is makeEmpty(initializedIdentity{res=10}(integer));
+   def foo is emptyinitializedIdentity{res=10};
+   def e is makeEmpty(initializedIdentity{res=10}(integer));
    logMsg(info, "$e");
    assert e.res = 10;
  }

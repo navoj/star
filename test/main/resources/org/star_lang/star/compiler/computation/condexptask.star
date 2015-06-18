@@ -16,37 +16,37 @@
  *
  */
 condexptask is package{  
-  tt(X) is task{
+  fun tt(X) is task{
     valis valof task { valis X+2 };
   }
   
-  pos(X) is X>0;
+  fun pos(X) is X>0;
   
-  alpha is "alpha";
-  beta is "beta";
+  def alpha is "alpha";
+  def beta is "beta";
   
   cc has type (integer)=>task of string;
-  cc(X) is task{
+  fun cc(X) is task{
     valis "$X"
   }
   
-  S0(X) is task{ valis (pos(X) ? alpha : valof cc(X)) }
+  fun S0(X) is task{ valis (pos(X) ? alpha : valof cc(X)) }
 
-  S1(X) is task{ valis (pos(X) ? valof task{ valis "$X"}  : beta) }
+  fun S1(X) is task{ valis (pos(X) ? valof task{ valis "$X"}  : beta) }
   
-  L is list of {1;2;3};
+  def L is list of {1;2;3};
 
-  S2(X) is task{ valis X in L ? valof task { valis X} : nonInteger };
+  fun S2(X) is task{ valis X in L ? valof task { valis X} : nonInteger };
   
-  main() do{
-    R0a is valof S0(1);
-    R0b is valof S0(-1);
+  prc main() do{
+    def R0a is valof S0(1);
+    def R0b is valof S0(-1);
    
-    R1a is valof S1(2);
-    R1b is valof S1(-2);
+    def R1a is valof S1(2);
+    def R1b is valof S1(-2);
    
-    R2a is valof S2(1);
-    R2b is valof S2(4);
+    def R2a is valof S2(1);
+    def R2b is valof S2(4);
    
     assert R0a=alpha;
     assert R0b="-1";

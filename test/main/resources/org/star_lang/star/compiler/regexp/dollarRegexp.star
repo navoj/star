@@ -16,7 +16,7 @@
  *
  */
 dollarRegexp is package{
-  main() do {
+  prc main() do {
    assert 0'2"$$ matches `\$\$`
   }
 }

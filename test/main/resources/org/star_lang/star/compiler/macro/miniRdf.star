@@ -18,15 +18,15 @@ miniRdf is package{
     #n3Concept(identifier?I) ==> n3C($$I)
     
     #collectSemis(?Sq) ==> convert(Sq) ## {  
-      #convert(S) is convertHeads(S,<| _nil() |>);
+      #fun convert(S) is convertHeads(S,<| _nil() |>)
   
-      convertHeads(<| ?F ; ?T |>, Tl) is <| _cons(?F, ?convertHeads(T,Tl)) |>;
-      convertHeads( F, Tl) is <| _cons(?F,?Tl) |>;
+      fun convertHeads(<| ?F ; ?T |>, Tl) is <| _cons(?F, ?convertHeads(T,Tl)) |>
+       |  convertHeads( F, Tl) is <| _cons(?F,?Tl) |>;
     }
   }
  
-  main() do {
-    G is graph{
+  prc main() do {
+    def G is graph{
       john ! parent $ sam;
       sam ! parent $ joe
     };

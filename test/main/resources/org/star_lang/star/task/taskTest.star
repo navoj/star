@@ -18,31 +18,31 @@
 taskTest is package {
   import task;
   
-  testBasics() do {
+  prc testBasics() do {
     t1 has type task of integer;
-    t1 is taskReturn(42);
+    def t1 is taskReturn(42);
     assert(executeTask(t1,raiser_fun) = 42);
     
-    t2 is taskBind(taskReturn(2), (function (v) is taskReturn(21 * v)));
+    def t2 is taskBind(taskReturn(2), (v) => taskReturn(21 * v));
     assert(executeTask(t2,raiser_fun) = 42);
   }
 
-  testWait1() do {
-    t is taskWait((procedure (wakeup) do wakeup(taskReturn(42))));
-    v is executeTask(t,raiser_fun);
+  prc testWait1() do {
+    def t is taskWait(((wakeup) do wakeup(taskReturn(42))));
+    def v is executeTask(t,raiser_fun);
     assert(v = 42);
   }
 
-  testWait2() do {
+  prc testWait2() do {
     var ctrl := 0;
-    t is taskWait((procedure (wakeup) do {
-      def _ is __spawnExp((function () is valof {
+    def t is taskWait(((wakeup) do {
+      def _ is __spawnExp(() => valof {
         sync(ref ctrl) {
           when ctrl = 0 do ctrl := 1;
         }
         wakeup(taskReturn(42));
         valis 0;
-      }));
+      });
     }));
     sync(ref ctrl) {
       assert(ctrl = 0); -- thread not started yet
@@ -54,8 +54,7 @@ taskTest is package {
     assert(v = 42);
   }
   
-  
-  testExn1() do {
+  prc testExn1() do {
     def err is taskFail(exception("","Something went wrong" cast any,__location__))
     var _failed := false;
     try {
@@ -66,14 +65,14 @@ taskTest is package {
     assert(_failed);
   }
   
-  testExn2() do {
+  prc testExn2() do {
     def err is taskFail(exception(nonString,"Something went wrong" cast any, __location__))
     var _failed := false;
     try {
       var _t_failed := false;
-      def c is taskCatch(err, (function (e) is
+      def c is taskCatch(err, (e) =>
         valof { -- logMsg(info, e); 
-                _t_failed := true; valis taskReturn(0); }));
+                _t_failed := true; valis taskReturn(0); });
       
       def r is executeTask(c,raiser_fun);
       assert(_t_failed);
@@ -84,15 +83,15 @@ taskTest is package {
     assert(not _failed);
   }
   
-  testUtils() do {
-    def t1 is taskLift((function () is 42));
+  prc testUtils() do {
+    def t1 is taskLift(() => 42);
     assert(executeTask(t1,raiser_fun) = 42);
     
-    def t2 is taskGuard((function () is taskReturn(42)));
+    def t2 is taskGuard(() => taskReturn(42));
     assert(executeTask(t2,raiser_fun) = 42);
   } 
 
-  main() do {
+  prc main() do {
     testBasics();
     testWait1();
     testWait2();
@@ -102,5 +101,4 @@ taskTest is package {
     testUtils();
     logMsg(info, "taskTest done");
   }
-  
 }

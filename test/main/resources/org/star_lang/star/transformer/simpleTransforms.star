@@ -27,7 +27,7 @@ simpleTransforms is package{
     history has type list of tx;
   };
   
-  GP is transformer{
+  def GP is transformer{
     depends on accounts'n transactions;
     produces historical'n transactions;
     
@@ -36,7 +36,7 @@ simpleTransforms is package{
       Hist bound to list of { all Tx where Tx in transactions and (Tx.source=Id or Tx.dest=Id) order descending by Tx.timestamp};
   }
   
-  main() do {
+  prc main() do {
 /*    request GP to extend accounts with account{id=0L;owner="fred";balance=100L;lastTx=nonLong};
     request GP to extend accounts with account{id=1L;owner="peter";balance=0L;lastTx=nonLong};
 

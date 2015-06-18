@@ -58,7 +58,7 @@ private import folding;
 	      };
 
     updte has type (infoPath,json,json)=>json;
-    fun updte(list of {},I,_) is raise "path not valid";
+    fun updte(list of {},I,_) is raise "path not valid"
      |  updte(list of {Ky},I,V) is case Ky in {
           kString(K) where I matches iColl(M) is iColl(M[K->V]);
           kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->V]);
@@ -96,7 +96,7 @@ private import folding;
   }
 
   implementation indexed_iterable over json determines (infoPath,json) is {
-    fun _ixiterate(I,F,St) is indexInfoIterate(I,F,St,list of {});
+    fun _ixiterate(I,F,St) is indexInfoIterate(I,F,St,list of {})
   } using {
     fun indexInfoIterate(_,_,NoMore(X),_) is NoMore(X)
      |  indexInfoIterate(iColl(M),F,S,P) is _ixiterate(M,pathFun,S) using {
@@ -246,16 +246,16 @@ private import folding;
         }
      |  parseNum(L) is parseMore@parseInt(L,0l)
 
-    fun parseMore(Nm,list of {'.';..L}) is 
+    fun parseMore(Nm,list of ['.',..L]) is 
 	      parseExp@parseFrac(L,Nm as float,0.1)
-    fun parseMore(Nm,L matching (list of {'e';.._})) is
+     |  parseMore(Nm,L matching (list of ['e',.._])) is
 	      parseExp(Nm as float,L)
      |  parseMore(Nm,L) is (iNum(Nm),L)
 
     fun parseExp(Nm,list of {E;..L}) where E='e' or E='E' is parseX(Nm,L)
      |  parseExp(Nm,L) is (iFlt(Nm),L)
 
-    fun parseX(Nm,list of {'+';..L}) is parseX(Nm,L)
+    fun parseX(Nm,list of ['+',..L]) is parseX(Nm,L)
      |  parseX(Nm,L) is valof{
           def (Ex,LL) is parseInt(L,0l);
           valis (iFlt(Nm*10.0**(Ex as float)),LL)

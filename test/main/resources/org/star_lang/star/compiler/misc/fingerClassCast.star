@@ -18,9 +18,9 @@
 fingerClassCast is package {
   import finger;
 
-  iotaList(a,b,c) is (iota(a,b,c) has type cons of integer);
+  fun iotaList(a,b,c) is (iota(a,b,c) has type cons of integer);
 
-  main() do {
+  prc main() do {
     var st := flFromCons(iotaList(0,90,1));
   }
 }

@@ -19,12 +19,12 @@ basicPerform is package{
   import task;
 
   var flag := false;
-  t1 is task {
+  def t1 is task {
     flag := true;
     valis ();
   }
 
-  main() do {
+  prc main() do {
    perform t1; -- on abort { _ do logMsg(info, "XXX"); };
    assert(flag);
   }

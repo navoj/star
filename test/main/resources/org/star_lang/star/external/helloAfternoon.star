@@ -16,6 +16,6 @@
  *
  */
 helloAfternoon is package {
-	hello(who,morning) default is "Good Morning, " ++ who;
-	hello(who,morning) where not morning is "Hello " ++ who;
+  fun hello(who,morning) default is "Good Morning, " ++ who
+   |  hello(who,morning) where not morning is "Hello " ++ who;
 }

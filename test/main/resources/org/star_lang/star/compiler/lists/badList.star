@@ -17,16 +17,16 @@
  */
 badList is package{
   -- should not compile
-  test(list of [a,..x,b]) is x;
+  fun test(list of [a,..x,b]) is x;
   
   -- another bad list
-  XX is list of [a1,a2..,m,b1,b2,..t];
+  def XX is list of [a1,a2..,m,b1,b2,..t];
     
-  c is test(list of [1,2,3,4,5]);
+  def c is test(list of [1,2,3,4,5]);
   
-  foo is sequence of [1,2,..3,4];
+  def foo is sequence of [1,2,..3,4];
 
-  main() do {
+  prc main() do {
     logMsg(info, "c is $c");
   }
 }

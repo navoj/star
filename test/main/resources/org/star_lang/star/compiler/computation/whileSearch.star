@@ -16,14 +16,14 @@
  *
  */
 whileSearch is package{  
-  tt(X) is task{
+  fun tt(X) is task{
     valis X+2;
   }
   
-  ww(X) is task{
+  fun ww(X) is task{
     var C := 0;
     while C<10 do{
-      XX is valof tt(C);
+      def XX is valof tt(C);
       if XX>5 then
         valis XX
       else
@@ -32,8 +32,8 @@ whileSearch is package{
     valis nonInteger;
   }
   
-  main() do{
-   ZZ is valof ww(2);
+  prc main() do{
+   def ZZ is valof ww(2);
    
    logMsg(info,"ZZ=$ZZ");
      

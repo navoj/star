@@ -16,9 +16,9 @@
  *
  */
 callCall is package {
-  call(N) is N-1;
+  fun call(N) is N-1;
   
-  main() do {
+  prc main() do {
     assert call(2)=1;
   }
 }

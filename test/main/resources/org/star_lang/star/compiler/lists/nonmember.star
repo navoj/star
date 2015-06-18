@@ -17,7 +17,7 @@
  */
 nonmember is package{
   member has type ((%a, %a) => boolean, %a, cons of %a) => boolean;
-  member(eq,y,lis) is valof{
+  fun member(eq,y,lis) is valof{
     var r := lis;
     while r matches cons(x,xs) do{
       if eq(x,y) then
@@ -27,14 +27,14 @@ nonmember is package{
     valis false
   };
   
-  vanillaList is cons(1, cons(2, cons(3, nil)));
+  def vanillaList is cons(1, cons(2, cons(3, nil)));
   
-  #AssertBool(?s, ?expr) ==> assertBool( (function () is ?expr));
+  #AssertBool(?s, ?expr) ==> assertBool( () => ?expr);
   
   assertBool has type (()=>boolean)=>boolean;
-  assertBool(F) is F();
+  fun assertBool(F) is F();
   
-  main() do {
+  prc main() do {
     assert AssertBool("member4", not member((=), 4, vanillaList));
   }
 }

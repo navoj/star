@@ -18,22 +18,22 @@
 hashSetTest is package{
   import treemap;
   
-  buildTree(Count) is valof{
+  fun buildTree(Count) is valof{
     var H := treemap of {};
     
     var C := 1;
     while C<Count do{
       -- K is random(C);
-      K is C;
+      def K is C;
       H[K] := "val=$K";
       C := C+1;
     }
     valis H;
   };
   
-  main() do
+  prc main() do
   {
-    Count is 100000;
+    def Count is 100000;
     
     var B1 := nanos();
     var M := dictionary of {};
@@ -47,10 +47,10 @@ hashSetTest is package{
     logMsg(info,"dictionary: M has $(size(M)) elements");
     
     var B2 := nanos();
-    T is buildTree(Count);
+    def T is buildTree(Count);
     B2 := nanos()-B2;
     
-    B2Secs is B2 as float/1.0e9;
+    def B2Secs is B2 as float/1.0e9;
     logMsg(info,"build time is $(B2Secs), build factor is $(B2 as float/B1 as float)");
     logMsg(info,"dictionary depth is $(tree_depth(T))");
  

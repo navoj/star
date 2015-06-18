@@ -24,17 +24,17 @@ ports is package{
     _notify has type ((%u)=>()) => ();
   };
   
-  #p0rt{?S} ==> let{ #$"Schema" is actorTheta(S); } in port{
-    _notify(Fn) do Fn(#$"Schema");
-    _request(Fn,Qt,Fr) do Fn(#$"Schema");
-    _query(Fn,Qt,Fr) is Fn(#$"Schema");
+  #p0rt{?S} ==> let{ def #$"Schema" is actorTheta(S); } in port{
+    prc _notify(Fn) do Fn(#$"Schema");
+    prc _request(Fn,Qt,Fr) do Fn(#$"Schema");
+    fun _query(Fn,Qt,Fr) is Fn(#$"Schema");
   };
   
   type p0rt of %t is alias of port of %t;
   
   implementation speech over port of %schema determines (%schema,action) is {
-    _query(P,Qf,Qt,Fr) is action{ valis P._query(Qf,Qt,Fr)};
-    _request(P,Qf,Qt,Fr) is action{ P._request(Qf,Qt,Fr)};
-    _notify(P,Np) is action{ P._notify(Np)};
+    fun _query(P,Qf,Qt,Fr) is action{ valis P._query(Qf,Qt,Fr)};
+    fun _request(P,Qf,Qt,Fr) is action{ P._request(Qf,Qt,Fr)};
+    fun _notify(P,Np) is action{ P._notify(Np)};
   };
 }

@@ -19,7 +19,7 @@ tables is package{
   -- test out some of the basic tables and relations stuff
 
   R has type list of ((string,integer));
-  R is list of[
+  def R is list of[
     ("a",1),
     ("b",2),
     ("c",3),
@@ -27,13 +27,13 @@ tables is package{
   ];
   
   P has type list of {name has type string;age has type integer};
-  P is list of [ {name="fred";age=24}, {name="peter";age=23}];
+  def P is list of [ {name="fred";age=24}, {name="peter";age=23}];
   
   check has type (string,list of ((string,integer))) =>boolean;
-  check(S,Rr) is ((SS,_) where SS=S) in Rr;
+  fun check(S,Rr) is ((SS,_) where SS=S) in Rr;
     
   main has type action();
-  main() do {
+  prc main() do {
     logMsg(info,"is a in $R? $(check("a",R))");
     logMsg(info,"is e in $R? $(check("e",R))");
 

@@ -16,12 +16,12 @@
  *
  */
 parseURI is package{
-  main() do {
-    u1 is "file:/alpha/beta/gamma?question=answer\#fragment" as uri;
+  prc main() do {
+    def u1 is "file:/alpha/beta/gamma?question=answer\#fragment" as uri;
     
     logMsg(info,"u1=$u1");
     
-     u2 is "std:star.star" as uri;
+    def u2 is "std:star.star" as uri;
     
     logMsg(info,"u2=$u2");
   }

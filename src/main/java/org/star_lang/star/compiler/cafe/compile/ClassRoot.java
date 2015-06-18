@@ -120,15 +120,18 @@ public class ClassRoot implements CodeTree, CodeParser
     // Check for name is classRoot...
     if (term != null && CompilerUtils.isBraceTerm(term, CLASS_ROOT)) {
       for (IAbstract stmt : CompilerUtils.unWrap(CompilerUtils.braceArg(term))) {
-        if (CompilerUtils.isIsStatement(stmt) && Abstract.isIdentifier(CompilerUtils.isStmtPattern(stmt), ROOT)
-            && CompilerUtils.isStmtValue(stmt) instanceof StringLiteral) {
-          root = Abstract.getString(CompilerUtils.isStmtValue(stmt));
-        } else if (CompilerUtils.isIsStatement(stmt)
-            && Abstract.isIdentifier(CompilerUtils.isStmtPattern(stmt), PKG_FUN)
-            && CompilerUtils.isStmtValue(stmt) instanceof StringLiteral) {
-          pkgFunName = Abstract.getString(CompilerUtils.isStmtValue(stmt));
-        } else
-          errors.reportError("unknown statement type: " + stmt + " in manifest", stmt.getLoc());
+        if (CompilerUtils.isIsForm(stmt)) {
+          IAbstract lhs = CompilerUtils.isFormPattern(stmt);
+          IAbstract rhs = CompilerUtils.isFormValue(stmt);
+          if (Abstract.isIdentifier(lhs, ROOT) && rhs instanceof StringLiteral) {
+            root = Abstract.getString(rhs);
+            continue;
+          } else if (Abstract.isIdentifier(lhs, PKG_FUN) && rhs instanceof StringLiteral) {
+            pkgFunName = Abstract.getString(rhs);
+            continue;
+          }
+        }
+        errors.reportError("unknown statement type: " + stmt + " in manifest", stmt.getLoc());
       }
 
       if (errors.noNewErrors(mark))
@@ -156,13 +159,16 @@ public class ClassRoot implements CodeTree, CodeParser
     // Check for name is classRoot...
     if (term != null && CompilerUtils.isBraceTerm(term, CLASS_ROOT)) {
       for (IAbstract stmt : CompilerUtils.unWrap(CompilerUtils.braceArg(term))) {
-        if (CompilerUtils.isIsStatement(stmt) && Abstract.isIdentifier(CompilerUtils.isStmtPattern(stmt), ROOT)
-            && CompilerUtils.isStmtValue(stmt) instanceof StringLiteral) {
-          root = Abstract.getString(CompilerUtils.isStmtValue(stmt));
-        } else if (CompilerUtils.isIsStatement(stmt)
-            && Abstract.isIdentifier(CompilerUtils.isStmtPattern(stmt), PKG_FUN)
-            && CompilerUtils.isStmtValue(stmt) instanceof StringLiteral) {
-          pkgFunName = Abstract.getString(CompilerUtils.isStmtValue(stmt));
+        if (Abstract.isBinary(stmt, StandardNames.IS)) {
+          IAbstract lhs = Abstract.binaryLhs(stmt);
+          IAbstract rhs = Abstract.binaryRhs(stmt);
+
+          if (Abstract.isIdentifier(lhs, ROOT) && rhs instanceof StringLiteral)
+            root = Abstract.getString(rhs);
+          else if (Abstract.isIdentifier(lhs, PKG_FUN) && rhs instanceof StringLiteral)
+            pkgFunName = Abstract.getString(rhs);
+          else
+            errors.reportError("unknown statement type: " + stmt + " in manifest", stmt.getLoc());
         } else
           errors.reportError("unknown statement type: " + stmt + " in manifest", stmt.getLoc());
       }

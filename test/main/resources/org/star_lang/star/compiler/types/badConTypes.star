@@ -8,7 +8,7 @@ badConTypes is package{
   };
      
   makeCarrierAgent has type (carrierIdType, list of integer, integer) => carrierAgentType;
-  makeCarrierAgent(C, Ls, P) is carrier{
+  fun makeCarrierAgent(C, Ls, P) is carrier{
     carrierId = C;
     contains := Ls;
     location := P;

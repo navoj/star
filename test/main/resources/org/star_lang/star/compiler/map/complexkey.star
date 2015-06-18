@@ -18,7 +18,7 @@
 complexkey is package{
   type foo of %t is nf or foo(%t);
   
-  main() do {
+  prc main() do {
     var K := dictionary of {};
     
     K[foo(3)] := "aleph";

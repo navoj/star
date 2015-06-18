@@ -21,14 +21,14 @@ matchingRecord is package{
     Y has type string;
   }
   
-  hasY(X matching foo{Y=S}) is S;
+  fun hasY(X matching foo{Y=S}) is S;
   
   -- findK(L,K) where R matching foo{X=K} in L is R;
   
-  findK(K,cons(H matching foo{X=K},T)) is H;
-  findK(K,cons(_,T)) is findK(K,T);
+  fun findK(K,cons(H matching foo{X=K},T)) is H
+   |  findK(K,cons(_,T)) is findK(K,T)
   
-  main() do {
+  prc main() do {
     assert hasY(foo{X=23;Y="fred"})="fred";
     
     assert findK(2,cons of {foo{X=1;Y="a"}; foo{X=2;Y="b"}; foo{X=3;Y="c"}}) = foo{X=2;Y="b"};

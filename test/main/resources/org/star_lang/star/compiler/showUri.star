@@ -16,9 +16,9 @@
  *
  */
 showUri is package{
-  U is "http://www.example.com?V=2.3\#fooFrag" as uri;
+  def U is "http://www.example.com?V=2.3\#fooFrag" as uri;
   
-  main() do {
+  prc main() do {
     logMsg(info,"U=#U");
     logMsg(info,"U is really #(__display(U))");
   }

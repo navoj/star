@@ -21,7 +21,7 @@ actorCrud is package{
   };
   
   
-  main() do {
+  prc main() do {
     assert (query A's R with R) = list of [];
     
     request A to extend R with ("peter",1);

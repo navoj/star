@@ -16,14 +16,14 @@
  *
  */
 bench is package {
-  timer_start has type (integer, string) => (long, integer, string);
-  timer_start(count, msg) is (nanos(), count, msg);
+  timer_start has type (integer, string) => (long, integer, string)
+  fun timer_start(count, msg) is (nanos(), count, msg)
 
-  timer_finish has type action((long, integer, string));
-  timer_finish((start, count, msg)) do {
-    stop is nanos();
-    elapsed is ((stop - start) as float) / 1.0e6;
-    ops_per_sec is (count as float) / elapsed * 1.0e3;
+  timer_finish has type action((long, integer, string))
+  prc timer_finish((start, count, msg)) do {
+    def stop is nanos();
+    def elapsed is ((stop - start) as float) / 1.0e6;
+    def ops_per_sec is (count as float) / elapsed * 1.0e3;
     logMsg(info, "$count\t#msg\t$elapsed ms\t$(ops_per_sec) ops/sec");
   };
 
@@ -35,11 +35,11 @@ bench is package {
     }
   };
   
-  benchNativeList(Count) do {
+  prc benchNativeList(Count) do {
     var timer := timer_start(Count, "");
     var i:= nonInteger;
     idxes has type list of integer;
-    idxes is iota(0, Count-1, 1);
+    def idxes is iota(0, Count-1, 1);
 
     logMsg(info, "******* native lists ******");
     timer := timer_start(Count, "Creating native list from iota($Count)");
@@ -80,8 +80,7 @@ bench is package {
 
   }
 
-  main () do {
+  prc main () do {
     benchNativeList(10000);
   }
-
 }

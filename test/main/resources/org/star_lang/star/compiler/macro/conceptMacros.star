@@ -44,26 +44,26 @@ conceptMacros is package{
   # graph{} ==> list of [] has type n3Graph;
   # graph{?Graph} ==> list of [ concepts(Graph) ] ## {
    
-    #concepts(A) is  mapSemi(trConcept,A);
+    #fun concepts(A) is  mapSemi(trConcept,A);
    
-    unwrap(<| ?L ; ?R |>,Lst) is unwrap(R,unwrap(L,Lst));
-    unwrap(El,Lst) is list of {Lst..;El};
+    fun unwrap(<| ?L ; ?R |>,Lst) is unwrap(R,unwrap(L,Lst))
+     |  unwrap(El,Lst) is list of [Lst..,El]
    
-    wrapRv(_pair(El,_empty())) is <| ?El |>;
-    wrapRv(_pair(El,More)) is <| ?El , ?wrapRv(More) |>;
+    fun wrapRv(_pair(El,_empty())) is <| ?El |>
+     |  wrapRv(_pair(El,More)) is <| ?El , ?wrapRv(More) |>;
    
-    mapSemi(F,A) is wrapRv(leftFold(F,_nil(),unwrap(A,_nil())));
+    fun mapSemi(F,A) is wrapRv(leftFold(F,_nil(),unwrap(A,_nil())));
 
-    trConcept(SoFar,<| #(string?S)# : #(string?Lng)# |>) is list of {SoFar..;<| n3S(?S,?Lng) |>}; 
-    trConcept(SoFar,<| #(identifier?G)# : #(identifier ? C)# |>) is list of {SoFar..;<| n3C(?nameString(G), ?nameString(C)) |>};
-    trConcept(SoFar,<| identifier?C |>) is list of {SoFar..;<| n3C("", ?nameString(C)) |>};
-    trConcept(SoFar,<| string ?S |>) is list of {SoFar..;<| n3S(?S,"") |>};
+    fun trConcept(SoFar,<| #(string?S)# : #(string?Lng)# |>) is list of [SoFar..,<| n3S(?S,?Lng) |>] 
+     |  trConcept(SoFar,<| #(identifier?G)# : #(identifier ? C)# |>) is list of [SoFar..,<| n3C(?nameString(G), ?nameString(C)) |>]
+     |  trConcept(SoFar,<| identifier?C |>) is list of [SoFar..,<| n3C("", ?nameString(C)) |>]
+     |  trConcept(SoFar,<| string ?S |>) is list of [SoFar..,<| n3S(?S,"") |>]
     
-    nameString(nameAst(Lc,N)) is stringAst(Lc,N);
+    fun nameString(nameAst(Lc,N)) is stringAst(Lc,N)
   }
   
-  main() do {
-    G is graph{ foo; gr:concept; "a string"; "une string française":"fr" }
+  prc main() do {
+    def G is graph{ foo; gr:concept; "a string"; "une string française":"fr" }
    
     logMsg(info,"concepts are $G");
     

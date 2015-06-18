@@ -16,19 +16,19 @@
  *
  */
 subTask is package{
-  tt(X) is task{
+  fun tt(X) is task{
     valis X+2;
   }
   
-  uu(X) is task{
+  fun uu(X) is task{
     logMsg(info,"We got $X");
     var Y := 1;
     Y:=Y+valof tt(3);
     valis X+Y;
   };
   
-  main() do {    
-    YY is valof uu(3);
+  prc main() do {    
+    def YY is valof uu(3);
     assert YY=9;
   }
 }

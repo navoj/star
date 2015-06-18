@@ -1,18 +1,18 @@
 recordThis is package{
 
-  RR is let{
-    This is memo{
+  def RR is let{
+    def This is memo{
       F=F; G=G;
     }
     
-    F(X) is let{
-      T is This();
+    fun F(X) is let{
+      def T is This();
     } in G(X);
     
-    G(X) is X;
+    fun G(X) is X;
   } in This();
   
-  main() do {
+  prc main() do {
     assert RR.F(3)=3;
   }
 }

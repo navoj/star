@@ -20,40 +20,40 @@ binaryTrees is package{
   -- adapted from the YAP prolog version http://shootout.alioth.debian.org/gp4/benchmark.php?test=binarytrees&lang=yap&id=1
   import bitstring;
   
-  minDepth is 4;
+  def minDepth is 4;
   
   type tree of %t is tree(tree of %t,%t,tree of %t)
                   or nilTree;
   
-  checkTree has type (tree of integer) =>integer;
-  checkTree(tree(nilTree,Item,_)) is Item;
-  checkTree(tree(_,Item,nilTree)) is Item;
-  checkTree(tree(L,I,R)) is I+checkTree(L)-checkTree(R);
+  checkTree has type (tree of integer) =>integer
+  fun checkTree(tree(nilTree,Item,_)) is Item
+   |  checkTree(tree(_,Item,nilTree)) is Item
+   |  checkTree(tree(L,I,R)) is I+checkTree(L)-checkTree(R)
   
-  buildTree has type (integer,integer) =>tree of integer;
-  buildTree(I,0) is tree(nilTree,I,nilTree);
-  buildTree(I,D) is tree(buildTree((2*I)-1,D-1),I,buildTree(2*I,D-1));
+  buildTree has type (integer,integer) =>tree of integer
+  fun buildTree(I,0) is tree(nilTree,I,nilTree)
+   |  buildTree(I,D) is tree(buildTree((2*I)-1,D-1),I,buildTree(2*I,D-1))
   
-  sho(X,Y) is valof{
+  fun sho(X,Y) is valof{
     logMsg(info,X);
     valis Y
   };
   
-  main() do
+  prc main() do
   {
-    N is 16;
+    def N is 16;
     
-    maxDepth is (minDepth+2>N?minDepth:N);
-    stretchDepth is maxDepth+1;
+    def maxDepth is (minDepth+2>N?minDepth:N);
+    def stretchDepth is maxDepth+1;
         
-    longLivedTree is buildTree(0,maxDepth);
+    def longLivedTree is buildTree(0,maxDepth);
     
     -- logMsg(info,"iota $minDepth, $maxDepth =$(iota(minDepth,maxDepth+1,2))");
     
-    Start is nanos();
+    def Start is nanos();
     
     for depth in iota(minDepth,maxDepth+1,2) do{
-      iterations is 1.<<.(maxDepth-depth+minDepth);
+      def iterations is 1.<<.(maxDepth-depth+minDepth);
       
       -- logMsg(info,"iterations= $iterations, depth=$depth, maxDepth=$maxDepth, minDepth=$minDepth");
       
@@ -67,7 +67,7 @@ binaryTrees is package{
       -- assert 2*iterations=-check;
     }
     
-    Time is nanos()-Start;
+    def Time is nanos()-Start;
     
     logMsg(info,"long lived tree of depth $maxDepth\t check: $(checkTree(longLivedTree)), in $Time nanos");
   }

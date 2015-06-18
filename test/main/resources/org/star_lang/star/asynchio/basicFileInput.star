@@ -1,20 +1,20 @@
 basicFileInput is package{
 
-  openFile(string(Fl)) is __asynch_open_file(Fl);
+  fun openFile(string(Fl)) is __asynch_open_file(Fl);
   
-  consumeFile(Start,F) do let{
-    consume(success((_,""))) do logMsg(info,"end of input");
-    consume(success((Cnt,S))) do {
-      logMsg(info,"next block of $Cnt bytes, #(__display(S))");
-      consumeFile(Start+(Cnt as long),F);
-    }
+  prc consumeFile(Start,F) do let{
+    prc consume(success((_,""))) do logMsg(info,"end of input")
+     |  consume(success((Cnt,S))) do {
+          logMsg(info,"next block of $Cnt bytes, #(__display(S))");
+          consumeFile(Start+(Cnt as long),F);
+        }
   } in { __file_read(F,Start,consume) };
      
 
   main has type (string)=>();
-  main(fl) do
+  prc main(fl) do
   {
-  	F is openFile(fl);
+  	def F is openFile(fl);
   	logMsg(info,__display(F));
   	
   	consumeFile(0l,F);

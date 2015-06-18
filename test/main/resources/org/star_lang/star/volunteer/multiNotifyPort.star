@@ -23,7 +23,7 @@ multiNotifyPort is package{
   var Acount := 0;
   var Bcount := 0;
   
-  Port_In is p0rt{
+  def Port_In is p0rt{
     on ((A has type string),B) on AA do {
       Acount := Acount+B;
       logMsg(info,"AA: A=$A,B=$B, Acount=$Acount");
@@ -35,9 +35,9 @@ multiNotifyPort is package{
     };
   };
 
-  P1 is connectPort_Out(Port_In);
+  def P1 is connectPort_Out(Port_In);
   
-  main() do {
+  prc main() do {
     notify P1 with ("main greeting on AA",1) on AA;
     notify P1 with ("greeting on BB",2) on BB;
 

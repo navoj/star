@@ -16,14 +16,14 @@
  *
  */
  othertest is package{
-   ttVal is valof{
+   def ttVal is valof{
      if (true otherwise true) then {
             valis true; 
         } else {
             valis false;
         };
      };
-   main() do {
+   prc main() do {
      assert ttVal;
    }
  }

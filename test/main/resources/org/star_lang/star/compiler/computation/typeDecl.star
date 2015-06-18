@@ -19,15 +19,15 @@ typeDecl is package{
   import task;
 
   -- aa has type (() => task of integer) => task of integer
-  aa(f) is task {
+  fun aa(f) is task {
     try {
       valis valof f();
     } on abort {
       E do { logMsg(info, "recovering from $E"); valis 1 };
     }
   }
-  main() do {
-    F is (function () is task { logMsg(info,"do F"); raise "F malfunction"; });
+  prc main() do {
+    def F is () => task { logMsg(info,"do F"); raise "F malfunction"; };
     assert valof aa(F) = 1;
   }
 };

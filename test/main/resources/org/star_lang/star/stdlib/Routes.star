@@ -1,11 +1,11 @@
 Routes is package {
   type OperationName is alias of string;
 
-  operationNameEqual(n1, n2) is (n1 = n2);
+  fun operationNameEqual(n1, n2) is (n1 = n2);
 
   type Operation of %op is Operation(OperationName, %op);
 
-  operationEquals(Operation(n1, o1), Operation(n2, o2)) is
+  fun operationEquals(Operation(n1, o1), Operation(n2, o2)) is
     operationNameEqual(n1, n2) and (o1 = o2)
 
 /*
@@ -17,7 +17,7 @@ Routes is package {
   };
 
   routeEquals has type (Route of %op, Route of %op) => boolean where equality over %op;
-  routeEquals(r1, r2) is r1.rem = r2.rem;
+  fun routeEquals(r1, r2) is r1.rem = r2.rem;
 
   implementation equality over (Route of %op where equality over %op) is {
     (=) = routeEquals;
@@ -33,10 +33,10 @@ Routes is package {
   or RouteQTLimit(RouteRem of %op, RouteRem of %op);
 
   routeRemEquals has type (RouteRem of %op, RouteRem of %op) => boolean where equality over %op;
-  routeRemEquals(RouteList(l1), RouteList(l2)) is l1 = l2;
-  routeRemEquals(RouteQTLimit(r1in, r1after), RouteQTLimit(r2in, r2after)) is
-    routeRemEquals(r2in, r2in) and routeRemEquals(r2after, r2after)
-  routeRemEquals(_, _) default is false;
+  fun routeRemEquals(RouteList(l1), RouteList(l2)) is l1 = l2
+   |  routeRemEquals(RouteQTLimit(r1in, r1after), RouteQTLimit(r2in, r2after)) is
+        routeRemEquals(r2in, r2in) and routeRemEquals(r2after, r2after)
+   |  routeRemEquals(_, _) default is false
 
   implementation equality over (RouteRem of %op where equality over %op) is {
     (=) = routeRemEquals;
@@ -48,13 +48,12 @@ Routes is package {
     or RouteQTZone(RouteRem of %op); /* route must not be empty */
 
   routeElementEquals has type ((RouteElement of %op , RouteElement of %op) => boolean) where equality over %op;
-  routeElementEquals(RouteOp(op1), RouteOp(op2)) is operationEquals(op1, op2);
-  routeElementEquals(RouteQTZone(r1), RouteQTZone(r2)) is
-    routeRemEquals(r1, r2);
-  routeElementEquals(_, _) default is false;
+  fun routeElementEquals(RouteOp(op1), RouteOp(op2)) is operationEquals(op1, op2)
+   |  routeElementEquals(RouteQTZone(r1), RouteQTZone(r2)) is
+        routeRemEquals(r1, r2)
+   |  routeElementEquals(_, _) default is false;
 
   implementation equality over (RouteElement of %op where equality over %op) is {
     (=) = routeElementEquals;
   };
-
 }

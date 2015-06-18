@@ -16,10 +16,10 @@
  *
  */
 nonString is package{
-  testFn(`(.:C).*`) is C;
-  testFn(_) default is nonString;
+  fun testFn(`(.:C).*`) is C
+   |  testFn(_) default is nonString;
   
-  main() do {
+  prc main() do {
     assert testFn(nonString) = nonString
   }
 }

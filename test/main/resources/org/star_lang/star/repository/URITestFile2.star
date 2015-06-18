@@ -16,5 +16,5 @@
  *
  */
 URITestFile2 is package {
-  x is 1;
+  def x is 1;
 }

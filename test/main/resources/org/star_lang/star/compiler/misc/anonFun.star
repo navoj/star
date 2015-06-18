@@ -16,17 +16,17 @@
  *
  */
 anonFun is package {
-  foo() is let {
-    bar is () => 3;
+  fun foo() is let {
+    def bar is () => 3;
   } in bar;
   
-  ffoo() is let{
-    bar() is 3;
+  fun ffoo() is let{
+    fun bar() is 3;
   } in bar;
   
-  inc(X) is (Y) => X+Y;
+  fun inc(X) is (Y) => X+Y;
  
-  main() do {
+  prc main() do {
     logMsg(info,"foo is $(foo()())");
     logMsg(info,"ffoo is $(ffoo()())");
     

@@ -5,7 +5,7 @@ recordMap is package{
   
   def R is r{ f := dictionary of {"alpha"->1} }
   
-  main() do {
+  prc main() do {
     R.f["beta"] := 2
     
     assert R.f["alpha"] has value 1

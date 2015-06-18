@@ -17,7 +17,7 @@
  */
 risk is package{
 
-  countries is list of [
+  def countries is list of [
     { name="Western Australia";
       borders = list of {"Eastern Australia"; "Indonesia"; "Papua New Guinea"};
       continent="Australia"
@@ -191,7 +191,7 @@ risk is package{
    ];
    
    
-   main() do {
+   prc main() do {
      for {name=Cntry; borders=B} in countries do{
        for C in B do{
          if {name=C;borders=BC} in countries and not Cntry in BC then

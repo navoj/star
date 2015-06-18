@@ -20,7 +20,7 @@ dotslash is package{
   
  -- #probeFree(?Res,?Specs./respond(?Res),?Chnl) ==> (Res,Chnl);  
   
-  main() do
+  prc main() do
   {
     assert probe(list of [1,wrapRv(2)]) = list of [1,2];
     

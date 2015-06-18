@@ -20,7 +20,7 @@ matchingtest is package{
   testRelation has type ref list of (integer);
   var testRelation := list of [];
 
-  conditionalTest() do {
+  prc conditionalTest() do {
     var tookElse := false;
     if (X matching Y) in testRelation then
       nothing
@@ -29,5 +29,5 @@ matchingtest is package{
     assert tookElse; 
   };
 
-   main() do conditionalTest();
+   prc main() do conditionalTest();
  };

@@ -21,23 +21,23 @@ fanpl is package{
   }
   
   implementation A over integer is {
-    pl(X,Y) is X+Y;
+    fun pl(X,Y) is X+Y;
   }
   
   implementation A over list of %t where A over %t is {
-    pl(A1,A2) is arPlus(A1,A2);
+    fun pl(A1,A2) is arPlus(A1,A2);
   }
   
-  arPlus(list of [],list of []) is list of [];
-  arPlus(list of [E1,..L1], list of [E2,..L2]) is list of [pl(E1,E2),..arPlus(L1,L2)];
+  fun arPlus(list of [],list of []) is list of []
+   |  arPlus(list of [E1,..L1], list of [E2,..L2]) is list of [pl(E1,E2),..arPlus(L1,L2)]
   
-  f(X) is pl(X,X);
+  fun f(X) is pl(X,X);
   
-  g(X) is let{
-    h(U) is pl(U,X);
+  fun g(X) is let{
+    fun h(U) is pl(U,X);
   } in h(X)
   
-  main() do {
+  prc main() do {
     assert pl(2,3)=5;
     
     assert f(2)=4;

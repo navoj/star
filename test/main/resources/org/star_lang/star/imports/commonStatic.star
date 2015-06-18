@@ -19,8 +19,8 @@ commonStatic is package{
   import common;
   import updateCommon;
   
-  main() do{
-    X is updateX();
+  prc main() do{
+    def X is updateX();
     
     assert commonX()=X
   }

@@ -16,17 +16,17 @@
  *
  */
 doubleSel is package{
-  foo(X) is valof{
+  fun foo(X) is valof{
     logMsg(info,"foo of $X");
     valis X+2;
   }
   
-  bar(A) is case foo(A) in {
+  fun bar(A) is case foo(A) in {
     X matching 4 is X;
     _ default is -1
   };
   
-  main() do {
+  prc main() do {
     logMsg(info,"bar = $(bar(2))");
     assert bar(2)=4;
   }

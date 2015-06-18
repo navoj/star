@@ -17,10 +17,10 @@
  */
 nestedMap is package{
   MM has type dictionary of (string,dictionary of (string,integer));
-  MM is dictionary of {"alpha" -> dictionary of {"beta"->2; "gamma"->3};
+  def MM is dictionary of {"alpha" -> dictionary of {"beta"->2; "gamma"->3};
                 "delta" -> dictionary of {}};
   
-  main() do {
+  prc main() do {
     assert size(MM) = 2;
     assert size(someValue(MM["alpha"])) = 2;
     

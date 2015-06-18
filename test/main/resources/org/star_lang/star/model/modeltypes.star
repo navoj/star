@@ -40,28 +40,28 @@ modeltypes is package {
     DEFAULT_RELATION has type list of mModel
   };
   
-  createIn(notifyFunc, requestFunc) is { 
-    STR_STREAM(x) do notifyPort(notifyFunc, "STR_STREAM", x);
+  fun createIn(notifyFunc, requestFunc) is { 
+    prc STR_STREAM(x) do notifyPort(notifyFunc, "STR_STREAM", x);
   };
 
-  createMODEL_IN(notifyFunc, requestFunc) is {
-    ATTRIBUTE_UPDATES(x) do notifyPort(notifyFunc, "ATTRIBUTE_UPDATES", x);
-    DEFAULT(x) do notifyPort(notifyFunc, "DEFAULT", x);
-    GET_CONFIGURATION(x) do requestPort(requestFunc, "GET_CONFIGURATION", x);
+  fun createMODEL_IN(notifyFunc, requestFunc) is {
+    prc ATTRIBUTE_UPDATES(x) do notifyPort(notifyFunc, "ATTRIBUTE_UPDATES", x);
+    prc DEFAULT(x) do notifyPort(notifyFunc, "DEFAULT", x);
+    prc GET_CONFIGURATION(x) do requestPort(requestFunc, "GET_CONFIGURATION", x);
   };
 
-  createIManage(notifyFunc, requestFunc) is {
-    PAUSE(x) do requestPort(requestFunc, "PAUSE", x);
-    PREPARE(x) do requestPort(requestFunc, "PREPARE", x);
-    RELEASE(x) do requestPort(requestFunc, "RELEASE", x);
-    RESUME(x) do requestPort(requestFunc, "RESUME", x);
-    START(x) do requestPort(requestFunc, "START", x);
-    START_DATAFLOW(x) do requestPort(requestFunc, "START_DATAFLOW", x);
-    STOP(x) do requestPort(requestFunc, "STOP", x);
-    STOP_DATAFLOW(x) do requestPort(requestFunc, "STOP_DATAFLOW", x);
+  fun createIManage(notifyFunc, requestFunc) is {
+    prc PAUSE(x) do requestPort(requestFunc, "PAUSE", x);
+    prc PREPARE(x) do requestPort(requestFunc, "PREPARE", x);
+    prc RELEASE(x) do requestPort(requestFunc, "RELEASE", x);
+    prc RESUME(x) do requestPort(requestFunc, "RESUME", x);
+    prc START(x) do requestPort(requestFunc, "START", x);
+    prc START_DATAFLOW(x) do requestPort(requestFunc, "START_DATAFLOW", x);
+    prc STOP(x) do requestPort(requestFunc, "STOP", x);
+    prc STOP_DATAFLOW(x) do requestPort(requestFunc, "STOP_DATAFLOW", x);
   };
   
-  notifyPort(Fn,Name,Arg) do Fn(Arg);
-  requestPort(Fn,Name,Arg) do Fn(Arg);
-  queryPort(Fn,Name,Arg) is Fn(Arg);
+  prc notifyPort(Fn,Name,Arg) do Fn(Arg);
+  prc requestPort(Fn,Name,Arg) do Fn(Arg);
+  fun queryPort(Fn,Name,Arg) is Fn(Arg);
 }

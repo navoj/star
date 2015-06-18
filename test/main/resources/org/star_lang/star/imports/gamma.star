@@ -18,5 +18,5 @@
 gamma is package{
   import alpha;
   
-  gamma(X) is X;
+  fun gamma(X) is X;
 }

@@ -18,5 +18,5 @@
 single is package{
   import types;
   
-  single is bar;
+  def single is bar;
 }

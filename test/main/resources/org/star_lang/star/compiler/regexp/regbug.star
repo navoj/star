@@ -16,7 +16,7 @@
  *
  */
 regbug is package{
-  main() do { 
+  prc main() do { 
     var testString := "X";
 --    logMsg(info, "Atempting match"); 
     
@@ -27,7 +27,7 @@ regbug is package{
       logMsg(info, "Match failed"); 
   };
   
-  regFun(`X..`) is true;
-  regFun(_) default is false;
+  fun regFun(`X..`) is true
+   |  regFun(_) default is false
   
 };

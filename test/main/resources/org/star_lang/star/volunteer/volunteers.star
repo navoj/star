@@ -55,13 +55,13 @@ Name is connections{
       };
       
       connectAo(Br,Cr) is port{
-        private pA is { DATA(X) do { Br._notify((procedure(SS) do SS.INP(X)));
-                                     Cr._notify((procedure(SS) do SS.DATA(X)))}
+        private pA is { prc DATA(X) do { Br._notify(((SS) do SS.INP(X)));
+                                     Cr._notify(((SS) do SS.DATA(X)))}
                       };
         
-        _notify(Nf) do Nf(pA);
-        _query(Qf,QQ,QFr) is Cr._query(Qf,QQ,QFr);
-        _request(Rf,RQ,RFr) do Cr._request(Rf,RQ,RFr); 
+        prc _notify(Nf) do Nf(pA);
+        fun _query(Qf,QQ,QFr) is Cr._query(Qf,QQ,QFr);
+        fun _request(Rf,RQ,RFr) do Cr._request(Rf,RQ,RFr); 
       }
     }
  */
@@ -95,7 +95,7 @@ Name is connections{
     #connection(?OP,?Schema,?Specs) ==> 
 	#(
 	 connect#+OP has type #<#*connectedPortTypes(#*connectedPorts(OP,Specs,()),Specs)>#=>#*portType(OP,Specs,());
-	 connect#+OP#@#<connectedPorts(OP,Specs,())># is
+	 fun connect#+OP#@#<connectedPorts(OP,Specs,())># is
 	     #*unwrapSAs(#$"lVar",
 		   #*mergeSA(#*processNotifies(#$"lVar",Schema,OP,Specs),
 			 #*mergeSA(#*processRequests(#$"lVar",Schema,OP,Specs),
@@ -104,8 +104,8 @@ Name is connections{
 	  #unwrapSAs(?lVar, (?Outer, ())) ==> port{Outer};
 	  #unwrapSAs(?lVar, (?Outer, ?Local)) ==> 
 	      let{ 
-		lVar has type {adjustSchema(Schema)}; 
-		lVar is {#*generateFromSchema(Local,Schema)}
+		    lVar has type {adjustSchema(Schema)}; 
+		    def lVar is {#*generateFromSchema(Local,Schema)}
 	      } in port{Outer};
 	  
 	  #adjustSchema(?S) ==> S;
@@ -145,13 +145,13 @@ Name is connections{
     #generateDeflt(?Ch,?Tp,((),?Ot)) ==> glom(genDeflt(Ch,Tp),Ot);
     #generateDeflt(?Ch,?Tp,(?Lc,?Ot)) ==> glom(Lc,Ot);
     
-    #genDeflt(?Ch,occurrence of ?T) ==> #(Ch(#$"X") do nothing)#;
-    #genDeflt(?Ch,action#@?Ar) ==> #(Ch#@ #<#:argTemplate(#:Ar)># do nothing)#;
-    #genDeflt(?Ch,#(?Ar)#=>()) ==>  #(Ch#@ #<#:argTemplate(#:Ar)># do nothing)#;
-    #genDeflt(?Ch,#(?Ar=>?rs)#) ==> #(Ch#@ #<#:argTemplate(#:Ar)># is raise "no data")#;
-    #genDeflt(?Ch,list of ?T) ==> #(Ch is #(list of []::expression)#)#;
+    #genDeflt(?Ch,occurrence of ?T) ==> #(prc Ch(#$"X") do nothing)#;
+    #genDeflt(?Ch,action#@?Ar) ==> #(prc Ch#@ #<#:argTemplate(#:Ar)># do nothing)#;
+    #genDeflt(?Ch,#(?Ar)#=>()) ==>  #(prc Ch#@ #<#:argTemplate(#:Ar)># do nothing)#;
+    #genDeflt(?Ch,#(?Ar=>?rs)#) ==> #(fun Ch#@ #<#:argTemplate(#:Ar)># is raise "no data")#;
+    #genDeflt(?Ch,list of ?T) ==> #(def Ch is #(list of []::expression)#)#;
     #genDeflt(?Ch,ref list of ?T) ==> #(var Ch := #(list of []::expression)#)#; 
-    #genDeflt(?Ch,?T) ==> #(Ch is void)#;
+    #genDeflt(?Ch,?T) ==> #(def Ch is void)#;
     
     #show(?M) ==> _macro_log($$M,M);
     
@@ -190,7 +190,7 @@ Name is connections{
     #notifyConns(?OP,?Chnl,?Oth,?Specs,?Schema,?Conns) ==> Conns;
     
     #notifyRule(?Strm, all(?Port,?Chnl)) ==> all((Port._notify(Fn),()));
-    #notifyRule(?Strm, ?Conns) ==> ((),Strm=#(Strm(#$"X") do invokeNotify(Conns,#$"X") )#);
+    #notifyRule(?Strm, ?Conns) ==> ((),Strm=#(prc Strm(#$"X") do invokeNotify(Conns,#$"X") )#);
     
     #invokeNotify((some(?Port,(?lArg),?Chnl#@(?rArg)),()),?X) ==> Port._notify(channelProc(Chnl(rArg./lArg->X)));
     #invokeNotify((all(?Port,?Chnl),()),?X) ==> Port._notify(channelProc(Chnl(X)));
@@ -198,12 +198,12 @@ Name is connections{
     #invokeNotify((some(?Port,(?lArg),?Exp),?More),?X) ==> #(Port._notify(channelProc(Exp./lArg->X));invokeNotify(More,X))#;
     #invokeNotify((all(?Port,?Chnl),?More),?X) ==> #(Port._notify(channelProc(Chnl,X));#*invokeNotify(More,X))#;
     
-    #channelProc(?Exp) ==> (procedure(#$"A") do #$"A".Exp);
-    #channelProc(?Chnl,?X) ==> (procedure(#$"A")do #$"A".Chnl(X));
+    #channelProc(?Exp) ==> ((#$"A") do #$"A".Exp);
+    #channelProc(?Chnl,?X) ==> ((#$"A") do #$"A".Chnl(X));
     
-    #notifyProc(?lVar,(?Streams, ()))  ==> ( #(_notify(Fn) do Streams)#, ()); -- push notifications
-    #notifyProc(?lVar, ( (), ?Local)) ==> ( #(_notify(Fn) do Fn(lVar))#, Local); -- process notifies locally
-    #notifyProc(?lVar, ()) ==> ( #(_notify(Fn) do nothing)#, ()); -- drop all notifications
+    #notifyProc(?lVar,(?Streams, ()))  ==> ( #(prc _notify(Fn) do Streams)#, ()); -- push notifications
+    #notifyProc(?lVar, ( (), ?Local)) ==> ( #(prc _notify(Fn) do Fn(lVar))#, Local); -- process notifies locally
+    #notifyProc(?lVar, ()) ==> ( #(prc _notify(Fn) do nothing)#, ()); -- drop all notifications
     
     -- process schema for requests
     #processRequests(?lVar,?Schema,?OP,?Specs) ==> requestProc(lVar,#*requests(Schema,Schema,OP,Specs,()));
@@ -242,10 +242,10 @@ Name is connections{
       localRequestRules(Chnl,More,Calls, #*glom(Res._request(Fn,Qt,Fr),Global),Rules);
     #localRequestRules(?Chnl,(some(?Res,?pArgs,?R),?More),?Calls,?Global,?Rules) ==>
       localRequestRules(Chnl,More,(#$Chnl,Calls),Global,
-                                     #*glom(#(private #$Chnl#@pArgs do Res._request((procedure(#$"X") do #$"X".R), 
-                                                      (function() is quote(R)),
-                                                      (function() is freeHash(pArgs))))#,Rules));
-    #localRequestRule(?Chnl,?Tmplate,(?Calls,?Globals,?Rules)) ==> (Globals, glom( Chnl=#(Chnl#@Tmplate do reqCall(Calls,Tmplate,()))#, Rules));
+                                     #*glom(#(private prc #$Chnl#@pArgs do Res._request(((#$"X") do #$"X".R), 
+                                                      (() => quote(R)),
+                                                      (() => freeHash(pArgs))))#,Rules));
+    #localRequestRule(?Chnl,?Tmplate,(?Calls,?Globals,?Rules)) ==> (Globals, glom( Chnl=#(prc Chnl#@Tmplate do reqCall(Calls,Tmplate,()))#, Rules));
     
     #reqCall( (), ?T, ?S) ==> S;
     #reqCall( (?L, ?R), ?T, ?S) ==> reqCall(R, T, glom(L#@T,S));
@@ -260,9 +260,9 @@ Name is connections{
      
     #requestRule(?OP,?Chnl,?Tp,?Conns) ==> #*ruleSignal(Conns,globalRequest) #@ (OP, Chnl,Tp, Conns); 
         
-    #requestProc(?lVar, (?Conds, ()) ) ==> ( #(_request(Fn,Qt,Fr) do Conds)#, () ); -- push requests down
-    #requestProc(?lVar, (?Calls, ?Local) ) ==> ( #(_request(Fn,Qt,Fr) do { glom(Fn(lVar),Calls)} )#, Local); -- process requests locally
-    #requestProc(?lVar, () ) ==> ( #(_request(Fn,Qt,Fr) do nothing)#, ());
+    #requestProc(?lVar, (?Conds, ()) ) ==> ( #(prc _request(Fn,Qt,Fr) do Conds)#, () ); -- push requests down
+    #requestProc(?lVar, (?Calls, ?Local) ) ==> ( #(prc _request(Fn,Qt,Fr) do { glom(Fn(lVar),Calls)} )#, Local); -- process requests locally
+    #requestProc(?lVar, () ) ==> ( #(prc _request(Fn,Qt,Fr) do nothing)#, ());
     #requestProc(?lVar, ?Rules ) ==> ((), Rules);
     
     -- process schema for queries
@@ -288,17 +288,17 @@ Name is connections{
     
     #queryEqn(?OP,?Chnl,?Tp,all(?Res,?Chnl)) ==> (Res._query(Fn,Qt,Fr),());
     #queryEqn(?OP,?Chnl,?Tp,(some(?Res,reference,?R),()))==> 
-       ((),Chnl=#(Chnl is Res._query((function(#$"X") is ref #$"X".R),
-                                             (function() is quote(R)),
-                                             (function() is dictionary of {})))#);
+       ((),Chnl=#(def Chnl is Res._query(((#$"X") => ref #$"X".R),
+                                             (() => quote(R)),
+                                             (() => dictionary of {})))#);
     #queryEqn(?OP,?Chnl,?Tp,(some(?Res,void,?R),()))==> 
-       ((),Chnl=#(Chnl is Res._query((function(#$"X") is #$"X".R),
-                                             (function() is quote(R)),
-                                             (function() is dictionary of {})))#);
+       ((),Chnl=#(def Chnl is Res._query(((#$"X") => #$"X".R),
+                                             (() => quote(R)),
+                                             (() => dictionary of {})))#);
     #queryEqn(?OP,?Chnl,?Tp,(some(?Res,?Args,?R),())) ==> 
-       ((),Chnl=#(Chnl#@Args is Res._query((function(#$"X") is #$"X".R), 
-                                     (function() is quote(R)),
-                                     (function() is freeHash(R))))#);
+       ((),Chnl=#(fun Chnl#@Args is Res._query(((#$"X") => #$"X".R), 
+                                     (() => quote(R)),
+                                     (() => freeHash(R))))#);
     #queryEqn(?OP,?Chnl,?Tp,(some(?Res,?Args,?R),?More)) ==> 
 	error("query channel $Chnl can be responded to by multiple ports",((),()));
     #queryEqn(?OP,?Chnl,?Tp,()) ==> (#(raise "cannot respond to query $(display_quoted(Qt()))")#,());
@@ -322,9 +322,9 @@ Name is connections{
       #unPack(?A) ==> #($$A -> (A as quoted))#;
     };
         
-    #queryFun(?lVar, (?qExp,()) ) ==> (#(_query(Fn,Qt,Fr) is qExp)#, ());
-    #queryFun(?lVar, ((), ?Local) ) ==> (#(_query(Fn,Qt,Fr) is Fn(lVar))#, Local);
-    #queryFun(?lVar, ()) ==> (#(_query(Fn,Qt,Fr) is raise "cannot respond to query $(display_quoted(Qt()))")#, ());
+    #queryFun(?lVar, (?qExp,()) ) ==> (#(fun _query(Fn,Qt,Fr) is qExp)#, ());
+    #queryFun(?lVar, ((), ?Local) ) ==> (#(fun _query(Fn,Qt,Fr) is Fn(lVar))#, Local);
+    #queryFun(?lVar, ()) ==> (#(fun _query(Fn,Qt,Fr) is raise "cannot respond to query $(display_quoted(Qt()))")#, ());
         
     #glom(?A,()) ==> A;
     #glom((),?A) ==> A;

@@ -21,7 +21,7 @@ actorOverload is package{
   };
 
   implementation FooAble over integer is {
-    getFoo(x) is 42;
+    fun getFoo(x) is 42;
   };
 
   type AA is alias of actor of {
@@ -29,7 +29,7 @@ actorOverload is package{
     signaled has type ()=>boolean;
   };
 
-  main() do {
+  prc main() do {
     X has type AA;
     def X is actor {
       private var S := false;
@@ -37,7 +37,7 @@ actorOverload is package{
         var y := getFoo(elt);
         S := true;
       };
-      signaled() is S;
+      fun signaled() is S;
     };
     notify X with 1 on foo;
     assert query X with signaled();

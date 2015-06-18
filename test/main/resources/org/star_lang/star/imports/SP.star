@@ -18,5 +18,5 @@
 SP is package{
   import NP;
   
-  Y is X;
+  def Y is X;
 }

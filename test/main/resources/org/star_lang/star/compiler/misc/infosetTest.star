@@ -52,7 +52,7 @@ jsonTest is package{
 	iColl(dictionary of {"http://www.kpsw.ac.th/teacher/piyaporn/page3.htm"->iNum(5L)}),
 	iColl(dictionary of {"http://whois.domaintools.com/ntsdc.go.th"->iNum(4L)})])});
 
-  main() do {
+  prc main() do {
     logMsg(info,"Init $I1");
 
     logMsg(info,"Look=$(I1[list of {kString("statusFrequency");kInt(0);kString("200")}])");
@@ -71,10 +71,10 @@ jsonTest is package{
     assert not present I1[list of {kString("statusFrequency");kInt(0);kString("404")}];
 
     for E in I1 do
-	logMsg(info,display(E));
+	  logMsg(info,display(E));
 
     for P->E in I1 do 
-	logMsg(info,"Path=$P, E=$E");
+	  logMsg(info,"Path=$P, E=$E");
 	
 	assert "true" as json = iTrue;
 	assert "34" as json = iNum(34L);
@@ -87,19 +87,19 @@ jsonTest is package{
     assert "\"fr\\\\ed\"" as json matches iText("fr\\ed");
     assert "\"fr\\u1234ed\"" as json matches iText("fr\u1234;ed");
     
-    S0 is "[116, 943, 234, 38793]";
+    def S0 is "[116, 943, 234, 38793]";
   
     logMsg(info,"parse S0=$(S0 as json)");
     assert S0 as json = iSeq(list of { iNum(116l); iNum(943l); iNum(234l); iNum(38793l)});
     
-    S1 is "{ \"alpha\" : 1, \"beta\" : [116, 943, 234, 38793] }";
+    def S1 is "{ \"alpha\" : 1, \"beta\" : [116, 943, 234, 38793] }";
     logMsg(info,"parse S1=$(S1 as json)");
     
-    attr is "{\"Image\": {\"Width\": 800,\"Height\": 600,\"Title\": \"View from 15th Floor\" }}";
+    def attr is "{\"Image\": {\"Width\": 800,\"Height\": 600,\"Title\": \"View from 15th Floor\" }}";
     logMsg(info,"parse attr = $(attr as json)");
     
   }
 
   approx has type (json,json)=>boolean;
-  approx(iFlt(X),iFlt(Y)) is abs(X-Y)/abs(X+Y)<1.0e-10;
+  fun approx(iFlt(X),iFlt(Y)) is abs(X-Y)/abs(X+Y)<1.0e-10;
 }

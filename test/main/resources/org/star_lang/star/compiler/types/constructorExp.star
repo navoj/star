@@ -25,9 +25,9 @@
     c has type for all t such that (integer,t)<=>el
   }
   
-  C1 is encap{
+  def C1 is encap{
     type c1 of string counts as el;
-    c is c1;
+    def c is c1;
     
     implementation pPrint over el is {
       ppDisp = ppDisp
@@ -38,9 +38,9 @@
     }
   }
   
-  C2 is encap{
+  def C2 is encap{
     type c2 of integer counts as el;
-    c is c2;
+    def c is c2;
     
     implementation pPrint over el is {
       ppDisp = ppDisp
@@ -51,9 +51,9 @@
     }
   }
   
-  main() do {
-    R1 is C1.c(34,"peter");
-    R2 is C2.c(23,56);
+  prc main() do {
+    def R1 is C1.c(34,"peter");
+    def R2 is C2.c(23,56);
     
     logMsg(info,"R1=$R1");
     logMsg(info,"R2=$R2");

@@ -16,11 +16,11 @@
  *
  */
 spawnexp is package{
-  main() do {
-    x is spawn{     
-    valis "1";        
-      };
-    ret is waitfor x; 
+  prc main() do {
+    def x is spawn{     
+      valis "1";        
+    };
+    def ret is waitfor x; 
     
     assert ret="1"
   }

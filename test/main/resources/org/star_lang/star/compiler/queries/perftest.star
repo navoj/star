@@ -16,7 +16,7 @@
  *
  */
 perftest is package{
-  Size is 10000;
+  def Size is 10000;
   
   def Base is indexed of {all ("$Ix",Ix) where Ix in (iota(1,Size,1) has type array of integer)};
   
@@ -26,7 +26,7 @@ perftest is package{
     merge ind with Base;
   }
   
-  main() do {
+  prc main() do {
     -- logMsg(info,"base is $Base");
     
     def startBase is nanos();

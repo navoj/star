@@ -19,7 +19,7 @@ typeBug is package {
   import task;
   import cml;
 
-  serve(ch) is task {
+  fun serve(ch) is task {
     valis valof
       (case await(recv(ch)) in {
         true is task { valis valof serve(ch); }
@@ -28,9 +28,9 @@ typeBug is package {
       })
   }
 
-  main() do {
-    ch is channel();
-    _ is valof backgroundF(serve(ch));
+  prc main() do {
+    def ch is channel();
+    def _ is valof backgroundF(serve(ch));
     assert (valof send(ch, true)) = ();
     assert (valof send(ch, false)) = ();
   }

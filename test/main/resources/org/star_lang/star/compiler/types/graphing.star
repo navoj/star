@@ -12,22 +12,22 @@ graphing is package{
 
   type concept is idea(string) or text(string);
 
-  relGraph is graph{
+  def relGraph is graph{
     type list of triple of (concept,concept) counts as gr;
     
     type integer counts as ar;
 
-    empty() is list of [];
+    fun empty() is list of [];
 
-    addTriple(R,T) is R union (list of [T]);
+    fun addTriple(R,T) is R union (list of [T]);
   }
 
-  main() do {
-    gr0 is relGraph.empty();
-    gr1 is relGraph.addTriple(gr0,triple(idea("c1"),idea("p1"),idea("c2")));
+  prc main() do {
+    def gr0 is relGraph.empty();
+    def gr1 is relGraph.addTriple(gr0,triple(idea("c1"),idea("p1"),idea("c2")));
 
-    gr4 is relGraph.addTriple(gr1,triple(idea("c3"),idea("p1"),idea("c1")));
-    gr5 is relGraph.addTriple(gr4,triple(idea("c3"),idea("p1"),idea("c1")));
+    def gr4 is relGraph.addTriple(gr1,triple(idea("c3"),idea("p1"),idea("c1")));
+    def gr5 is relGraph.addTriple(gr4,triple(idea("c3"),idea("p1"),idea("c1")));
     
     logMsg(info,"gr4 is $gr4");
     logMsg(info,"gr5 is $gr5");

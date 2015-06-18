@@ -30,22 +30,22 @@ dequoteTest is package{
     empty or
     node(tree of %t,%t,tree of %t) implementing quotable;
 
-  main() do {
-    N is <|noone|> as person;
+  prc main() do {
+    def N is <|noone|> as person;
 
     logMsg(info,"N is $N");
 
-    S is <|someone{ name="fred"; age=0.0; dob=12345l }|> as person;
+    def S is <|someone{ name="fred"; age=0.0; dob=12345l }|> as person;
     logMsg(info,"S is $S");
 
     assert S.name="fred";
 
-    T is <|node(node(empty,1,empty),2,node(empty,3,empty))|> as (tree of integer);
+    def T is <|node(node(empty,1,empty),2,node(empty,3,empty))|> as (tree of integer);
 
     logMsg(info,"T=$T");
     assert T matches node(_,2,_);
     
-    Q is S as quoted;
+    def Q is S as quoted;
     logMsg(info,"Quoted S = $Q");
     
     assert Q as person = S;

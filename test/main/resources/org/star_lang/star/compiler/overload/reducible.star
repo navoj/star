@@ -30,25 +30,22 @@ reducible is package{
   }
   
   private
-    consReduce(nil, _, state) is return(state);
-    
-    consReduce(cons(x, xs), reducer, state matching NoMore(_)) is return(state);
-
-    consReduce(cons(x, xs), reducer, state matching ContinueWith(_)) is
-      bind(reducer(x, state),
-	       (function (newState) is consReduce(xs, reducer, newState)));
-    consReduce(cons(x, xs), reducer, state matching NoneFound) is
-      bind(reducer(x, state),
-	       (function (newState) is consReduce(xs, reducer, newState)));
+  fun consReduce(nil, _, state) is return(state)
+   |  consReduce(cons(x, xs), reducer, state matching NoMore(_)) is return(state)
+   |  consReduce(cons(x, xs), reducer, state matching ContinueWith(_)) is
+        bind(reducer(x, state),( (newState) => consReduce(xs, reducer, newState)))
+   |  consReduce(cons(x, xs), reducer, state matching NoneFound) is
+        bind(reducer(x, state),
+	       ( (newState) => consReduce(xs, reducer, newState)));
 	       
-  adder(J,ContinueWith(I)) is some(ContinueWith(I+J));
-  adder(_,NoMore(I)) is some(NoMore(I));
-  adder(I,NoneFound) is some(ContinueWith(I))
+  fun adder(J,ContinueWith(I)) is some(ContinueWith(I+J))
+   |  adder(_,NoMore(I)) is some(NoMore(I))
+   |  adder(I,NoneFound) is some(ContinueWith(I))
 
-  main() do {
-    II is cons of {1;2;3};
+  prc main() do {
+    def II is cons of {1;2;3};
 
-    Reslt is _reduce(II,adder,NoneFound);
+    def Reslt is _reduce(II,adder,NoneFound);
     logMsg(info,"Reslt=$Reslt");
   }
 }

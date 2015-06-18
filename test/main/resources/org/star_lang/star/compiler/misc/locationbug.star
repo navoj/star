@@ -20,5 +20,5 @@ locationbug is package{
         name has type string;
     };
     
-  main() do nothing;
+  prc main() do nothing;
 }

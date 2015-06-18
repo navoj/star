@@ -23,7 +23,7 @@ mapseq is package{
   }
   
   implementation mmap over list is {
-    mapseq(S, F) is valof{
+    fun mapseq(S, F) is valof{
       var alreadyMapped := sequence of {};
 	  var toBeMapped := S;
 	  while toBeMapped matches sequence of {X;.. restTBM} do {
@@ -34,8 +34,8 @@ mapseq is package{
     };
   }
   
-  main() do {
-    def XX is mapseq(list of [1,2,3], (function(X) is X*2));
+  prc main() do {
+    def XX is mapseq(list of [1,2,3], ((X) => X*2));
     
     logMsg(info,"XX=$XX");
     

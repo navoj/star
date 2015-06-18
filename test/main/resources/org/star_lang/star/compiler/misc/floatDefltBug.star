@@ -28,16 +28,16 @@ floatDefltBug is package{
     H_spec has type float;
   };
   
-  testValue is 1.0;
-  goldValue is 1.5;
+  def testValue is 1.0;
+  def goldValue is 1.5;
   
-  main() do {
-    N is "fred";
-    groupName is "group";
-    lower is 0.0;
-    upper is 1.0;
+  prc main() do {
+    def N is "fred";
+    def groupName is "group";
+    def lower is 0.0;
+    def upper is 1.0;
      
-    R is result{
+    def R is result{
       name=N;
       value_A=goldValue;
       value_B=testValue;

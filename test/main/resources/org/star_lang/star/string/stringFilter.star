@@ -1,5 +1,5 @@
 stringFilter is package{
-  main() do {
+  prc main() do {
      assert filter(isUpperCase,"goodbye, Cruel World") = "CW"
   }
 }

@@ -25,63 +25,63 @@ tokens is package{
              or stringTok(string,astLocation)
              or terminal;
 
-  tokenize(SrcTxt,Uri) is let{
-    allTokens(sequence of {},Lc) is cons of {};
-    allTokens(Text,Lc) is valof{
-      (Tok,Rest,nLc) is nextToken(Text,Lc);
-      logMsg(info,"got token: $Tok");
-      valis cons of {Tok;.. allTokens(Rest,nLc)};
-    };
+  fun tokenize(SrcTxt,Uri) is let{
+    fun allTokens(sequence of {},Lc) is cons of {}
+     |  allTokens(Text,Lc) is valof{
+          def (Tok,Rest,nLc) is nextToken(Text,Lc);
+          logMsg(info,"got token: $Tok");
+          valis cons of {Tok;.. allTokens(Rest,nLc)};
+        };
 
-    nextToken(Text,Lc) is valof{
-      (nText,nLc) is skipComments(Text,Lc);
+    fun nextToken(Text,Lc) is valof{
+      def (nText,nLc) is skipComments(Text,Lc);
       valis nxtToken(nText,nLc);
     };
 
-    locOf((ChrCount,Ln,Off),C) is _somewhere{
+    fun locOf((ChrCount,Ln,Off),C) is _somewhere{
         uri=Uri;charCount=ChrCount;
         lineCount=Ln;lineOffset=Off;
         length=C};
 
-    nxtLoc((Count,Ln,Off),C) is (Count+C,Ln,Off+C);
-    nxtLne((Count,Ln,Off)) is (Count+1,Ln+1,0);
+    fun nxtLoc((Count,Ln,Off),C) is (Count+C,Ln,Off+C);
+    fun nxtLne((Count,Ln,Off)) is (Count+1,Ln+1,0);
 
-    reportId(Id,Cnt,L,Lc) is (idTok(Id,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+    fun reportId(Id,Cnt,L,Lc) is (idTok(Id,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
-    reportChr(ch,Cnt,L,Lc) is (charTok(ch[0], locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+    fun reportChr(ch,Cnt,L,Lc) is (charTok(ch[0], locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
-    reportString(S,Cnt,L,Lc) is (stringTok(S,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+    fun reportString(S,Cnt,L,Lc) is (stringTok(S,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
-    reportChrInteger(ch,Cnt,L,Lc) is (integerTok(ch[0] as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+    fun reportChrInteger(ch,Cnt,L,Lc) is (integerTok(ch[0] as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
-	reportInteger(I,Cnt,L,Lc) is  (integerTok(I as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+	fun reportInteger(I,Cnt,L,Lc) is  (integerTok(I as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
 		
-	reportLong(Ln,Cnt,L,Lc) is  (longTok(Ln as long,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+	fun reportLong(Ln,Cnt,L,Lc) is  (longTok(Ln as long,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
 
-	reportFloat(F,Cnt,L,Lc) is  (floatTok(F as float,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+	fun reportFloat(F,Cnt,L,Lc) is  (floatTok(F as float,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
 	
-	reportDecimal(F,Cnt,L,Lc) is  (decimalTok(F as decimal,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+	fun reportDecimal(F,Cnt,L,Lc) is  (decimalTok(F as decimal,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
 	
-	reportTerminal(Lc) is (terminal,"",Lc);
+	fun reportTerminal(Lc) is (terminal,"",Lc);
 	
-    skipComments(sequence of {' ';..L}, Lc) is skipComments(L,nxtLoc(Lc,1));
-    skipComments(sequence of {'\t';..L}, Lc) is skipComments(L,nxtLoc(Lc,1));
-    skipComments(sequence of {'\n';..L}, Lc) is skipComments(L,nxtLne(Lc));
-    skipComments(sequence of {'-';'-';' ';..L}, Lc) is lineComment(L,nxtLoc(Lc,3));
-    skipComments(sequence of {'-';'-';'\t';..L}, Lc) is lineComment(L,nxtLoc(Lc,3));
-    skipComments(sequence of {'/';'*';..L}, Lc) is blockComment(L,nxtLoc(Lc,2));
-    skipComments(L,Lc) default is (L,Lc);
+    fun skipComments(sequence of {' ';..L}, Lc) is skipComments(L,nxtLoc(Lc,1))
+     |  skipComments(sequence of {'\t';..L}, Lc) is skipComments(L,nxtLoc(Lc,1))
+     |  skipComments(sequence of {'\n';..L}, Lc) is skipComments(L,nxtLne(Lc))
+     |  skipComments(sequence of {'-';'-';' ';..L}, Lc) is lineComment(L,nxtLoc(Lc,3))
+     |  skipComments(sequence of {'-';'-';'\t';..L}, Lc) is lineComment(L,nxtLoc(Lc,3))
+     |  skipComments(sequence of {'/';'*';..L}, Lc) is blockComment(L,nxtLoc(Lc,2))
+     |  skipComments(L,Lc) default is (L,Lc)
 
-    lineComment(sequence of {'\n';..L},Lc) is skipComments(L,nxtLne(Lc));
-    lineComment(sequence of {_;..L},Lc) is lineComment(L,nxtLoc(Lc,1));
-    lineComment(L,Lc) default is (L,Lc);
+    fun lineComment(sequence of {'\n';..L},Lc) is skipComments(L,nxtLne(Lc))
+     |  lineComment(sequence of {_;..L},Lc) is lineComment(L,nxtLoc(Lc,1))
+     |  lineComment(L,Lc) default is (L,Lc)
 
-    blockComment(sequence of {'*';'/';..L},Lc) is skipComments(L,nxtLoc(Lc,2));
-    blockComment(sequence of {'\n';..L},Lc) is blockComment(L,nxtLne(Lc));
-    blockComment(sequence of {_;..L},Lc) is blockComment(L,nxtLoc(Lc,1));
-    blockComment(L,Lc) default is (L,Lc);
+    fun blockComment(sequence of {'*';'/';..L},Lc) is skipComments(L,nxtLoc(Lc,2))
+     |  blockComment(sequence of {'\n';..L},Lc) is blockComment(L,nxtLne(Lc))
+     |  blockComment(sequence of {_;..L},Lc) is blockComment(L,nxtLoc(Lc,1))
+     |  blockComment(L,Lc) default is (L,Lc)
 
-    nxtToken(T,Lc) is case T in {
+    fun nxtToken(T,Lc) is case T in {
       `\$\:(.*:L)` is reportId("\$:",2,L,Lc);
       `\$\$(.*:L)` is reportId("\$\$",2,L,Lc);
       `\$=>(.*:L)` is reportId("\$=>",3,L,Lc);
@@ -132,9 +132,9 @@ tokens is package{
      }
   } in allTokens(SrcTxt,(0,1,0));
   
-  main() do {
-    Toks is tokenize(
-    0'555" /* A comment */
+  prc main() do {
+    def Toks is tokenize(
+    """ /* A comment */
   type token -- A line comment 
   -- A line comment /* with a block comment */ in it
 
@@ -147,7 +147,7 @@ tokens is package{
   /* Characters: */'a' 'b' '\n' '@' '\u34;' 
   /* Strings: */"a simple string" "a string with a \n in it" 0'6"a blob "stri\u56;ng"
   /* Interpolated */"A $var string" "an $(expression()+34) string"
-  /* Some special symbols */ 'n 's
+  /* Some special symbols */ 'n 's """
     ,"test.star" as uri);
     logMsg(info,"$Toks")
   } 

@@ -17,13 +17,13 @@
  */
 evenPrimes is package{
   isEvenAndPrime has type (integer) => boolean;
-  isEvenAndPrime(2) is true;
-  isEvenAndPrime(_) default is false;
+  fun isEvenAndPrime(2) is true
+   |  isEvenAndPrime(_) default is false
 
   isEvenAndPrime3 has type boolean;
-  isEvenAndPrime3 is isEvenAndPrime(3);
+  def isEvenAndPrime3 is isEvenAndPrime(3);
   
-  main() do {
+  prc main() do {
     logMsg(info,"$isEvenAndPrime3");
     assert not isEvenAndPrime3;
   }

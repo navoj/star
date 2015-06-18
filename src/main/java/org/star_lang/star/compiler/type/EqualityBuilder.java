@@ -12,6 +12,7 @@ import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.ComboIterable;
 import org.star_lang.star.compiler.util.FixedList;
+import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
@@ -283,8 +284,8 @@ public class EqualityBuilder
   private static IAbstract specDeflt(Location loc, String label)
   {
     List<IAbstract> args = new ArrayList<>();
-    Name lV = new Name(loc, "L");
-    Name rV = new Name(loc, "R");
+    Name lV = new Name(loc, GenSym.genSym("L"));
+    Name rV = new Name(loc, GenSym.genSym("R"));
     args.add(lV);
     args.add(rV);
     return CompilerUtils.defaultEquation(loc, label, args, Abstract.name(loc, StandardNames.FALSE));

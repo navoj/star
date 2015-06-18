@@ -1,30 +1,30 @@
 ring is package{
 
-  exitChnnl is channel();
+  def exitChnnl is channel();
 
   ring has type (integer,channel of integer,channel of integer) => task of ();
-  ring(Id,L,R) is task{
+  fun ring(Id,L,R) is task{
     logMsg(info,"spin up $Id");
 
     while true do {
       logMsg(info,"$Id is ready");
       case valof recv(L) in {
-	1 do {
-	  perform wait for put Id on exitChnnl;
-	  valis ()
-	}
-	Tk do{
-	  logMsg(info,"$Id got $Tk");
-	  perform wait for put Tk-1 on R;
-	  logMsg(info,"sent $(Tk-1)");
-	}
+	    1 do {
+	      perform wait for put Id on exitChnnl;
+	      valis ()
+	    }
+	    Tk do{
+	      logMsg(info,"$Id got $Tk");
+	      perform wait for put Tk-1 on R;
+	      logMsg(info,"sent $(Tk-1)");
+	    }
       }
     }
   }
 
-  main() do {
-    HowMany is 4;
-    Count is 100;
+  prc main() do {
+    def HowMany is 4;
+    def Count is 100;
     def Lch is channel();
     def Rch is channel();
 

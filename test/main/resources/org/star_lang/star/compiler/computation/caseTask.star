@@ -18,15 +18,15 @@
 caseTask is package{
   import task;
   
-  recf(n) is task {
-    next is (function (k) is task { valis k/2 });
+  fun recf(n) is task {
+    def next is (k) => task { valis k/2 };
     case n in {
       0 do valis ();
       _ default do valis valof recf(valof next(n));
     }
   };
   
-  main() do {
+  prc main() do {
     perform recf(1) on abort { _ do logMsg(info,"something wrong"); }
   }
 }

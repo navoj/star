@@ -24,5 +24,5 @@ mutualAlias is package{
   };
 
   state_func_cons has type (integer, state_func) => state_func;
-  state_func_cons(i, f) is (function((numbers, _)) is (cons(i, numbers), f));
+  fun state_func_cons(i, f) is (((numbers, _)) => (cons(i, numbers), f));
 }

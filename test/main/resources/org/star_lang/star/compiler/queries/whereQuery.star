@@ -16,9 +16,9 @@
  *
  */
 whereQuery is package{  
-  foo(rs) is (r in rs where r > 0) ? some(r) | none;
+  fun foo(rs) is (r in rs where r > 0) ? some(r) : none;
   
-  main() do {
+  prc main() do {
     logMsg(info,"present = $(foo(list of {-1;0;2}))");
     
     assert foo(list of {-1;0;2}) = some(2);

@@ -6,18 +6,18 @@ worksheet{
   }
   
   msgQ has type for all a such that ()=>messageQ of a;
-  msgQ() is let{
+  fun msgQ() is let{
     def postMsgChnl is channel();
     def grabMsgChnl is channel();
 
-    qLoop(Q) where isEmpty(Q) is wait for postM(Q);
-    qLoop(Q) default is wait for postM(Q) or pollM(Q)
+    fun qLoop(Q) where isEmpty(Q) is wait for postM(Q)
+     |  qLoop(Q) default is wait for postM(Q) or pollM(Q)
  
-    postM(Q) is 
+    fun postM(Q) is 
       wrapRv(recvRv(postMsgChnl), (A) => qLoop([Q..,A]))
 
-    pollM([A,..Q]) is let{
-      reply(R) is valof{
+    fun pollM([A,..Q]) is let{
+      fun reply(R) is valof{
         perform send(R,A);    -- reply on the one-time channel
         valis qLoop(Q)
       }
@@ -25,22 +25,22 @@ worksheet{
     
     { ignore background qLoop(queue of []); }
   } in {
-    post(A) is send(postMsgChnl,A)
-    poll() is task{
-      var ReplyChnl is channel();
+    fun post(A) is send(postMsgChnl,A)
+    fun poll() is task{
+      def ReplyChnl is channel();
       perform wait for sendRv(grabMsgChnl,ReplyChnl);
       valis valof (wait for recvRv(ReplyChnl))
     } 
   }
   
-  sender(Q) is task{
+  fun sender(Q) is task{
     for i in range(0,1000,1) do 
       perform Q.post(i);
     sleep(3000l);
     logMsg(info,"all done");
   };
   
-  worker(W,Q) is task{
+  fun worker(W,Q) is task{
     while true do{
       def Nx is valof Q.poll();
       logMsg(info,"$W doing $Nx");

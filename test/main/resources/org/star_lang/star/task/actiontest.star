@@ -1,11 +1,11 @@
 worksheet{
-  AA(f,x) is action computation {
+  fun AA(f,x) is action computation {
     valis x+valof f(x)
   }
   
-  idA(X) is action computation { valis X};
+  fun idA(X) is action computation { valis X};
   
-  A is AA(idA,2);
+  def A is AA(idA,2);
   
   show valof A;
   

@@ -16,23 +16,23 @@
  *
  */
 stringParse is package{
-  A is 1;
-  B is "3";
+  def A is 1;
+  def B is "3";
   
-  Cheese is 23;
-  Ham is 21;
+  def Cheese is 23;
+  def Ham is 21;
   
-  priceOf("SKU23") is 34.23;
-  priceOf("SKU21") is 12.00;
+  fun priceOf("SKU23") is 34.23
+   |  priceOf("SKU21") is 12.00
   
-  assertEqual(X,Y) do {
+  prc assertEqual(X,Y) do {
     if X!=Y then{
       logMsg(info,"expecting $X, got $Y");
       assert false;
     }
   } 
   
-  main() do {
+  prc main() do {
     logMsg(info,"C:\\B");
     logMsg(info,"A string$((A as string)++("3\$\n"))B$B");
     

@@ -18,28 +18,28 @@
 taskPerformanceTest is package {
   import task;
 
-  spawnTest(numSpawn) do {
+  prc spawnTest(numSpawn) do {
     
-    -- work is taskBind(taskReturn(42), (function(v) is taskReturn(v)));
-    work is taskReturn(42);
+    -- work is taskBind(taskReturn(42), (v) => taskReturn(v));
+    def work is taskReturn(42);
     
     once has type () => task of integer
-    once is (function () is valof {
-      completor is valof backgroundF(work);
+    def once is () => valof {
+      def completor is valof backgroundF(work);
       valis taskBind(completor, taskReturn);
-    })
-             
+    }
     
-    expected is 42 * numSpawn;
-    actual is let {
+    def expected is 42 * numSpawn;
+    
+    def actual is let {
       loop has type (integer, integer) => task of integer
-      loop(0, res) is taskReturn(res)
-      loop(i, res) default is
-        taskBind(once(), (function (v) is loop(i-1, res+v)));
+      fun loop(0, res) is taskReturn(res)
+       |  loop(i, res) default is
+            taskBind(once(), (v) => loop(i-1, res+v))
 
       -- "falling asleep" in the background is much more efficient than in the foreground...!
-      w is valof backgroundF(loop(numSpawn, 0));
-      waitRes is w;
+      def w is valof backgroundF(loop(numSpawn, 0));
+      def  waitRes is w;
     } in
       executeTask(waitRes,raiser_fun);
           
@@ -48,16 +48,16 @@ taskPerformanceTest is package {
     assert(actual = expected);
   }
 
-  benchmark(name, act,count) do {
-    st is nanos();
+  prc benchmark(name, act,count) do {
+    def st is nanos();
     act();
-    en is nanos();
+    def en is nanos();
     logMsg(info, "Benchmark $(name): $((en-st)/count) ns/task total $(((en-st) as float)/1000000000.0) s");
   }
   
-  main() do {
-    benchmark("spawn   10000", (procedure () do spawnTest(10000)),10000l);
-    benchmark("spawn  100000", (procedure () do spawnTest(100000)),100000l);
-    benchmark("spawn 1000000", (procedure () do spawnTest(1000000)),1000000l);
+  prc main() do {
+    benchmark("spawn   10000", (() do spawnTest(10000)),10000l);
+    benchmark("spawn  100000", (() do spawnTest(100000)),100000l);
+    benchmark("spawn 1000000", (() do spawnTest(1000000)),1000000l);
   }
 }

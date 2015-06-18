@@ -20,17 +20,17 @@ import ports;
 
 twowayporttest is package{
 
-  P2 is p0rt{
+  def P2 is p0rt{
     on X on ODP2 do logMsg(info,"P2:$(X cast any)");
   };   
   
-  P3 is p0rt{
+  def P3 is p0rt{
     on X on DO do logMsg(info,"P3:$(X cast any)");
   };
   
-  P1 is connectp1(P2,P3);
+  def P1 is connectp1(P2,P3);
   
-  main() do {
+  prc main() do {
     request P1's DO to DO("P1 sends greetings");
   }
 }

@@ -17,8 +17,8 @@
  */
 coerce is package{
 
-  main() do {
-    I is "123" as integer;
+  prc main() do {
+    def I is "123" as integer;
     
     logMsg(info,"I is $I");
   

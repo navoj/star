@@ -17,11 +17,11 @@
  */
 sortlist is package{
 
-  R is list of {(1,2);(3,4);(1,2)};
-  L is sort(R,<);
+  def R is list of {(1,2);(3,4);(1,2)};
+  def L is sort(R,<);
   
 
-  main() do {
+  prc main() do {
     logMsg(info, "L is $L");
     assert L = list of {(1,2); (1,2); (3,4) };
   };

@@ -45,13 +45,13 @@ workedex is package{
   type dep is dep(string,long) or multiDep(list of dep) or allDep(string) or noDep;
   
   -- encapsulate the query into a generator function 
-  fullAcGen(Txs,Acts) is all (fullAc{ id=Id; owner=Owner; balance=bal; history=Hist},multiDep(list of {dep("accounts",AcK);..Keys})) where
+  fun fullAcGen(Txs,Acts) is all (fullAc{ id=Id; owner=Owner; balance=bal; history=Hist},multiDep(list of {dep("accounts",AcK);..Keys})) where
         AcK->account{ id=Id; owner=Owner; balance=bal; lastTx = last} in Acts and 
         (Hist,Keys) bound to unravel(list of { all (Tx,dep("transactions",TxK)) where TxK->Tx in Txs and 
                                                                                   (Tx.source=Id or Tx.dest=Id)
                                                                                order descending by Tx.timestamp});
 
-  unravel(Ls) is valof{
+  fun unravel(Ls) is valof{
     var Lin := Ls;
     var LO := list of {};
     var RO := list of {};
@@ -74,7 +74,7 @@ workedex is package{
   var full := dictionary of {};
   var fullDeps := dictionary of {};
   
-  genIndex(R,key,ref index) is valof{
+  fun genIndex(R,key,ref index) is valof{
     def H is key(R);
     def Id is nextId();
     def Ix is index[H] or else cons of {};
@@ -82,15 +82,15 @@ workedex is package{
     valis Id;
   }
   
-  genTxIndex(Tx) is genIndex(Tx,idKey,ref transactionIndex);
-  genAccountIndex(Act) is genIndex(Act,idKey,ref accountIndex);
+  fun genTxIndex(Tx) is genIndex(Tx,idKey,ref transactionIndex);
+  fun genAccountIndex(Act) is genIndex(Act,idKey,ref accountIndex);
   
-  getAccountIndex(Act) is any of Id where (Id,_) in accountIndex[idKey(Act)] default nonLong;
+  fun getAccountIndex(Act) is any of Id where (Id,_) in accountIndex[idKey(Act)] default nonLong;
   
-  addAccount(Act) do {
+  prc addAccount(Act) do {
     def Id is genAccountIndex(Act); -- pick up a unique id for the new tuple
     accounts[Id] := Act;
-    SnglAc is dictionary of {(Id,Act)};
+    def SnglAc is dictionary of {(Id,Act)};
     for (F,D) in fullAcGen(transactions,SnglAc) do{
       def FId is nextId();
       full[FId] := F;
@@ -100,8 +100,8 @@ workedex is package{
     }
   }
   
-  updateAccnt(Ptn,Updater) do {
-    Ix is getAccountIndex(Ptn);
+  prc updateAccnt(Ptn,Updater) do {
+    def Ix is getAccountIndex(Ptn);
     
     if Ix!=nonLong then{ 
       accounts[Ix] := Updater(someValue(accounts[Ix]));
@@ -109,20 +109,20 @@ workedex is package{
     }
   }
   
-  updateAccount(Ptn,Updater) do let{
+  prc updateAccount(Ptn,Updater) do let{
     var track := list of [];
     
-    updateAct((Ix,Act)) is valof{
-      ActFoll is someValue(accntFollow[Ix]);
+    fun updateAct((Ix,Act)) is valof{
+      def ActFoll is someValue(accntFollow[Ix]);
       track := list of [ActFoll,..track];
       
-      UpAc is Updater(Act);
+      def UpAc is Updater(Act);
 
       valis (Ix,UpAc);
     };
-    testAct() from (_,Ptn());
+    ptn testAct() from (_,Ptn());
     
-    followTrack() do {
+    prc followTrack() do {
       for Foll in track do
         redoResult(Foll);
     }
@@ -131,28 +131,27 @@ workedex is package{
     followTrack();
   }
   
-  redoResult(dep("fullAccount",Ix)) do
-    redoFullAccount(Ix);
-  redoResult(multiDep(L)) do { 
-    for D in L do
-      redoResult(D);
-  }
-  redoResult(noDep) do nothing;
-  redoResult(allDep("fullAccount")) do {
-    for Ix in (all Ix where Ix->_ in full) do
-      redoFullAccount(Ix); 
-  }
+  prc redoResult(dep("fullAccount",Ix)) do redoFullAccount(Ix)
+   |  redoResult(multiDep(L)) do { 
+        for D in L do
+          redoResult(D);
+      }
+   |  redoResult(noDep) do nothing
+   |  redoResult(allDep("fullAccount")) do {
+        for Ix in (all Ix where Ix->_ in full) do
+          redoFullAccount(Ix); 
+      }
   
-  redoFullAccount(Ix) do {
+  prc redoFullAccount(Ix) do {
     -- logMsg(info,"redo full $Ix");
-    D is someValue(fullDeps[Ix]);
+    def D is someValue(fullDeps[Ix]);
     
     -- logMsg(info,"depends = $D");
-    Acts is getDepAccount(D); 
+    def Acts is getDepAccount(D); 
     -- logMsg(info,"Acts=$Acts");
 
     -- logMsg(info,"current transactions: $transactions");
-    Txs is getDepTxs(D);
+    def Txs is getDepTxs(D);
     -- logMsg(info,"Txs=$Txs");
 
     for (NF,ND) in fullAcGen(Txs,Acts) do{
@@ -165,25 +164,24 @@ workedex is package{
     }
   }
 
-  removeResult(dep("fullAccount",Ix)) do
-    removeFullAccount(Ix);
-  removeResult(multiDep(L)) do { 
-    for D in L do
-      removeResult(D);
-  }
-  removeResult(noDep) do nothing;
-  removeResult(allDep("fullAccount")) do {
-    for Ix in (all Ix where Ix->_ in full) do
-      removeFullAccount(Ix); 
-  }
+  prc removeResult(dep("fullAccount",Ix)) do removeFullAccount(Ix)
+   |  removeResult(multiDep(L)) do { 
+        for D in L do
+          removeResult(D);
+      }
+   |  removeResult(noDep) do nothing
+   |  removeResult(allDep("fullAccount")) do {
+        for Ix in (all Ix where Ix->_ in full) do
+          removeFullAccount(Ix); 
+      }
   
-  removeFullAccount(Ix) do {
+  prc removeFullAccount(Ix) do {
     remove full[Ix];
     remove fullDeps[Ix];
   }
 
-  removeAccnt(Rec) do {
-     Ky is getAccountIndex(Rec);
+  prc removeAccnt(Rec) do {
+    def Ky is getAccountIndex(Rec);
     
     if Ky!=nonLong then{ 
       remove accounts[Ky];
@@ -191,17 +189,18 @@ workedex is package{
     }
   }
   
-  removeAccount(Ptn) do let{
+  prc removeAccount(Ptn) do let{
     var track := list of [];
     
-    removeAct(Ix) is valof{
-      ActFoll is someValue(accntFollow[Ix]);
+    fun removeAct(Ix) is valof{
+      def ActFoll is someValue(accntFollow[Ix]);
       track := list of [ActFoll,..track];
       valis true;
-    };
-    testAct() from (Ix,Ptn()) where removeAct(Ix);
+    }
     
-    followTrack() do {
+    ptn testAct() from (Ix,Ptn()) where removeAct(Ix);
+    
+    prc followTrack() do {
       for Foll in track do
         removeResult(Foll);
     }
@@ -210,16 +209,16 @@ workedex is package{
     followTrack();
   }
 
-  addToTxs(Tx) do {
-    IxT is genTxIndex(Tx);
+  prc addToTxs(Tx) do {
+    def IxT is genTxIndex(Tx);
     transactions[IxT] := Tx;
 
-    FF is all (F,Ix) where Ix->F in full; -- this is a work-around.
+    def FF is all (F,Ix) where Ix->F in full; -- this is a work-around.
     for (F,Ix) in FF do{
-      D is someValue(fullDeps[Ix]);
-      Acts is getDepAccount(D);
+      def D is someValue(fullDeps[Ix]);
+      def Acts is getDepAccount(D);
       
-      Txs is dictionary of {(IxT,Tx);..getDepTxs(D)};
+      def Txs is dictionary of {(IxT,Tx);..getDepTxs(D)};
 
       for (NF,ND) in fullAcGen(Txs,Acts) do{
         full[Ix] := NF;
@@ -231,18 +230,19 @@ workedex is package{
     }
   }
   
-  updateTrans(Ptn,Updater) do let{
+  prc updateTrans(Ptn,Updater) do let{
     var track := list of [];
     
-    updateTx((Ix,Tx)) is valof{
-      ActFoll is someValue(transFollow[Ix]);
+    fun updateTx((Ix,Tx)) is valof{
+      def ActFoll is someValue(transFollow[Ix]);
       track := list of [ActFoll,..track];
       
       valis (Ix,Updater(Tx));
-    };
-    testTx() from (_,Ptn());
+    }
     
-    followTrack() do {
+    ptn testTx() from (_,Ptn());
+    
+    prc followTrack() do {
       for Foll in track do
         redoResult(Foll);
     }  
@@ -252,13 +252,13 @@ workedex is package{
     logMsg(info,"full after tx update: $full");
   }
   
-  getDepAccount(dep("accounts",Id)) is dictionary of {(Id,someValue(accounts[Id]))};
-  getDepAccount(allDep("accounts")) is accounts;
-  getDepAccount(multiDep(L)) is dictionary of {all (Id,someValue(accounts[Id])) where dep("accounts",Id) in L };
+  fun getDepAccount(dep("accounts",Id)) is dictionary of {Id -> someValue(accounts[Id])}
+   |  getDepAccount(allDep("accounts")) is accounts
+   |  getDepAccount(multiDep(L)) is dictionary of {all (Id,someValue(accounts[Id])) where dep("accounts",Id) in L }
   
-  getDepTxs(dep("transactions",Id)) is dictionary of {(Id,someValue(transactions[Id]))};
-  getDepTxs(allDep("transactions")) is transactions;
-  getDepTxs(multiDep(L)) is dictionary of {all (Id,someValue(transactions[Id])) where dep("transactions",Id) in L};
+  fun getDepTxs(dep("transactions",Id)) is dictionary of {Id -> someValue(transactions[Id])}
+   |  getDepTxs(allDep("transactions")) is transactions
+   |  getDepTxs(multiDep(L)) is dictionary of {all (Id,someValue(transactions[Id])) where dep("transactions",Id) in L}
   
   -- update a follows table based on the new set up dependencies
   /*@
@@ -275,24 +275,24 @@ workedex is package{
    @arg FollowIx the identity of the tuple in the result table
    @return a table updated with new record of consequential entries
   */
-  updateFollow(Deps,Lbl,Flw,FollowLbl,FollowIx) is let{
-    updateFlw(Follow,dep(Lb,Id)) where Lb=Lbl is let{
-      updateDeps(noDep) is dep(FollowLbl,FollowIx);
-      updateDeps(dep(F,Fix)) where F=FollowLbl and Fix=FollowIx is dep(F,Fix);
-      updateDeps(dep(F,Fix)) is multiDep(list of {dep(F,Fix);dep(FollowLbl,FollowIx)});
-      updateDeps(multiDep(L)) is multiDep((list of {dep(FollowLbl,FollowIx)}) union L);
-      updateDeps(allDep(Lbls)) is allDep(Lbls);
-    } in _set_indexed(Follow,Id,updateDeps((Follow[Id] or else noDep)));
-    updateFlw(Follow,dep(_,Id)) is Follow;
-    updateFlw(Follow,multiDep(L)) is leftFold(updateFlw,Follow,L)
-  } in updateFlw(Flw,Deps);
+  fun updateFollow(Deps,Lbl,Flw,FollowLbl,FollowIx) is let{
+    fun updateFlw(Follow,dep(Lb,Id)) where Lb=Lbl is let{
+          fun updateDeps(noDep) is dep(FollowLbl,FollowIx)
+           |  updateDeps(dep(F,Fix)) where F=FollowLbl and Fix=FollowIx is dep(F,Fix)
+           |  updateDeps(dep(F,Fix)) is multiDep(list of {dep(F,Fix);dep(FollowLbl,FollowIx)})
+           |  updateDeps(multiDep(L)) is multiDep((list of {dep(FollowLbl,FollowIx)}) union L)
+           |  updateDeps(allDep(Lbls)) is allDep(Lbls)
+         } in _set_indexed(Follow,Id,updateDeps((Follow[Id] or else noDep)))
+     |  updateFlw(Follow,dep(_,Id)) is Follow
+     |  updateFlw(Follow,multiDep(L)) is leftFold(updateFlw,Follow,L)
+  } in updateFlw(Flw,Deps)
   
-  updateActFollow(Deps,FIx) do 
-    accntFollow := updateFollow(Deps,"accounts",accntFollow,"fullAccount",FIx);
-  updateTxFollow(Deps,FIx) do
+  prc updateActFollow(Deps,FIx) do 
+        accntFollow := updateFollow(Deps,"accounts",accntFollow,"fullAccount",FIx)
+  prc updateTxFollow(Deps,FIx) do
     transFollow := updateFollow(Deps,"transactions",transFollow,"fullAccount",FIx);
   
-  main() do {
+  prc main() do {
 --    extend accounts with account{id=0L;owner="fred";balance=100L;lastTx=0L};
     addAccount(account{id=0L;owner="fred";balance=100L;lastTx=0L});
 
@@ -316,17 +316,17 @@ workedex is package{
 --    updateAccount((pattern() from account{id=0L}),
 --                 (function(Ac) is Ac substitute {balance=Ac.balance-55L}));
                  
-    updateAccnt({id=0L},(function(Ac) is Ac substitute {balance=Ac.balance-55L}));
+    updateAccnt({id=0L},((Ac) => Ac substitute {balance=Ac.balance-55L}));
 
 --    update Ac matching account{id=1L;balance=B} in accounts with Ac substitute {balance=B+55L};
 --    updateAccount((pattern() from account{id=1L}),
 --                 (function(Ac) is Ac substitute {balance=Ac.balance+55L}));
 
-    updateAccnt({id=1L},(function(Ac) is Ac substitute {balance=Ac.balance+55L}));
+    updateAccnt({id=1L},((Ac) => Ac substitute {balance=Ac.balance+55L}));
                  
 --    update Tx matching tx{id=100L} in transactions with Tx substitute { amnt=Tx.amnt+10L};
-    updateTrans((pattern() from tx{id=100L}),
-                (function(Tx) is Tx substitute { amnt = Tx.amnt+10L})); 
+    updateTrans((() from tx{id=100L}),
+                ((Tx) => Tx substitute { amnt = Tx.amnt+10L})); 
                  
 --    update Ac matching account{id=1L;balance=B} in accounts with Ac substitute {balance=B-5L};
 --    update Ac matching account{id=0L;balance=B} in accounts with Ac substitute {balance=B+5L};

@@ -16,10 +16,10 @@
  *
  */
 counter is package{
-  nextId is let{
+  def nextId is let{
     var count := 0L;
     
-    next() is valof{
+    fun next() is valof{
       count := count+1L;
       valis count;
     }

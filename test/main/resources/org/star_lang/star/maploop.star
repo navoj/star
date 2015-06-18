@@ -22,7 +22,7 @@ maploop is package{
     "q"->indexed{ ("t",12) }
   };
   
-  main() do {
+  prc main() do {
     for K->V in H do{
       for (C,A) in V do
         logMsg(info,"K=$K, C=$C, A=$A");

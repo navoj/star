@@ -22,18 +22,18 @@ typeCon is package {
   }
 
   maybeCreate has type (%a) => option of %a;
-  maybeCreate(a) is some(a);
+  fun maybeCreate(a) is some(a);
 
   implementation Monad over option of %a default is {
     mcreate = maybeCreate;
   }
 
-  constant(a) is mcreate(a);
+  fun constant(a) is mcreate(a);
   
-  dbl2(X) is X%X;
+  fun dbl2(X) is X%X;
   
-  main () do {
-    thirteen is constant(13);
+  prc main () do {
+    def thirteen is constant(13);
     
     assert dbl2(3)=zero;
   }

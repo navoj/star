@@ -19,11 +19,11 @@ dependency is package{
 
   type stack of %t is alias of list of %t;
 
-  analyseGraph(G) is let{
+  fun analyseGraph(G) is let{
     var nodes := keys(G);
     var groups := list of {};
     
-    analyseNode(N, S) is valof{
+    fun analyseNode(N, S) is valof{
       def L0 is size(S);
       
       var Stk := stack of {N;..S};
@@ -41,14 +41,14 @@ dependency is package{
         valis (Stk,Low)
     };
     
-    analyseConnection(N,Stack,Low) is valof{
-      Ix is indexOf(Stack,N);
+    fun analyseConnection(N,Stack,Low) is valof{
+      def Ix is indexOf(Stack,N);
 
       if Ix>=0 then valis (Stack,min(Ix,Low)) 
       else if N in nodes then {
         delete (NN where NN=N) in nodes;
         
-        (nStack,nLow) is analyseNode(N,Stack);
+        def (nStack,nLow) is analyseNode(N,Stack);
         valis (nStack,min(Low,nLow));
       }
       else
@@ -56,14 +56,14 @@ dependency is package{
     };
     
     popStack has type (stack of %t,integer)=>() where pPrint over %t;
-    popStack(S,L0) do {
-      rel is S[0:(size(S)-L0)];
+    prc popStack(S,L0) do {
+      def rel is S[0:(size(S)-L0)];
       groups := list of [groups..,rel];
     }
    
-    sortGraph() is valof{
+    fun sortGraph() is valof{
       while not isEmpty(nodes) do{
-        N is someValue(nodes[0]);
+        def N is someValue(nodes[0]);
         remove nodes[0];
 
         ignore analyseNode(N,stack of {});
@@ -73,9 +73,9 @@ dependency is package{
       
   } in sortGraph();
   
-  keys(M) is list of {all K where K->V in M};
+  fun keys(M) is list of {all K where K->V in M};
  
-  indexOf(S,N) is valof{
+  fun indexOf(S,N) is valof{
 	var SS := S;
 	var Ix := size(S)-1;
 	while SS matches list of [E,..R] do {
@@ -91,18 +91,18 @@ dependency is package{
   
   type node is Nd(string);
   
-  main() do {
-	G is dictionary of{
-	  Nd("A") -> list of [Nd("D")];
-	  Nd("B") -> list of [Nd("C"), Nd("F")];
-	  Nd("C") -> list of [Nd("D")];
-	  Nd("D") -> list of [Nd("B")];
-	  Nd("E") -> list of [Nd("F"), Nd("G")];
-	  Nd("F") -> list of [Nd("E"), Nd("G")];
+  prc main() do {
+	def G is dictionary of[
+	  Nd("A") -> list of [Nd("D")],
+	  Nd("B") -> list of [Nd("C"), Nd("F")],
+	  Nd("C") -> list of [Nd("D")],
+	  Nd("D") -> list of [Nd("B")],
+	  Nd("E") -> list of [Nd("F"), Nd("G")],
+	  Nd("F") -> list of [Nd("E"), Nd("G")],
 	  Nd("G") -> list of []
-	};
+	];
 	
-	Sorted is analyseGraph(G);
+	def Sorted is analyseGraph(G);
    
 	logMsg(info,"sorted graph is $Sorted");
 	

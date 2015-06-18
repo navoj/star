@@ -19,14 +19,14 @@ basicNamedImport is package{
   N is import NP;
   S is import SP;
   
-  main() do {
+  prc main() do {
     X has type N.tp;
-    X is N.X;
+    def X is N.X;
     
     logMsg(info,"X=$(__display(X))");
     
     Y has type S.tp;
-    Y is S.Y;
+    def Y is S.Y;
     
     logMsg(info,"Y=$(__display(Y))");
   }

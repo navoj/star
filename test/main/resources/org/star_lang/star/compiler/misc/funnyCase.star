@@ -18,7 +18,7 @@
 funnyCase is package{
 
   search has type () => integer;
-  search() is valof {
+  fun search() is valof {
     case 1 in {
       1 do valis 2;
     }

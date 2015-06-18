@@ -16,7 +16,7 @@
  *
  */
 uniqueQuery is package{
-  main() do {
+  prc main() do {
     var l:=list of [12,113,8,45,113];
    
     def m is 3 of X where X in l order by X;

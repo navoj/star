@@ -21,17 +21,17 @@ contractInActorTest is package {
  }
 
  implementation C1 over integer is {
-   cFun(x) is x + 1;
+   fun cFun(x) is x + 1;
  }
 
- X is memo actor {
-   aFun(x) do {
-     y is cFun(x);
+ def X is memo actor {
+   prc aFun(x) do {
+     def y is cFun(x);
      logMsg(info, "$y");
    }
  }
 
- main() do {
+ prc main() do {
    request X()'s aFun to aFun(1);
  }
 }

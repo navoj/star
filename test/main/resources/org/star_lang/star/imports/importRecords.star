@@ -18,9 +18,9 @@
 importRecords is package{
   NP is import NP;
 
-  R is NP.RC{id="fred"}
+  def R is NP.RC{id="fred"}
 
-  main() do {
+  prc main() do {
     assert R.id="fred";
   }
 }

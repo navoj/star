@@ -20,23 +20,23 @@ semaphore is package{
   type sem is alias of  { grab has type ()=>task of (()); release has type ()=>task of (()) };
 
   semaphore has type (integer) => sem;
-  semaphore(Count) is {
-    private grabCh is channel();
-    private releaseCh is channel();
+  fun semaphore(Count) is {
+    private def grabCh is channel();
+    private def releaseCh is channel();
     
     { ignore background semLoop(Count); }
     
     private
-    releaseR(x) is choose wrap incoming releaseCh in (_) => semLoop(x+1);
+    fun releaseR(x) is choose wrap incoming releaseCh in ((_) => semLoop(x+1));
     private
-    grabR(x) is choose wrap incoming grabCh in (_) => semLoop(x-1);
+    fun grabR(x) is choose wrap incoming grabCh in ((_) => semLoop(x-1));
    
     private 
-    semLoop(0) is wait for releaseR(0);
-    semLoop(x) default is wait for grabR(x) or releaseR(x)
+    fun semLoop(0) is wait for releaseR(0)
+     |  semLoop(x) default is wait for grabR(x) or releaseR(x)
 
-    grab() is wait for put () on grabCh;
-    release() is wait for put () on releaseCh;
+    fun grab() is wait for put () on grabCh;
+    fun release() is wait for put () on releaseCh;
   };
 }
     

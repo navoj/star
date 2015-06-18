@@ -30,20 +30,20 @@ safeCast is package{
     el has type for all %t such that (%t)=>elem;
   };
   
-  G is group{
+  def G is group{
     type integer counts as elem;
     
-    zero is 0;
-    inv(X) is -X;
-    op(X,Y) is X+Y;
+    def zero is 0;
+    fun inv(X) is -X;
+    fun op(X,Y) is X+Y;
     
-    el(X) is X cast elem;
+    fun el(X) is X cast elem;
     
-    eq(X,Y) is X=Y;
+    fun eq(X,Y) is X=Y;
   }
   
-  main() do {
-    Z is G.op(3 cast G.elem,2 cast G.elem);
+  prc main() do {
+    def Z is G.op(3 cast G.elem,2 cast G.elem);
     
     -- assert G.eq(Z,5 cast G.elem)
     

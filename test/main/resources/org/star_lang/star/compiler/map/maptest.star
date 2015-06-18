@@ -21,10 +21,9 @@ maptest is package{
   
   #mget(?H,?P,?D) ==> (__hashGet(H,P) matches some(V) ? V :  D);
 
-  main has type action();
-  main() do
+  prc main() do
   {
-    BV is H["B"];
+    def BV is H["B"];
     logMsg(info,"get H[B] is $BV");
     assert BV has value 2;
     

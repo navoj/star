@@ -20,22 +20,22 @@ import volOnewayRequest;
 
 onewayPortTest is package{
 
-  S2 is {
-    testAction((X has type string)) do logMsg(info,"P2:$X");
+  def S2 is {
+    prc testAction((X has type string)) do logMsg(info,"P2:$X");
   }
   
-  Port_In is port{
-    _notify(Fn) do Fn(S2);
-    _request(Fn,Qt,Fr) do Fn(S2);
-    _query(Fn,Qt,Fr) is Fn(S2);
+  def Port_In is port{
+    prc _notify(Fn) do Fn(S2);
+    prc _request(Fn,Qt,Fr) do Fn(S2);
+    fun _query(Fn,Qt,Fr) is Fn(S2);
   };
   
  
-  P1 is connectPort_Out(Port_In);
+  def P1 is connectPort_Out(Port_In);
   
-  main() do {
-    P1._request((procedure(Schema) do Schema.testAction("P1 sends greetings")),
-              (function() is quote((procedure(Schema) do Schema.testAction("P1 sends greetings")))),
-              (function() is dictionary of {}));
+  prc main() do {
+    P1._request(((Schema) do Schema.testAction("P1 sends greetings")),
+              (() => quote((procedure(Schema) do Schema.testAction("P1 sends greetings")))),
+              (() => dictionary of {}));
   }
 }

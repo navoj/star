@@ -18,13 +18,13 @@
 dateEq is package {
   type r is r{ a has type list of integer; b has type date };
    
-  main() do {
+  prc main() do {
     assert {a=list of []} = {a=list of []};
 
-    d is now();
+    def d is now();
     assert d = d;
     AA has type { a has type list of integer; b has type date };
-    AA is {a=list of [];b=d};
+    def AA is {a=list of [];b=d};
     assert AA = {a=list of [];b=d};
   }
 }

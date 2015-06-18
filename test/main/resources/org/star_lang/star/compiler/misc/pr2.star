@@ -16,11 +16,11 @@
  *
  */
 pr2 is package{
-  pr2 is let {
-        id2 is (function (X) is X);
+  def pr2 is let {
+        def id2 is ( (X) => X);
     } in (id2(1), id2(true));
     
-  main() do {
+  prc main() do {
     assert pr2 = (1,true)
   }
 }

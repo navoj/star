@@ -16,11 +16,12 @@
  *
  */
 mapsearch is package {
- m is dictionary of {"a" -> 1; "b" -> 2};
- main() do {
-   bar is let {
-     x is "a";
-     foo is case m in {
+ def m is dictionary of {"a" -> 1; "b" -> 2};
+ 
+ prc main() do {
+   def bar is let {
+     def x is "a";
+     def foo is case m in {
        a where (x1 where x1=x) -> b in m and b <2 is b;
        _ default is nonInteger;
      }

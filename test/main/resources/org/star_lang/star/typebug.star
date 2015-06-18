@@ -19,7 +19,7 @@ typeBug is package{
 
   h has type (string)=>string;
 
-  h(X) is let{
+  fun h(X) is let{
     Y has type string;
     var Y:= X;
   } in {

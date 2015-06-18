@@ -18,20 +18,20 @@
 regpttrn is package{
   
   email has type (string,string) <= string;
-  email(N,H) from `mailto\:(.*:N)@(.*:H)`;
-  email(N,H) from `(.*:N)@(.*:H)`;
+  ptn email(N,H) from `mailto\:(.*:N)@(.*:H)`
+   |  email(N,H) from `(.*:N)@(.*:H)`
   
-  hostOfEmail(`(.*:N)@(.*:H)`) is H;
-  hostOfEmail(`mailto\:(.*:N)@(.*:H)`) is H;
+  fun hostOfEmail(`(.*:N)@(.*:H)`) is H
+   |  hostOfEmail(`mailto\:(.*:N)@(.*:H)`) is H
   
   type emailPart is name or host;
   
-  emailFragment(`(.*:N)@(.*:H)`,host) is H;
-  emailFragment(`(.*:N)@(.*:H)`,name) is N;
-  emailFragment(`mailto\:(.*:N)@(.*:H)`,host) is H;
-  emailFragment(`mailto\:(.*:N)@(.*:H)`,name) is N;
+  fun emailFragment(`(.*:N)@(.*:H)`,host) is H
+   |  emailFragment(`(.*:N)@(.*:H)`,name) is N
+   |  emailFragment(`mailto\:(.*:N)@(.*:H)`,host) is H
+   |  emailFragment(`mailto\:(.*:N)@(.*:H)`,name) is N
   
-  main() do {
+  prc main() do {
     assert "foo@bar.com" matches email("foo","bar.com");
     
     if "mailto:foo@bar.com" matches email(U,H) then 

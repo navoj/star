@@ -20,16 +20,16 @@ defaultContracts is package{
   contract foo over %t is {
     bar has type (%t)=>string;
     
-    bar(X) default is __display(X)
+    fun bar(X) default is __display(X)
   }
   
   implementation foo over integer is {
-    bar(I) is "%$I";
+    fun bar(I) is "%$I";
   }
   
   implementation foo over float is {}
   
-  main() do {
+  prc main() do {
     logMsg(info,bar(12));
     logMsg(info,bar(12.4));
   }

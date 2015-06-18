@@ -16,11 +16,11 @@
  *
  */
 emptyRecord is package{
-  E is {};
+  def E is {};
 
-  testEmpty({}) is true;
+  fun testEmpty({}) is true;
 
-  main() do {
+  prc main() do {
     assert testEmpty(E)
   }
 }

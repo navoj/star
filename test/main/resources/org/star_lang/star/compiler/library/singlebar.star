@@ -18,7 +18,7 @@
 singlebar is package{
   import single;
   
-  main() do {
+  prc main() do {
     assert single=bar;
     logMsg(info,"$single")
   }

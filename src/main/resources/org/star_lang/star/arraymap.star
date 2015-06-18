@@ -80,7 +80,7 @@ implementation iterable over seqmap of (%k,%e) determines %e is {
   fun _iterate(R,F,S) is listMapIter(R,F,S);
 }
 
-listMapIter(seqmap(R),F,S) is let {
+fun listMapIter(seqmap(R),F,S) is let {
   fun dropFun((_,E),St) is F(E,St);
 } in __array_iterate(R,dropFun,S);
 

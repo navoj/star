@@ -19,44 +19,44 @@ performTest is package{
   type maybe of %t is possible(%t) or impossible(exception);
   
   implementation (computation) over maybe is {
-    _encapsulate(X) is possible(X);
+    fun _encapsulate(X) is possible(X)
     
-    _combine(possible(X),F) is F(X);
-    _combine(impossible(E),_) is impossible(E);
+    fun _combine(possible(X),F) is F(X)
+     |  _combine(impossible(E),_) is impossible(E)
     
-    _abort(R) is impossible(R);
+    fun _abort(R) is impossible(R)
     
-    _handle(impossible(R),EF) is EF(R);
-    _handle(M,EF) is M;
+    fun _handle(impossible(R),EF) is EF(R)
+     |  _handle(M,EF) is M;
   }
   
   implementation execution over maybe is {    
-    _perform(possible(X),_) is X;
-    _perform(impossible(R),F) is F(R);
+    fun _perform(possible(X),_) is X
+     |  _perform(impossible(R),F) is F(R)
   }
   
-  ff(LL) is maybe computation{
+  fun ff(LL) is maybe computation{
     for L in LL do{
       perform pp(L);
     }
     valis ();
   } 
   
-  pp(L) is maybe computation{
+  fun pp(L) is maybe computation{
     for (KK,V) in L do
       logMsg(info,"KK=$KK,V=$V");
       
     valis ()
   };
   
-  doIf(LL,K) is maybe computation{
+  fun doIf(LL,K) is maybe computation{
     if present LL[K] then
       valis ();
       
     raise "not found"
   }
   
-  handle(LL,K) is maybe computation{
+  fun handle(LL,K) is maybe computation{
     try { 
       for (KK,V) in LL do {
         if V>K then
@@ -66,12 +66,12 @@ performTest is package{
     valis ()
   }
 
-  id(X) is X;
+  fun id(X) is X;
   
-  main() do {
-    L1 is list of {(1,"alpha"); (2,"beta"); (3,"gamma"); (4,"delta")};
-    L2 is list of {(5,"eta")};
-    MM is list of {L1; L2};
+  prc main() do {
+    def L1 is list of [(1,"alpha"), (2,"beta"), (3,"gamma"), (4,"delta")];
+    def L2 is list of [(5,"eta")];
+    def MM is list of [L1, L2];
     
     perform ff(MM);
     
@@ -81,7 +81,7 @@ performTest is package{
     
     perform doIf(L1,5) on abort { X do logMsg(info,"Got exception (2): $X"); }
     
-    HH is handle(L1,"omega");
+    def HH is handle(L1,"omega");
     
     perform HH;
     

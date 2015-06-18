@@ -22,13 +22,13 @@ reduceC is package{
   }
  
   implementation reduce over cons of %t determines %t is {
-    reducer(f) is (function(x,z) is foldr(f,z,x));
-    reducel(f) is (function(x,z) is foldl(f,x,z));
+    fun reducer(f) is (x,z) => foldr(f,z,x);
+    fun reducel(f) is (x,z) => foldl(f,x,z);
   }
   
-  foldr(f,z,nil) is z;
-  foldr(f,z,cons(x,xs)) is f(x,foldr(f,z,xs));
+  fun foldr(f,z,nil) is z
+   |  foldr(f,z,cons(x,xs)) is f(x,foldr(f,z,xs))
   
-  foldl(f,z,nil) is z;
-  foldl(f,z,cons(x,xs)) is foldl(f,f(z,x),xs);
+  fun foldl(f,z,nil) is z
+   |  foldl(f,z,cons(x,xs)) is foldl(f,f(z,x),xs)
 }

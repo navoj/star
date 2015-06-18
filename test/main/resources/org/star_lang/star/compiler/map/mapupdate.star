@@ -24,7 +24,7 @@ mapupdate is package{
     atts has type props;
   };
   
-  main() do
+  prc main() do
   {
     var Joe := person{name = "Joe"; atts = props{values:=dictionary of {"alpha"->"beta"} }};
     

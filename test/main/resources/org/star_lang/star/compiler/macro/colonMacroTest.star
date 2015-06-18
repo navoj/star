@@ -19,33 +19,33 @@ import colonMacros;
 
 colonMacroTest is package{
 
-  Average(Tm) is (function(Buff) is sum(Buff)/size(Buff));
+  fun Average(Tm) is (Buff) => sum(Buff)/size(Buff);
   
-  StdDev(Tm) is let{
-    stdDev(Buff) is valof{
-      Count is size(Buff);
-      M is sum(Buff)/Count;
+  fun StdDev(Tm) is let{
+    fun stdDev(Buff) is valof{
+      def Count is size(Buff);
+      def M is sum(Buff)/Count;
       valis sqrt(sumSq(Buff)/Count);
     }
-  } in stdDev;
+  } in stdDev
   
-  sum(L) is foldF(L,(function(A,B) is A+B),0);
+  fun sum(L) is foldF(L,(A,B) => A+B,0)
   
-  sumSq(L) is foldF(L,(function(A,B) is A*A+B),0);
+  fun sumSq(L) is foldF(L,(A,B) => A*A+B,0)
   
-  foldF has type (list of %e,(%e,%x)=>%x,%x)=>%x;
-  foldF(L,F,I) is valof{
+  foldF has type (list of %e,(%e,%x)=>%x,%x)=>%x
+  fun foldF(L,F,I) is valof{
     var XX := I;
     for E in L do
       XX := F(E,XX);
     valis XX;
   }
 
-  Buffer is list of [1,3,4,2,-1,0,-4,10];
+  def Buffer is list of [1,3,4,2,-1,0,-4,10];
   
-  XX is parseColon(A:Average(3h) <B:(3*StdDev(3h)));
+  def XX is parseColon((A:Average(3h)) < (B:(3*StdDev(3h))))
   
-  main() do
+  prc main() do
   {
     logMsg(info,"$XX");
     

@@ -23,7 +23,7 @@ pingpong is package{
   type talker is alias of actor of {ear has type occurrence of string};
   
   chatty has type (()=>talker)=>talker;
-  chatty(Who) is actor{
+  fun chatty(Who) is actor{
     private var lifeTime := 1000;
     Bx has type mbox of string;
     private def Bx is box();
@@ -43,7 +43,7 @@ pingpong is package{
     };
   };
  
-  main() do {
+  prc main() do {
     let{
       def ping is memo chatty(pong);
       def pong is memo chatty(ping);

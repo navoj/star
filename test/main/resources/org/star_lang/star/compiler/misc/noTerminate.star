@@ -26,7 +26,7 @@ noTerminate is package {
   type MyMonad of %a is MyMonad { result has type Store of %a };
 
   maybeBind has type (MyMonad of %a, (%a) => MyMonad of %b) => MyMonad of %b;
-  maybeBind(mm matching MyMonad { result = result_a }, f) is
+  fun maybeBind(mm matching MyMonad { result = result_a }, f) is
     case a of {
       Store(val) is f(val);
       Empty is mm;

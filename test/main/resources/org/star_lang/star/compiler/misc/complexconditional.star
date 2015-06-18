@@ -16,10 +16,10 @@
  *
  */
 complexconditional is package{
-  R is list of [1,2,3];
+  def R is list of [1,2,3];
   
-  main() do {
-    FF is (X where X>2) in R ? X | nonInteger;
+  prc main() do {
+    def FF is (X where X>2) in R ? X : nonInteger;
     
     assert FF=3
   }

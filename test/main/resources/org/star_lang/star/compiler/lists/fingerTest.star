@@ -19,7 +19,7 @@ fingerTest is package{
 
   import fingers;
   
-  main() do {
-    T is emptyFinger;
+  prc main() do {
+    def T is emptyFinger;
   }
 }
