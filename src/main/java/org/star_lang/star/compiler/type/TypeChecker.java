@@ -5666,15 +5666,15 @@ public class TypeChecker
             IAbstract defFun = entry.getValue().left();
             IType defType = entry.getValue().right();
 
-            IContentExpression defltExp = typeOfExp(defFun, Freshen.freshenForEvidence(defType), funCxt, dict);
+            IContentExpression defltExp = typeOfExp(defFun, defType, funCxt, dict);
             if (defltExp instanceof ProgramLiteral) // can happen if there is a syntax error
             {
               ProgramLiteral dFun = (ProgramLiteral) defltExp;
-
               VarEntry defltVar = VarEntry.createVarEntry(defName, defType, defFun.getLoc(), dFun, visibility);
+              IStatement overVar = Over.overload(errors, defltVar, tmpCxt);
 
-              thetaElements.add(Over.overload(errors, defltVar, dict));
-              dict.declareVar(defltVar.getVariable().getName(), defltVar.getVariable(), readOnly, visibility, true);
+              thetaElements.add(overVar);
+              dict.declareVar(defName, defltVar.getVariable(), readOnly, visibility, true);
             }
           }
 

@@ -10,9 +10,7 @@ import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
-import org.star_lang.star.compiler.transform.Over;
 import org.star_lang.star.compiler.type.TypeUtils;
-import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.data.type.ContractConstraint;
 import org.star_lang.star.data.type.ExistentialType;
 import org.star_lang.star.data.type.FieldConstraint;
@@ -147,9 +145,6 @@ public class TypeAbstract<T> implements TypeTransformer<IAbstract, IAbstract, T>
   @Override
   public IAbstract transformUniversalType(UniversalType t, T cxt)
   {
-    if (TypeUtils.hasContractDependencies(t) && !TypeUtils.isConstructorType(TypeUtils.unwrap(t)))
-      t = (UniversalType) Over.computeDictionaryType(t, loc, AccessMode.readOnly);
-
     IAbstract tV = t.getBoundVar().transform(this, cxt);
 
     IAbstract bound = t.getBoundType().transform(this, cxt);

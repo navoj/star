@@ -18,11 +18,11 @@
 reducible is package{
   private import monad;
 
-  contract reducible over %s determines %e is {
+  contract reducible over s determines e is {
     _reduce has type
-      for all %r,%%m such that
-        (%s, (%e, IterState of %r) => %%m of IterState of %r, IterState of %r) =>
-           %%m of IterState of %r where monad over %%m;
+      for all r,m such that
+        (s, (e, IterState of r) => m of IterState of r, IterState of r) =>
+           m of IterState of r where monad over m;
   };
 
   implementation reducible over (cons of %e) determines %e is {

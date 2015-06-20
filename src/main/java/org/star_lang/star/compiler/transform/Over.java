@@ -398,6 +398,74 @@ public class Over extends DefaultTransformer<OverContext>
         transformedValue, entry.isReadOnly(), entry.getVisibility());
   }
 
+  public IStatement overloadVarEntry(VarEntry defn, OverContext context)
+  {
+    IType varType = defn.getType();
+
+    if (TypeUtils.hasContractDependencies(varType) && !TypeUtils.isConstructorType(TypeUtils.unwrap(varType))
+        && !isOverloadedDefn(defn)) {
+      // We have a generic function that relies on the implementation of a
+      // type contract
+      // F(P1,..,Pn) is Exp
+      //
+      // We rewrite this to:
+      // F(D) is let{ F'(P1,..,Pn) is Exp } in F'
+      // where F is replaced by F' in Exp and F is replaced by F(D) in other expressions
+
+      Location loc = defn.getLoc();
+      Variable var = defn.getVariable();
+
+      assert var instanceof OverloadedVariable;
+
+      String vrName = var.getName();
+
+      IContentExpression expression = defn.getValue();
+
+      IType dictType = ((OverloadedVariable) var).getDictType();
+
+      Variable innerVar = new Variable(loc, TypeUtils.getOverloadedType(dictType), vrName + "'");
+      IContentExpression old = defineSubstitution(vrName, innerVar);
+
+      IType[] reqTypes = TypeUtils.getOverloadRequirements(dictType);
+      Variable reqVars[] = new Variable[reqTypes.length];
+
+      int currDictState = context.markDict();
+
+      for (int ix = 0; ix < reqTypes.length; ix++) {
+        IType reqType = reqTypes[ix];
+
+        Variable dictVar = reqVars[ix] = new Variable(loc, reqType, reqType.typeLabel() + context.nextVarNo());
+        context.getLocalCxt().declareVar(dictVar.getName(), dictVar, AccessMode.readOnly, Visibility.priVate, true);
+        context.define(reqType, (IContentExpression) dictVar);
+      }
+
+      IContentExpression resolvedExp = expression.transform(this, context);
+
+      List<IStatement> inner = new ArrayList<IStatement>();
+
+      inner.add(new VarEntry(loc, innerVar, resolvedExp, AccessMode.readOnly, Visibility.priVate));
+
+      resolvedExp = new LetTerm(loc, innerVar, inner);
+
+      Variable[] iFree = FreeVariables.freeFreeVars(reqVars, resolvedExp, context.getLocalCxt());
+
+      FunctionLiteral instFun = new FunctionLiteral(loc, vrName, dictType, reqVars, resolvedExp, iFree);
+
+      // This is carefully done to avoid overloading a definition twice.
+      Visibility visibility = defn.getVisibility();
+      VarEntry resolved = new VarEntry(loc, Variable.create(loc, varType, vrName), instFun, AccessMode.readOnly,
+          visibility);
+      context.getLocalCxt().declareVar(vrName, Variable.create(loc, dictType, vrName), AccessMode.readOnly, visibility,
+          true);
+
+      defineSubstitution(vrName, old); // undo substitution
+      context.resetDict(currDictState);
+      return resolved;
+    } else
+      return transformVarEntry(defn, context);
+
+  }
+
   public IContentPattern[] transformPatterns(IContentPattern[] args, OverContext cxt)
   {
     IContentPattern nArgs[] = new IContentPattern[args.length];
@@ -642,7 +710,13 @@ public class Over extends DefaultTransformer<OverContext>
   public static IStatement overload(ErrorReport errors, VarEntry defn, Dictionary cxt)
   {
     Over overloader = new Over();
-    return defn.transform(overloader, new OverContext(cxt, errors, 0));
+    return overloader.overloadVarEntry(defn, new OverContext(cxt, errors, 0));
+  }
+
+  public static IContentExpression overload(IContentExpression term, ErrorReport errors, Dictionary dict)
+  {
+    Over overloader = new Over();
+    return term.transform(overloader, new OverContext(dict, errors, 0));
   }
 
   private boolean testTheta(List<IStatement> stmts)
