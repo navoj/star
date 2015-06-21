@@ -2833,11 +2833,6 @@ public class TypeChecker
       IAbstract lhs = Abstract.binaryLhs(condition);
       findVarsInPtn(CompilerUtils.indexPttrnPtn(lhs), cxt, outer, varFinder);
       findVarsInPtn(CompilerUtils.indexPttrnIx(lhs), cxt, outer, varFinder);
-    } else if (Abstract.isBinary(condition, StandardNames.DOWN)
-        && CompilerUtils.isIndexPattern(Abstract.binaryLhs(condition))) {
-      IAbstract lhs = Abstract.binaryLhs(condition);
-      findVarsInPtn(CompilerUtils.indexPttrnPtn(lhs), cxt, outer, varFinder);
-      findVarsInPtn(CompilerUtils.indexPttrnIx(lhs), cxt, outer, varFinder);
     } else if (Abstract.isBinary(condition, StandardNames.IN)) {
       findVarsInPtn(Abstract.getArg(condition, 0), cxt, outer, varFinder);
     } else if (CompilerUtils.isBoundTo(condition)) {

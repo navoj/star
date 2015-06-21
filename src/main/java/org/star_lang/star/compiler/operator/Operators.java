@@ -119,9 +119,8 @@ public class Operators implements PrettyPrintable
 
     definePrefix(StandardNames.JAVA, 1300);
     definePrefix(StandardNames.OPEN, 1300);
-    
-    defineRight(StandardNames.PIPE, 1290);
 
+    defineRight(StandardNames.PIPE, 1290);
 
     defineRight(StandardNames.DO, 1200);
 
@@ -198,7 +197,7 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.SPAWN, 950);
     definePrefix(StandardNames.WAITFOR, 950);
     definePrefix(StandardNames.WHEN, 950);
-    
+
     defineInfix(StandardNames.DOTSLASH, 999);
 
     defineLeft(StandardNames.GROUPBY, 960);
@@ -214,11 +213,10 @@ public class Operators implements PrettyPrintable
     defineRight(StandardNames.IMPLIES, 920);
 
     definePrefix(StandardNames.NOT, 910);
-    
+
     definePrefix(StandardNames.LET, 909);
     defineLeft(StandardNames.USING, 908);
     defineInfix(StandardNames.IN, 908);
-    defineInfix(StandardNames.DOWN, 908);
 
     defineInfix(StandardNames.EXPORTS, 907);
     defineRight(StandardNames.ALSO, 906);
