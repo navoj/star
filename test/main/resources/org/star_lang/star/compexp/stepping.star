@@ -39,9 +39,9 @@ stepping is package{
     result(X) is done(X);
   }
   
-  step(X) is case X in {
-    done(_) is X;
-    notYet(F) is F();
+  step(X) is switch X in {
+    case done(_) is X;
+    case notYet(F) is F();
   }
   
   main() do {

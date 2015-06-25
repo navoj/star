@@ -134,19 +134,19 @@ prc _join_resource_controllers(res1, res2) do {
 }
 
 prc _activate_if_inactive(res) do {
-  def is_inactive_state is ( (st) => case st in { ResInactive(_) is true; _ default is false; });
+  def is_inactive_state is ( (st) => switch st in { case ResInactive(_) is true; case _ default is false; });
   def st is _my_atomic_test_n_swap_ext(res.state, is_inactive_state, ResTransient)
-  case st in {
-    ResInactive(activate) do activate(); -- shall set state to ResActive
+  switch st in {
+    case ResInactive(activate) do activate(); -- shall set state to ResActive
     -- what if Deactivating state?
   }
 }
 
 prc _deactivate_if_active(res) do {
-  def is_active_state is ( (st) => case st in { ResActive(_) is true; _ default is false; });
+  def is_active_state is ( (st) => switch st in { case ResActive(_) is true; case _ default is false; });
   def st is _my_atomic_test_n_swap_ext(res.state, is_active_state, ResDeactivating)
-  case st in {
-    ResActive(deactivate) do deactivate(); -- shall set state to ResInactive
+  switch st in {
+    case ResActive(deactivate) do deactivate(); -- shall set state to ResInactive
     -- what if Transient state?
   }
 }

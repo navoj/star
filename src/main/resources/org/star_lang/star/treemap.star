@@ -67,9 +67,9 @@ fun look(K,T) is valof{
   def H is __hashCode(K);
   var Tr := T;
   while true do{
-    case Tr in {
-      trLeaf(H1,Els) where __integer_eq(H1,H) do valis _index(Els,K);
-      trNode{maskLen=Ln;mask=M;left=L;right=R} do{
+    switch Tr in {
+      case trLeaf(H1,Els) where __integer_eq(H1,H) do valis _index(Els,K);
+      case trNode{maskLen=Ln;mask=M;left=L;right=R} do{
         def CM is commonMask(H,Ln);
 
 	    if __integer_eq(CM,M) then{
@@ -81,7 +81,7 @@ fun look(K,T) is valof{
 	    else
 	      valis none
       };
-      _ default do valis none
+      case _ default do valis none
     }
   }
 };
@@ -225,15 +225,15 @@ fun remve(_,_,trEmpty) is trEmpty
       if __integer_eq(CM,M) then{
         if nthBit(H,Ln) then{
           def NR is remve(H,K,R);
-          case NR in {
-	        trEmpty do valis L;
-	        _ default do valis trNode{mask=M;maskLen=Ln;left=L;right=NR}
+          switch NR in {
+	        case trEmpty do valis L;
+	        case _ default do valis trNode{mask=M;maskLen=Ln;left=L;right=NR}
           }
         } else {
           def NL is remve(H,K,L);
-          case NL in {
-	        trEmpty do valis R;
-	        _ default do valis trNode{mask=M;maskLen=Ln;left=NL;right=R}
+          switch NL in {
+	        case trEmpty do valis R;
+	        case _ default do valis trNode{mask=M;maskLen=Ln;left=NL;right=R}
           }
         }
       }
@@ -275,10 +275,10 @@ implementation sizeable over treemap of (%k,%v) is {
 private
 fun iter(trLeaf(H,Els),F,S) is listMapIter(Els,F,S)
  |  iter(trEmpty,F,S) is S
- |  iter(trNode{left=L;right=R},F,S) is case iter(L,F,S) in {
-      ContinueWith(X) is iter(R,F,ContinueWith(X));
-      NoneFound is iter(R,F,NoneFound);
-      NoMore(X) is NoMore(X);
+ |  iter(trNode{left=L;right=R},F,S) is switch iter(L,F,S) in {
+      case ContinueWith(X) is iter(R,F,ContinueWith(X));
+      case NoneFound is iter(R,F,NoneFound);
+      case NoMore(X) is NoMore(X);
     }
 
 implementation iterable over treemap of (%k,%v) determines %v is {
@@ -292,10 +292,10 @@ implementation indexed_iterable over treemap of (%k,%v) determines (%k,%v) is {
 private
 fun ixIter(trLeaf(H,Els),F,S) is listmapIxIter(Els,F,S)
  |  ixIter(trEmpty,F,S) is S
- |  ixIter(trNode{left=L;right=R},F,S) is case ixIter(L,F,S) in {
-      ContinueWith(X) is ixIter(R,F,ContinueWith(X));
-      NoneFound is ixIter(R,F,NoneFound);
-      NoMore(X) is NoMore(X);
+ |  ixIter(trNode{left=L;right=R},F,S) is switch ixIter(L,F,S) in {
+      case ContinueWith(X) is ixIter(R,F,ContinueWith(X));
+      case NoneFound is ixIter(R,F,NoneFound);
+      case NoMore(X) is NoMore(X);
     }
 
 implementation updateable over treemap of (%k,%v) determines ((%k,%v)) where equality over %k is {

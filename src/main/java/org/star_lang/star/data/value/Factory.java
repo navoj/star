@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IArray;
@@ -31,6 +29,7 @@ import org.star_lang.star.data.value.IntWrap.IntWrapper;
 import org.star_lang.star.data.value.LongWrap.LongWrapper;
 import org.star_lang.star.data.value.StringWrap.NonStringWrapper;
 import org.star_lang.star.data.value.StringWrap.StringWrapper;
+
 
 /**
  * The Factory has two roles: to support the creation of values and to support accessing scalar

@@ -19,8 +19,8 @@ caseTgt is package {
 
   search has type () => integer;
   fun search() is valof {
-    case 1 in {
-      1 do valis 2;
+    switch 1 in {
+      case 1 do valis 2;
     }
   }
 }

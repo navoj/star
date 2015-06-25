@@ -154,9 +154,9 @@ firstMapMaybe has type ((%a) => option of %b, cons of %a) => option of %b;
 firstMapMaybe(f, lis) is valof {
   var r:= lis;
   while r matches cons(x, xs) do {
-      case f(x) in {
-        none do nothing;
-        a matching some(y) do valis a;
+      switch f(x) in {
+        case none do nothing;
+        case a matching some(y) do valis a;
       };
       r := xs;
   };
@@ -182,9 +182,9 @@ randomFirst_ has type ((brv of %a) => option of %c, prv of %a, prv of %a, intege
 
 /* recursive version
 randomFirst_(pred, BRV(brv0), rest, sz_rest) is
-  case pred(brv0) in {
-    some(v) is some(v)
-    _ default is __integer_eq(sz_rest, 0_) ? none : randomFirst_(pred, rest, neverPrv, 0_)
+  switch pred(brv0) in {
+    case some(v) is some(v)
+    case _ default is __integer_eq(sz_rest, 0_) ? none : randomFirst_(pred, rest, neverPrv, 0_)
   }
   
 randomFirst_(pred, CHOOSE(c1, sz1, c2, sz2), rest, sz_rest) is
@@ -211,10 +211,10 @@ fun randomFirst_(pred, prv0_, rest_, sz_rest_) is valof {
   var sz_rest := sz_rest_;
   
   while (true) do {
-    case prv0 in {
-      BRV(brv0) do {
-        case pred(brv0) in {
-          none do {
+    switch prv0 in {
+      case BRV(brv0) do {
+        switch pred(brv0) in {
+          case none do {
             if __integer_eq(sz_rest, 0_) then
               valis none
             else {
@@ -223,11 +223,11 @@ fun randomFirst_(pred, prv0_, rest_, sz_rest_) is valof {
               sz_rest := 0_;
             }
           }
-          s default do valis s;
+          case s default do valis s;
         }
       }
       
-      CHOOSE(c1, sz1, c2, sz2) do {
+      case CHOOSE(c1, sz1, c2, sz2) do {
         if __integer_lt(__integer_random(__integer_plus(sz1, sz2)), sz1) then {
           prv0 := c1;
           if __integer_eq(sz_rest, 0_) then {
@@ -287,9 +287,9 @@ prc block(BRV(brv0), state, k) do {
     
 fun prv_await(prv) is let {
   fun start(wakeup) is valof {
-    case _get_first_enabled(prv) in {
-      some(t) do valis TaskMicroSleep(t)
-      _ default do {
+    switch _get_first_enabled(prv) in {
+      case some(t) do valis TaskMicroSleep(t)
+      case _ default do {
         def k is mk_task_cont(wakeup);
         block(prv, atomic_int(WAITING), k);
         valis TaskSleep;
@@ -347,8 +347,8 @@ fun _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, ma
         -- try to fulfill that other request
         while not __integer_eq(__atomic_int_reference(his_request.state), SYNCHED) do {
           -- try to set state from WAITING to SYNCHED, looking at the new value:
-          case atomic_int_cas(his_request.state, WAITING, SYNCHED) in {
-            v where __integer_eq(v, WAITING) do {
+          switch atomic_int_cas(his_request.state, WAITING, SYNCHED) in {
+            case v where __integer_eq(v, WAITING) do {
               -- success
 		        spinUnlock(ch.lock);
               -- let the partner continue and return
@@ -356,12 +356,12 @@ fun _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, ma
               -- logMsg(info, "continued partner with $(__display(passed_msg)), now return $(__display(get_result(his_request)))");
               valis some(taskReturn(get_result(his_request)));
             }
-            v where __integer_eq(v, CLAIMED) do {
+            case v where __integer_eq(v, CLAIMED) do {
               -- somebody was just looking at it, try again
               -- logMsg(info, "doFn: his_request: CLAIMED - retry");
               _dispatch() -- pause/yield
             }
-            v where __integer_eq(v, SYNCHED) default do {
+            case v where __integer_eq(v, SYNCHED) default do {
               -- already synched, try next one (will stay synched)
               nothing -- or break
             }
@@ -384,11 +384,11 @@ fun _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, ma
           in_queue := n_in_queue;
           -- a partner blocked since we polled
           while not __integer_eq(__atomic_int_reference(his_request.state), SYNCHED) do {
-            case atomic_int_cas(state, WAITING, CLAIMED) in { -- test_n_set might be enough here
-              v1 where __integer_eq(v1, WAITING) do {
+            switch atomic_int_cas(state, WAITING, CLAIMED) in { -- test_n_set might be enough here
+              case v1 where __integer_eq(v1, WAITING) do {
                 -- ok, now also try to get the matching rendezvous
-                case atomic_int_cas(his_request.state, WAITING, SYNCHED) in {
-                  v where __integer_eq(v, WAITING) do {
+                switch atomic_int_cas(his_request.state, WAITING, SYNCHED) in {
+                  case v where __integer_eq(v, WAITING) do {
                     -- success
                     spinUnlock(ch.lock);
                     __atomic_int_assign(state, SYNCHED);
@@ -396,13 +396,13 @@ fun _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, ma
                     cont_throw_val(k, get_result(his_request)); -- TODO: original: enqueueRdy k ??
                     valis true;
                   }
-                  v where __integer_eq(v, CLAIMED) do {
+                  case v where __integer_eq(v, CLAIMED) do {
                     -- logMsg(info, "blockFN his_request: CLAIMED - try again");
                     __atomic_int_assign(state, WAITING) -- waiting again
                     -- retry this one (spinning)
                     _dispatch(); -- pause/yield
                   }
-                  v where __integer_eq(v, SYNCHED) default do {
+                  case v where __integer_eq(v, SYNCHED) default do {
                     -- logMsg(info, "his_request: SYNCHED");
                     -- someone took it away just now
                     __atomic_int_assign(state, WAITING) -- waiting again
@@ -411,7 +411,7 @@ fun _channelPrv(act, ch, ref in_queue, ref out_queue, get_result, passed_msg, ma
                 }
               }
               -- CLAIMED assert false
-              _ default do {
+              case _ default do {
                 -- Someone else has synchronized on this rendezvous, so we don't have to do anything
                 in_queue := undequeue(in_queue, his_request);
                 spinUnlock(ch.lock);
@@ -488,11 +488,11 @@ fun waitPrv(cv) is let {
     spinLock(cv.lock);
     if cv.state then {
       spinUnlock(cv.lock);
-      case atomic_int_cas(state, WAITING, SYNCHED) in {
-        v where __integer_eq(v, WAITING) do {
+      switch atomic_int_cas(state, WAITING, SYNCHED) in {
+        case v where __integer_eq(v, WAITING) do {
           cont_throw_task(k, _taskUnit);
         }
-        _ default do _dispatch();
+        case _ default do _dispatch();
       }
     }
     else {

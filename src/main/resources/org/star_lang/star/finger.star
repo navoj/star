@@ -242,9 +242,9 @@ private deepL has type (integer_, FLDigit of %a, FingerList of (FLNode of (%a)),
 fun deepL(newSize, l, m, r) is valof {
   def sz is __array_size(l);
   if __integer_eq(sz, ZERO) then {
-    valis (case flViewFromLeftNode(m) in {
-      NoFLViewFromLeft is memo(flDigitToLeftistTree(newSize, r));
-      ConsFLViewFromLeft(a, m2) is memo(FLDeep(newSize, flNodeToDigit(a), (m2()), r));
+    valis (switch flViewFromLeftNode(m) in {
+      case NoFLViewFromLeft is memo(flDigitToLeftistTree(newSize, r));
+      case ConsFLViewFromLeft(a, m2) is memo(FLDeep(newSize, flNodeToDigit(a), (m2()), r));
     });
   } else {
     valis memo(FLDeep(newSize, l, m, r));
@@ -252,19 +252,19 @@ fun deepL(newSize, l, m, r) is valof {
 };
 
 flFirst has type (FingerList of (%a)) => %a;
-fun flFirst(ft) is case flViewFromLeftElem(ft) in {
-  ConsFLViewFromLeft(a, _) is a;
+fun flFirst(ft) is switch flViewFromLeftElem(ft) in {
+  case ConsFLViewFromLeft(a, _) is a;
 };
 
 flRear has type (FingerList of (%a)) => FingerList of (%a);
-fun flRear(ft) is case flViewFromLeftElem(ft) in {
-  ConsFLViewFromLeft(_, ft2) is (ft2());
+fun flRear(ft) is switch flViewFromLeftElem(ft) in {
+  case ConsFLViewFromLeft(_, ft2) is (ft2());
 };
 
 /** return first and remaining elements in one operation */
 flFirstRear has type (FingerList of (%a)) => (%a, FingerList of (%a));
-fun flFirstRear(ft) is case flViewFromLeftElem(ft) in {
-  ConsFLViewFromLeft(first, rear) is (first, (rear()));
+fun flFirstRear(ft) is switch flViewFromLeftElem(ft) in {
+  case ConsFLViewFromLeft(first, rear) is (first, (rear()));
 }
 
 /* view finger trees from the right */
@@ -288,9 +288,9 @@ private deepR has type (integer_, FLDigit of %a, FingerList of (FLNode of (%a)),
 fun deepR(newSize, l, m, r) is valof {
   def sz is __array_size(r);
   if __integer_eq(sz, ZERO) then {
-    valis (case flViewFromRightNode(m) in {
-      NoFLViewFromRight is memo(flDigitToRightistTree(newSize, l));
-      SnocFLViewFromRight(m2, a) is memo(FLDeep(newSize, l, (m2()), flNodeToDigit(a)));
+    valis (switch flViewFromRightNode(m) in {
+      case NoFLViewFromRight is memo(flDigitToRightistTree(newSize, l));
+      case SnocFLViewFromRight(m2, a) is memo(FLDeep(newSize, l, (m2()), flNodeToDigit(a)));
     });
   } else {
     valis memo(FLDeep(newSize, l, m, r));
@@ -298,19 +298,19 @@ fun deepR(newSize, l, m, r) is valof {
 };
 
 flLast has type (FingerList of (%a)) => %a;
-fun flLast(ft) is case flViewFromRightElem(ft) in {
-  SnocFLViewFromRight(_, a) is a;
+fun flLast(ft) is switch flViewFromRightElem(ft) in {
+  case SnocFLViewFromRight(_, a) is a;
 };
 
 flFront has type (FingerList of (%a)) => FingerList of (%a);
-fun flFront(ft) is case flViewFromRightElem(ft) in {
-  SnocFLViewFromRight(tail, _) is (tail());
+fun flFront(ft) is switch flViewFromRightElem(ft) in {
+  case SnocFLViewFromRight(tail, _) is (tail());
 };
 
 /** return the front and the last element of a finger tree */
 flFrontLast has type (FingerList of (%a)) => (FingerList of (%a), %a);
-fun flFrontLast(ft) is case flViewFromRightElem(ft) in {
-  SnocFLViewFromRight(front, last) is ((front()), last);
+fun flFrontLast(ft) is switch flViewFromRightElem(ft) in {
+  case SnocFLViewFromRight(front, last) is ((front()), last);
 };
 
 private flAppend has type (FingerList of (%a), FingerList of (%a)) => FingerList of (%a);
@@ -648,12 +648,12 @@ private flEqual has type (FingerList of %a, FingerList of %a) => boolean where e
 fun flEqual(fl1, fl2) is valof {
   var st := (flViewFromLeftElem(fl1),flViewFromLeftElem(fl2));
   while true do {
-    case st in {
-      (NoFLViewFromLeft, NoFLViewFromLeft) do valis (true);
-      (NoFLViewFromLeft, ConsFLViewFromLeft(_,_)) do valis (false);
-      (ConsFLViewFromLeft(_,_), NoFLViewFromLeft) do valis (false);
-      (ConsFLViewFromLeft(h1,t1), ConsFLViewFromLeft(h1,t2)) do st := ((flViewFromLeftElem(force(t1)), flViewFromLeftElem(force(t2))));
-      (ConsFLViewFromLeft(h1,t1), ConsFLViewFromLeft(h2,t2)) default do valis (false);
+    switch st in {
+      case (NoFLViewFromLeft, NoFLViewFromLeft) do valis (true);
+      case (NoFLViewFromLeft, ConsFLViewFromLeft(_,_)) do valis (false);
+      case (ConsFLViewFromLeft(_,_), NoFLViewFromLeft) do valis (false);
+      case (ConsFLViewFromLeft(h1,t1), ConsFLViewFromLeft(h1,t2)) do st := ((flViewFromLeftElem(force(t1)), flViewFromLeftElem(force(t2))));
+      case (ConsFLViewFromLeft(h1,t1), ConsFLViewFromLeft(h2,t2)) default do valis (false);
     }
   };
 }
@@ -679,11 +679,11 @@ private flCompare has type (FingerList of %a, FingerList of %a) => integer where
 fun flCompare(fl1, fl2) is valof {
   var st := (flViewFromLeftElem(fl1),flViewFromLeftElem(fl2));
   while true do {
-    case st in {
-      (NoFLViewFromLeft, NoFLViewFromLeft) do valis (0);
-      (NoFLViewFromLeft, ConsFLViewFromLeft(_,_)) do valis (-1);
-      (ConsFLViewFromLeft(_,_), NoFLViewFromLeft) do valis (1);
-      (ConsFLViewFromLeft(h1,t1), ConsFLViewFromLeft(h2,t2)) default do {
+    switch st in {
+      case (NoFLViewFromLeft, NoFLViewFromLeft) do valis (0);
+      case (NoFLViewFromLeft, ConsFLViewFromLeft(_,_)) do valis (-1);
+      case (ConsFLViewFromLeft(_,_), NoFLViewFromLeft) do valis (1);
+      case (ConsFLViewFromLeft(h1,t1), ConsFLViewFromLeft(h2,t2)) default do {
         if h1 < h2 then {
           valis (-1)
         } else if h1 > h2 then {
@@ -754,13 +754,13 @@ private
 fun flIterate(FLEmpty,_,St) is St
  |  flIterate(_,_,NoMore(X)) is NoMore(X)
  |  flIterate(fl,F,St) default is
-    case flViewFromLeftElem(fl) in {
-      NoFLViewFromLeft is St;
-      ConsFLViewFromLeft(head, tail) is
+    switch flViewFromLeftElem(fl) in {
+      case NoFLViewFromLeft is St;
+      case ConsFLViewFromLeft(head, tail) is
         -- delay forcing tail until necessary
-        case F(head, St) in {
-          NoMore(X) is NoMore(X);
-          St2 default is flIterate(force(tail),F,St2);
+        switch F(head, St) in {
+          case NoMore(X) is NoMore(X);
+          case St2 default is flIterate(force(tail),F,St2);
         }
       }
 
@@ -770,13 +770,13 @@ implementation indexed_iterable over FingerList of %a determines (integer, %a) i
   fun flIxIterate(FLEmpty,_,St,_) is St
    |  flIxIterate(_,_,NoMore(X),_) is NoMore(X)
    |  flIxIterate(fl,F,St,Ix) default is
-        case flViewFromLeftElem(fl) in {
-          NoFLViewFromLeft is St;
-          ConsFLViewFromLeft(head, tail) is
+        switch flViewFromLeftElem(fl) in {
+          case NoFLViewFromLeft is St;
+          case ConsFLViewFromLeft(head, tail) is
             -- delay forcing tail until necessary
-            case F(integer(Ix), head, St) in {
-              NoMore(X) is NoMore(X);
-              St2 default is flIxIterate(force(tail),F,St2, __integer_plus(Ix, ONE));
+            switch F(integer(Ix), head, St) in {
+              case NoMore(X) is NoMore(X);
+              case St2 default is flIxIterate(force(tail),F,St2, __integer_plus(Ix, ONE));
             }
           }
       };
@@ -788,28 +788,28 @@ implementation comparable over FingerList of %a where comparable over %a is {
   (>=) = ge;
 } using {
   fun lt(x, y) is
-    case flCompare(x, y) in {
-       -1 is true;
-       0 is false;
-       1 is false;
+    switch flCompare(x, y) in {
+       case -1 is true;
+       case 0 is false;
+       case 1 is false;
     };
   fun le(x, y) is
-    case flCompare(x, y) in {
-       -1 is true;
-       0 is true;
-       1 is false;
+    switch flCompare(x, y) in {
+       case -1 is true;
+       case 0 is true;
+       case 1 is false;
     };
   fun gt(x, y) is
-    case flCompare(x, y) in {
-       -1 is false;
-       0 is false;
-       1 is true;
+    switch flCompare(x, y) in {
+       case -1 is false;
+       case 0 is false;
+       case 1 is true;
     };
   fun ge(x, y) is
-    case flCompare(x, y) in {
-       -1 is false;
-       0 is true;
-       1 is true;
+    switch flCompare(x, y) in {
+       case -1 is false;
+       case 0 is true;
+       case 1 is true;
     };
 };
 

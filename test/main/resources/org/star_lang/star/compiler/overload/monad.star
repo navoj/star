@@ -26,9 +26,9 @@ monad is package {
   implementation monad over option is {
     fun return(x) is some(x);
     fun bind(m, f) is
-			case m in {
-			  none is none;
-			  some(v) is f(v);
+			switch m in {
+			  case none is none;
+			  case some(v) is f(v);
 			 };
     fun fail() is none;
   };

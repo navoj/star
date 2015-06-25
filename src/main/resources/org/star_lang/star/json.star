@@ -51,36 +51,36 @@ private import folding;
     find has type (infoPath,json)=>option of json;
     fun find(list of {},I) is some(I)
      |  find(list of {Ky;..Keys},I) is 
-	      case Ky in {
-            kString(K) where I matches iColl(M) and M[K] has value S is find(Keys,S);
-            kInt(Ix) where I matches iSeq(L) and L[Ix] has value S is find(Keys,S);
-            _ default is none
+	      switch Ky in {
+            case kString(K) where I matches iColl(M) and M[K] has value S is find(Keys,S);
+            case kInt(Ix) where I matches iSeq(L) and L[Ix] has value S is find(Keys,S);
+            case _ default is none
 	      };
 
     updte has type (infoPath,json,json)=>json;
     fun updte(list of {},I,_) is raise "path not valid"
-     |  updte(list of {Ky},I,V) is case Ky in {
-          kString(K) where I matches iColl(M) is iColl(M[K->V]);
-          kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->V]);
-          _ default is raise "illegal key $Ky"
+     |  updte(list of {Ky},I,V) is switch Ky in {
+          case kString(K) where I matches iColl(M) is iColl(M[K->V]);
+          case kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->V]);
+          case _ default is raise "illegal key $Ky"
         }
-     |  updte(list of {Ky;..Keys},I,V) is case Ky in {
-          kString(K) where I matches iColl(M) is iColl(M[K->updte(Keys,someValue(M[K]),V)]);
-          kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->updte(Keys,someValue(L[Ix]),V)]);
-          _ default is raise "illegal key $Ky";
+     |  updte(list of {Ky;..Keys},I,V) is switch Ky in {
+          case kString(K) where I matches iColl(M) is iColl(M[K->updte(Keys,someValue(M[K]),V)]);
+          case kInt(Ix) where I matches iSeq(L) is iSeq(L[Ix->updte(Keys,someValue(L[Ix]),V)]);
+          case _ default is raise "illegal key $Ky";
         }
 
     remve has type (infoPath,json)=>json;
     fun remve(list of {},I) is I
-     |  remve(list of {Ky},I) is case Ky in {
-          kString(K) where I matches iColl(M) is iColl(_delete_indexed(M,K));
-          kInt(Ix) where I matches iSeq(L) is iSeq(_delete_indexed(L,Ix));
-          _ default is raise "illegal key $Ky";
+     |  remve(list of {Ky},I) is switch Ky in {
+          case kString(K) where I matches iColl(M) is iColl(_delete_indexed(M,K));
+          case kInt(Ix) where I matches iSeq(L) is iSeq(_delete_indexed(L,Ix));
+          case _ default is raise "illegal key $Ky";
         }
-     |  remve(list of {Ky;..Keys},I) is case Ky in {
-          kString(K) where I matches iColl(M) is iColl(_set_indexed(M,K,remve(Keys,someValue(M[K]))));
-          kInt(Ix) where I matches iSeq(L) is iSeq(_set_indexed(L,Ix,remve(Keys,someValue(L[Ix]))));
-          _ default is raise "illegal key $Ky";
+     |  remve(list of {Ky;..Keys},I) is switch Ky in {
+          case kString(K) where I matches iColl(M) is iColl(_set_indexed(M,K,remve(Keys,someValue(M[K]))));
+          case kInt(Ix) where I matches iSeq(L) is iSeq(_set_indexed(L,Ix,remve(Keys,someValue(L[Ix]))));
+          case _ default is raise "illegal key $Ky";
         }
   }
 

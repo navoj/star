@@ -1,3 +1,7 @@
-#Wed Jan 19 15:40:51 PST 2011
 eclipse.preferences.version=1
+encoding//src/main/java=UTF-8
+encoding//src/main/resources=UTF-8
+encoding//test/main/java=UTF-8
+encoding//test/main/resources=UTF-8
 encoding/<project>=UTF-8
+encoding/META-INF=UTF-8

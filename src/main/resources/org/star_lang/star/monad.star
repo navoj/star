@@ -25,9 +25,9 @@ contract monad over %%m is {
 
 implementation monad over option is {
   fun _return(x) is some(x);
-  fun _bind(m, f) is case m in {
-    none is none;
-    some(v) is f(v);
+  fun _bind(m, f) is switch m in {
+    case none is none;
+    case some(v) is f(v);
   };
   fun _fail() is none;
   fun _perform(some(X)) is X;

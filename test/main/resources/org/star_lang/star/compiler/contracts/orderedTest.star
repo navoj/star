@@ -23,17 +23,17 @@ orderedTest is package {
     compare has type (%t, %t) => ordering;
     minimum has type (%t, %t) => %t;
     fun minimum(x, y) default is
-	  case compare(x, y) in {
-	    lt is x;
-	    eq is x;
-	    gt is y;
+	  switch compare(x, y) in {
+	    case lt is x;
+	    case eq is x;
+	    case gt is y;
 	  };
     maximum has type (%t, %t) => %t;
     fun maximum(x, y) default is
- 	  case compare(x, y) in {
-	    lt is y;
-	    eq is x;
-	    gt is x;
+ 	  switch compare(x, y) in {
+	    case lt is y;
+	    case eq is x;
+	    case gt is x;
 	  };
   };
   

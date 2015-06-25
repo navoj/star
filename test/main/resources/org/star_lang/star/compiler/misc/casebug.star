@@ -22,9 +22,9 @@ casebug is package {
   type outletStatus is oPen or closed or underRepair or unknown;
 
   prc main () do {
-    case myStatus in {
-      oPen do logMsg(info,"it is open");
-      _ default do nothing;
+    switch myStatus in {
+      case oPen do logMsg(info,"it is open");
+      case _ default do nothing;
     }
   }
 }

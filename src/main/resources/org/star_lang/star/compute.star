@@ -50,10 +50,10 @@ fun runCombo(Act,C,H) is valof{
   while A matches _delayed(D) do
     A := D();
     
-  case A in {
-    _done(X) do valis C(X);
-    _aborted(X) do valis H(X);
-    _ default do raise "illegal case";
+  switch A in {
+    case _done(X) do valis C(X)
+    case _aborted(X) do valis H(X)
+    case _ default do raise "illegal case";
   }
 }
 

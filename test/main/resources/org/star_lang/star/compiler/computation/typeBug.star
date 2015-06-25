@@ -21,10 +21,9 @@ typeBug is package {
 
   fun serve(ch) is task {
     valis valof
-      (case await(recv(ch)) in {
-        true is task { valis valof serve(ch); }
-        false is task { valis (); }
-        _ default is task { raise "invalid state"; }
+      (switch await(recv(ch)) in {
+        case true is task { valis valof serve(ch); }
+        case false is task { valis (); }
       })
   }
 

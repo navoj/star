@@ -38,7 +38,7 @@ abortTak is package{
       def v is valof f(X);
       valis v;
     } on abort {
-      _ do valis X;
+      case _ do valis X;
     }
   }
 

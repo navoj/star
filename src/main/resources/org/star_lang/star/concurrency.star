@@ -126,11 +126,11 @@ fun actorHead(Defs) is let{
   
   fun loop() is task{
     while true do{
-      case valof recv(actorChnl) in {
-        trRequest{queryFun = QF; chnl=RepChnl} do {
+      switch valof recv(actorChnl) in {
+        case trRequest{queryFun = QF; chnl=RepChnl} do {
           perform wait for put QF() on RepChnl; 
         }
-        trNotify(QF,RepChnl) do {
+        case trNotify(QF,RepChnl) do {
           perform wait for put () on RepChnl; -- reply immediately, before executing the notify itself 
           QF();
         }

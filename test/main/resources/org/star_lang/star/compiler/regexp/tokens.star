@@ -81,54 +81,54 @@ tokens is package{
      |  blockComment(sequence of {_;..L},Lc) is blockComment(L,nxtLoc(Lc,1))
      |  blockComment(L,Lc) default is (L,Lc)
 
-    fun nxtToken(T,Lc) is case T in {
-      `\$\:(.*:L)` is reportId("\$:",2,L,Lc);
-      `\$\$(.*:L)` is reportId("\$\$",2,L,Lc);
-      `\$=>(.*:L)` is reportId("\$=>",3,L,Lc);
-      `\$(.*:L)` is reportId("\$",1,L,Lc);
-      `//(.*:L)` is reportId("//",2,L,Lc);
-      `/(.*:L)` is reportId("/",1,L,Lc);
-      `-->(.*:L)` is reportId("-->",3,L,Lc);
-      `->(.*:L)` is reportId("->",2,L,Lc);
-      `-(.*:L)` is reportId("-",1,L,Lc);
-      `\#(.*:L)` is reportId("\#",1,L,Lc);
-      `\#\((.*:L)` is reportId("\#\(",2,L,Lc);
-      `\)\#(.*:L)` is reportId("\)\#",2,L,Lc);
-      `\((.*:L)` is reportId("\(",1,L,Lc);
-      `\)(.*:L)` is reportId("\)",1,L,Lc);
-      `\[(.*:L)` is reportId("\[",1,L,Lc);
-      `\](.*:L)` is reportId("\]",1,L,Lc);
-      `\{(.*:L)` is reportId("\{",1,L,Lc);
-      `\}(.*:L)` is reportId("\}",1,L,Lc);
-      `;\.\.(.*:L)` is reportId(";..",3,L,Lc);
-      `;\*(.*:L)` is reportId(";*",2,L,Lc);
-      `;(.*:L)` is reportId(";",1,L,Lc);
-      `\+\+(.*:L)` is reportId("++",2,L,Lc);
-      `\+(.*:L)` is reportId("+",1,L,Lc);
-      `\^(.*:L)` is reportId("^",1,L,Lc);
-      `%%(.*:L)` is reportId("%%",2,L,Lc);
-      `%(.*:L)` is reportId("%",1,L,Lc); 
-      `@(.*:L)` is reportId("@",1,L,Lc);
-      `\?(.*:L)` is reportId("?",1,L,Lc);
-      `\*\*(.*:L)` is reportId("**",2,L,Lc);
-      `\*(.*:L)` is reportId("*",1,L,Lc);
-      `=>(.*:L)` is reportId("=>",2,L,Lc);
-      `==>(.*:L)` is reportId("=>",2,L,Lc);
-      `\.\.;(.*:L)` is reportId("..;",3,L,Lc);
-      `\.\.(.*:L)` is reportId("..",2,L,Lc);
-      `\.(.*:L)` is reportId(".",1,L,Lc);
-      `0c(.:C)(.*:L)` is reportChrInteger(C,3,L,Lc);
-      `([0-9]+:N)(.*:L)` is reportInteger(N,size(N),L,Lc);
-      `([0-9]+[lL]:N)(.*:L)` is reportLong(N,size(N),L,Lc);
-      `([0-9]*\.[0-9]+[aA]:N)(.*:L)` is reportDecimal(N,size(N),L,Lc);
-      `([0-9]*\.[0-9]+[eE][0-9]+:N)(.*:L)` is reportFloat(N,size(N),L,Lc);
-	  `([A-Za-z_][A-Za-z0-9_]*:I)(.*:L)` is reportId(I,size(I),L,Lc);
-	  `'(.:ch)'(.*:L)` is reportChr(ch,3,L,Lc);
-	  `(.:O)(.*:L)` is valof{
+    fun nxtToken(T,Lc) is switch T in {
+      case `\$\:(.*:L)` is reportId("\$:",2,L,Lc);
+      case `\$\$(.*:L)` is reportId("\$\$",2,L,Lc);
+      case `\$=>(.*:L)` is reportId("\$=>",3,L,Lc);
+      case `\$(.*:L)` is reportId("\$",1,L,Lc);
+      case `//(.*:L)` is reportId("//",2,L,Lc);
+      case `/(.*:L)` is reportId("/",1,L,Lc);
+      case `-->(.*:L)` is reportId("-->",3,L,Lc);
+      case `->(.*:L)` is reportId("->",2,L,Lc);
+      case `-(.*:L)` is reportId("-",1,L,Lc);
+      case `\#(.*:L)` is reportId("\#",1,L,Lc);
+      case `\#\((.*:L)` is reportId("\#\(",2,L,Lc);
+      case `\)\#(.*:L)` is reportId("\)\#",2,L,Lc);
+      case `\((.*:L)` is reportId("\(",1,L,Lc);
+      case `\)(.*:L)` is reportId("\)",1,L,Lc);
+      case `\[(.*:L)` is reportId("\[",1,L,Lc);
+      case `\](.*:L)` is reportId("\]",1,L,Lc);
+      case `\{(.*:L)` is reportId("\{",1,L,Lc);
+      case `\}(.*:L)` is reportId("\}",1,L,Lc);
+      case `;\.\.(.*:L)` is reportId(";..",3,L,Lc);
+      case `;\*(.*:L)` is reportId(";*",2,L,Lc);
+      case `;(.*:L)` is reportId(";",1,L,Lc);
+      case `\+\+(.*:L)` is reportId("++",2,L,Lc);
+      case `\+(.*:L)` is reportId("+",1,L,Lc);
+      case `\^(.*:L)` is reportId("^",1,L,Lc);
+      case `%%(.*:L)` is reportId("%%",2,L,Lc);
+      case `%(.*:L)` is reportId("%",1,L,Lc); 
+      case `@(.*:L)` is reportId("@",1,L,Lc);
+      case `\?(.*:L)` is reportId("?",1,L,Lc);
+      case `\*\*(.*:L)` is reportId("**",2,L,Lc);
+      case `\*(.*:L)` is reportId("*",1,L,Lc);
+      case `=>(.*:L)` is reportId("=>",2,L,Lc);
+      case `==>(.*:L)` is reportId("=>",2,L,Lc);
+      case `\.\.;(.*:L)` is reportId("..;",3,L,Lc);
+      case `\.\.(.*:L)` is reportId("..",2,L,Lc);
+      case `\.(.*:L)` is reportId(".",1,L,Lc);
+      case `0c(.:C)(.*:L)` is reportChrInteger(C,3,L,Lc);
+      case `([0-9]+:N)(.*:L)` is reportInteger(N,size(N),L,Lc);
+      case `([0-9]+[lL]:N)(.*:L)` is reportLong(N,size(N),L,Lc);
+      case `([0-9]*\.[0-9]+[aA]:N)(.*:L)` is reportDecimal(N,size(N),L,Lc);
+      case `([0-9]*\.[0-9]+[eE][0-9]+:N)(.*:L)` is reportFloat(N,size(N),L,Lc);
+	  case `([A-Za-z_][A-Za-z0-9_]*:I)(.*:L)` is reportId(I,size(I),L,Lc);
+	  case `'(.:ch)'(.*:L)` is reportChr(ch,3,L,Lc);
+	  case `(.:O)(.*:L)` is valof{
 	    logMsg(info,"Bad char: $O");
 	    valis reportId(O,1,L,Lc)
 	  }
-	  "" is reportTerminal(Lc);
+	  case "" is reportTerminal(Lc);
      }
   } in allTokens(SrcTxt,(0,1,0));
   

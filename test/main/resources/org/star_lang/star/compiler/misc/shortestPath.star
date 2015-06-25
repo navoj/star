@@ -28,9 +28,9 @@ shortestPath is package {
 	fun _abort(e) is none;
 	fun _handle(o, h) is o;
 	fun _combine(m, f) is
-	  case m in {
-		none is none;
-		some(x) is f(x);
+	  switch m in {
+		case none is none;
+		case some(x) is f(x);
 	  };
   };
 
@@ -66,11 +66,11 @@ shortestPath is package {
 			  fun shortmap(i, jmap) is rightFold(shortest, dictionary of {}, vs)
 				using {
 				  fun shortest(j, m) is 
-					(case (old, new) in {
-					  (none, none) is m;
-					  (none, some(w)) is m[j->w];
-					  (some(w), none) is m[j->w];
-					  (some(w1), some(w2)) is m[j->min(w1, w2)];
+					(switch (old, new) in {
+					  case (none, none) is m;
+					  case (none, some(w)) is m[j->w];
+					  case (some(w), none) is m[j->w];
+					  case (some(w1), some(w2)) is m[j->min(w1, w2)];
 					}) using {
 						def old is mapLookup(jmap, j);
 						def new is
@@ -93,16 +93,16 @@ shortestPath is package {
 	let {
 	  fun step(el, ContinueWith(l)) is ContinueWith(_cons(f(el), l));
 	} in
-	  (case _iterate(lis, step, ContinueWith(_nil())) in {
-		ContinueWith(l) is reverse(l);
+	  (switch _iterate(lis, step, ContinueWith(_nil())) in {
+		case ContinueWith(l) is reverse(l);
 	  });
 
   fun ixitMap(f, lis) is
 	let {
 	  fun step(k, v, ContinueWith(l)) is ContinueWith(cons(f(k, v), l));
 	} in
-	  (case _ixiterate(lis, step, ContinueWith(nil)) in {
-		ContinueWith(l) is reverse(l);
+	  (switch _ixiterate(lis, step, ContinueWith(nil)) in {
+		case ContinueWith(l) is reverse(l);
 	  });
 
   implementation coercion over (dictionary of (%k, %v), cons of ((%k, %v))) is {
@@ -110,8 +110,8 @@ shortestPath is package {
 	  let {
 		fun step(k, v, ContinueWith(l)) is ContinueWith(_cons((k, v), l));
 	  } in
-		(case _ixiterate(mp, step, ContinueWith(nil)) in {
-		  ContinueWith(l) is reverse(l);
+		(switch _ixiterate(mp, step, ContinueWith(nil)) in {
+		  case ContinueWith(l) is reverse(l);
 		});
   };
 
@@ -124,8 +124,8 @@ shortestPath is package {
 	  fun step(k, v, st matching ContinueWith(mp)) is
 		present mp1[k] ? st : ContinueWith(mp[k->v]);
 	} in
-	  (case _ixiterate(mp2, step, ContinueWith(mp1)) in {
-		ContinueWith(mp) is mp;
+	  (switch _ixiterate(mp2, step, ContinueWith(mp1)) in {
+		case ContinueWith(mp) is mp;
 	  });
 
   fun fmap(f, l) is reverse(leftFold(((r, x) => cons(f(x), r)), nil(), l));

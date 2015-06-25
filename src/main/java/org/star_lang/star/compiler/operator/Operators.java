@@ -121,10 +121,11 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.OPEN, 1300);
 
     defineRight(StandardNames.PIPE, 1290);
+    definePrefix(StandardNames.CASE, 1290);
 
     defineRight(StandardNames.DO, 1200);
-
     defineInfix(StandardNames.IS, 1200);
+    
     defineInfix(StandardNames.COUNTS_AS, 1200);
 
     defineRight(StandardNames.ELSE, 1200);
@@ -166,7 +167,6 @@ public class Operators implements PrettyPrintable
 
     defineInfix(StandardNames.WITH, 1050);
 
-    definePrefix(StandardNames.CASE, 1020);
     definePrefix(StandardNames.SWITCH, 1020);
 
     defineInfix(StandardNames.HAS_TYPE, HAS_TYPE_PRIORITY);

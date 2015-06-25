@@ -73,9 +73,9 @@ cmlTest is package {
       var done := false;
       -- wait for a1 to become 1, then set it to 2
       while (not done) do {
-        case atomic_int_cas(a1, 1_, 2_) in {
-          1_ do { logMsg(info, "thread loop done, cas 1->2 succeeded"); done := true; }
-          _ default do __yield(); -- loop
+        switch atomic_int_cas(a1, 1_, 2_) in {
+          case 1_ do { logMsg(info, "thread loop done, cas 1->2 succeeded"); done := true; }
+          case _ default do __yield(); -- loop
         }
       }
       logMsg(info, "testAtomicRef() - Child thread done; current ref: $(integer(__atomic_int_reference(a1)))");
@@ -89,9 +89,9 @@ cmlTest is package {
     assert(__integer_eq(atomic_int_cas(a1, 0_, 1_), 0_));
     -- wait for a1 to become 2, then set it to 3
     while (not done2) do {
-      case atomic_int_cas(a1, 2_, 3_) in {
-        2_ do done2 := true;
-        _ default do sleep(1000L); -- __yield(); -- loop
+      switch atomic_int_cas(a1, 2_, 3_) in {
+        case 2_ do done2 := true;
+        case _ default do sleep(1000L); -- __yield(); -- loop
       }
     }
     assert(__integer_eq(__atomic_int_reference(a1), 3_));

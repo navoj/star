@@ -8,12 +8,12 @@ ring is package{
 
     while true do {
       logMsg(info,"$Id is ready");
-      case valof recv(L) in {
-	    1 do {
+      switch valof recv(L) in {
+	    case 1 do {
 	      perform wait for put Id on exitChnnl;
 	      valis ()
 	    }
-	    Tk do{
+	    case Tk do{
 	      logMsg(info,"$Id got $Tk");
 	      perform wait for put Tk-1 on R;
 	      logMsg(info,"sent $(Tk-1)");
@@ -43,8 +43,8 @@ ring is package{
 
     perform wait for put Count on Lch;
 
-    case valof recv(exitChnnl) in {
-      Id do 
+    switch valof recv(exitChnnl) in {
+      case Id do 
 	    logMsg(info,"Ended at $Id");
     }
   }

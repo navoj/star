@@ -62,7 +62,7 @@ performTest is package{
         if V>K then
           raise "over #K"
       }
-    } on abort { exception(_,XX,_) do logMsg(info,"abort message: #(XX cast string)") };
+    } on abort { case exception(_,XX,_) do logMsg(info,"abort message: #(XX cast string)") };
     valis ()
   }
 
@@ -77,9 +77,9 @@ performTest is package{
     
     perform doIf(L1,1);
     
-    perform doIf(L1,1) on abort { X do logMsg(info,"Got exception (1): $X"); }
+    perform doIf(L1,1) on abort { case X do logMsg(info,"Got exception (1): $X"); }
     
-    perform doIf(L1,5) on abort { X do logMsg(info,"Got exception (2): $X"); }
+    perform doIf(L1,5) on abort { case X do logMsg(info,"Got exception (2): $X"); }
     
     def HH is handle(L1,"omega");
     

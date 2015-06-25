@@ -30,7 +30,7 @@ public class TaskExpTest extends SRTest
   }
 
   @Rule
-  public ExpectedException exception = ExpectedException.none().handleAssertionErrors();
+  public ExpectedException exception = ExpectedException.none();
 
   @Test
   public void testBasicTask()

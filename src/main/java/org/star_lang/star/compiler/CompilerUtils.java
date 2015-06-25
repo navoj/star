@@ -251,6 +251,15 @@ public class CompilerUtils
     return count;
   }
 
+  public static boolean filterUnwrap(final IAbstract term, final String operator, Predicate<IAbstract> test)
+  {
+    for (IAbstract t : unWrap(term, operator)) {
+      if (!test.test(t))
+        return false;
+    }
+    return true;
+  }
+
   public static IAbstract tupleUp(Location loc, String operator, List<IAbstract> els)
   {
     assert els.size() >= 1;
@@ -1631,62 +1640,89 @@ public class CompilerUtils
     return Abstract.unaryArg(trm);
   }
 
-  public static boolean isCaseTerm(IAbstract term)
+  public static boolean isCaseTerm(IAbstract term, Predicate<IAbstract> caseTest)
   {
-    if (Abstract.isUnary(term, StandardNames.CASE)) {
-      term = Abstract.unaryArg(term);
-      return Abstract.isBinary(term, StandardNames.IN) && isBlockTerm(Abstract.binaryRhs(term));
+    if (Abstract.isUnary(term, StandardNames.SWITCH) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IN)
+        && isBlockTerm(Abstract.binaryRhs(Abstract.unaryArg(term)))) {
+      IAbstract cases = blockContent(Abstract.binaryRhs(Abstract.unaryArg(term)));
+      return filterUnwrap(cases, StandardNames.TERM, caseTest);
     } else
       return false;
+  }
+
+  public static boolean isCaseExp(IAbstract term)
+  {
+    return isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE)
+        && Abstract.isBinary(Abstract.unaryArg(T), StandardNames.IS));
+  }
+
+  public static boolean isCaseAction(IAbstract term)
+  {
+    return isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE)
+        && Abstract.isBinary(Abstract.unaryArg(T), StandardNames.DO));
   }
 
   public static IAbstract caseTerm(Location loc, IAbstract sel, List<IAbstract> cases)
   {
     IAbstract cses = blockTerm(loc, cases);
-    return Abstract.unary(loc, StandardNames.CASE, Abstract.binary(loc, StandardNames.IN, sel, cses));
+    return Abstract.unary(loc, StandardNames.SWITCH, Abstract.binary(loc, StandardNames.IN, sel, cses));
   }
 
   public static IAbstract caseSel(IAbstract term)
   {
-    assert isCaseTerm(term);
+    assert isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE));
     term = Abstract.unaryArg(term);
     return Abstract.binaryLhs(term);
   }
 
   public static IAbstract caseRules(IAbstract term)
   {
-    assert isCaseTerm(term);
+    assert isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE));
     term = Abstract.unaryArg(term);
     return blockContent(Abstract.binaryRhs(term));
   }
 
   public static boolean isCaseRule(IAbstract term)
   {
-    return Abstract.isBinary(term, StandardNames.IS) || Abstract.isBinary(term, StandardNames.DO)
-        || Abstract.isUnary(term, StandardNames.DEFAULT);
+    return Abstract.isUnary(term, StandardNames.CASE)
+        && (Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS) || Abstract.isBinary(Abstract.unaryArg(term),
+            StandardNames.DO));
+  }
+
+  public static boolean isDefaultCaseRule(IAbstract term)
+  {
+    if (isCaseRule(term)) {
+      return Abstract.isUnary(Abstract.binaryLhs(Abstract.unaryArg(term)), StandardNames.DEFAULT);
+    } else
+      return false;
   }
 
   public static IAbstract caseRulePtn(IAbstract term)
   {
     assert isCaseRule(term);
-    return Abstract.binaryLhs(term);
+    return Abstract.binaryLhs(Abstract.unaryArg(term));
+  }
+
+  public static IAbstract caseDefaultRulePtn(IAbstract term)
+  {
+    assert isDefaultCaseRule(term);
+    return Abstract.unaryArg(Abstract.binaryLhs(Abstract.unaryArg(term)));
   }
 
   public static IAbstract caseRuleValue(IAbstract term)
   {
     assert isCaseRule(term);
-    return Abstract.binaryRhs(term);
+    return Abstract.binaryRhs(Abstract.unaryArg(term));
   }
 
   public static IAbstract caseRule(Location loc, IAbstract ptn, IAbstract value)
   {
-    return Abstract.binary(loc, StandardNames.IS, ptn, value);
+    return Abstract.unary(loc, StandardNames.CASE, Abstract.binary(loc, StandardNames.IS, ptn, value));
   }
 
   public static IAbstract defaultCaseRule(Location loc, IAbstract ptn, IAbstract value)
   {
-    IAbstract deflt = Abstract.unary(loc, StandardNames.DEFAULT, ptn);
-    return Abstract.binary(loc, StandardNames.IS, deflt, value);
+    return caseRule(loc, Abstract.unary(loc, StandardNames.DEFAULT, ptn), value);
   }
 
   public static boolean isDefaultRule(IAbstract term)
@@ -2534,11 +2570,6 @@ public class CompilerUtils
     return Abstract.isBinary(trm, StandardNames.IS) && isProgramHeadPtn(Abstract.binaryLhs(trm));
   }
 
-  public static boolean isDefaultEquation(IAbstract trm)
-  {
-    return Abstract.isBinary(trm, StandardNames.IS) && isProgramHeadPtn(Abstract.binaryLhs(trm));
-  }
-
   public static IList getEquationArgs(IAbstract eqn)
   {
     assert isEquation(eqn);
@@ -3271,9 +3302,6 @@ public class CompilerUtils
       return isProgramHeadPtn(Abstract.unaryArg(term));
     else if (Abstract.isParenTerm(term))
       return isProgramHeadPtn(Abstract.deParen(term));
-    else if (Abstract.isApply(term, StandardNames.FUNCTION) || Abstract.isApply(term, StandardNames.PROC_LAMBDA)
-        || Abstract.isApply(term, StandardNames.PATTERN))
-      return true;
     else
       return term instanceof Apply && !Abstract.isTupleTerm(term) && !isAnonAggConLiteral(term)
           && !StandardNames.isKeyword(Abstract.getOperator(term));

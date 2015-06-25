@@ -16,10 +16,10 @@
  *
  */
 matchMinus is package {
-  fun foo(a) is case a in {
-    (-1) is "neg";
-     0 is "zero";
-     1 is "pos";
+  fun foo(a) is switch a in {
+     case (-1) is "neg";
+     case 0 is "zero";
+     case 1 is "pos";
   };
   
   prc main() do{

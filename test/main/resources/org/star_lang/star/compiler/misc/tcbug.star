@@ -28,9 +28,9 @@ enumerateEnumerator has type (CollEnumerator of (%val, %seed)) => CollEnumerator
 fun enumerateEnumerator(enum) is
   ((it, seed) =>
     enum((((count, seed1), val1) =>
-      (case it(seed1, (count, val1)) in {
-        Right(v) is Right((count+1, v));
-        Left(v) is Left(v)
+      (switch it(seed1, (count, val1)) in {
+        case Right(v) is Right((count+1, v));
+        case Left(v) is Left(v)
       })),
         (0, seed)));
   }

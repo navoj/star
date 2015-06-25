@@ -25,7 +25,7 @@ import org.star_lang.star.compiler.SRTest;
 public class VolunteerTest extends SRTest
 {
   @Rule
-  public ExpectedException exception = ExpectedException.none().handleAssertionErrors();
+  public ExpectedException exception = ExpectedException.none();
 
   public VolunteerTest()
   {

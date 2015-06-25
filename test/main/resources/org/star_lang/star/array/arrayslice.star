@@ -56,8 +56,8 @@ arrayslice is package {
             logMsg(info, "arrCons $(a): l[0:1] = $(l[0:1])");
             logMsg(info, "arrCons $(a): l[1:sz] = $(l[1:sz])");
             assert size(l[0:1]++l[1:sz])=size(l);
-            case l in {
-              _pair(head, tail) do {
+            switch l in {
+              case _pair(head, tail) do {
                 logMsg(info, "arrCons $(a): head = $(head)");
                 logMsg(info, "arrCons $(a): tail = $(tail)");
               }

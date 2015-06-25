@@ -19,9 +19,9 @@ casescopes is package{
   fun test(X) is valof{
     def a is 1;
     
-    case X in {
-      a do valis "yep";
-      b default do valis "no"
+    switch X in {
+      case a do valis "yep";
+      case b default do valis "no"
     }
   };
   

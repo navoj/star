@@ -36,7 +36,7 @@ maptest is package{
     try{
       assert someValue(H["E"]) = 1
     } on abort {
-      E do logMsg(info,"We got the exception $E");
+      case E do logMsg(info,"We got the exception $E");
     };
     
     H["E"] := 45;

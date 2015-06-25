@@ -23,9 +23,9 @@ iterateState has type (%a, (%a) => Either of (%b, %a)) => %b;
 iterateState(theST, step) is valof {
     var st := theST;
     while true do {
-      case step(st) in {
-        Left(final) do valis final;
-        Right(next) do st := next;
+      switch step(st) in {
+        case Left(final) do valis final;
+        case Right(next) do st := next;
       };
     };
 };

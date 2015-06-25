@@ -21,9 +21,9 @@ primitiveIO is package {
   _primitive_as_task_callback(primitive) is
     taskWait((procedure (wakeup) do {
 	  callback is (procedure (res) do {
-	      case res in {
-		failed(err) do wakeup(task { raise err });
-		success(S) do wakeup(taskReturn(S))
+	      switch res in {
+		    case failed(err) do wakeup(task { raise err });
+		    case success(S) do wakeup(taskReturn(S))
 	      }
 	    });
 	  primitive(callback)

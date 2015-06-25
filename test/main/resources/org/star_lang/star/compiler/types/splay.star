@@ -31,9 +31,9 @@ splay is package{
     fun partition(pivot,E) is (E,E)
      |  partition(pivot,t matching T(a,x,b)) is 
           Element.le(x,pivot) ?
-	        (case b in {
-	          E is (t,E);
-	          T(b1,y,b2) is 
+	        (switch b in {
+	          case E is (t,E);
+	          case T(b1,y,b2) is 
 	            Element.le(y,pivot) ? valof{
 		          def (small,big) is partition(pivot,b2);
 		          valis (T(T(a,x,b1),y,small),big)
@@ -43,9 +43,9 @@ splay is package{
 		          valis (T(a,x,small),T(big,y,b2));
 	            }
 	        })
-      : (case a in {
-	      E is (E,t);
-	      T(a1,y,a2) is 
+      : (switch a in {
+	      case E is (E,t);
+	      case T(a1,y,a2) is 
 	        Element.le(y,pivot) ?
 	          valof{
 		        def (small,big) is partition(pivot,a2);

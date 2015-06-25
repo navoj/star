@@ -20,13 +20,13 @@ caseTask is package{
   
   fun recf(n) is task {
     def next is (k) => task { valis k/2 };
-    case n in {
-      0 do valis ();
-      _ default do valis valof recf(valof next(n));
+    switch n in {
+      case 0 do valis ();
+      case _ default do valis valof recf(valof next(n));
     }
   };
   
   prc main() do {
-    perform recf(1) on abort { _ do logMsg(info,"something wrong"); }
+    perform recf(1) on abort { case _ do logMsg(info,"something wrong"); }
   }
 }

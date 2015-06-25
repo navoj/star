@@ -75,9 +75,9 @@ implementation sizeable over binmap of (%k,%v) is {
    |  sze(binTree(L,_,_,R),S0) is sze(R,sze(L,S0))
 }
 
-private fun checkIter(S,F) is case S in {
-  NoMore(X) is S;
-  _ default is F(S);
+private fun checkIter(S,F) is switch S in {
+  case NoMore(X) is S;
+  case _ default is F(S);
 }
 
 implementation iterable over binmap of (%k,%v) determines ((%k,%v)) is {

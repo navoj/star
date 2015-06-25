@@ -21,7 +21,7 @@ fixedExeption is package{
       def errorCode is 99;
       raise "My Exception":errorCode;
     } on abort {
-           exception (errText, errCode, errLocation) do {
+      case exception (errText, errCode, errLocation) do {
                 logMsg(info, "Caught Exception\nerrText: $errText, errCode: $errCode, errLocation: $errLocation");                
             }
         }

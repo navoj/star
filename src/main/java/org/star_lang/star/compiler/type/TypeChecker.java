@@ -865,7 +865,7 @@ public class TypeChecker
         return QueryPlanner.transformCondition(tst, free, then, els, ifCxt, outer, errors);
       } else
         return new ConditionalExp(loc, expectedType, tst, then, els);
-    } else if (CompilerUtils.isCaseTerm(term)) {
+    } else if (CompilerUtils.isCaseExp(term)) {
       Pair<IContentPattern, IContentExpression> deflt = null;
       IAbstract selTerm = CompilerUtils.caseSel(term);
       IAbstract caseTerms = CompilerUtils.caseRules(term);
@@ -875,10 +875,10 @@ public class TypeChecker
       List<Pair<IContentPattern, IContentExpression>> cases = new ArrayList<>();
 
       for (IAbstract el : CompilerUtils.unWrap(caseTerms)) {
-        if (CompilerUtils.isDefaultRule(el)) {
+        if (CompilerUtils.isDefaultCaseRule(el)) {
           Wrapper<ICondition> cond = new Wrapper<>(CompilerUtils.truth);
           Dictionary caseCxt = dict.fork();
-          IContentPattern ptn = typeOfPtn(CompilerUtils.defaultRulePtn(el), selectorType, cond, caseCxt, dict,
+          IContentPattern ptn = typeOfPtn(CompilerUtils.caseDefaultRulePtn(el), selectorType, cond, caseCxt, dict,
               new RuleVarHandler(dict, errors));
           IContentExpression value = typeOfExp(CompilerUtils.caseRuleValue(el), expectedType, caseCxt, dict);
           if (!CompilerUtils.isTrivial(cond.get()))
@@ -4746,7 +4746,7 @@ public class TypeChecker
       IAbstract reform = new Apply(loc, Abstract.binary(loc, StandardNames.PERIOD, Abstract.binaryLhs(action), act
           .getOperator()), act.getArgs());
       return checkAction(reform, actionType, resultType, cxt, outer);
-    } else if (CompilerUtils.isCaseTerm(action)) {
+    } else if (CompilerUtils.isCaseAction(action)) {
       IAbstract selTerm = CompilerUtils.caseSel(action);
       IAbstract caseTerms = CompilerUtils.caseRules(action);
 
@@ -4833,10 +4833,10 @@ public class TypeChecker
     List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
 
     for (IAbstract el : CompilerUtils.unWrap(caseTerms)) {
-      if (CompilerUtils.isDefaultRule(el)) {
+      if (CompilerUtils.isDefaultCaseRule(el)) {
         Wrapper<ICondition> cond = new Wrapper<>(CompilerUtils.truth);
         Dictionary caseCxt = dict.fork();
-        IContentPattern ptn = typeOfPtn(CompilerUtils.defaultRulePtn(el), selectorType, cond, caseCxt, dict,
+        IContentPattern ptn = typeOfPtn(CompilerUtils.caseDefaultRulePtn(el), selectorType, cond, caseCxt, dict,
             new RuleVarHandler(dict, errors));
 
         IContentAction caseArm = pickAction(loc, resultType, checkAction(CompilerUtils.caseRuleValue(el), actionType,

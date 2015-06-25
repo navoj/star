@@ -43,11 +43,11 @@ fun taskFail(e) is
 taskCatch has type (task of %a, (exception) => task of %a) => task of %a
 fun taskCatch(_task(b),EF) is let{
   fun catchTask() is
-    case b() in {
-      TaskFailure(E) is TaskContinue(EF(E));
-      TaskContinue(b2) is TaskContinue(taskCatch(b2, EF));
-      TaskWait(start, more) is TaskWait(start,  (c) => taskCatch(more(c), EF))
-      Other default is Other; -- TaskDone
+    switch b() in {
+      case TaskFailure(E) is TaskContinue(EF(E));
+      case TaskContinue(b2) is TaskContinue(taskCatch(b2, EF));
+      case TaskWait(start, more) is TaskWait(start,  (c) => taskCatch(more(c), EF))
+      case Other default is Other; -- TaskDone
     }
 } in _task(catchTask)
 
@@ -56,11 +56,11 @@ fun taskCatch(_task(b),EF) is let{
 taskBind has type (task of %b, (%b) => task of %a) => task of %a
 fun taskBind(_task(b), f) is let {
   fun boundTask() is
-    case b() in {
-      TaskDone(v) is TaskContinue(f(v)); -- TODO? catch java exceptions in f?
-      TaskContinue(b2) is TaskContinue(taskBind(b2, f));
-      TaskWait(start, more) is TaskWait(start,  (c) => taskBind(more(c), f))
-      TaskFailure(e) is TaskFailure(e)
+    switch b() in {
+      case TaskDone(v) is TaskContinue(f(v)); -- TODO? catch java exceptions in f?
+      case TaskContinue(b2) is TaskContinue(taskBind(b2, f));
+      case TaskWait(start, more) is TaskWait(start,  (c) => taskBind(more(c), f))
+      case TaskFailure(e) is TaskFailure(e)
     }
 } in _task(boundTask)
 
@@ -114,9 +114,9 @@ fun _doWait(resumet, start, k) is valof {
      -- k creates the continuation task that depended on v. Attention: tv may be a taskFail
      resumet(k(tv));
   });
-  case start(wakeup) in { -- TODO? catch java exceptions in start?
-    TaskMicroSleep(tv) do valis TaskMicroSleep(k(tv));
-    _ default do valis TaskSleep;
+  switch start(wakeup) in { -- TODO? catch java exceptions in start?
+    case TaskMicroSleep(tv) do valis TaskMicroSleep(k(tv));
+    case _ default do valis TaskSleep;
   }  
 }
   
@@ -133,16 +133,16 @@ fun executeTaskStep(resumet, _task(a)) is valof {
   var curr := a;
   
   while true do {
-      case curr() in {
-        TaskDone(r) do { valis TaskCompleted(r); }
-        TaskContinue(_task(c)) do curr := c;
-        TaskWait(start, k) do {
-           case _doWait(resumet, start, k) in {
-             TaskMicroSleep(_task(nxt)) do curr := nxt; -- immediately woke up again
-             TaskSleep default do valis TaskBlocked;
+      switch curr() in {
+        case TaskDone(r) do { valis TaskCompleted(r); }
+        case TaskContinue(_task(c)) do curr := c;
+        case TaskWait(start, k) do {
+           switch _doWait(resumet, start, k) in {
+             case TaskMicroSleep(_task(nxt)) do curr := nxt; -- immediately woke up again
+             case TaskSleep default do valis TaskBlocked;
            }
         };
-        TaskFailure(e) do { valis TaskFailed(e); }
+        case TaskFailure(e) do { valis TaskFailed(e); }
       }
  --   }
   }
@@ -170,10 +170,10 @@ fun executeTaskOnCurrentThread(op,EF) is valof {
   def resumer is ((next) do { future_set(fut, next); });
   while true do {
     def next is executeTaskStep(resumer, future_wait(fut));
-    case next in {
-      TaskFailed(e) do valis EF(e);
-      TaskCompleted(res) do valis res; -- return
-      TaskBlocked default do { -- blocked
+    switch next in {
+      case TaskFailed(e) do valis EF(e);
+      case TaskCompleted(res) do valis res; -- return
+      case TaskBlocked default do { -- blocked
         nothing; -- but loop; next future_wait will block until resume is called
       }
     }
@@ -214,10 +214,10 @@ prc _executeTaskOnAndThen(op, cont) do {
     _executeTaskOnAndThen(next,  cont);
   });
   def task_job is (() do
-    case executeTaskStep(task_resume, op) in {
-      TaskFailed(e) is cont(TaskError(e));
-      TaskCompleted(v) is cont(TaskSuccess(v));
-      TaskBlocked default is nothing;
+    switch executeTaskStep(task_resume, op) in {
+      case TaskFailed(e) do cont(TaskError(e));
+      case TaskCompleted(v) do cont(TaskSuccess(v));
+      case TaskBlocked default do nothing;
     });
   __spawnQueuedAction(task_job);
 }
@@ -237,17 +237,17 @@ fun _backgroundOn(op) is
       __atomic_test_n_set(result_flag, _result_undefined, _result_set);
 
     prc taskIsDone(v) do {
-      def rv is case v in {
-        TaskSuccess(r) is taskReturn(r)
-        TaskError(e) is taskFail(e); -- pass exception to waiter
+      def rv is switch v in {
+        case TaskSuccess(r) is taskReturn(r)
+        case TaskError(e) is taskFail(e); -- pass exception to waiter
       };
       result_value := some(rv);
       
       if not try_signal_result() then {
         -- result was already signaled, so the waiter was 'faster'
-        case result_wakeup in {
-          some(w) do w(rv)
-          _ default do assert(false);
+        switch result_wakeup in {
+          case some(w) do w(rv)
+          case _ default do assert(false);
         }
       }
     };

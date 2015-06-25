@@ -376,7 +376,7 @@ public class Over extends DefaultTransformer<OverContext>
   public IContentExpression transformVariable(Variable var, OverContext context)
   {
     IContentExpression subst = substitute(var.getName());
-    if (subst != null /* && isConsistent( var.getType(), subst.getType(), exp.getLoc()) */)
+    if (subst != null)
       return subst;
     else
       return var;

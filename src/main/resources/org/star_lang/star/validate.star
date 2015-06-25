@@ -260,7 +260,6 @@ private import macrosupport;
   #unwrapLet(?Id, (?A, ?D)) ==> let { def Id is SS; D } in A;
 };
 
-# case ?E in ?Cs :: action :- E::expression :& Cs::actionCases;
 # switch ?E in {?Cs} :: action :- E::expression :& Cs;*actionCase;
 
 # { ?Cs } :: actionCases :- Cs ;* actionCase;
@@ -303,7 +302,6 @@ private import macrosupport;
 # ?E using ?S  :: expression :- S::expression :& E::expression;
 
 -- case expression
-# case ?E in { ?Cs } :: expression :- E::expression :& Cs;*caseExpRule;
 # switch ?E in { ?Cs } :: expression :- E::expression :& Cs;*caseExpRule;
 
 # ?Ptn is ?Exp :: caseExpRule :- Ptn::pattern :& Exp::expression;
@@ -486,8 +484,8 @@ private import macrosupport;
 # try ?A catch { } :: action :- A::action ;
 # try ?E catch ?Ex :: expression :- E::expression :& Ex::expression;
 
-# try ?A catch { ?Ex } ==> try ?A on abort { _ do Ex};
-# try ?A catch { } ==> try ?A on abort { _ do nothing};
+# try ?A catch { ?Ex } ==> try ?A on abort { case _ do Ex};
+# try ?A catch { } ==> try ?A on abort { case _ do nothing};
 
 # try ?A on abort  ?Cs  :: action :- A::action :& Cs::actionCases;
 

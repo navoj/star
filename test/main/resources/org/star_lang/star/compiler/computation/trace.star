@@ -26,9 +26,9 @@ trace is package{
   
   implementation (computation) over trace is {
     fun _encapsulate(x) is valof{ logMsg(info,"encap $x"); valis xx(x)};
-    fun _combine(m, f) is case m in {
-      drop(S) is drop(S);
-      xx(v) is f(v);
+    fun _combine(m, f) is switch m in {
+      case drop(S) is drop(S);
+      case xx(v) is f(v);
     };
     fun _abort(S) is drop(S);
     

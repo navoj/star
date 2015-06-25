@@ -84,8 +84,8 @@
 # let{ ?B } in ?A  :: action --> B::{indent:+2} :& A:: { breakBefore:true; indent:+4};
 # ?A using { ?B } :: action --> B::{indent:+2} :& A:: { breakAfter:true; indent:+4};
 
-# case ?E in { ?Cs } default ?D :: action --> D:: {breakBefore:true} :& Cs::{indent:+2};
-# case ?E in { ?Cs } :: action --> Cs::{indent:+2};
+# switch ?E in { ?Cs } default ?D :: action --> D:: {breakBefore:true} :& Cs::{indent:+2};
+# switch ?E in { ?Cs } :: action --> Cs::{indent:+2};
 
 -- request speech actions
 -- # request ?Ag to ?Act :: action --> Act :: {indent:+2};
@@ -147,8 +147,8 @@
 # ?E using { ?S } :: expression --> S :: {indent:+2};
 
 -- case expression
-# case ?E in { ?Cs } default ?El :: expression --> Cs::{indent:+2} :& El::{breakBefore:true};
-# case ?E in { ?Cs } :: expression --> Cs::{indent:+2};
+# switch ?E in { ?Cs } default ?El :: expression --> Cs::{indent:+2} :& El::{breakBefore:true};
+# switch ?E in { ?Cs } :: expression --> Cs::{indent:+2};
 
 -- Lambdas
 

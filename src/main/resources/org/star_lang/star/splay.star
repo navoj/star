@@ -33,9 +33,9 @@ fun priorityFun(C) is priorityQ{
   fun partition(pivot,eQ) is (eQ,eQ)
    |  partition(pivot,t matching Nd(a,x,b)) is
   	    C.le(x,pivot) ?
-  	      case b in {
-  	        eQ is (t,eQ);
-  	        Nd(b1,y,b2) is valof{
+  	      switch b in {
+  	        case eQ is (t,eQ);
+  	        case Nd(b1,y,b2) is valof{
   	          if C.le(y,pivot) then {
   	            def (small, big) is partition(pivot,b2);
   	            valis (Nd(Nd(a,x,b),y,small),big)

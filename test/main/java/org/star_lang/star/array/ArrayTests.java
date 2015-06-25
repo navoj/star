@@ -30,7 +30,7 @@ public class ArrayTests extends SRTest
   }
 
   @Rule
-  public ExpectedException exception = ExpectedException.none().handleAssertionErrors();
+  public ExpectedException exception = ExpectedException.none();
 
   @Test
   public void testSimpleArray()
@@ -95,7 +95,6 @@ public class ArrayTests extends SRTest
   @Test
   public void testBounds()
   {
-    exception.expectMessage("evaluation exception");
     runStar("arraybounds.star");
   }
 

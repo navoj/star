@@ -21,9 +21,9 @@ doubleSel is package{
     valis X+2;
   }
   
-  fun bar(A) is case foo(A) in {
-    X matching 4 is X;
-    _ default is -1
+  fun bar(A) is switch foo(A) in {
+    case X matching 4 is X;
+    case _ default is -1
   };
   
   prc main() do {

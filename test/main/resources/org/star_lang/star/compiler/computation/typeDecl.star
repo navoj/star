@@ -23,7 +23,7 @@ typeDecl is package{
     try {
       valis valof f();
     } on abort {
-      E do { logMsg(info, "recovering from $E"); valis 1 };
+      case E do { logMsg(info, "recovering from $E"); valis 1 };
     }
   }
   prc main() do {

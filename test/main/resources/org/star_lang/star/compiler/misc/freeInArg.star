@@ -19,8 +19,8 @@ freeInArg is package{
   -- test case where free variable is argument
   
   fun outer(X) is let{
-    fun inner((U,V)) is case X in {
-        (A,B) is ((U+A),(V+B))
+    fun inner((U,V)) is switch X in {
+        case (A,B) is ((U+A),(V+B))
       }
   } in inner;
 
