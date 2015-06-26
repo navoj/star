@@ -2872,11 +2872,7 @@ public class TypeChecker
       IAbstract braceArg = CompilerUtils.blockContent(Abstract.binaryRhs(ptn));
 
       for (IAbstract el : CompilerUtils.unWrap(braceArg)) {
-        if (Abstract.isBinary(el, StandardNames.CONS)) {
-          findVarsInPtn(Abstract.getArg(el, 0), cxt, outer, varFinder);
-          findVarsInPtn(Abstract.getArg(el, 1), cxt, outer, varFinder);
-        } else
-          findVarsInPtn(el, cxt, outer, varFinder);
+        findVarsInPtn(el, cxt, outer, varFinder);
       }
     } else if (CompilerUtils.isBraceTerm(ptn)) {
       IAbstract arg = CompilerUtils.braceArg(ptn);

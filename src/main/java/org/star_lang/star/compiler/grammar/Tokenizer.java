@@ -13,9 +13,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.grammar.Token.TokenType;
@@ -69,6 +72,7 @@ public class Tokenizer
   private static TokenChar stdTokens = new TokenChar(-1, true);
 
   private final TokenListener operatorListener = new OperatorListener(stdTokens);
+
   static {
     Operators.operatorRoot(); // force the operators
   }
@@ -114,6 +118,18 @@ public class Tokenizer
       TokenChar.recordToken(stdTokens, tok);
   }
 
+  public static String[] multiTokens()
+  {
+    Collection<String> multi = new HashSet<>();
+
+    for (Entry<String, List<Pair<String[], String>>> entry : multiTokens.entrySet()) {
+      for (Pair<String[], String> e : entry.getValue()) {
+        multi.add(e.right);
+      }
+    }
+    return multi.toArray(new String[multi.size()]);
+  }
+
   private static boolean isAlphaIdentifier(String tok)
   {
     int first = tok.codePointAt(0);
@@ -148,7 +164,7 @@ public class Tokenizer
 
   public Token commitToken()
   {
-    assert !tokenBuffer.isEmpty();
+    assert!tokenBuffer.isEmpty();
 
     Token first = tokenBuffer.remove(0);
     operatorListener.newToken(first);
@@ -513,8 +529,8 @@ public class Tokenizer
   {
     long X = 0;
     char ch = hedChar();
-    while (Character.getType(ch) == Character.DECIMAL_DIGIT_NUMBER || (ch >= 'a' && ch <= 'f')
-        || (ch >= 'A' && ch <= 'F')) {
+    while (Character.getType(ch) == Character.DECIMAL_DIGIT_NUMBER || (ch >= 'a' && ch <= 'f') || (ch >= 'A'
+        && ch <= 'F')) {
       X = X * 16 + Character.digit(ch, 16);
       ch = nextHedChar();
     }

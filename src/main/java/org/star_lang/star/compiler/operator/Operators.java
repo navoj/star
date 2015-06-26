@@ -314,7 +314,6 @@ public class Operators implements PrettyPrintable
     defineRight(StandardNames.MACRO_IDENT, 50);
     defineRight(StandardNames.MACRO_CATENATE, 50);
     definePrefix(StandardNames.MACRO_DETUPLE, 50);
-    definePrefix(StandardNames.MACRO_EXPLODE, 50);
 
     defineBrackets(2000, "{", "}", StandardNames.BRACES);
     defineBrackets(1100, "[", "]", StandardNames.SQUARE);

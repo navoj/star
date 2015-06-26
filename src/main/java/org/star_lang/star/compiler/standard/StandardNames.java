@@ -8,6 +8,7 @@ import org.star_lang.star.code.repository.RepositoryManager;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
+import org.star_lang.star.compiler.grammar.Tokenizer;
 import org.star_lang.star.compiler.transform.Computations;
 import org.star_lang.star.data.type.AbstractType;
 import org.star_lang.star.data.value.BoolWrap.FalseValue;
@@ -84,8 +85,6 @@ public class StandardNames
   public static final String HASH = standard("hash");
   public static final String DICTIONARY = standard("dictionary");
   public static final String LIST = standard("list");
-  public static final String CONS = graphic(";..");
-  public static final String ENDCONS = graphic("..;");
   public static final String ANY = keyword("any");
   public static final String VOID = standard("void");
 
@@ -375,7 +374,6 @@ public class StandardNames
   public static final String MACRO_TUPLE = graphic("#<>");
   public static final String MACRO_DETUPLE = graphic("#:");
   public static final String MACRO_LOG = "_macro_log";
-  public static final String MACRO_EXPLODE = "# explode";
 
   public static final String MAC_KEY = AstMacroKey.name;
   public static final String MAC_KEY_PREFIX = "%_";
@@ -411,7 +409,7 @@ public class StandardNames
   private static String keyword(String word)
   {
     word = word.intern();
-    assert !keywords.contains(word);
+    assert!keywords.contains(word);
     keywords.add(word);
     return word;
   }
@@ -430,7 +428,7 @@ public class StandardNames
   {
     word = word.intern();
 
-    assert !standard.contains(word) && !isKeyword(word);
+    assert!standard.contains(word) && !isKeyword(word);
     standard.add(word);
     return word;
   }
@@ -468,6 +466,8 @@ public class StandardNames
     showList(graphics(), 8);
 
     showList(words(standard), 4);
+    
+    showList(Tokenizer.multiTokens(),4);
   }
 
   public static void showList(String[] keyList, int cols)
