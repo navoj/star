@@ -40,7 +40,7 @@ actorbank is package{
   }
   
   fun bank(Nm) is actor{
-    var accounts := dictionary of {};
+    var accounts := dictionary of [];
     var acctNo := 0;
     
     fun custBals() is all (Nm,Bal) where K->A in accounts and (query A's name 'n balance with (name,balance())) matches (Nm,Bal);

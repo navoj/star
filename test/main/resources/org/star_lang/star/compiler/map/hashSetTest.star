@@ -19,7 +19,7 @@ hashSetTest is package{
   import treemap;
   
   fun buildTree(Count) is valof{
-    var H := treemap of {};
+    var H := treemap of [];
     
     var C := 1;
     while C<Count do{
@@ -36,7 +36,7 @@ hashSetTest is package{
     def Count is 100000;
     
     var B1 := nanos();
-    var M := dictionary of {};
+    var M := dictionary of [];
     
     for ix in range(1,Count,1) do 
     {

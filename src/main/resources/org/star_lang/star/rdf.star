@@ -76,14 +76,14 @@ import cons;
  type n3Concept is n3C(string,string) or n3S(string,string);
  
  implementation pPrint over n3Concept is {
-   fun ppDisp(n3C(G,C)) is ppSequence(0,cons of {ppStr(G);ppStr(":");ppStr(C)})
+   fun ppDisp(n3C(G,C)) is ppSequence(0,cons of [ppStr(G),ppStr(":"),ppStr(C)])
     |  ppDisp(n3S(_,S)) is ppStr(display(S));
  }
  
  implementation pPrint over n3Triple is {
  	fun ppDisp(Tr) is displayTriple(Tr)
  } using {
- 	fun displayTriple(n3Triple(Subj,Pred,Obj)) is ppSequence(0,cons of {ppDisp(Subj); ppSpace; ppDisp(Pred); ppSpace; ppDisp(Obj); ppNl})
+ 	fun displayTriple(n3Triple(Subj,Pred,Obj)) is ppSequence(0,cons of [ppDisp(Subj), ppSpace, ppDisp(Pred), ppSpace, ppDisp(Obj), ppNl])
  }
               
  -- Macros to convert graph expressions into regular Star structures.
@@ -101,7 +101,7 @@ import cons;
    |  trVerb(SoFar, C) is list of [SoFar..,trConcept(C)];
   
   fun trNounPhrase(SoFar,<| [ ?NPs ] |>) is SoFar++mapComma(trNounPhrase,NPs)
-   |  trNounPhrase(SoFar, N ) is list of {SoFar..;trConcept(N) };
+   |  trNounPhrase(SoFar, N ) is list of [SoFar..,trConcept(N) ];
       
   fun trConcept(<| #(string?S)# : #(string?Lng)# |>) is <| n3S(?S,?Lng) |>
    |  trConcept(<| #(identifier?G)# : #(identifier ? C)# |>) is <| n3C(?nameString(G), ?nameString(C)) |>

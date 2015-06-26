@@ -31,6 +31,6 @@ matchingRecord is package{
   prc main() do {
     assert hasY(foo{X=23;Y="fred"})="fred";
     
-    assert findK(2,cons of {foo{X=1;Y="a"}; foo{X=2;Y="b"}; foo{X=3;Y="c"}}) = foo{X=2;Y="b"};
+    assert findK(2,cons of [foo{X=1;Y="a"}, foo{X=2;Y="b"}, foo{X=3;Y="c"}]) = foo{X=2;Y="b"};
   }
 } 

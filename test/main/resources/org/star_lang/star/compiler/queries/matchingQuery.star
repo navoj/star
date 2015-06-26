@@ -32,8 +32,8 @@ matchingQuery is package{
     list of { all Em where Em matching empl{ name = Nm; id = ID; ssn = SSN} in EE and (N=Nm or N=nonString) and (ID=I or I=nonInteger) and (SSN=S or S=nonString)};
      
   prc main() do {
-    assert findEmpl("joe",nonInteger,nonString,E) = list of { Joe };
-    assert findEmpl(nonString,1,nonString,E) = list of {Peter};
-    assert findEmpl(nonString,4,nonString,E) = list of {}
+    assert findEmpl("joe",nonInteger,nonString,E) = list of [ Joe ];
+    assert findEmpl(nonString,1,nonString,E) = list of [Peter];
+    assert findEmpl(nonString,4,nonString,E) = list of []
   }
 }

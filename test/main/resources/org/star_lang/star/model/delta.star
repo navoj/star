@@ -84,10 +84,10 @@ delta is package {
 
 
   -- For Maps...
-  hashRemoveFn(M, K1) is dictionary of {};
+  hashRemoveFn(M, K1) is dictionary of [];
   
   hashUpsertFn(M, K2, V) is valof{
-   var tm := dictionary of {};
+   var tm := dictionary of [];
    set K2 in tm to V;
    valis (tm);
   }
@@ -265,8 +265,8 @@ delta is package {
 	logMsg(info, "diff of rels: => $(showChanges(dltaR, r1))");
  	
 	-- diff for Maps...
-	var m1 := dictionary of {1->1; 2->2; 3->3};
-    var m2 := dictionary of {1->1; 2->2; 4->4; 5->5};
+	var m1 := dictionary of [1->1, 2->2, 3->3];
+    var m2 := dictionary of [1->1, 2->2, 4->4, 5->5];
     -- def d is diff(m1, m2, "MyMap");
   	-- logMsg(info, "diff(m1, m2) ==> $d");
   	def dltaM is diff(m1, m2, "MyMap");

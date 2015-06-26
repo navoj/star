@@ -181,7 +181,7 @@ zebra(H,W,Z) :-
                         (H10 where foxConstraint(H10,L10) matches p(N11,L11) and N11 >0) in L10 and
                           (N1 where (N1>0 and N1<6))  in cons of [N11-1,N11+1] and
                             chestConstraint(N1,L10) matches (L12,true) and 
-                              (N2 where N2>0 and N2<6 and horseConstraint(N2,L12) matches (L13,true)) in cons of {N8-1;N8+1} and
+                              (N2 where N2>0 and N2<6 and horseConstraint(N2,L12) matches (L13,true)) in cons of [N8-1,N8+1] and
                                 (H13 where waterConstraint(H13,L13) matches (L14,true)) in L13 and
                                   (H14 where zebraConstraint(H14,L14) matches (L15,true)) in L14
      
@@ -215,12 +215,12 @@ zebra(H,W,Z) :-
        	              for (H10 where foxConstraint(H10,L10) matches p(N11,L11) and N11 >0) in L10 do { 
       	                -- fox in some house number N11
   						logMsg(info,"10: fox is in house number $N11\n$L11");
-       	                for (N1 where (N1>0 and N1<6))  in cons of {N11-1;N11+1} do { 
+       	                for (N1 where (N1>0 and N1<6))  in cons of [N11-1,N11+1] do { 
   						  logMsg(info,"11.1 checking if chest in house $N1");
   						  if chestConstraint(N1,L10) matches (L12,true) then {
   						    logMsg(info,"11: chesterfieds next to fox house number $N1\n$L12");
       	                    -- chesterfields smoked in house next to fox in house num N11
-       	                    for (N2 where N2>0 and N2<6 and horseConstraint(N2,L12) matches (L13,true)) in cons of {N8-1;N8+1} do { 
+       	                    for (N2 where N2>0 and N2<6 and horseConstraint(N2,L12) matches (L13,true)) in cons of [N8-1,N8+1] do { 
   						      logMsg(info,"12: kools next to horse house number\n $N2");
   					     	  -- horse in house next to one with kools cig, which has no N8
         	                  for (H13 where waterConstraint(H13,L13) matches (L14,true)) in L13 do {

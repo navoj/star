@@ -29,7 +29,7 @@ maybeTest is package{
   fun id(X) is X;
   
   prc main() do {
-    def MM is list of {(1,"alpha"); (2,"beta"); (3,"gamma"); (4,"delta")};
+    def MM is list of [(1,"alpha"), (2,"beta"), (3,"gamma"), (4,"delta")];
     
     logMsg(info,"value of ff(2,MM) is $(valof ff(2,MM))");
     

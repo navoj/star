@@ -318,8 +318,8 @@ public class TypeChecker
         IContentExpression pkgTheta;
         if (!localActions.isEmpty()) {
           localActions.add(new ValisAction(loc, record));
-          pkgTheta = new LetTerm(loc, new ValofExp(loc, sealed, new Sequence(loc,
-              TypeUtils.typeExp(actionType, sealed), localActions)), definitions);
+          pkgTheta = new LetTerm(loc, new ValofExp(loc, sealed, new Sequence(loc, TypeUtils.typeExp(actionType, sealed),
+              localActions)), definitions);
         } else
           pkgTheta = new LetTerm(loc, record, definitions);
 
@@ -361,7 +361,8 @@ public class TypeChecker
   {
     IType mainType = dict.getVarType(StandardNames.MAIN);
 
-    if (mainType != null && !isLocallyDefined(definitions, StandardNames.UMAIN) && TypeUtils.isProcedureType(mainType)) {
+    if (mainType != null && !isLocallyDefined(definitions, StandardNames.UMAIN) && TypeUtils.isProcedureType(
+        mainType)) {
       int errCount = errors.errorCount();
 
       Location loc = dict.getVar(StandardNames.MAIN).getLoc();
@@ -391,8 +392,8 @@ public class TypeChecker
       IContentExpression body = new Application(loc, TypeUtils.typeExp(actionType, unitType), Variable.create(loc,
           mainType, StandardNames.MAIN), new ConstructorTerm(loc, mainArgs));
 
-      Triple<IContentPattern[], ICondition, IContentExpression> mainDo = Triple.create(
-          new IContentPattern[] { umainArg }, CompilerUtils.truth, body);
+      Triple<IContentPattern[], ICondition, IContentExpression> mainDo = Triple.create(new IContentPattern[] {
+          umainArg }, CompilerUtils.truth, body);
       List<Triple<IContentPattern[], ICondition, IContentExpression>> rules = new ArrayList<>();
       rules.add(mainDo);
 
@@ -643,13 +644,13 @@ public class TypeChecker
         IAbstract reform = CompilerUtils.fieldExp(loc, rc, Abstract.deParen(field));
         return typeOfExp(reform, expectedType, dict, outer);
       } else if (CompilerUtils.isBraceTerm(field)) {
-        IAbstract reform = CompilerUtils.braceTerm(loc, CompilerUtils
-            .fieldExp(loc, rc, CompilerUtils.braceLabel(field)), CompilerUtils.braceArg(field));
+        IAbstract reform = CompilerUtils.braceTerm(loc, CompilerUtils.fieldExp(loc, rc, CompilerUtils.braceLabel(
+            field)), CompilerUtils.braceArg(field));
         return typeOfExp(reform, expectedType, dict, outer);
       } else if (field instanceof Apply && CompilerUtils.isIdentifier(((Apply) field).getOperator())) {
         // R.m(A1,..,An) -> (R.m)(A1,..,An)
-        IAbstract reform = new Apply(loc,
-            Abstract.binary(loc, StandardNames.PERIOD, rc, ((Apply) field).getOperator()), ((Apply) field).getArgs());
+        IAbstract reform = new Apply(loc, Abstract.binary(loc, StandardNames.PERIOD, rc, ((Apply) field).getOperator()),
+            ((Apply) field).getArgs());
         return typeOfExp(reform, expectedType, dict, outer);
       } else {
         errors.reportError(StringUtils.msg("invalid expression after period, got ", field), loc);
@@ -708,8 +709,8 @@ public class TypeChecker
       try {
         Subsume.subsume(StandardTypes.astType, expectedType, loc, dict);
       } catch (TypeConstraintException e) {
-        errors
-            .reportError(StringUtils.msg("expression not consistent with expected type\nbecause ", e.getWords()), loc);
+        errors.reportError(StringUtils.msg("expression not consistent with expected type\nbecause ", e.getWords()),
+            loc);
       }
       Quoter quoter = new Quoter(dict, outer, this);
 
@@ -719,10 +720,9 @@ public class TypeChecker
       return new VoidExp(loc);
     }
     // Logical conditions
-    else if (Abstract.isBinary(term, StandardNames.AND) || Abstract.isBinary(term, StandardNames.OR)
-        || Abstract.isUnary(term, StandardNames.NOT) || Abstract.isBinary(term, StandardNames.OTHERWISE)
-        || Abstract.isBinary(term, StandardNames.IN) || CompilerUtils.isBoundTo(term)
-        || Abstract.isBinary(term, StandardNames.IMPLIES)) {
+    else if (Abstract.isBinary(term, StandardNames.AND) || Abstract.isBinary(term, StandardNames.OR) || Abstract
+        .isUnary(term, StandardNames.NOT) || Abstract.isBinary(term, StandardNames.OTHERWISE) || Abstract.isBinary(term,
+            StandardNames.IN) || CompilerUtils.isBoundTo(term) || Abstract.isBinary(term, StandardNames.IMPLIES)) {
       try {
         Subsume.subsume(booleanType, expectedType, loc, dict);
       } catch (TypeConstraintException e) {
@@ -770,9 +770,8 @@ public class TypeChecker
       try {
         Subsume.subsume(type, expectedType, loc, dict);
       } catch (TypeConstraintException e) {
-        errors
-            .reportError(StringUtils.msg("coerced type: ", type, " not consistent with expected type: ", expectedType),
-                merge(loc, e.getLocs()));
+        errors.reportError(StringUtils.msg("coerced type: ", type, " not consistent with expected type: ",
+            expectedType), merge(loc, e.getLocs()));
       }
 
       return typeOfExp(Abstract.unary(loc, StandardNames.COERCE, CompilerUtils.coercedExp(term)), expectedType, dict,
@@ -843,9 +842,7 @@ public class TypeChecker
       IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
           raised, location);
       return new RaiseExpression(loc, expectedType, ex);
-    } else if (CompilerUtils.isSequenceTerm(term))
-      return sequenceExpression(term, expectedType, dict, outer);
-    else if (CompilerUtils.isSquareSequenceTerm(term) || CompilerUtils.isLabeledSequenceTerm(term))
+    } else if (CompilerUtils.isSquareSequenceTerm(term) || CompilerUtils.isLabeledSequenceTerm(term))
       return squareSequenceExpression(term, expectedType, dict, outer);
     else if (CompilerUtils.isRecordLiteral(term))
       return checkRecordLiteral(term, expectedType, dict, outer);
@@ -903,15 +900,14 @@ public class TypeChecker
         else {
           Variable tmp = Variable.create(selector.getLoc(), selector.getType(), GenSym.genSym("XX"));
           return new ValofExp(selector.getLoc(), expectedType, new VarDeclaration(selector.getLoc(), tmp, readOnly,
-              selector), new ValisAction(selector.getLoc(), MatchCompiler.generateCaseExpression(selector.getLoc(),
-              tmp, cases, deflt, expectedType, dict, outer, errors)));
+              selector), new ValisAction(selector.getLoc(), MatchCompiler.generateCaseExpression(selector.getLoc(), tmp,
+                  cases, deflt, expectedType, dict, outer, errors)));
         }
       } else
         return new VoidExp(loc);
-    } else if (Abstract.isBinary(term, StandardNames.DEFAULT)
-        && Abstract.isBinary(Abstract.getArg(term, 0), StandardNames.WHERE)
-        && (Abstract.isUnary(Abstract.argPath(term, 0, 0), StandardNames.ANYOF) || Abstract.isUnary(Abstract.argPath(
-            term, 0, 0), StandardNames.ANY_OF))) {
+    } else if (Abstract.isBinary(term, StandardNames.DEFAULT) && Abstract.isBinary(Abstract.getArg(term, 0),
+        StandardNames.WHERE) && (Abstract.isUnary(Abstract.argPath(term, 0, 0), StandardNames.ANYOF) || Abstract
+            .isUnary(Abstract.argPath(term, 0, 0), StandardNames.ANY_OF))) {
       IAbstract df = Abstract.getArg(term, 1);
       IAbstract lhs = Abstract.argPath(term, 0, 0);
       IAbstract rhs = Abstract.argPath(term, 0, 1);
@@ -926,9 +922,8 @@ public class TypeChecker
 
       return QueryPlanner.transformReferenceExpression(queryInfo.left(), free, queryCxt, outer, bound, deflt,
           expectedType, loc, errors);
-    } else if (Abstract.isBinary(term, StandardNames.WHERE)
-        && (Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.ANYOF) || Abstract.isUnary(Abstract
-            .getArg(term, 0), StandardNames.ANY_OF))) {
+    } else if (Abstract.isBinary(term, StandardNames.WHERE) && (Abstract.isUnary(Abstract.binaryLhs(term),
+        StandardNames.ANYOF) || Abstract.isUnary(Abstract.getArg(term, 0), StandardNames.ANY_OF))) {
       IAbstract lhs = Abstract.getArg(term, 0);
       IAbstract rhs = Abstract.getArg(term, 1);
 
@@ -1062,9 +1057,8 @@ public class TypeChecker
       try {
         Subsume.subsume(tupleType, expectedType, loc, dict);
       } catch (TypeConstraintException e) {
-        errors.reportError(
-            StringUtils.msg("cannot bind ", expectedType, " to ", tupleType, "\nbecause ", e.getWords()), merge(loc, e
-                .getLocs()));
+        errors.reportError(StringUtils.msg("cannot bind ", expectedType, " to ", tupleType, "\nbecause ", e.getWords()),
+            merge(loc, e.getLocs()));
       }
     } else {
       errors.reportError(StringUtils.msg("not expecting tuple ", term, " here"), loc);
@@ -1135,8 +1129,8 @@ public class TypeChecker
               if (fieldTypes.containsKey(member)) {
                 IType fieldType = TypeUtils.deRef(fieldTypes.get(member));
                 if (TypeUtils.isReferenceType(fieldType)) {
-                  errors
-                      .reportError(StringUtils.msg(member, " has incorrect form of field, should use := not ="), loc1);
+                  errors.reportError(StringUtils.msg(member, " has incorrect form of field, should use := not ="),
+                      loc1);
                   fieldType = TypeUtils.referencedType(fieldType);
                 }
                 elements.put(member, typeOfExp(Abstract.binaryRhs(el), fieldType, dict, outer));
@@ -1235,8 +1229,8 @@ public class TypeChecker
               Location defltLoc = deflt.getLoc();
               Variable def = Variable.create(defltLoc, attType, att);
 
-              IContentExpression defFun = deflt.getVariable().verifyType(defltLoc, errors,
-                  TypeUtils.functionType(nonDefaultsVars.right, attType), dict, false);
+              IContentExpression defFun = deflt.getVariable().verifyType(defltLoc, errors, TypeUtils.functionType(
+                  nonDefaultsVars.right, attType), dict, false);
 
               IContentExpression defltValue = Application.apply(defltLoc, attType, defFun, nonDefaults);
 
@@ -1264,20 +1258,6 @@ public class TypeChecker
           "\nwhich is not consistent with ", arg), arg.getLoc());
       return new VoidExp(loc);
     }
-  }
-
-  private IContentExpression sequenceExpression(IAbstract term, IType expectedType, Dictionary dict, Dictionary outer)
-  {
-    Location loc = term.getLoc();
-    String label = CompilerUtils.sequenceLabel(term);
-
-    sequenceType(label, expectedType, dict, loc, errors);
-
-    IAbstract content = CompilerUtils.sequenceContent(term);
-    IAbstract construct = braceSequence(loc, content, StandardNames.ADD_TO_FRONT, StandardNames.APND,
-        StandardNames.NIL, errors);
-
-    return typeOfExp(construct, expectedType, dict, outer);
   }
 
   private IContentPattern squareSequencePattern(IAbstract ptn, IType expectedType, Wrapper<ICondition> condition,
@@ -1336,8 +1316,8 @@ public class TypeChecker
     try {
       Subsume.subsume(collType, expectedType, loc, dict);
     } catch (TypeConstraintException e) {
-      errors.reportError(StringUtils
-          .msg("cannot use ", expectedType, " in sequence expression\nbecause ", e.getWords()), loc);
+      errors.reportError(StringUtils.msg("cannot use ", expectedType, " in sequence expression\nbecause ", e
+          .getWords()), loc);
     }
 
     if (!label.equals(StandardNames.SEQUENCE)) {
@@ -1459,11 +1439,11 @@ public class TypeChecker
 
     IAbstract condTrm, sortbyTrm, cntTrm, compWithTrm;
 
-    if ((Abstract.isBinary(query, StandardNames.ORDERBY) || Abstract.isBinary(query, StandardNames.ORDERDESCENDINBY) || Abstract
-        .isBinary(query, StandardNames.DESCENDINGBY))) {
+    if ((Abstract.isBinary(query, StandardNames.ORDERBY) || Abstract.isBinary(query, StandardNames.ORDERDESCENDINBY)
+        || Abstract.isBinary(query, StandardNames.DESCENDINGBY))) {
       isSorted = true;
-      if (Abstract.isBinary(query, StandardNames.ORDERDESCENDINBY)
-          || Abstract.isBinary(query, StandardNames.DESCENDINGBY))
+      if (Abstract.isBinary(query, StandardNames.ORDERDESCENDINBY) || Abstract.isBinary(query,
+          StandardNames.DESCENDINGBY))
         ascending = false;
 
       if (Abstract.isBinary(Abstract.binaryRhs(query), StandardNames.USING)) {
@@ -1543,8 +1523,8 @@ public class TypeChecker
       try {
         Subsume.subsume(elType, expectedType, loc, dict);
       } catch (TypeConstraintException e) {
-        errors.reportError(StringUtils.msg("expected type: ", expectedType, " not consistent with query type: ",
-            elType, "\nbecause ", e.getWords()), merge(loc, e.getLocs()));
+        errors.reportError(StringUtils.msg("expected type: ", expectedType, " not consistent with query type: ", elType,
+            "\nbecause ", e.getWords()), merge(loc, e.getLocs()));
       }
     }
 
@@ -1559,8 +1539,8 @@ public class TypeChecker
 
       IContentExpression wrapBound = new ConstructorTerm(loc, bound, selector);
 
-      IType intSequenceType = (isCollection ? rewrapSequenceType(collType, wrapBound.getType()) : TypeUtils
-          .arrayType(wrapBound.getType()));
+      IType intSequenceType = (isCollection ? rewrapSequenceType(collType, wrapBound.getType())
+          : TypeUtils.arrayType(wrapBound.getType()));
       IContentExpression transformed = QueryPlanner.transformQuery(loc, free, wrapBound, intSequenceType, queryInfo
           .left(), dict, outer, errors);
 
@@ -1632,8 +1612,8 @@ public class TypeChecker
       if (eliminateDuplicates) {
         // The expression we will be comparing against
         IType collectionType = TypeUtils.arrayType(expectedType);
-        IContentExpression transformed = QueryPlanner.transformQuery(loc, free, bound, collectionType,
-            queryInfo.left(), dict, outer, errors);
+        IContentExpression transformed = QueryPlanner.transformQuery(loc, free, bound, collectionType, queryInfo.left(),
+            dict, outer, errors);
         IType eqType = TypeUtils.functionType(bound.getType(), bound.getType(), booleanType);
         IType makeType = TypeUtils.functionType(collectionType, eqType, collectionType);
 
@@ -1669,8 +1649,8 @@ public class TypeChecker
             expectedType, loc, errors);
       }
     } else {
-      IContentExpression result = QueryPlanner.transformQuery(loc, free, bound, collType, queryInfo.left(), dict,
-          outer, errors);
+      IContentExpression result = QueryPlanner.transformQuery(loc, free, bound, collType, queryInfo.left(), dict, outer,
+          errors);
       if (isCollection) {
         if (countExp != null) {
           IType sliceFunType = TypeUtils.functionType(expectedType, integerType, integerType, expectedType);
@@ -1722,8 +1702,8 @@ public class TypeChecker
     Variable Y = Variable.create(loc, selType, GenSym.genSym("__Y"));
     String compFunName = GenSym.genSym("__compare");
 
-    comp = ascending ? Application.apply(loc, booleanType, comp, X, Y) : Application
-        .apply(loc, booleanType, comp, Y, X);
+    comp = ascending ? Application.apply(loc, booleanType, comp, X, Y)
+        : Application.apply(loc, booleanType, comp, Y, X);
 
     IContentPattern tpl1 = new ConstructorPtn(loc, Variable.anonymous(loc, boundType), X);
     IContentPattern tpl2 = new ConstructorPtn(loc, Variable.anonymous(loc, boundType), Y);
@@ -1872,8 +1852,8 @@ public class TypeChecker
                       face);
                   IContentExpression[] nonDefaults = nonDefaultsVars.left;
 
-                  IContentExpression dfltFun = deflt.getVariable().verifyType(loc, errors,
-                      TypeUtils.functionType(nonDefaultsVars.right, fieldType), dict, false);
+                  IContentExpression dfltFun = deflt.getVariable().verifyType(loc, errors, TypeUtils.functionType(
+                      nonDefaultsVars.right, fieldType), dict, false);
 
                   IContentExpression defltVal = Application.apply(loc, fieldType, dfltFun, nonDefaults);
                   definitions.add(new VarEntry(loc, Variable.create(loc, fieldType, field), defltVal, readOnly,
@@ -1960,8 +1940,8 @@ public class TypeChecker
         checkContractImplementations(loc, constraintMap, thetaCxt, elements);
         sealInterface(evidenceType, elements, definitions, thetaCxt, errors, loc);
 
-        TypeInterfaceType face = (TypeInterfaceType) TypeUtils.unwrap(TypeUtils
-            .interfaceOfType(loc, evidenceType, dict));
+        TypeInterfaceType face = (TypeInterfaceType) TypeUtils.unwrap(TypeUtils.interfaceOfType(loc, evidenceType,
+            dict));
 
         // We need to look for every element of the record
         SortedMap<String, IType> fieldTypes = face.getAllFields();
@@ -2351,8 +2331,8 @@ public class TypeChecker
       args[ix] = Variable.anonymous(loc, new TypeVar());
     deflt = Triple.create(args, CompilerUtils.truth, (IContentExpression) new VoidExp(loc));
 
-    return MatchCompiler.generateFunction(rules, deflt, programType, prcCxt.getFreeVars(), GenSym
-        .genSym(StandardNames.PRC), loc, cxt, cxt, errors);
+    return MatchCompiler.generateFunction(rules, deflt, programType, prcCxt.getFreeVars(), GenSym.genSym(
+        StandardNames.PRC), loc, cxt, cxt, errors);
   }
 
   private IContentExpression typeOfFunction(IAbstract fun, IType programType, Dictionary cxt)
@@ -2536,8 +2516,8 @@ public class TypeChecker
     }
 
     if (errors.noNewErrors(errorCount))
-      return MatchCompiler.generateFunction(equations, deflt, programType, funCxt.getFreeVars(), GenSym
-          .genSym(StandardNames.LAMBDA), loc, cxt, cxt, errors);
+      return MatchCompiler.generateFunction(equations, deflt, programType, funCxt.getFreeVars(), GenSym.genSym(
+          StandardNames.LAMBDA), loc, cxt, cxt, errors);
     else
       return new VoidExp(loc);
   }
@@ -2789,7 +2769,8 @@ public class TypeChecker
     else if (Abstract.isBinary(condition, StandardNames.AND)) {
       findVarsInCondition(Abstract.binaryLhs(condition), cxt, outer, varFinder);
       findVarsInCondition(Abstract.binaryRhs(condition), cxt, outer, varFinder);
-    } else if (Abstract.isBinary(condition, StandardNames.OTHERWISE) || Abstract.isBinary(condition, StandardNames.OR)) {
+    } else if (Abstract.isBinary(condition, StandardNames.OTHERWISE) || Abstract.isBinary(condition,
+        StandardNames.OR)) {
       List<Variable> vars = varFinder.getVars();
       List<Variable> lVars = new ArrayList<>(vars);
       List<Variable> rVars = new ArrayList<>(vars);
@@ -2824,12 +2805,12 @@ public class TypeChecker
         if (rVars.contains(v))
           varFinder.checkVariable(v, cxt, outer);
       }
-    } else if (Abstract.isBinary(condition, StandardNames.IN)
-        && Abstract.isBinary(Abstract.getArg(condition, 0), StandardNames.MAP_ARROW)) {
+    } else if (Abstract.isBinary(condition, StandardNames.IN) && Abstract.isBinary(Abstract.getArg(condition, 0),
+        StandardNames.MAP_ARROW)) {
       findVarsInPtn(Abstract.argPath(condition, 0, 0), cxt, outer, varFinder);
       findVarsInPtn(Abstract.argPath(condition, 0, 1), cxt, outer, varFinder);
-    } else if (Abstract.isBinary(condition, StandardNames.IN)
-        && CompilerUtils.isIndexPattern(Abstract.binaryLhs(condition))) {
+    } else if (Abstract.isBinary(condition, StandardNames.IN) && CompilerUtils.isIndexPattern(Abstract.binaryLhs(
+        condition))) {
       IAbstract lhs = Abstract.binaryLhs(condition);
       findVarsInPtn(CompilerUtils.indexPttrnPtn(lhs), cxt, outer, varFinder);
       findVarsInPtn(CompilerUtils.indexPttrnIx(lhs), cxt, outer, varFinder);
@@ -2885,8 +2866,8 @@ public class TypeChecker
         } else
           errors.reportError(StringUtils.msg("invalid member of aggregate value: ", el), el.getLoc());
       }
-    } else if (Abstract.isBinary(ptn, StandardNames.OF) && Abstract.isName(Abstract.binaryLhs(ptn))
-        && CompilerUtils.isBlockTerm(Abstract.binaryRhs(ptn))) {
+    } else if (Abstract.isBinary(ptn, StandardNames.OF) && Abstract.isName(Abstract.binaryLhs(ptn)) && CompilerUtils
+        .isBlockTerm(Abstract.binaryRhs(ptn))) {
 
       IAbstract braceArg = CompilerUtils.blockContent(Abstract.binaryRhs(ptn));
 
@@ -2970,8 +2951,8 @@ public class TypeChecker
       IType kyType = new TypeVar();
       IType vlType = new TypeVar();
       TypeVar rlType = new TypeVar();
-      ContractConstraint constraint = new ContractConstraint(StandardNames.IXITERABLE, rlType, TypeUtils
-          .determinedType(kyType, vlType));
+      ContractConstraint constraint = new ContractConstraint(StandardNames.IXITERABLE, rlType, TypeUtils.determinedType(
+          kyType, vlType));
       rlType.setConstraint(constraint);
 
       Wrapper<ICondition> cond = new Wrapper<>(null);
@@ -2987,14 +2968,14 @@ public class TypeChecker
         return new Conjunction(loc, mapTest, cond.get());
       else
         return mapTest;
-    } else if (Abstract.isBinary(condition, StandardNames.IN)
-        && CompilerUtils.isIndexPattern(Abstract.binaryLhs(condition))) {
+    } else if (Abstract.isBinary(condition, StandardNames.IN) && CompilerUtils.isIndexPattern(Abstract.binaryLhs(
+        condition))) {
       TypeVar kyType = new TypeVar();
       TypeVar elType = new TypeVar();
       TypeVar rlType = new TypeVar();
 
-      ContractConstraint constraint = new ContractConstraint(StandardNames.IXITERABLE, rlType, TypeUtils
-          .determinedType(kyType, elType));
+      ContractConstraint constraint = new ContractConstraint(StandardNames.IXITERABLE, rlType, TypeUtils.determinedType(
+          kyType, elType));
       rlType.setConstraint(constraint);
 
       Wrapper<ICondition> cond = new Wrapper<ICondition>(CompilerUtils.truth);
@@ -3039,8 +3020,8 @@ public class TypeChecker
       Dictionary rightCxt = cxt.fork();
       ICondition rhs = typeOfCond(CompilerUtils.conditionalElse(condition), rightCxt, outer, varHandler);
       if (!reconcile(cxt, leftCxt, rightCxt, loc))
-        errors.reportError(StringUtils.msg("cannot reconcile variables defined in ", lhs,
-            ", with variabls defined in ", rhs), loc);
+        errors.reportError(StringUtils.msg("cannot reconcile variables defined in ", lhs, ", with variabls defined in ",
+            rhs), loc);
       return new ConditionCondition(loc, tst, lhs, rhs);
     } else if (CompilerUtils.isBoundTo(condition)) {
       Wrapper<ICondition> cond = new Wrapper<>((ICondition) new TrueCondition(loc));
@@ -3095,8 +3076,8 @@ public class TypeChecker
     for (Iterator<DictInfo> rightIt = right.iterator(); rightIt.hasNext();) {
       DictInfo var = rightIt.next();
       String vrName = var.getName();
-      if (!cxt.isDefinedVar(vrName) && var instanceof VarInfo && cxt.isFreeVar(var.getVariable())
-          && !cxt.isDeclaredVar(vrName))
+      if (!cxt.isDefinedVar(vrName) && var instanceof VarInfo && cxt.isFreeVar(var.getVariable()) && !cxt.isDeclaredVar(
+          vrName))
         varsToDeclare.put(vrName, var);
     }
 
@@ -3311,8 +3292,8 @@ public class TypeChecker
         return lvalueType(reform, expectedType, dict, outer);
       } else if (field instanceof Apply && CompilerUtils.isIdentifier(((Apply) field).getOperator())) {
         // R.m(A1,..,An) -> (R.m)(A1,..,An)
-        IAbstract reform = new Apply(loc,
-            Abstract.binary(loc, StandardNames.PERIOD, rc, ((Apply) field).getOperator()), ((Apply) field).getArgs());
+        IAbstract reform = new Apply(loc, Abstract.binary(loc, StandardNames.PERIOD, rc, ((Apply) field).getOperator()),
+            ((Apply) field).getArgs());
         return lvalueType(reform, expectedType, dict, outer);
       } else {
         errors.reportError(StringUtils.msg("invalid expression after period, got ", field), loc);
@@ -3622,27 +3603,15 @@ public class TypeChecker
       try {
         TypeUtils.unify(expectedType, StandardTypes.astType, loc, cxt);
       } catch (TypeConstraintException e) {
-        errors
-            .reportError(StringUtils.msg("expression not consistent with expected type\nbecause ", e.getWords()), loc);
+        errors.reportError(StringUtils.msg("expression not consistent with expected type\nbecause ", e.getWords()),
+            loc);
       }
       PtnQuoter quoter = new PtnQuoter(cxt, outer, condition, varHandler, this, errors);
 
       return quoter.quoted(CompilerUtils.quotedExp(ptn));
     } else if (CompilerUtils.isBraceTerm(ptn))
       return recordPattern(ptn, expectedType, condition, cxt, outer, varHandler);
-    // Special <Lbl> of { <el>; .. ; <el>} or <Lbl> of { <el>; .. ;.. <Ptn> }
-    // pattern.
-    else if (CompilerUtils.isSequenceTerm(ptn)) {
-      String label = CompilerUtils.sequenceLabel(ptn);
-
-      sequenceType(label, expectedType, cxt, loc, errors);
-
-      IAbstract braceArg = CompilerUtils.sequenceContent(ptn);
-      IAbstract construct = braceSequence(loc, braceArg, StandardNames.PAIR, StandardNames.BACK, StandardNames.EMPTY,
-          errors);
-
-      return typeOfPtn(construct, expectedType, condition, cxt, outer, varHandler);
-    } else if (CompilerUtils.isSquareSequenceTerm(ptn) || CompilerUtils.isLabeledSequenceTerm(ptn))
+    else if (CompilerUtils.isSquareSequenceTerm(ptn) || CompilerUtils.isLabeledSequenceTerm(ptn))
       return squareSequencePattern(ptn, expectedType, condition, cxt, outer, varHandler);
     else if (Abstract.isParenTerm(ptn)) {
       ptn = Abstract.unaryArg(ptn);
@@ -3678,8 +3647,8 @@ public class TypeChecker
 
         return inner; // Nothing to do
       } catch (TypeConstraintException e) {
-        if (TypeUtils.deRef(expectedType).equals(StandardTypes.anyType)
-            || TypeUtils.deRef(innerType).equals(StandardTypes.anyType))
+        if (TypeUtils.deRef(expectedType).equals(StandardTypes.anyType) || TypeUtils.deRef(innerType).equals(
+            StandardTypes.anyType))
           return new CastPtn(loc, expectedType, inner);
         else {
           errors.reportError(StringUtils.msg("cannot cast ", inner, ":", innerType, " to ", expectedType), loc);
@@ -3725,8 +3694,8 @@ public class TypeChecker
         try {
           Subsume.subsume(TypeUtils.referenceType(new TypeVar()), expectedType, loc, cxt);
         } catch (TypeConstraintException e) {
-          errors.reportError(StringUtils.msg("type of ", refTerm, " not consistent with expected type: `",
-              expectedType, "'\nbecause ", e.getWords()), loc);
+          errors.reportError(StringUtils.msg("type of ", refTerm, " not consistent with expected type: `", expectedType,
+              "'\nbecause ", e.getWords()), loc);
         }
 
         return varHandler.typeOfVariable(refTerm, expectedType, condition, Permission.notAllowed, cxt);
@@ -3878,8 +3847,8 @@ public class TypeChecker
             return new PatternApplication(loc, expectedType, fun, resPtns);
           }
         } catch (TypeConstraintException e) {
-          errors.reportError(
-              StringUtils.msg("pattern ", fun, " not consistent with arguments\nbecause ", e.getWords()), loc);
+          errors.reportError(StringUtils.msg("pattern ", fun, " not consistent with arguments\nbecause ", e.getWords()),
+              loc);
           return Variable.anonymous(loc, expectedType);
         }
       }
@@ -3902,8 +3871,8 @@ public class TypeChecker
       try {
         TypeUtils.unify(ptnType, TypeUtils.patternType(TypeUtils.tupleType(resTypes), expectedType), loc, cxt);
       } catch (TypeConstraintException e) {
-        errors
-            .reportError(StringUtils.msg("problem with pattern application: ", e.getWords()), merge(loc, e.getLocs()));
+        errors.reportError(StringUtils.msg("problem with pattern application: ", e.getWords()), merge(loc, e
+            .getLocs()));
       }
 
       if (fun instanceof Variable)
@@ -4049,59 +4018,6 @@ public class TypeChecker
         return ((IAlgebraicType) desc).getValueSpecifier(name) != null;
     }
     return false;
-  }
-
-  private static IAbstract braceSequence(Location loc, IAbstract term, String cons, String apnd, String empty,
-      ErrorReport errors)
-  {
-    List<IAbstract> front = new ArrayList<>();
-    List<IAbstract> tail = new ArrayList<>();
-    IAbstract remainder = null;
-    List<IAbstract> els = front;
-
-    for (IAbstract el : CompilerUtils.unWrap(term)) {
-      if (Abstract.isBinary(el, StandardNames.CONS)) {
-        if (remainder != null)
-          errors.reportError(StringUtils.msg("not expecting elements after ", remainder), remainder.getLoc());
-        else {
-          assert els != null;
-          els.add(Abstract.binaryLhs(el));
-          IAbstract rhs = Abstract.binaryRhs(el);
-          if (Abstract.isBinary(rhs, StandardNames.ENDCONS)) {
-            remainder = Abstract.binaryLhs(rhs);
-            els = tail;
-            els.add(Abstract.binaryRhs(rhs));
-          } else {
-            remainder = rhs;
-            els = null;
-          }
-        }
-      } else if (Abstract.isBinary(el, StandardNames.ENDCONS)) {
-        if (remainder != null)
-          errors.reportError(StringUtils.msg("not expecting ", StandardNames.ENDCONS, " here"), el.getLoc());
-        else if (!front.isEmpty())
-          errors.reportError("too many elements to left of ..;", el.getLoc());
-        else {
-          remainder = Abstract.binaryLhs(el);
-          els = tail;
-          els.add(Abstract.binaryRhs(el));
-        }
-      } else if (els != null) {
-        if (Abstract.isBinary(el, StandardNames.MAP_ARROW))
-          els.add(Abstract.tupleTerm(el.getLoc(), Abstract.binaryLhs(el), Abstract.binaryRhs(el)));
-        else
-          els.add(el);
-      } else if (remainder != null)
-        errors.reportError(StringUtils.msg("not expecting elements after ", remainder), remainder.getLoc());
-    }
-
-    IAbstract reslt = remainder == null ? Abstract.zeroary(loc, empty) : remainder;
-
-    for (IAbstract el : tail)
-      reslt = Abstract.binary(loc, apnd, reslt, el);
-    for (int ix = front.size(); ix > 0; ix--)
-      reslt = Abstract.binary(loc, cons, front.get(ix - 1), reslt);
-    return reslt;
   }
 
   private static IAbstract squareSequence(Location loc, IAbstract term, String cons, String apnd, String empty,
@@ -4299,8 +4215,8 @@ public class TypeChecker
   {
     int X = 0;
     int ch = it.next();
-    while (Character.getType(ch) == Character.DECIMAL_DIGIT_NUMBER || (ch >= 'a' && ch <= 'f')
-        || (ch >= 'A' && ch <= 'F')) {
+    while (Character.getType(ch) == Character.DECIMAL_DIGIT_NUMBER || (ch >= 'a' && ch <= 'f') || (ch >= 'A'
+        && ch <= 'F')) {
       X = X * HEX_RADIX + Character.digit(ch, HEX_RADIX);
       ch = it.next();
     }
@@ -4370,8 +4286,8 @@ public class TypeChecker
       if (!CompilerUtils.isBasicPerform(action)) {
         IType abortType = TypeUtils.functionType(exType, unitType);
 
-        List<Pair<IContentPattern, IContentAction>> cases = checkCaseBranches(loc,
-            CompilerUtils.performedAbort(action), exType, resultType, cxt);
+        List<Pair<IContentPattern, IContentAction>> cases = checkCaseBranches(loc, CompilerUtils.performedAbort(action),
+            exType, resultType, cxt);
         Variable exceptionVar = new Variable(loc, exType, StandardNames.EXCEPTION);
         IContentAction handler = MatchCompiler.generateCaseAction(loc, exceptionVar, cases, cxt, outer, errors);
 
@@ -4537,8 +4453,8 @@ public class TypeChecker
             .getWords()), merge(loc, e.getLocs()));
       }
 
-      List<Pair<IContentPattern, IContentAction>> cases = checkCaseBranches(loc, CompilerUtils
-          .abortHandlerHandler(action), exceptionType, resultType, cxt);
+      List<Pair<IContentPattern, IContentAction>> cases = checkCaseBranches(loc, CompilerUtils.abortHandlerHandler(
+          action), exceptionType, resultType, cxt);
       Variable exceptionVar = new Variable(loc, exceptionType, StandardNames.EXCEPTION);
       IContentAction handler = MatchCompiler.generateCaseAction(loc, exceptionVar, cases, cxt, outer, errors);
       return FixedList.create((IContentAction) new ExceptionHandler(loc, body, handler));
@@ -4559,8 +4475,8 @@ public class TypeChecker
           resultType, loopCxt, outer));
 
       if (!TypeUtils.isType(actionType, StandardNames.ACTION))
-        return FixedList
-            .create((IContentAction) new ForLoopAction(loc, cond.left(), cond.right(), cond.middle(), body));
+        return FixedList.create((IContentAction) new ForLoopAction(loc, cond.left(), cond.right(), cond.middle(),
+            body));
       else {
         IContentExpression loopExp = QueryPlanner.transformForLoop(action.getLoc(), cond.right(), cond.left(), body,
             resultType, resultType, actionType, cxt, outer, errors);
@@ -4579,8 +4495,8 @@ public class TypeChecker
         else
           return FixedList.create((IContentAction) new Ignore(loc, loopExp));
       }
-    } else if (Abstract.isBinary(action, StandardNames.DO)
-        && Abstract.isUnary(Abstract.getArg(action, 0), StandardNames.WHILE)) {
+    } else if (Abstract.isBinary(action, StandardNames.DO) && Abstract.isUnary(Abstract.getArg(action, 0),
+        StandardNames.WHILE)) {
       IAbstract cndTerm = Abstract.argPath(action, 0, 0);
       IAbstract bdyTerm = Abstract.getArg(action, 1);
 
@@ -4610,11 +4526,11 @@ public class TypeChecker
           IContentExpression reslt = CompilerUtils.possible(loc, freeTpl);
           IContentExpression deflt = CompilerUtils.impossible(loc, freeTpl.getType());
 
-          IContentExpression test = QueryPlanner.transformReferenceExpression(cond.left(), free, whileCxt, outer,
-              reslt, deflt, resltType, loc, errors);
+          IContentExpression test = QueryPlanner.transformReferenceExpression(cond.left(), free, whileCxt, outer, reslt,
+              deflt, resltType, loc, errors);
 
-          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn
-              .tuplePtn(loc, definedVars.toArray(new IContentPattern[definedVars.size()]))));
+          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn.tuplePtn(
+              loc, definedVars.toArray(new IContentPattern[definedVars.size()]))));
           return FixedList.create((IContentAction) new WhileAction(loc, matches, body));
         } else {
           IContentExpression ok = CompilerUtils.trueLiteral(loc);
@@ -4673,8 +4589,8 @@ public class TypeChecker
           IContentExpression test = QueryPlanner.transformReferenceExpression(cond, free, ifCxt, outer, reslt, deflt,
               resltType, loc, errors);
 
-          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn
-              .tuplePtn(loc, definedVars.toArray(new IContentPattern[definedVars.size()]))));
+          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn.tuplePtn(
+              loc, definedVars.toArray(new IContentPattern[definedVars.size()]))));
           return FixedList.create((IContentAction) new ConditionalAction(loc, matches, thAct, elAct));
         } else {
           IContentExpression ok = CompilerUtils.trueLiteral(loc);
@@ -4705,8 +4621,8 @@ public class TypeChecker
         if (definedVars.size() > 1) {
           List<IContentExpression> freeExps = new ArrayList<IContentExpression>(definedVars);
           IContentExpression freeTpl = new ConstructorTerm(loc, freeExps);
-          IContentPattern freeMtch = new ConstructorPtn(loc, definedVars
-              .toArray(new IContentPattern[definedVars.size()]));
+          IContentPattern freeMtch = new ConstructorPtn(loc, definedVars.toArray(new IContentPattern[definedVars
+              .size()]));
 
           IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, freeTpl.getType());
           IContentExpression reslt = CompilerUtils.possible(loc, freeTpl);
@@ -5238,8 +5154,8 @@ public class TypeChecker
               IType implType = TypeParser.parseContractImplType(CompilerUtils.implementedContractSpec(stmt), cxt,
                   errors, true, isFallback);
 
-              String instanceFunName = isFallback ? TypeContracts.contractFallbackName(implType) : Over
-                  .instanceFunName(implType);
+              String instanceFunName = isFallback ? TypeContracts.contractFallbackName(implType)
+                  : Over.instanceFunName(implType);
 
               IType dictType = Over.computeDictionaryType(Freshen.generalizeType(implType), stmt.getLoc(), readOnly);
 
@@ -5406,7 +5322,8 @@ public class TypeChecker
       for (Entry<String, IType> fldEntry : fields.entrySet()) {
         IType fType = fldEntry.getValue();
         String conName = fldEntry.getKey();
-        if (TypeUtils.isConstructorType(fType) && TypeUtils.getConstructorResultType(fType).typeLabel().equals(tpName)) {
+        if (TypeUtils.isConstructorType(fType) && TypeUtils.getConstructorResultType(fType).typeLabel().equals(
+            tpName)) {
           if (TypeUtils.isTypeInterface(TypeUtils.getConstructorArgType(fType)))
             specs.add(new RecordSpecifier(loc, conName, new FieldAccess(loc, fType, source, conName), conIx++, fType));
           else
@@ -5638,8 +5555,8 @@ public class TypeChecker
       } else if (CompilerUtils.isTypeDefn(tpStmt)) {
         Map<String, IAbstract> integrities = new HashMap<>();
         Map<String, Pair<IAbstract, IType>> defaults = new HashMap<>();
-        IAlgebraicType desc = TypeParser
-            .parseTypeDefinition(tpStmt, defaults, integrities, tmpCxt, dict, errors, false);
+        IAlgebraicType desc = TypeParser.parseTypeDefinition(tpStmt, defaults, integrities, tmpCxt, dict, errors,
+            false);
 
         if (desc != null) {
           for (IValueSpecifier spec : desc.getValueSpecifiers())
@@ -5683,7 +5600,7 @@ public class TypeChecker
 
   private DefinitionKind validateGroup(List<Definition> group)
   {
-    assert !group.isEmpty();
+    assert!group.isEmpty();
 
     DefinitionKind groupKind = null;
 
@@ -5844,8 +5761,8 @@ public class TypeChecker
           VarEntry instanceFun = Over.instanceFunction(loc, instanceName, evidence.left, implementation, outer, errors,
               def.getVisibility());
 
-          cxt.declareVar(instanceName, instanceFun.getVariable(), instanceFun.isReadOnly(),
-              instanceFun.getVisibility(), true);
+          cxt.declareVar(instanceName, instanceFun.getVariable(), instanceFun.isReadOnly(), instanceFun.getVisibility(),
+              true);
 
           cxt.declareImplementation(instanceFun.getVariable(), contract.getName(), isDefault);
 
@@ -6198,8 +6115,8 @@ public class TypeChecker
       Subsume.subsume(face, tv, loc, dict);
     } catch (TypeConstraintException e) {
       if (TypeUtils.hasAttributeType(dict, face, name))
-        errors.reportError(StringUtils.msg("definition for ", name, " not permitted because ", e.getWords()), merge(
-            loc, e.getLocs()));
+        errors.reportError(StringUtils.msg("definition for ", name, " not permitted because ", e.getWords()), merge(loc,
+            e.getLocs()));
     }
   }
 
@@ -6215,8 +6132,8 @@ public class TypeChecker
   {
     Location loc = stmt.getLoc();
 
-    if (CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isProcedureStatement(stmt)
-        || CompilerUtils.isPatternStatement(stmt)) {
+    if (CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isProcedureStatement(stmt) || CompilerUtils
+        .isPatternStatement(stmt)) {
       accessMode = accessPolicy(loc, readOnly, accessMode);
     } else if (CompilerUtils.isIsStatement(stmt)) {
       accessMode = accessPolicy(loc, readOnly, accessMode);

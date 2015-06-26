@@ -23,9 +23,9 @@ unravel is package{
     sequence over %right determines %r;
 
   fun unravel(LL) is let{
-    fun unravl(sequence of {},L,R) is (L,R)
-     |  unravl(sequence of {(El,Er);..M},L,R) is unravl(M,sequence of {L..;El},sequence of {R..;Er})
-  } in unravl(LL,sequence of {},sequence of {});
+    fun unravl([],L,R) is (L,R)
+     |  unravl([(El,Er),..M],L,R) is unravl(M,[L..,El],[R..,Er])
+  } in unravl(LL,[],[]);
     
   prc main() do {
     def Lin is list of [(1,"alpha"), (2,"beta"), (3,"gamma")];

@@ -33,7 +33,7 @@ strsequence is package{
     
     logMsg(info,"R=$R");
     
-    assert R=ContinueWith(cons of {'g'; 'n'; 'i'; 'r'; 't'; 's'; ' '; 'a'});
+    assert R=ContinueWith(cons of ['g', 'n', 'i', 'r', 't', 's', ' ', 'a']);
     
     def TT is concat(SS," and more");
     assert TT="a string and more";

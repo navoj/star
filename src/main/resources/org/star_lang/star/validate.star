@@ -329,15 +329,6 @@ private import macrosupport;
 
 # ?X :: attributeExpression :- X :: statement;
 
--- List expressions
-
-# #( ?S ; ?T )# :: listBody :- S::expression :& T::listBody;
-# #( ?S ;.. ?T )# :: listBody :- S::expression :& T::expression;  
-# #( ?S ;)#::listBody :- S::expression;
-# ?E :: listBody :- E::expression;
-
-# ?I of {?C} :: expression :- I::id :& C::listBody; 
-
 # #(?E)#[?ix] :: expression :- E::expression :& ix::sliceExpression;
 
 # #(?F)#:#(?C)# :: sliceExpression :- F::expression :& C::expression;

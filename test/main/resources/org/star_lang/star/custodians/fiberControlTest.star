@@ -12,10 +12,10 @@ fiberControlTest is package {
     valis valof bingForever(i+1, ch);
   };
 
-  recvTimeout(ch, ms, def) is chooseRv(cons of {
-    recvRv(ch);
-    wrapRv(timeoutRv(ms), (function (_) is task { valis def }));
-  });
+  recvTimeout(ch, ms, def) is chooseRv(cons of [
+    recvRv(ch),
+    wrapRv(timeoutRv(ms), (function (_) is task { valis def }))
+  ]);
     
   fiberControlTest1() {
     ch is channel();

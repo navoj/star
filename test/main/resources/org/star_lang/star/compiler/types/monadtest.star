@@ -26,7 +26,7 @@ monadtest is package{
   }
   
   implementation monad over cons is {
-    fun ret(X) is cons of {X};
+    fun ret(X) is cons of [X];
     fun bind(Ll,F) is let{
       fun apply(nil,A) is flat(A,nil)
        |  apply(cons(E,L), A) is apply(L,cons(F(E),A))
@@ -46,7 +46,7 @@ monadtest is package{
   prc main() do {
     def X0 is cons of ["alpha", "beta"];
     logMsg(info,"X0=$X0");
-    def X1 is bind(X0,((X) => cons of {X;X}));
+    def X1 is bind(X0,((X) => cons of [X,X]));
     logMsg(info,"X1=$X1");
     assert X1=cons of ["alpha", "alpha", "beta", "beta"]
   }

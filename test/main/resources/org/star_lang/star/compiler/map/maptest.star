@@ -17,7 +17,7 @@
  */
 maptest is package{
 
-  var H := dictionary of { "A"->1; "B"->2; "C"->3; "D"->4 };
+  var H := dictionary of [ "A"->1, "B"->2, "C"->3, "D"->4 ];
   
   #mget(?H,?P,?D) ==> (__hashGet(H,P) matches some(V) ? V :  D);
 

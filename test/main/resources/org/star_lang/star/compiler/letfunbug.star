@@ -80,14 +80,14 @@ def AbQuery is lvl2Fun{
       lhs = l2Ident("G");
       rhs = l2All(l2Dot(l2Ident("x"), "c1"),
                         l2In("x", l2Dot(l2Ident("G"), "table1")));
-      bindings = dictionary of{};      
+      bindings = dictionary of[];      
 };
  
 abstosql has type (lvl2Fun) => string;
  
 fun abstosql(lvl2Fun{lhs=l2Ident(Pn); rhs=l2All(Tx,Cx)}) is
   let{
-    def Res is constraintExp(dictionary of { Pn->"Port"},"", Cx);
+    def Res is constraintExp(dictionary of [ Pn->"Port"],"", Cx);
     def CxEnv is first(Res);
     def CxTables is second(Res);
     def CxText is third(Res);

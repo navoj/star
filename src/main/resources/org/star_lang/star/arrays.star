@@ -115,9 +115,9 @@ implementation grouping over list determines (dictionary, %k,%v) is {
     fun f(M,El) is valof{
       def Key is CF(El);
       if M[Key] has value group then
-        valis M[with Key->list of {group..;El}]
+        valis M[with Key->list of [group..,El]]
       else
-        valis M[with Key->list of {El}]
+        valis M[with Key->list of [El]]
     }
-  } in leftFold(f,dictionary of {},Rel)
+  } in leftFold(f,dictionary of [],Rel)
 }

@@ -53,13 +53,13 @@ omegatest is package{
   };
   
   prc main() do {
-    def L is cons of {1;2;3};
+    def L is cons of [1,2,3];
     def S is transform (L,int2String);
     logMsg(info,"S is $S");
-    assert S=cons of {"1";"2";"3"};
+    assert S=cons of ["1","2","3"];
     def II is transform (L,double);
     logMsg(info,"II is $II");
-    assert II=cons of {2;4;6};
+    assert II=cons of [2,4,6];
     
     def D is dbl(L);
     logMsg(info,"D is $D");

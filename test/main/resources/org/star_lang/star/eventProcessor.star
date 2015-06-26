@@ -81,7 +81,7 @@ eventProcessor is package{
       };
   	};
   	var agentsMap := valof{
-      var hMap := dictionary of {};
+      var hMap := dictionary of [];
       for stock in monitoredStockSymbols do{
   		a is stockAgent(stock);
   		mupdate(hMap, stock, a);

@@ -37,10 +37,10 @@ whilerev is package{
   }
 
   prc main() do {
-    def L is cons of {1;2;3;4;5};
-    def R is cons of {6;7;8};
-    assert reverse(L)=cons of {5;4;3;2;1};
+    def L is cons of [1,2,3,4,5];
+    def R is cons of [6,7,8]
+    assert reverse(L)=cons of [5,4,3,2,1]
     
-    assert conc(L,R) = cons of {1;2;3;4;5;6;7;8};
+    assert conc(L,R) = cons of [1,2,3,4,5,6,7,8]
   }
 }

@@ -99,7 +99,7 @@ type mType is mvType {
 type mTypeDescription is mvTypeDescription {
   tp has type mType;
   valueSpecifiers has type dictionary of (string, mValueSpecifier)
-  valueSpecifiers default is dictionary of {};
+  valueSpecifiers default is dictionary of [];
   -- contracts has type dictionary of (string, mContractInstance);
   -- superType has type mType;
   -- attributeKeys has type dictionary of (string, integer);
@@ -118,11 +118,11 @@ type mValueSpecifier is mvPositionalVSP {
   label has type string;
   tp has type mType;
   memberIndex has type dictionary of (string, integer);
-  memberIndex default is dictionary of {};
+  memberIndex default is dictionary of [];
   memberTypes has type list of mType;
   memberTypes default is list of [];
   defaults has type dictionary of (string, mExpression);
-  defaults default is dictionary of {};
+  defaults default is dictionary of [];
   implClass has type string;
   implClass default is "com.starview.platform.language.data.AggregateValue";
 } or noneVSP;
@@ -130,11 +130,11 @@ type mValueSpecifier is mvPositionalVSP {
 
 type mSchema is mvSchema{
   memberTypes has type dictionary of (string, mType);
-  memberTypes default is dictionary of {};
+  memberTypes default is dictionary of [];
   memberReferences has type list of (string); -- maintains a list of attributes which are references.
   memberReferences default is list of [];
   defaults has type dictionary of (string, mExpression);
-  defaults default is dictionary of{};
+  defaults default is dictionary of [];
   constraints has type list of mCondition;
   constraints default is list of [];
 } or noneSchema;
@@ -168,12 +168,12 @@ type mSlice is mvSlice(mExpression)
 
 type mCollection is mvCollection{
    values has type dictionary of (string, mExpression);
-   values default is dictionary of {};
+   values default is dictionary of [];
    schema has type mSchema;
    schema default is noneSchema;
 } or mvSRCollection{
   values has type dictionary of (string, mExpression); -- (<attributeName>, <StarRulesString representing its value>)
-  values default is dictionary of {};
+  values default is dictionary of [];
 } or noneCollection;
 
 type mScalarLiteral is mvInteger(mType, integer)
@@ -277,7 +277,7 @@ type mResource is mvTypeResource{
     name has type string;
     description has type string;
     resources has type dictionary of (string, mResource); -- key is id of mResource
-    resources default is dictionary of {};
+    resources default is dictionary of [];
   } or noneResource;
 
 type mMetadataAttribute is mvMetadataAttribute {
@@ -286,7 +286,7 @@ type mMetadataAttribute is mvMetadataAttribute {
   metaAttrName has type string;
   metaAttrType has type mType;
   cfHandlers has type dictionary of (string, mFunction) -- result type of mFunction=metaAttrType
-  cfHandlers default is dictionary of {};
+  cfHandlers default is dictionary of [];
 }
 
 type mNotifyProcessor is mvStandardNotifyProcessor {
@@ -354,14 +354,14 @@ type mModel is mvModelElement {
     attributes has type mCollection;
     attributes default is noneCollection;
     inputPorts has type dictionary of (string, mPort);
-    inputPorts default is dictionary of {};
+    inputPorts default is dictionary of [];
     outputPorts has type dictionary of (string, mPort);
-    outputPorts default is dictionary of {};
+    outputPorts default is dictionary of [];
     -- handlers has type dictionary of (string, mScalarLiteral); <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
     resources default is list of [(mvPrivate, noneResource)];
     notes has type dictionary of (string, string);
-    notes default is dictionary of {};
+    notes default is dictionary of [];
     lastModifiedDate has type long;
     lastModifiedDate default is 0L;
 } or mvScriptableComponent {
@@ -379,16 +379,16 @@ type mModel is mvModelElement {
     attributes has type mCollection;
     attributes default is noneCollection;
     daemons has type dictionary of (string, mDaemon);
-    daemons default is dictionary of {};
+    daemons default is dictionary of [];
     inputPorts has type dictionary of (string, mPort);
-    inputPorts default is dictionary of {};
+    inputPorts default is dictionary of [];
     outputPorts has type dictionary of (string, mPort);
-    outputPorts default is dictionary of {};
+    outputPorts default is dictionary of [];
     -- handlers has type dictionary of (string, mScalarLiteral);   <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
     resources default is list of [(mvPrivate, noneResource)];
     notes has type dictionary of (string, string);
-    notes default is dictionary of {};
+    notes default is dictionary of [];
     lastModifiedDate has type long;
     lastModifiedDate default is 0L;
 }
@@ -407,18 +407,18 @@ type mModel is mvModelElement {
     attributes has type mCollection;
     attributes default is noneCollection;
     inputPorts has type dictionary of (string, mPort);
-    inputPorts default is dictionary of {};
+    inputPorts default is dictionary of [];
     outputPorts has type dictionary of (string, mPort);
-    outputPorts default is dictionary of {};
+    outputPorts default is dictionary of [];
     -- handlers has type dictionary of (string, mScalarLiteral);     <handlers need to be associated to a Port>...
 	resources has type list of ((mVisibility, mResource));
     resources default is list of [(mvPrivate, noneResource)];
     connections has type list of ((mIdType, mIdType, list of mConnectionContract));
     connections default is list of [];
     subComponents has type dictionary of (string, mModel);
-    subComponents default is dictionary of {};
+    subComponents default is dictionary of [];
     notes has type dictionary of (string, string);
-    notes default is dictionary of {};
+    notes default is dictionary of [];
     lastModifiedDate has type long;
     lastModifiedDate default is 0L;
 } or nullModel;
@@ -448,7 +448,7 @@ type mPort is mvPort {
   queryProcessor default is noneQueryProcessor;
 
   notes has type dictionary of (string, string);
-  notes default is dictionary of {};
+  notes default is dictionary of [];
   lastModifiedDate has type long;
   lastModifiedDate default is 0L;
  };
@@ -514,7 +514,7 @@ type mDaemon is mvTimerDaemon {
   unitOfTime has type mUnitOfTime;
   stopOnError has type boolean;
   notes has type dictionary of (string, string);
-  notes default is dictionary of {};
+  notes default is dictionary of [];
   lastModifiedDate has type long;
   lastModifiedDate default is 0L;
 } or mvListenerDaemon {

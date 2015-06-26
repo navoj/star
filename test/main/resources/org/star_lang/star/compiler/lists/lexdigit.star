@@ -32,7 +32,7 @@ lexdigit is package{
   } in readNum(Str,0l,0)
   
   prc main() do {
-    def XX is readNumber(cons of {'0';'3';'4'});
+    def XX is readNumber(cons of ['0','3','4']);
     logMsg(info,"XX=$XX");
     assert XX=34l;
     assert readNumber("34")=34l;

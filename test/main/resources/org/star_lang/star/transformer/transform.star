@@ -47,7 +47,7 @@ transform is package{
     # ruleFuns ==> processTheta(Rules,genRuleFun,{});
     
     # incomingDecls ==> genStmts(#*incoming,makeDecl) ## {
-      # makeDecl(?Id) ==> #( var Id#+_spt := support of {} )#;
+      # makeDecl(?Id) ==> #( var Id#+_spt := support of [] )#;
     };
     
     # findIncoming(?Rls) ==> processTheta(Rls,findIn,()) ## {

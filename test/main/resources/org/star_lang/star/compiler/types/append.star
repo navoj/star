@@ -26,8 +26,8 @@ append is package{
    |  appR(cons(H,T),X) is cons(H,append(T,X))
   
   prc main() do {
-    assert append(cons of {1;2;3},cons of {4;5;6}) = cons of {1;2;3;4;5;6}
+    assert append(cons of [1,2,3],cons of [4,5,6]) = cons of [1,2,3,4,5,6]
     
-    assert append(cons of {"a";"b"}, cons of {"c"}) = cons of {"a"; "b"; "c"}
+    assert append(cons of ["a","b"], cons of ["c"]) = cons of ["a", "b", "c"]
   }
 }

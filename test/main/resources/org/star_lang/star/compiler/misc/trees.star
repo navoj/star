@@ -55,7 +55,7 @@ trees is package{
     assert locate(T,"delta");
     assert not locate(T,"eta");
     
-    assert find(list of {("alpha",1);("beta",2)},"beta") = some(2)
-    assert find(list of {("alpha",1);("beta",2)},"gamma") = none
+    assert find(list of [("alpha",1),("beta",2)],"beta") = some(2)
+    assert find(list of [("alpha",1),("beta",2)],"gamma") = none
   };
 }

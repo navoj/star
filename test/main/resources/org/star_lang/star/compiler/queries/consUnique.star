@@ -19,7 +19,7 @@ consUnique is package {
   def R is list of [{ F="U"}]
 
   constCons has type ((%a) => cons of string);
-  fun constCons(l) is cons of {"a"};
+  fun constCons(l) is cons of ["a"];
 
   def foo is
     let {

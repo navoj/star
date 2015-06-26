@@ -16,7 +16,7 @@
  *
  */
 mapsearch is package {
- def m is dictionary of {"a" -> 1; "b" -> 2};
+ def m is dictionary of ["a" -> 1, "b" -> 2];
  
  prc main() do {
    def bar is let {

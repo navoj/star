@@ -703,9 +703,9 @@ serialization is package {
     shoveHash(h) is shoverM computation {
       /* currently, there is no way to iterate over elements of a dictionary,
        * so we copy them to an array */
-      var elements := array of {};
+      var elements := array of [];
       for K->V in h do {
-	elements := array of {(K,V);..elements};
+	elements := list of [(K,V),..elements];
       }
       valis valof shove(elements);
     }
@@ -717,7 +717,7 @@ serialization is package {
     /* need type declaration for elements for for-loop */
     hashFromElements has type (array of ((%k, %v))) => dictionary of (%k, %v);
     hashFromElements(elements) is valof {
-      var res := dictionary of {};
+      var res := dictionary of [];
       for (K,V) in elements do {
         res[K] := V;
       }

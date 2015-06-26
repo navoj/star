@@ -23,7 +23,7 @@ mbox is package{
   }
 
   fun box() is mbox{
-    private var Q := queue of {};
+    private var Q := queue of [];
     private def lock is 1; -- value not important
      
     fun grab() is valof{

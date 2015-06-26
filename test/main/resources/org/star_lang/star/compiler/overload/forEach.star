@@ -26,6 +26,6 @@ forEach is package{
   };
   
   prc main() do {
-    forEach(((X) do { logMsg(info,X); }), cons of {"alpha"; "beta"; "gamma"});
+    forEach(((X) do { logMsg(info,X); }), cons of ["alpha", "beta", "gamma"]);
   }
 }

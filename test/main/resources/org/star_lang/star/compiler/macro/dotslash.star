@@ -24,6 +24,6 @@ dotslash is package{
   {
     assert probe(list of [1,wrapRv(2)]) = list of [1,2];
     
-  --  assert probeFree("Jim", KK(JJ of { respond("Jim")}) ,nonInteger) = ("Jim",nonInteger);
+  --  assert probeFree("Jim", KK(JJ of [ respond("Jim")]) ,nonInteger) = ("Jim",nonInteger);
   }  
 }

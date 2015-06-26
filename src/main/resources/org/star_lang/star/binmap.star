@@ -50,9 +50,9 @@ fun mergeNodes(emptyTree,T) is T
 -- implement the various collection contracts
  
 implementation pPrint over binmap of (%k,%v) where pPrint over %k and pPrint over %v is {
-  fun ppDisp(H) is ppSequence(2,cons of {ppStr("binmap of {"); dispContent(H); ppStr("}")});
+  fun ppDisp(H) is ppSequence(2,cons of [ppStr("binmap of ["), dispContent(H), ppStr("]")]);
 } using {
-  fun dispContent(binNode(L,K,V,R)) is ppSequence(2,cons of {dispContent(L); ppDisp(K);ppStr("->");ppDisp(V);dispContent(R)})
+  fun dispContent(binNode(L,K,V,R)) is ppSequence(2,cons of [dispContent(L), ppDisp(K), ppStr("->"), ppDisp(V), dispContent(R)])
    |  dispContent(emptyTree) is ppStr("");
 }
 
@@ -105,14 +105,14 @@ implementation updateable over binmap of (%k,%v) determines ((%k,%v)) where equa
     fun collectUpdates(emptyTree,Ups) is (emptyTree,Ups)
      |  collectUpdates(binNode(L,K,V,R),Ups) is valof{
           def (LL,Lu) is collectUpdates(L,Ups);
-          def Ups1 is (K,V) matches M() ? array of {Lu..;U((K,V))} } Lu;
+          def Ups1 is (K,V) matches M() ? array of [Lu..,U((K,V))] : Lu;
           def (RR,Ru) is collectUpdates(R,Ups1);
           valis (mergeTee(LL,RR),Ru);
         }
-  } in applyUpdates @ collectUpdates(TM,cons of {});
+  } in applyUpdates @ collectUpdates(TM,cons of []);
   
   private
-  fun applyUpdates(Tr,cons of {}) is Tr
+  fun applyUpdates(Tr,cons of []) is Tr
    |  applyUpdates(Tr,cons of [(K,V),..Rest]) is applyUpdates(insertNode(Tr,K,V),Rest)
       
   private

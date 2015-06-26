@@ -130,7 +130,7 @@ statTest is package{
     } in
       (A>55 or B>C ?
          MIGCondition{
-           labels = dictionary of { "A" -> A ; "B"->B; "C"->C };
+           labels = dictionary of [ "A" -> A , "B"->B, "C"->C ];
            Cond = "A:Average(12h)>55 or B:StdDev(1h)>C:StdDev(12h)";
            ruleId="mig1";
            Priority = 1;
@@ -150,7 +150,7 @@ statTest is package{
     } in
       (A>2*B ?
          MIGCondition{
-           labels = dictionary of {"A" -> A; "B"->B };
+           labels = dictionary of ["A" -> A, "B"->B ];
            Cond = "A:Max(10m)>B:Forecast(12m,3m)";
            ruleId="mig2";
            Priority = 1;
@@ -169,7 +169,7 @@ statTest is package{
     } in
       (A>0?
          MIGCondition{
-           labels = dictionary of {"A" -> A };
+           labels = dictionary of ["A" -> A ];
            Cond = "A:Min(4m)>0";
            ruleId="mig1";
            Priority = 1;

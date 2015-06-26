@@ -31,7 +31,7 @@ recordalias is package {
   }
   
   prc main() do {
-    def x is ct { v := queue of {}; };
+    def x is ct { v := queue of []; };
     f(x);
     g(x, 5);
   }

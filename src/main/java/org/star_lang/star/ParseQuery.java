@@ -117,7 +117,7 @@ public class ParseQuery
   private static final String queryTemplate = "$pkg is package{\n  $imprt fun $fn($freeVars) is (($prt) =>"
       + "  $prt.Query(((#(v has type $schema)#) => let{ open v } in #($exp)#),\n"
       + "             (() => quote(#($exp)#)),\n"
-      + "             (() => dictionary of {$freeHash})));"
+      + "             (() => dictionary of [$freeHash])));"
       + "\n}\n";
 
   public static IFunction parseQuery(String query, Map<String, IValue> free, String imprt, String face,
@@ -133,16 +133,16 @@ public class ParseQuery
       String sep = "";
       for (Map.Entry<String, IValue> freeVar : free.entrySet()) {
         freeVars.append(sep); // set up the free args
+        freeHash.append(sep);
         sep = ",";
         freeVars.append(freeVar.getKey());
         freeArgs[ix++] = freeVar.getValue();
-
         freeHash.append("      "); // set up the free hash
         freeHash.append(StringUtils.quoteString(freeVar.getKey()));
         freeHash.append(" -> (");
         freeHash.append(freeVar.getKey());
         freeHash.append(" cast any)");
-        freeHash.append(";\n ");
+        freeHash.append("\n ");
       }
     }
 

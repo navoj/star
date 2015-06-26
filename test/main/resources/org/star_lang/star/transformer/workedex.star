@@ -45,7 +45,7 @@ workedex is package{
   type dep is dep(string,long) or multiDep(list of dep) or allDep(string) or noDep;
   
   -- encapsulate the query into a generator function 
-  fun fullAcGen(Txs,Acts) is all (fullAc{ id=Id; owner=Owner; balance=bal; history=Hist},multiDep(list of {dep("accounts",AcK);..Keys})) where
+  fun fullAcGen(Txs,Acts) is all (fullAc{ id=Id; owner=Owner; balance=bal; history=Hist},multiDep(list of [dep("accounts",AcK),..Keys])) where
         AcK->account{ id=Id; owner=Owner; balance=bal; lastTx = last} in Acts and 
         (Hist,Keys) bound to unravel(list of { all (Tx,dep("transactions",TxK)) where TxK->Tx in Txs and 
                                                                                   (Tx.source=Id or Tx.dest=Id)
@@ -53,32 +53,32 @@ workedex is package{
 
   fun unravel(Ls) is valof{
     var Lin := Ls;
-    var LO := list of {};
-    var RO := list of {};
-    while Lin matches list of {(L,R);..LinR} do{
-      LO := list of {LO..;L};
-      RO := list of {RO..;R};
+    var LO := list of [];
+    var RO := list of [];
+    while Lin matches list of [(L,R),..LinR] do{
+      LO := list of [LO..,L];
+      RO := list of [RO..,R];
       Lin := LinR;
     }
     valis (LO,RO);
   }
   
-  var transactions := dictionary of {};
-  var transactionIndex := dictionary of {};
-  var transFollow := dictionary of {}; -- what depends on transaction entries
+  var transactions := dictionary of [];
+  var transactionIndex := dictionary of [];
+  var transFollow := dictionary of []; -- what depends on transaction entries
 
-  var accounts := dictionary of {};
-  var accountIndex := dictionary of {};
-  var accntFollow := dictionary of {}; -- what depends on account entries
+  var accounts := dictionary of [];
+  var accountIndex := dictionary of [];
+  var accntFollow := dictionary of []; -- what depends on account entries
   
-  var full := dictionary of {};
-  var fullDeps := dictionary of {};
+  var full := dictionary of [];
+  var fullDeps := dictionary of [];
   
   fun genIndex(R,key,ref index) is valof{
     def H is key(R);
     def Id is nextId();
-    def Ix is index[H] or else cons of {};
-    index[H] := cons of {(Id,R);..Ix};
+    def Ix is index[H] or else cons of [];
+    index[H] := cons of [(Id,R),..Ix];
     valis Id;
   }
   
@@ -90,7 +90,7 @@ workedex is package{
   prc addAccount(Act) do {
     def Id is genAccountIndex(Act); -- pick up a unique id for the new tuple
     accounts[Id] := Act;
-    def SnglAc is dictionary of {(Id,Act)};
+    def SnglAc is dictionary of [Id->Act];
     for (F,D) in fullAcGen(transactions,SnglAc) do{
       def FId is nextId();
       full[FId] := F;
@@ -218,7 +218,7 @@ workedex is package{
       def D is someValue(fullDeps[Ix]);
       def Acts is getDepAccount(D);
       
-      def Txs is dictionary of {(IxT,Tx);..getDepTxs(D)};
+      def Txs is dictionary of [IxT->Tx,..getDepTxs(D)];
 
       for (NF,ND) in fullAcGen(Txs,Acts) do{
         full[Ix] := NF;
@@ -252,11 +252,11 @@ workedex is package{
     logMsg(info,"full after tx update: $full");
   }
   
-  fun getDepAccount(dep("accounts",Id)) is dictionary of {Id -> someValue(accounts[Id])}
+  fun getDepAccount(dep("accounts",Id)) is dictionary of [Id -> someValue(accounts[Id])]
    |  getDepAccount(allDep("accounts")) is accounts
    |  getDepAccount(multiDep(L)) is dictionary of {all (Id,someValue(accounts[Id])) where dep("accounts",Id) in L }
   
-  fun getDepTxs(dep("transactions",Id)) is dictionary of {Id -> someValue(transactions[Id])}
+  fun getDepTxs(dep("transactions",Id)) is dictionary of [Id -> someValue(transactions[Id])]
    |  getDepTxs(allDep("transactions")) is transactions
    |  getDepTxs(multiDep(L)) is dictionary of {all (Id,someValue(transactions[Id])) where dep("transactions",Id) in L}
   
@@ -279,8 +279,8 @@ workedex is package{
     fun updateFlw(Follow,dep(Lb,Id)) where Lb=Lbl is let{
           fun updateDeps(noDep) is dep(FollowLbl,FollowIx)
            |  updateDeps(dep(F,Fix)) where F=FollowLbl and Fix=FollowIx is dep(F,Fix)
-           |  updateDeps(dep(F,Fix)) is multiDep(list of {dep(F,Fix);dep(FollowLbl,FollowIx)})
-           |  updateDeps(multiDep(L)) is multiDep((list of {dep(FollowLbl,FollowIx)}) union L)
+           |  updateDeps(dep(F,Fix)) is multiDep(list of [dep(F,Fix),dep(FollowLbl,FollowIx)])
+           |  updateDeps(multiDep(L)) is multiDep((list of [dep(FollowLbl,FollowIx)]) union L)
            |  updateDeps(allDep(Lbls)) is allDep(Lbls)
          } in _set_indexed(Follow,Id,updateDeps((Follow[Id] or else noDep)))
      |  updateFlw(Follow,dep(_,Id)) is Follow

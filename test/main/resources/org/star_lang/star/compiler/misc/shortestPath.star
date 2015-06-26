@@ -51,7 +51,7 @@ shortestPath is package {
 	alistToMap(zipWith(row, iota(0, size(xss)-1, 1), xss))
 	  using {
 		fun row(i, xs) is 
-		  (i, alistToMap(cons of { (j, w) where (j, w) in zip(iota(0, size(xs)-1, 1), xs) and w != 100 }));
+		  (i, alistToMap(cons of { all (j, w) where (j, w) in zip(iota(0, size(xs)-1, 1), xs) and w != 100 }));
 	  };
 
   shortestPaths has type (cons of vertex, graph) => graph;
@@ -63,7 +63,7 @@ shortestPath is package {
 		  valis
 			let {
 			  shortmap has type (vertex, intmap of weight) => intmap of weight;
-			  fun shortmap(i, jmap) is rightFold(shortest, dictionary of {}, vs)
+			  fun shortmap(i, jmap) is rightFold(shortest, dictionary of [], vs)
 				using {
 				  fun shortest(j, m) is 
 					(switch (old, new) in {
@@ -115,7 +115,7 @@ shortestPath is package {
 		});
   };
 
-  fun alistToMap(l) is leftFold(( (m, (k, v)) => m[k->v]),dictionary of {}, l);
+  fun alistToMap(l) is leftFold(( (m, (k, v)) => m[k->v]),dictionary of [], l);
 
 
   mapUnion has type for all a such that (intmap of a, intmap of a) => intmap of a;
@@ -216,13 +216,13 @@ shortestPath is package {
 	  valis reverse(valof rev);
  	};
 
-  def test is cons of {
-         cons of {  0; 999; 999;  13; 999; 999};
-         cons of {999;   0; 999; 999;   4;   9};
-         cons of { 11; 999;   0; 999; 999; 999};
-         cons of {999;   3; 999;   0; 999;   7};
-         cons of { 15;   5; 999;   1;   0; 999};
-         cons of { 11; 999; 999;  14; 999;   0}};
+  def test is cons of [
+         cons of [  0, 999, 999,  13, 999, 999],
+         cons of [999,   0, 999, 999,   4,   9],
+         cons of [ 11, 999,   0, 999, 999, 999],
+         cons of [999,   3, 999,   0, 999,   7],
+         cons of [ 15,   5, 999,   1,   0, 999],
+         cons of [ 11, 999, 999,  14, 999,   0]]
 
   prc main() do {
 	def res is shortestPaths(iota(0, 5, 1), makeGraph(test));

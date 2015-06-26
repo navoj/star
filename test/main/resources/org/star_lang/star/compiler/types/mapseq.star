@@ -24,10 +24,10 @@ mapseq is package{
   
   implementation mmap over list is {
     fun mapseq(S, F) is valof{
-      var alreadyMapped := sequence of {};
+      var alreadyMapped := [];
 	  var toBeMapped := S;
-	  while toBeMapped matches sequence of {X;.. restTBM} do {
-	    alreadyMapped := sequence of {alreadyMapped..;F(X)};
+	  while toBeMapped matches [X,.. restTBM] do {
+	    alreadyMapped := [alreadyMapped..,F(X)];
 	    toBeMapped := restTBM;
 	  };
 	  valis alreadyMapped;

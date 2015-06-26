@@ -17,8 +17,8 @@ modules is package{
   
   def M is m{
     type cons counts as k;
-    def c is cons of {1;2;3};
-    fun poot(L,E) is cons of {E;..L};
+    def c is cons of [1,2,3];
+    fun poot(L,E) is cons of [E,..L];
     def ff is f;
   }
   

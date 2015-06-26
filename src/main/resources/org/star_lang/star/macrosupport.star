@@ -88,7 +88,7 @@ fun __macro_detupleize(applyAst(Loc,Op,Args)) is detupleize(Args) using {
 fun __macro_tupleize(Loc,Els) is __macro_tuple(Loc,liftEls(Els,_nil())) using {
   fun liftEls(<|()|>,Args) is Args
    |  liftEls(<|(?L,?R)|>,Args) is liftEls(L,liftEls(R,Args))
-   |  liftEls(El,Args) is list of {El;..Args}
+   |  liftEls(El,Args) is list of [El,..Args]
 };
 
 fun macroLog(M,V) is valof{
@@ -164,7 +164,7 @@ implementation concatenate over quoted is {
   fun X++Y is qConcat(X,Y)
 } using {
   fun qConcat(stringAst(Lc,L),stringAst(_,R)) is stringAst(Lc,L++R)
-   |  qConcat(stringAst(Lc,L),R) is applyAst(Lc,nameAst(Lc,"++"),list of {stringAst(Lc,L);R})
+   |  qConcat(stringAst(Lc,L),R) is applyAst(Lc,nameAst(Lc,"++"),list of [stringAst(Lc,L),R])
    |  qConcat(nameAst(Lc,L),stringAst(_,R)) is nameAst(Lc,L++R)
    |  qConcat(nameAst(Lc,L),nameAst(_,R)) is nameAst(Lc,L++R)
 }

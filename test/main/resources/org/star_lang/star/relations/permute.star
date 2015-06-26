@@ -27,7 +27,7 @@ permute is package{
    |  shuffle(E,list of [H,..T],Pre) is list of [Pre++list of [E,H,..T],.. shuffle(E,T,list of [H,..Pre])]
   
   fun NofM(0,_) is list of []
-   |  NofM(1,L) is list of {(list of [E]) where E in L}
+   |  NofM(1,L) is list of {all (list of [E]) where E in L}
    |  NofM(K,list of [E1,..Mr]) where K>0 is glue(E1,NofM(K-1,Mr))++NofM(K,Mr)
    |  NofM(K,list of []) is list of []
   

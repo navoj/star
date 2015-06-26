@@ -34,7 +34,7 @@ condexptask is package{
 
   fun S1(X) is task{ valis (pos(X) ? valof task{ valis "$X"}  : beta) }
   
-  def L is list of {1;2;3};
+  def L is list of [1,2,3];
 
   fun S2(X) is task{ valis X in L ? valof task { valis X} : nonInteger };
   

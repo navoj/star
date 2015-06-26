@@ -26,7 +26,7 @@ valofsrch is package{
   }
   
   prc main() do {
-    def R is setAttributes(list of {"ignre"; "not"}, {ignre="nothing"; nt=1});
+    def R is setAttributes(list of ["ignre", "not"], {ignre="nothing"; nt=1});
     assert R = changed;
   }
 }

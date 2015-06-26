@@ -21,12 +21,12 @@ dependency is package{
 
   fun analyseGraph(G) is let{
     var nodes := keys(G);
-    var groups := list of {};
+    var groups := list of [];
     
     fun analyseNode(N, S) is valof{
       def L0 is size(S);
       
-      var Stk := stack of {N;..S};
+      var Stk := stack of [N,..S];
       var Low := L0;
       
       for Cn in G[N] do{
@@ -66,7 +66,7 @@ dependency is package{
         def N is someValue(nodes[0]);
         remove nodes[0];
 
-        ignore analyseNode(N,stack of {});
+        ignore analyseNode(N,stack of []);
       }
       valis groups;
     }

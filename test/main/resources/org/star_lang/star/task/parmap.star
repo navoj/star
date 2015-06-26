@@ -23,8 +23,8 @@ parmap is package{
 	  fun collect(LL) is list of { all (valof X) where X in LL }
 	} in collect(spread());
 	    
-  fun listmap(F,list of {}) is list of {}
-   |  listmap(F,list of {X;..Y}) is list of {F(X);..listmap(F,Y)}
+  fun listmap(F,list of []) is list of []
+   |  listmap(F,list of [X,..Y]) is list of [F(X),..listmap(F,Y)]
 	
   prc main() do {
 	L1 has type list of integer;

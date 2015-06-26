@@ -57,10 +57,10 @@ type occurrence of %t is alias of action(%t);
 
 # freeVarMap(?Exp) ==> freeVarMap(Exp,());
 # freeVarMap(?Exp,?XX) ==> #*formHash(__find_free(Exp,XX,comma,())) ## {
-  #formHash(()) ==> dictionary of {};
-  #formHash(?E) ==> dictionary of {hashEntries(E)};
+  #formHash(()) ==> dictionary of [];
+  #formHash(?E) ==> dictionary of [hashEntries(E)];
   #hashEntries(comma(?V,())) ==> $$V->#(V as quoted)#;
-  #hashEntries(comma(?V,?T)) ==> #($$V->#(V as quoted)#;hashEntries(T))#;
+  #hashEntries(comma(?V,?T)) ==> #($$V->#(V as quoted)#,hashEntries(T))#;
 };
 
 #queryFree(?Qq,?Excl) ==> freeVarMap(Qq,#*queryDefined(Qq,Excl)) ## {
@@ -100,7 +100,7 @@ type occurrence of %t is alias of action(%t);
 #request ?A to merge ?Tgt with ?Exp  ==>
         perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _merge(#(#$"XX")#.Tgt,Exp)}),(() => <|merge ?Tgt with ?Exp|>),(() => freeVarMap(Exp)));
 #request ?A to delete ?Ptn in ?Tgt  ==>
-        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(() from Ptn))}),(() => <|delete ?Ptn in ?Tgt|>),(() => dictionary of {}));
+        perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _delete(#(#$"XX")#.Tgt,(() from Ptn))}),(() => <|delete ?Ptn in ?Tgt|>),(() => dictionary of []));
 #request ?A to update ?Ptn in ?Tgt with ?Exp  ==>
         perform _request(A,((#$"XX") do {#(#$"XX")#.Tgt := _update(#(#$"XX")#.Tgt,(() from Ptn), (Ptn) => Exp)}),(() => <|update ?Ptn in ?Tgt with ?Exp|>),() => freeVarMap(Exp,Ptn));
 
@@ -123,10 +123,10 @@ type occurrence of %t is alias of action(%t);
   #fun makeActorRules(Defs) is let{
     fun collectRules(Rl matching <|on ?Evt do ?Act|>, (Theta, EventRules)) is (Theta,insertEventRule(EventRules,eventRule(Rl)))
      |  collectRules(<|?L;?R|>,Coll) is collectRules(R,collectRules(L,Coll))
-     |  collectRules(Stmt,(Theta,Rules)) is (list of {Theta..;Stmt},Rules)
+     |  collectRules(Stmt,(Theta,Rules)) is (list of [Theta..,Stmt],Rules)
 
-    fun insertEventRule(Rules,Rl matching (Ch,P,C,A)) where _index(Rules,Ch) matches some(chnnlRules) is _set_indexed(Rules,Ch,list of {chnnlRules..;Rl})
-     |  insertEventRule(Rules,Rl matching (Ch,P,C,A)) is _set_indexed(Rules,Ch,list of {Rl})
+    fun insertEventRule(Rules,Rl matching (Ch,P,C,A)) where _index(Rules,Ch) matches some(chnnlRules) is _set_indexed(Rules,Ch,list of [chnnlRules..,Rl])
+     |  insertEventRule(Rules,Rl matching (Ch,P,C,A)) is _set_indexed(Rules,Ch,list of [Rl])
 
     -- pick apart an event condition into individual pieces
     fun eventRule(<|on ?P on ?Ch where ?C do ?A|>) is (Ch,P,C,A)
@@ -151,7 +151,7 @@ type occurrence of %t is alias of action(%t);
       
       fun makeEcaProc((Dfs, Calls)) is <| prc #(?Ch)#(?eVar) do {?Calls} using { ?Dfs } |>;
 
-      fun makeEca(list of {(_,P,C,A)}) is <| prc #(?Ch)#(?P) where ?C do ?A |>
+      fun makeEca(list of [(_,P,C,A)]) is <| prc #(?Ch)#(?P) where ?C do ?A |>
        |  makeEca(Rls) is makeEcaProc(makeRules(Rls))
     } in makeEca(Rules);
 
@@ -159,5 +159,5 @@ type occurrence of %t is alias of action(%t);
       def eventRules is list of { all channelProc(Ch,Rules) where Ch->Rules in EvtRules}
     } in __wrapSemi(eventRules,__wrapSemi(Theta,<|{}|>));
 
-  } in makeActorTheta(collectRules(Defs,(list of {}, dictionary of {})));
+  } in makeActorTheta(collectRules(Defs,(list of [], dictionary of [])));
 }

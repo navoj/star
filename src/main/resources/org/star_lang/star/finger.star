@@ -698,9 +698,9 @@ fun flCompare(fl1, fl2) is valof {
 
 /** contracts */
 implementation pPrint over FingerList of %t where pPrint over %t is {
-  fun ppDisp(fl) is ppSequence(0,cons(ppStr("fl of {"),cons(ppSequence(2,dispFtl(fl,ppStr(""))),cons(ppStr("}"),nil))));
+  fun ppDisp(fl) is ppSequence(0,cons(ppStr("fl of ["),cons(ppSequence(2,dispFtl(fl,ppStr(""))),cons(ppStr("]"),nil))));
 } using {
-  def inter is ppStr(";");
+  def inter is ppStr(",");
   fun dispFtl(fl, sep0) is let {
     def (res, _) is flFoldLeft(
                   (((d, sep), t) => (cons(ppDisp(t), cons(sep, d)), inter)),

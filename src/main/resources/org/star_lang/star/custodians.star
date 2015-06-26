@@ -82,8 +82,8 @@ implementation equality over custodian is {
 
 fun _new_custodian() is _custodian {
   state = atomic(CustActive);
-  subcustodians := cons of {};
-  resources := cons of {};
+  subcustodians := cons of [];
+  resources := cons of [];
 }
  
 def _main_custodian is _new_custodian(); -- TODO: unique object

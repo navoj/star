@@ -36,10 +36,10 @@ loopingTask is package{
   };
   
   prc main() do {
-    def ZZ is valof ww(list of {1;2;3;4;5});
+    def ZZ is valof ww(list of [1,2,3,4,5]);
     assert ZZ=15;
     
-    def MM is list of {(1,"alpha"); (2,"beta"); (3,"gamma"); (4,"delta")};
+    def MM is list of [(1,"alpha"), (2,"beta"), (3,"gamma"), (4,"delta")];
     def T1 is ff(3,MM);
     logMsg(info,"not yet started: $T1");
     def V1 is valof T1;

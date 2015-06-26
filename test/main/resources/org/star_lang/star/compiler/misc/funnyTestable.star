@@ -33,7 +33,7 @@ funnyTestable is package {
     -- "dictionary literal not valid here 
     -- because list of integer not equal to dictionary of(%__47213, %__47214)" 
 
-    def t2 is toTest("Good Morning",dictionary of {1->1;2->2}); -- now commented out to pass type checking
+    def t2 is toTest("Good Morning",dictionary of [1->1,2->2]); -- now commented out to pass type checking
     logMsg(info, "t2 is $t2");
   }
 }

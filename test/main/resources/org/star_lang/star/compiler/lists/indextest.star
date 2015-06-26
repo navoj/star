@@ -29,7 +29,7 @@ indextest is package{
   
   def CC is cons of ["a","b","c","d"];
   
-  def MM is dictionary of {"a"->1;"b"->2;"c"->3};
+  def MM is dictionary of ["a"->1,"b"->2,"c"->3];
   
   prc main() do {
     logMsg(info,"$LL");

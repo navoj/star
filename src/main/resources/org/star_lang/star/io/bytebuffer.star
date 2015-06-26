@@ -130,7 +130,7 @@ bytebuffer is package {
   bytebuffer_to_array has type (bytebuffer) => array of word8;
   bytebuffer_to_array(bb0) is valof {
     bb is _bb_asReadOnlyBuffer(bb0);
-    var res := array of {};
+    var res := array of [];
     while(bytebuffer_hasRemaining(bb)) do {
       (b, _) is bytebuffer_getWord8(bb);
       res := _apnd(res, b);

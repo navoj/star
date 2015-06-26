@@ -26,7 +26,7 @@ mapupdate is package{
   
   prc main() do
   {
-    var Joe := person{name = "Joe"; atts = props{values:=dictionary of {"alpha"->"beta"} }};
+    var Joe := person{name = "Joe"; atts = props{values:=dictionary of ["alpha"->"beta"] }};
     
     var prop := "alpha";
     

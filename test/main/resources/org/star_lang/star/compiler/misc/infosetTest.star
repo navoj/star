@@ -18,57 +18,57 @@
 jsonTest is package{
   import json;
 
-  var I1 := iColl( dictionary of { "eventVersion"-> iText("1.0");
-     "sourceString"->iText("::1 - - [29/Aug/2010:06:12:57 +0700] \"OPTIONS * HTTP/1.0\" 200 152 \"-\" \"Apache/2.2.12 (Ubuntu) (internal dummy connection)\"");
-     "sourceName"->iText("access log");
-     "Status"->iText("200");
-     "Useragent"->iText("Apache/2.2.12 (Ubuntu) (internal dummy connection)");
-     "Date"->iText("29/Aug/2010:06:12:57 +0700");
-     "Host"->iText("::1");
-     "Ident"->iText("-");
-     "Referer"->iText("-");
-     "Request"->iText("OPTIONS * HTTP/1.0");
-     "Bytes"->iText("152");
-     "Authuser"->iText("-");
-     "messageDate"->iNum(1368743816990L);
-     "processedDate"->iNum(1368743816990L);
-     "hostBytes"->iNum(3040L);
-     "numUniqueUsers"->iNum(19L);
-     "bigDownloadUser"->iText("false");
-     "avgHostBytes"->iFlt(61668.47916666669);
-     "imageBytes"->iNum(110408L);
-     "pictureBytes"->iNum(396883L);
+  var I1 := iColl( dictionary of [ "eventVersion"-> iText("1.0"),
+     "sourceString"->iText("::1 - - [29/Aug/2010:06:12:57 +0700] \"OPTIONS * HTTP/1.0\" 200 152 \"-\" \"Apache/2.2.12 (Ubuntu) (internal dummy connection)\""),
+     "sourceName"->iText("access log"),
+     "Status"->iText("200"),
+     "Useragent"->iText("Apache/2.2.12 (Ubuntu) (internal dummy connection)"),
+     "Date"->iText("29/Aug/2010:06:12:57 +0700"),
+     "Host"->iText("::1"),
+     "Ident"->iText("-"),
+     "Referer"->iText("-"),
+     "Request"->iText("OPTIONS * HTTP/1.0"),
+     "Bytes"->iText("152"),
+     "Authuser"->iText("-"),
+     "messageDate"->iNum(1368743816990L),
+     "processedDate"->iNum(1368743816990L),
+     "hostBytes"->iNum(3040L),
+     "numUniqueUsers"->iNum(19L),
+     "bigDownloadUser"->iText("false"),
+     "avgHostBytes"->iFlt(61668.47916666669),
+     "imageBytes"->iNum(110408L),
+     "pictureBytes"->iNum(396883L),
      "statusFrequency"->iSeq(list of [
-	iColl(dictionary of {"200"->iNum(75L)}),
-	iColl(dictionary of {"304"->iNum(60L)}),
-	iColl(dictionary of {"404"->iNum(5L)}),
-	iColl(dictionary of {"206"->iNum(2L)}),
-	iColl(dictionary of {"301"->iNum(2L)})]);
-     "totalBytes"->iNum(2425928L);
+	iColl(dictionary of ["200"->iNum(75L)]),
+	iColl(dictionary of ["304"->iNum(60L)]),
+	iColl(dictionary of ["404"->iNum(5L)]),
+	iColl(dictionary of ["206"->iNum(2L)]),
+	iColl(dictionary of ["301"->iNum(2L)])]),
+     "totalBytes"->iNum(2425928L),
      "referFrequency"->iSeq(list of [
-	iColl(dictionary of {"-"->iNum(85L)}),
-	iColl(dictionary of {"http://www.vallop.in.th/"->iNum(36L)}),
-	iColl(dictionary of {"http://www.tb1nkp.com/webboard/view.php?No=1"->iNum(6L)}),
-	iColl(dictionary of {"http://www.kpsw.ac.th/teacher/piyaporn/page3.htm"->iNum(5L)}),
-	iColl(dictionary of {"http://whois.domaintools.com/ntsdc.go.th"->iNum(4L)})])});
+	iColl(dictionary of ["-"->iNum(85L)]),
+	iColl(dictionary of ["http://www.vallop.in.th/"->iNum(36L)]),
+	iColl(dictionary of ["http://www.tb1nkp.com/webboard/view.php?No=1"->iNum(6L)]),
+	iColl(dictionary of ["http://www.kpsw.ac.th/teacher/piyaporn/page3.htm"->iNum(5L)]),
+	iColl(dictionary of ["http://whois.domaintools.com/ntsdc.go.th"->iNum(4L)])])]);
 
   prc main() do {
     logMsg(info,"Init $I1");
 
-    logMsg(info,"Look=$(I1[list of {kString("statusFrequency");kInt(0);kString("200")}])");
+    logMsg(info,"Look=$(I1[list of [kString("statusFrequency"),kInt(0),kString("200")]])");
 
-    assert I1[list of {kString("statusFrequency");kInt(0);kString("200")}] has value iNum(75L);
+    assert I1[list of [kString("statusFrequency"),kInt(0),kString("200")]] has value iNum(75L);
 
-    I1[list of {kString("statusFrequency");kInt(0);kString("404")}] := iNum(7L);
+    I1[list of [kString("statusFrequency"),kInt(0),kString("404")]] := iNum(7L);
     logMsg(info,"After update $I1");
  
-    assert I1[list of {kString("statusFrequency");kInt(0);kString("200")}] has value iNum(75L);
-    assert I1[list of {kString("statusFrequency");kInt(0);kString("404")}] has value iNum(7L);
+    assert I1[list of [kString("statusFrequency"),kInt(0),kString("200")]] has value iNum(75L);
+    assert I1[list of [kString("statusFrequency"),kInt(0),kString("404")]] has value iNum(7L);
 
-    remove I1[list of {kString("statusFrequency");kInt(0)}]
+    remove I1[list of [kString("statusFrequency"),kInt(0)]]
     logMsg(info,"After remove $I1");
 
-    assert not present I1[list of {kString("statusFrequency");kInt(0);kString("404")}];
+    assert not present I1[list of [kString("statusFrequency"),kInt(0),kString("404")]];
 
     for E in I1 do
 	  logMsg(info,display(E));
@@ -90,7 +90,7 @@ jsonTest is package{
     def S0 is "[116, 943, 234, 38793]";
   
     logMsg(info,"parse S0=$(S0 as json)");
-    assert S0 as json = iSeq(list of { iNum(116l); iNum(943l); iNum(234l); iNum(38793l)});
+    assert S0 as json = iSeq(list of [ iNum(116l), iNum(943l), iNum(234l), iNum(38793l)]);
     
     def S1 is "{ \"alpha\" : 1, \"beta\" : [116, 943, 234, 38793] }";
     logMsg(info,"parse S1=$(S1 as json)");

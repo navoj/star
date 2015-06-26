@@ -18,7 +18,7 @@
 hashes is package{  
   -- trial data
   
-  def M is dictionary of {("a",1); ("b",2); ("c",3)};
+  def M is dictionary of ["a"->1, "b"->2, "c"->3];
   
   prc main() do {
     logMsg(info,"M=$M");

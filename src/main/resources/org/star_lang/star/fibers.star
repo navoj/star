@@ -85,14 +85,14 @@ fun _new_fiber(parent) is
     def controller is _current_custodian(parent);
     def res is _resource {
       state = atomic(ResTransient);
-      controllers := _mutable_list { value := cons of { controller } };
+      controllers := _mutable_list { value := cons of [ controller ] };
     };
   } in valof {
     def token is add_resource(controller, res);
     def fib is _fiber {
       resource = res;
       token = token;
-      keep_alive := cons of {};
+      keep_alive := cons of [];
       current_custodian := controller;
     };
     -- let the caller do this? _activate_resource(res, suspend_this);
@@ -109,12 +109,12 @@ def __main_fiber is let {
   def terminate is (procedure () do nothing); -- terminate program?
   def res is _resource {
     state = atomic(ResActive(terminate));
-    controllers := _mutable_list { value := cons of {_main_custodian} };
+    controllers := _mutable_list { value := cons of [_main_custodian] };
   };
   def fib is _fiber {
     resource = res;
     token = add_resource(_main_custodian, res);
-    keep_alive := cons of {};
+    keep_alive := cons of [];
     current_custodian := _main_custodian;
   }
 } in fib

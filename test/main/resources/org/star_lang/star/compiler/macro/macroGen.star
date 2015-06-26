@@ -23,7 +23,7 @@ macroGen is package{
   };
   
   prc main() do {
-    generate(list of {bar; bar; foo; foo});
+    generate(list of [bar, bar, foo, foo]);
   }
 }
   

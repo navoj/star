@@ -57,8 +57,8 @@ iterations is package{
   def PP is cons of [("f","s"), ("m","s")];
   def P is cons of [("j","k"), ("s","k"), ("j","p"), ("s","p"), ("k","ss"), ("d","ss"),..PP];
   
-  def alpha is cons of { (1,"alpha"); (2,"beta"); (3,"gamma") };
-  def beta is cons of { ("omega",-1); ("iota",0); ("gamma",3) };
+  def alpha is cons of [ (1,"alpha"), (2,"beta"), (3,"gamma") ];
+  def beta is cons of [ ("omega",-1), ("iota",0), ("gamma",3) ];
   
   fun sho(E,St) is valof{
     logMsg(info,"$E in $St");
@@ -80,7 +80,7 @@ iterations is package{
          |  sF(_,S) default is S;
       } in sF,NoneFound);
     logMsg(info,"X0=$X0");
-    assert X0=ContinueWith (cons of { "s"; "j" });
+    assert X0=ContinueWith (cons of [ "s", "j" ]);
     
     -- Emulate: anyof X where (X,Peter) in parent and (X,male) in gender
     def X1 is iterates(parent,
@@ -108,8 +108,8 @@ iterations is package{
          |  sF(_,A) is A
       } in sF,NoneFound);
     logMsg(info,"X2=$X2");
-    assert X2=ContinueWith (cons of {"s"});
-    assert X2!=NoMore(cons of {"s"});
+    assert X2=ContinueWith (cons of ["s"]);
+    assert X2!=NoMore(cons of ["s"]);
     
     -- Emulate: all (X,Y) where (X,Y) in alpha or (Y,X) in beta
     def X3 is iterates(beta,
@@ -136,7 +136,7 @@ iterations is package{
          |  fA(_,Sa) default is Sa
       } in fA, NoneFound);
     logMsg(info,"X4=$X4");
-    assert X4=ContinueWith(cons of {2;1});
+    assert X4=ContinueWith(cons of [2,1]);
     
     -- Emulate: all X where (X,Y) in alpha otherwise ((_,Y) in beta and "Def" matches X)
     def X5 is otherWise(
@@ -191,7 +191,7 @@ iterations is package{
          |  fA(_,Sa) default is Sa
       } in fA, NoneFound);
     logMsg(info,"X8=$X8");
-    assert X8=ContinueWith(cons of {(3,"gamma")}); 
+    assert X8=ContinueWith(cons of [(3,"gamma")]); 
        
     -- Emulate: all (X,Y) where (X,Y) in alpha and Y>1
     def X9 is iterates(alpha,
@@ -200,7 +200,7 @@ iterations is package{
          |  fA(_,Sa) default is Sa
       } in fA, NoneFound);
     logMsg(info,"X9=$X9");
-    assert X9=ContinueWith(cons of {(3,"gamma"); (2,"beta")});
+    assert X9=ContinueWith(cons of [(3,"gamma"), (2,"beta")]);
     
     -- Emulate: (X,Y) in alpha implies (Y,X) in beta
     def X10 is negate(iterates(alpha,

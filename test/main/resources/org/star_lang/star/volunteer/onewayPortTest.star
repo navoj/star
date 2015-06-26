@@ -36,6 +36,6 @@ onewayPortTest is package{
   prc main() do {
     P1._request(((Schema) do Schema.testAction("P1 sends greetings")),
               (() => quote((procedure(Schema) do Schema.testAction("P1 sends greetings")))),
-              (() => dictionary of {}));
+              (() => dictionary of []));
   }
 }

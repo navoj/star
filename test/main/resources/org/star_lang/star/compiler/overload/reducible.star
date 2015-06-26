@@ -43,7 +43,7 @@ reducible is package{
    |  adder(I,NoneFound) is some(ContinueWith(I))
 
   prc main() do {
-    def II is cons of {1;2;3};
+    def II is cons of [1,2,3];
 
     def Reslt is _reduce(II,adder,NoneFound);
     logMsg(info,"Reslt=$Reslt");

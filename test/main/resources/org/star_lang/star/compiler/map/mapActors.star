@@ -50,6 +50,6 @@ mapActors is package{
   def Rec is recep("receiverAgent");
   
   prc main() do {
-    notify portActor with msg{count=4; details=dictionary of {"flight"->content{data="UA838"}; "rec"->content{data="24Tons"};"??"->content{data="GIGO"}}} on msgChannel
+    notify portActor with msg{count=4; details=dictionary of ["flight"->content{data="UA838"}, "rec"->content{data="24Tons"}, "??"->content{data="GIGO"}]} on msgChannel
   }
 }

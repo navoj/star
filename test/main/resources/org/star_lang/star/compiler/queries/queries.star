@@ -61,7 +61,7 @@ queries is package{
   prc main() do {
     def DD is all (X,Z) where (X,Y) in R and (Z,Y) in S;
     
-    def EE is all X where (X,Y) in R and ((Y,_) in N ? X in cons of {"a";"b"} : "none" matches X);
+    def EE is all X where (X,Y) in R and ((Y,_) in N ? X in cons of ["a","b"] : "none" matches X);
     logMsg(info,"EE=$EE"); 
   
     def QQ is all (X,Y,U) where (X,Y) in N and (X>Y ? (U,X) in R : (U,Y) in S);

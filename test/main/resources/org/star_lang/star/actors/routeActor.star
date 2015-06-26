@@ -7,7 +7,7 @@ routeActor is package {
   def routesActor is actor {
     rD has type ref arouteData;
     private var rD := arouteData{
-      routesMap := dictionary of {};
+      routesMap := dictionary of [];
     };
     on V on mapChannel do {
       def key is "";

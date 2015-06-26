@@ -32,7 +32,7 @@ tickTackToe is package{
   } using {
     fun dispBoard(B) is valof {
       def [B0,B1,B2,B3,B4,B5,B6,B7,B8] is B
-      valis ppSequence(0,cons of {ppDisp(B0);ppDisp(B1);ppDisp(B2);ppStr("\n");ppDisp(B3);ppDisp(B4);ppDisp(B5);ppStr("\n");ppDisp(B6);ppDisp(B7);ppDisp(B8)})
+      valis ppSequence(0,cons of [ppDisp(B0),ppDisp(B1),ppDisp(B2),ppStr("\n"),ppDisp(B3),ppDisp(B4),ppDisp(B5),ppStr("\n"),ppDisp(B6),ppDisp(B7),ppDisp(B8)])
     }
   }
   
@@ -52,7 +52,7 @@ tickTackToe is package{
   }
   
   implementation indexed_iterable over board determines ((integer,integer,integer),(mark,mark,mark)) is {
-    fun _ixiterate(board(list of {C1;C2;C3;C4;C5;C6;C7;C8;C9}),Fn,St) is iter(C1,C2,C3,C4,C5,C6,C7,C8,C9,Fn,St);
+    fun _ixiterate(board(list of [C1,C2,C3,C4,C5,C6,C7,C8,C9]),Fn,St) is iter(C1,C2,C3,C4,C5,C6,C7,C8,C9,Fn,St);
   } using {
     fun iter(c1,c2,c3,c4,c5,c6,c7,c8,c9,Fn,Ste) is let{
       fun itRow(_,_,NoMore(X)) is NoMore(X)
@@ -88,21 +88,21 @@ tickTackToe is package{
   
   fun play(board(B),Ps,P) is board(B[Ps->P]);
   
-  fun oppositeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[opposite(P)] = some(reverse(Plyr)) and B[P] has value blank };
+  fun oppositeCorner(board(B),Plyr) is list of { all P where P in list of [0, 2, 6, 8] and B[opposite(P)] = some(reverse(Plyr)) and B[P] has value blank };
   
   fun opposite(0) is 8
    |  opposite(8) is 0
    |  opposite(2) is 6
    |  opposite(6) is 2
   
-  fun freeCorner(board(B),Plyr) is list of { all P where P in list of {0; 2; 6; 8} and B[P] has value blank };
+  fun freeCorner(board(B),Plyr) is list of { all P where P in list of [0, 2, 6, 8] and B[P] has value blank };
   
-  fun freeSide(board(B),Plyr) is list of { all P where P in list of {1; 3; 5; 7} and B[P] has value blank };
+  fun freeSide(board(B),Plyr) is list of { all P where P in list of [1, 3, 5, 7] and B[P] has value blank };
   
-  def BB0 is board(list of {blank;blank;blank;blank;blank;blank;blank;blank;blank});
-  def BB1 is board(list of {blank;blank;circle;blank;circle;circle;blank;blank;blank});
-  def BB2 is board(list of {cross;blank;blank;blank;circle;blank;blank;blank;blank});
-  def BB3 is board(list of {cross;blank;blank;blank;circle;blank;blank;blank;cross});
+  def BB0 is board(list of [blank,blank,blank,blank,blank,blank,blank,blank,blank]);
+  def BB1 is board(list of [blank,blank,circle,blank,circle,circle,blank,blank,blank]);
+  def BB2 is board(list of [cross,blank,blank,blank,circle,blank,blank,blank,blank]);
+  def BB3 is board(list of [cross,blank,blank,blank,circle,blank,blank,blank,cross]);
   
   implementation reversible over mark is {
     fun reverse(circle) is cross

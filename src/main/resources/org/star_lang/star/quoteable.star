@@ -30,13 +30,13 @@ implementation coercion over (quoted, list of %t) where coercion over (quoted,%t
   fun coerce(R) is dequoteRel(R)
 } using {
   dequoteRel has type (quoted) => list of %t where coercion over (quoted,%t);
-  fun dequoteRel(<| list of { ?Q } |>) is let{
-        fun dequoteSemi(<| ?L ; ?R |>) is dequoteSemi(L)++dequoteSemi(R)
-         |  dequoteSemi(El) is list of {El as %t}
+  fun dequoteRel(<| list of [ ?Q ] |>) is let{
+        fun dequoteSemi(<| ?L , ?R |>) is dequoteSemi(L)++dequoteSemi(R)
+         |  dequoteSemi(El) is list of [El as %t]
       } in dequoteSemi(Q)
    |  dequoteRel(Q) is valof{
         logMsg(info,"Cannot dequote $Q");
-        valis list of {}
+        valis list of []
       }
 }
 

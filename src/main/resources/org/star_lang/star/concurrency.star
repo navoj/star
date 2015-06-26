@@ -151,7 +151,7 @@ fun actorHead(Defs) is let{
   #on ?Evt is ?Exp :: selectionRule :- Evt::expression :& Exp::expression;
 };
 
-#select{?R} ==> wait for chooseRv(list of {ruleConvert(R)}) ## {
+#select{?R} ==> wait for chooseRv(list of [ruleConvert(R)]) ## {
   #when ?C on ?Evt do ?Action ==> guardRv(task{ if C then valis wrapRv(Evt,((_) do Action)) else valis neverRv });
   #on ?Evt do ?Action ==> wrapRv(Evt,((_) do Action));
   #when ?C on ?Evt is ?Exp ==> guardRv(task{ if C then valis wrapRv(Evt,(_) => Exp) else valis neverRv});

@@ -22,7 +22,7 @@ bank is package{
   type custTx is newAccount(string) or removeAccount(string);
   
   def AllAccounts is actor{
-    private var allActs := dictionary of {}; 
+    private var allActs := dictionary of []; 
     
     on newAccount(Nm) on cust do
       allActs[Nm] := account(Nm);
@@ -51,18 +51,18 @@ bank is package{
       id = newCounterNo();
       owner = owner;
       balance := 0.0;
-      hist := list of {}
+      hist := list of []
     };
     
     on deposit(Amnt) on txs do{
       ac.balance := ac.balance+Amnt;
-      ac.hist := list of {ac.hist..;deposit(Amnt)};
+      ac.hist := list of [ac.hist..,deposit(Amnt)];
       logMsg(info,"Deposited $Amnt into account $(ac.id)");
     };
     
     on withdraw(Amnt) on txs where Amnt<=ac.balance do{
       ac.balance := ac.balance-Amnt;
-      ac.hist := list of {ac.hist..;withdraw(Amnt)};
+      ac.hist := list of [ac.hist..,withdraw(Amnt)];
       logMsg(info,"Withdraw $Amnt from account $(ac.id)");
     }
   }

@@ -28,9 +28,9 @@ otherwiseTest is package {
                         (T1{a=A;c=C} in t3 otherwise 1 matches C);
 
   prc main() do {
-    def t1s is list of {T1{a=1;b=2;c=1};T1{a=3;b=0;c=2}};
-    def t2s is list of {T1{a=1;b=3;c=3};T1{a=2;b=4;c=4}};
-    def t3s is list of {T1{a=1;b=3;c=5};T1{a=2;b=4;c=6}};
+    def t1s is list of [T1{a=1;b=2;c=1},T1{a=3;b=0;c=2}];
+    def t2s is list of [T1{a=1;b=3;c=3},T1{a=2;b=4;c=4}];
+    def t3s is list of [T1{a=1;b=3;c=5},T1{a=2;b=4;c=6}];
     def res is Q1(t1s, t2s, t3s);
     logMsg(info, "$res");
   }

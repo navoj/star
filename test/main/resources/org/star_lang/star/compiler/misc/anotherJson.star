@@ -37,20 +37,20 @@ worksheet{
 		
 	def JJ is someJsonStr as json;
 		
-	def fnames          is JJ[list of {kString("firstName")}];
-	def lnames          is JJ[list of {kString("lastName")}];
-	def ages            is JJ[list of {kString("age")}];		
-	def addresses       is JJ[list of {kString("address")}];
-	def streetAddresses is JJ[list of {kString("address");kString("streetAddress")}];
-	def cities          is JJ[list of {kString("address");kString("city")}];
-	def states          is JJ[list of {kString("address");kString("state")}];
-	def postalCodes     is JJ[list of {kString("address");kString("postalCode")}];
-	def phoneNumbers    is JJ[list of {kString("phoneNumbers")}];
+	def fnames          is JJ[list of [kString("firstName")]];
+	def lnames          is JJ[list of [kString("lastName")]];
+	def ages            is JJ[list of [kString("age")]];		
+	def addresses       is JJ[list of [kString("address")]];
+	def streetAddresses is JJ[list of [kString("address"),kString("streetAddress")]];
+	def cities          is JJ[list of [kString("address"),kString("city")]];
+	def states          is JJ[list of [kString("address"),kString("state")]];
+	def postalCodes     is JJ[list of [kString("address"),kString("postalCode")]];
+	def phoneNumbers    is JJ[list of [kString("phoneNumbers")]];
 		
 	-- [{"number":"212 555-1234","type":"home"},{"number":"646 555-4567","type":"fax"}]
-	-- phoneTypes      is JJ[list of {kString("phoneNumbers");[{kString("type")}]}];
+	-- phoneTypes      is JJ[list of [kString("phoneNumbers"),[{kString("type")}]]];
 		
-	def phoneNums    is JJ[list of {kString("phoneNumbers");kInt(0);kString("number")}];
+	def phoneNums    is JJ[list of [kString("phoneNumbers"),kInt(0),kString("number")]];
 	    
 	show phoneNums
 	   		

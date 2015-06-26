@@ -26,7 +26,7 @@ random is package{
   implementation pPrint over StdGen is {
 	ppDisp = dispStdGen;
   } using {
-	fun dispStdGen(StdGen(s1,s2)) is ppSequence(0,cons of {ppDisp(s1);ppStr("~");ppDisp(s2)});
+	fun dispStdGen(StdGen(s1,s2)) is ppSequence(0,cons of [ppDisp(s1),ppStr("~"),ppDisp(s2)]);
   }
 
   contract Random over (%a,%g) where RandomGen over %g is {

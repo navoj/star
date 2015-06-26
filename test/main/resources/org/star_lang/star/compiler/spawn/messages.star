@@ -24,7 +24,7 @@ messages is package{
   }
   
   box() is mbox{
-    private var Q := queue of {};
+    private var Q := queue of [];
     
     { ignore background msgLoop(); }
    
@@ -40,9 +40,9 @@ messages is package{
       while true do{
         select{
           on receive M on postMsgChnl do {
-            Q := queue of {Q..;M}
+            Q := queue of [Q..,M]
           };
-          when Q matches queue of {H;..QQ} on receive Reply on grabMsgChnl do {
+          when Q matches queue of [H,..QQ] on receive Reply on grabMsgChnl do {
             Q := QQ;
             send H to Reply
           }

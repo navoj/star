@@ -27,9 +27,9 @@ private import iterable;
 -- type cons of %e is nil or cons(%e, cons of %e);
 
 implementation pPrint over cons of %t where pPrint over %t is {
-  fun ppDisp(L) is ppSequence(0,cons(ppStr("cons of {"),cons(ppSequence(2,dispList(L,ppStr(""))),cons(ppStr("}"),nil))));
+  fun ppDisp(L) is ppSequence(0,cons(ppStr("cons of ["),cons(ppSequence(2,dispList(L,ppStr(""))),cons(ppStr("]"),nil))));
 } using {
-  def inter is ppStr(";");
+  def inter is ppStr(",");
   fun dispList(nil,_) is nil
    |  dispList(cons(H,T),Sep) is cons(Sep,cons(ppDisp(H),dispList(T,inter)))
 }
@@ -93,13 +93,13 @@ implementation comparable over cons of %t where comparable over %t and equality 
     fun X > Y is consLess(Y,X);
     fun X >= Y is consLessEq(Y,X);
   } using {
-    fun consLess(cons of {},cons of {_ ;.. _}) is true
-     |  consLess(cons of {X;..L1},cons of {X;..L2}) is consLess(L1,L2)
-     |  consLess(cons of {X;.._}, cons of {Y;.._}) where X<Y is true
+    fun consLess(cons of [],cons of [_ ,.. _]) is true
+     |  consLess(cons of [X,..L1],cons of [X,..L2]) is consLess(L1,L2)
+     |  consLess(cons of [X,.._], cons of [Y,.._]) where X<Y is true
      |  consLess(_,_) default is false
     
-    fun consLessEq(cons of {},_) is true
-     |  consLessEq(cons of {X;..L1},cons of {Y;..L2}) where X<=Y is consLessEq(L1,L2)
+    fun consLessEq(cons of [],_) is true
+     |  consLessEq(cons of [X,..L1],cons of [Y,..L2]) where X<=Y is consLessEq(L1,L2)
      |  consLessEq(_,_) default is false
   };
   

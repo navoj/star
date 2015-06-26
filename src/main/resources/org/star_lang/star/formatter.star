@@ -95,7 +95,7 @@
 -- # ?E default ?D :: expression --> D::{breakAfter:true; indent:+2};
 
 -- Map expressions
-# dictionary of {?A} :: expression --> A::{indent:+2};
+# dictionary of [?A] :: expression --> A::{indent:+2};
 
 
 # #(?L ; ?R)# :: tableEntry --> R::{breakBefore:true};
@@ -131,7 +131,7 @@
 
 -- Action expressions
 # valof{?A} ::expression --> A:: {indent:+2};
-# list of {?A} :: expression --> A:: {indent:+2};
+# list of [?A] :: expression --> A:: {indent:+2};
 
 -- Record expressions
 # symbol{?A} :: expression --> A::{indent:+2; breakAfter:";"};

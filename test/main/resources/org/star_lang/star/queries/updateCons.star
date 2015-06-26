@@ -19,13 +19,13 @@ updateRels is package{
   -- test the updateable contract over cons lists
 
   R has type ref cons of ((string,integer));
-  var R := cons of {
-    ("a",1);
-    ("b",2);
-    ("a",2);
-    ("a",3);
-    ("b",1);
-  };
+  var R := cons of [
+    ("a",1),
+    ("b",2),
+    ("a",2),
+    ("a",3),
+    ("b",1)
+  ];
     
   check has type (string,cons of ((string,integer))) =>boolean;
   fun check(S,Rr) is (S,_) in Rr;

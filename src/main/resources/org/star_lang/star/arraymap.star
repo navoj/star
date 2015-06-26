@@ -50,7 +50,7 @@ fun findEl(_empty(),_) is none
  |  findEl(_pair(E,L),K) is findEl(L,K)
   
 private
-fun replaceEl(_empty(),K,V) is list of {(K,V)}
+fun replaceEl(_empty(),K,V) is list of [(K,V)]
  |  replaceEl(_pair(E,L),K,V) where E matches (K,_) is list of [(K,V),..L]
  |  replaceEl(_pair(E,L),K,V) is list of [E,..replaceEl(L,K,V)]
 
@@ -92,11 +92,11 @@ fun listIxIter(_empty(),_,St) is St
  |  listIxIter(_pair((K,V),T),F,St) is listIxIter(T,F,F(K,V,St))
 
 implementation pPrint over seqmap of (%k,%v) where pPrint over %k and pPrint over %v is {
-  fun ppDisp(Els) is ppSequence(2,cons of {ppStr("listmap of {"); ppSeqMap(Els); ppStr("}")});
+  fun ppDisp(Els) is ppSequence(2,cons of [ppStr("listmap of ["), ppSeqMap(Els), ppStr("]")]);
 };
 
 fun ppSeqMap(seqmap(Els)) is
-  ppSequence(0,cons of {ppSequence(2,cons of [ppDisp(K), ppStr("->"), ppDisp(V), ppStr(";"), ppNl])
+  ppSequence(0,cons of {all ppSequence(2,cons of [ppDisp(K), ppStr("->"), ppDisp(V), ppStr(","), ppNl])
                                               where (K,V) in Els});  
                                               
 implementation foldable over seqmap of (%k,%v) determines %v is {

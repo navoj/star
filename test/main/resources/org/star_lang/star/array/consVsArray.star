@@ -57,7 +57,7 @@ consVsArray is package{
   
   prc walkBack(S) do {
     var SS := S;
-    while SS matches sequence of {T..;H} do{
+    while SS matches [T..,H] do{
       -- logMsg(info,"got $H");
       SS := T;
     };

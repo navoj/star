@@ -29,24 +29,24 @@ mastermind is package{
      |  stripBlacks(list of [E,..L],LL,list of [E,..R],RR) is stripBlacks(L,LL,R,RR)
      |  stripBlacks(list of [E1,..L],LL,list of [E2,..R],RR) is stripBlacks(L,list of [E1,..LL],R,list of [E2,..RR])
     
-    fun countWhites(L,R) where stripBlacks(L,list of [],R,list of []) matches (LL,RR) is size(list of {E where E in LL and E in RR}) 
+    fun countWhites(L,R) where stripBlacks(L,list of [],R,list of []) matches (LL,RR) is size(list of {all E where E in LL and E in RR}) 
   }
   
   fun verify(Test,[]) is true
    |  verify(Test,[(Prev,(B,W)),..Trials]) where score(Test,Prev)=(B,W) is verify(Test,Trials)
    |  verify(Test,_) default is false
   
-  fun filterPerms(Scores,Perms) is list of { P where P in Perms and verify(P,Scores)};
+  fun filterPerms(Scores,Perms) is list of { all P where P in Perms and verify(P,Scores)};
   
   fun guessSecret(Secret) is valof{
     var P := choices;
-    var Scores := list of {};
+    var Scores := list of [];
     while true do{
       def Guess is someValue(P[0]);
     
       def Sc is score(Guess,Secret);
       logMsg(info,"guess = $Guess, score=$Sc");
-      Scores := list of {(Guess,Sc);..Scores};
+      Scores := list of [(Guess,Sc),..Scores];
       P := filterPerms(Scores,P);
       if Sc=(3,0) then
         valis Guess

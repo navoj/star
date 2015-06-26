@@ -290,11 +290,11 @@ Name is connections{
     #queryEqn(?OP,?Chnl,?Tp,(some(?Res,reference,?R),()))==> 
        ((),Chnl=#(def Chnl is Res._query(((#$"X") => ref #$"X".R),
                                              (() => quote(R)),
-                                             (() => dictionary of {})))#);
+                                             (() => dictionary of [])))#);
     #queryEqn(?OP,?Chnl,?Tp,(some(?Res,void,?R),()))==> 
        ((),Chnl=#(def Chnl is Res._query(((#$"X") => #$"X".R),
                                              (() => quote(R)),
-                                             (() => dictionary of {})))#);
+                                             (() => dictionary of [])))#);
     #queryEqn(?OP,?Chnl,?Tp,(some(?Res,?Args,?R),())) ==> 
        ((),Chnl=#(fun Chnl#@Args is Res._query(((#$"X") => #$"X".R), 
                                      (() => quote(R)),
@@ -315,10 +315,10 @@ Name is connections{
     #mergeEquations( (), ?R) ==> R;
     #mergeEquations( ?L, ()) ==> L;
     
-    #freeHash(()) ==> dictionary of {};
-    #freeHash(?F#@?Args) ==> dictionary of { unPack(#:Args) } ## {
+    #freeHash(()) ==> dictionary of [];
+    #freeHash(?F#@?Args) ==> dictionary of [ unPack(#:Args) ] ## {
       #unPack((?L,())) ==> unPack(L);
-      #unPack((?L,?R)) ==> #( unPack(L);unPack(R))#;
+      #unPack((?L,?R)) ==> #( unPack(L),unPack(R))#;
       #unPack(?A) ==> #($$A -> (A as quoted))#;
     };
         

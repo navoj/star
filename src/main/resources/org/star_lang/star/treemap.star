@@ -49,9 +49,9 @@ fun validTree(trEmpty,_) is true
  |  validTree(T,Ln) default is false;
 
 implementation pPrint over treemap of (%k,%v) where pPrint over %k and pPrint over %v is {
-  fun ppDisp(H) is ppSequence(2,cons of {ppStr("treemap of {"); dispHash(H); ppStr("}")});
+  fun ppDisp(H) is ppSequence(2,cons of [ppStr("treemap of ["), dispHash(H), ppStr("]")]);
 } using {
-  fun dispHash(trNode{left=L; right=R}) is ppSequence(0,cons of {dispHash(L); dispHash(R)})
+  fun dispHash(trNode{left=L; right=R}) is ppSequence(0,cons of [dispHash(L), dispHash(R)])
    |  dispHash(trEmpty) is ppStr("")
    |  dispHash(trLeaf(_,Els)) is ppSeqMap(Els);
 }
@@ -87,7 +87,7 @@ fun look(K,T) is valof{
 };
 
 private
-fun insrt(K,V,S) is mergeTree(S,trLeaf(__hashCode(K), seqmap(list of {(K,V)})));
+fun insrt(K,V,S) is mergeTree(S,trLeaf(__hashCode(K), seqmap(list of [(K,V)])));
 
 private def mOne is -1_;
 
@@ -317,7 +317,7 @@ implementation updateable over treemap of (%k,%v) determines ((%k,%v)) where equ
     
     fun newLeaf(_,(Ups,_empty())) is (trEmpty,Ups)
      |  newLeaf(H,(Ups,L)) is (trLeaf(H,seqmap(L)),Ups);
-  } in applyUpdates @ collectUpdates(TM,cons of {});
+  } in applyUpdates @ collectUpdates(TM,cons of []);
   
   private
   fun applyUpdates(Tr,_empty()) is Tr

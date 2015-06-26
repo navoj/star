@@ -53,17 +53,17 @@ private import folding;
   # ?S :: workStatement :- S::statement;
 
   # worksheet{ ?Dfs } ==> genMain(Dfs) ## {
-    fun collectActions(Rl matching <|show ?E|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|perform ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|ignore ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|assert ?A|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|?L := ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|while ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|for ?L do ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|{ ?L }|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
-     |  collectActions(Rl matching <|try ?L on abort ?R|>, (Theta, Actions)) is (Theta,list of {Actions..;Rl})
+    fun collectActions(Rl matching <|show ?E|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|perform ?A|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|ignore ?A|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|assert ?A|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|?L := ?R|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|while ?L do ?R|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|for ?L do ?R|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|{ ?L }|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
+     |  collectActions(Rl matching <|try ?L on abort ?R|>, (Theta, Actions)) is (Theta,list of [Actions..,Rl])
      |  collectActions(<|?L;?R|>,Coll) is collectActions(R,collectActions(L,Coll))
-     |  collectActions(Stmt,(Theta,Actions)) is (list of {Theta..;Stmt},Actions);
+     |  collectActions(Stmt,(Theta,Actions)) is (list of [Theta..,Stmt],Actions);
     
     fun convertAction(<|show ?E |>) is <|showExpression(?E,?__display_macro(E),?getLineNumber(__macro_location(E)))|>
      |  convertAction(<|perform ?A |>) is <|performAction((() do ?A),?__display_macro(A),?getLineNumber(__macro_location(A)))|>
@@ -81,9 +81,9 @@ private import folding;
      |  getLineNumber(Lc) is integerAst(Lc,Lc.lineCount);
     
     fun genWkSht(D) is valof{
-      def (Defs,Actions) is __foldSemi(D,collectActions,(list of {},list of {}));
+      def (Defs,Actions) is __foldSemi(D,collectActions,(list of [],list of []));
       def Body is __wrapSemi(map(convertAction,Actions),<|nothing|>);
-      if Defs=list of {} then
+      if Defs=list of [] then
         valis <| ?Body |>
       else
         valis <| let { ?__wrapSemi(Defs, <|{}|>) } in ?Body |>

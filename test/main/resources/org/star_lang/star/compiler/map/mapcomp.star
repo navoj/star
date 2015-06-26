@@ -18,8 +18,8 @@
 mapcomp is package {
     main has type action();
     prc main() do {
-        def M1 is dictionary of{"a"->0;"b"->1;};
-        def M2 is dictionary of{"b"->0;"c"->1;};
+        def M1 is dictionary of ["a"->0,"b"->1];
+        def M2 is dictionary of ["b"->0,"c"->1];
         for K1->V1 in M1 do {
             if(not (K1->V2 in M2)) then logMsg(info, "$K1 is not in $M2");
         }

@@ -74,9 +74,6 @@ public class Operators implements PrettyPrintable
     defineRight(StandardNames.TERM, STATEMENT_PRIORITY);
     definePostfix(StandardNames.TERM, STATEMENT_PRIORITY);
 
-    defineInfix(StandardNames.CONS, STATEMENT_PRIORITY - 1);
-    defineInfix(StandardNames.ENDCONS, STATEMENT_PRIORITY - 2);
-
     defineInfix(StandardNames.SCONS, 1099);
     defineInfix(StandardNames.ENDSCONS, 1098);
 

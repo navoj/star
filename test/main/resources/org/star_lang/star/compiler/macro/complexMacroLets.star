@@ -30,9 +30,9 @@ complexMacroLets is package{
   };
   
   -- Some example processors
-  #glue(?List) ==> list of { processList(List,procl,iden,()) } ## {
+  #glue(?List) ==> list of [ processList(List,procl,iden,()) ] ## {
     #procl(?Elt,()) ==> Elt ;
-    #procl(?Elt, ?SoFar) ==> #(Elt;SoFar)#;
+    #procl(?Elt, ?SoFar) ==> #(Elt,SoFar)#;
   }
   
   assert glue(("A",("B",("C",())))) = glue(((((),"A"),"B"),"C"));

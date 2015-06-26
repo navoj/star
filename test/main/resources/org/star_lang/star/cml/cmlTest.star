@@ -110,7 +110,7 @@ cmlTest is package {
 	  recv2 is wrapRv(recv1, (v) => taskReturn(v + 1));
 	  send2 is wrapRv(send1, (_) => taskReturn(()));
 	  
-	  choose1 is chooseRv(cons of { recv1; recv2 });
+	  choose1 is chooseRv(cons of [recv1, recv2 ]);
 
       -- nothing synced here
       logMsg(info, "$(__display(choose1))");
@@ -199,9 +199,9 @@ cmlTest is package {
                      logMsg(info, "received first value $(n)");
                      logMsg(info, "=========================");
                      sleep(2000L); -- eval of wrap-fun seems to prevent the completion of the first send
-                     receiveOr is (def) => chooseRv(cons of {
-                        recvRv(ch1);
-                        wrapRv(timeoutRv(1000L), (_) => taskReturn(def)); });
+                     receiveOr is (def) => chooseRv(cons of [
+                        recvRv(ch1),
+                        wrapRv(timeoutRv(1000L), (_) => taskReturn(def)) ]);
                       
                      next is executeTaskOnThreadPool(await(receiveOr(0)), raiser_fun);
                      if next = 0 then logMsg(info, "timeout!!!") else logMsg(info, "received second value $(next)");
@@ -223,7 +223,7 @@ cmlTest is package {
     
     sendRv1 is sendRv(ch1, expected);
     recvRv1 is recvRv(ch1);
-    recvOrTimeoutRv is chooseRv(cons of { recvRv1; wrapRv(timeoutRv(2000L), (_) => task { valis 0; }) });
+    recvOrTimeoutRv is chooseRv(cons of [ recvRv1, wrapRv(timeoutRv(2000L), (_) => task { valis 0; }) ]);
     
     sending is task {
       -- we also need a delay here, so that the sending side will always (more likely) be the synchronizing side
@@ -279,8 +279,8 @@ cmlTest is package {
     var seen2 := false
     var seen_both_at := -1
     for i in iota(1, loops*2, 1) do {
-      v is executeTask(await(chooseRv(cons of { recvRv(ch1);
-                                              recvRv(ch2) })), raiser_fun);
+      v is executeTask(await(chooseRv(cons of [ recvRv(ch1),
+                                              recvRv(ch2) ])), raiser_fun);
       if (v > 0) then seen1 := true;
       if (v < 0) then seen2 := true;
       logMsg(info, "$(v)");
@@ -302,8 +302,8 @@ cmlTest is package {
       valis 0;
     }));
     for i in iota(1, 1000, 1) do {
-      v is executeTask(await(chooseRv(cons of { wrapRv(neverRv, (_) => taskReturn(666));
-                                              recvRv(ch) })), raiser_fun);
+      v is executeTask(await(chooseRv(cons of [ wrapRv(neverRv, (_) => taskReturn(666)),
+                                              recvRv(ch) ])), raiser_fun);
       assert(v = 42)
     }
     logMsg(info, "testCML_choose_never - End");

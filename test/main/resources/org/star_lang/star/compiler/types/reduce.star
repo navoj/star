@@ -31,7 +31,7 @@ reduce is package {
   };
   
   prc main() do {
-    def L is cons of {1;2;3;4};
+    def L is cons of [1,2,3,4];
     
     def K is reducer(((X,Y) => X+Y), L, 0);
     

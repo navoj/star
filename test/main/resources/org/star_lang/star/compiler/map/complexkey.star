@@ -19,7 +19,7 @@ complexkey is package{
   type foo of %t is nf or foo(%t);
   
   prc main() do {
-    var K := dictionary of {};
+    var K := dictionary of [];
     
     K[foo(3)] := "aleph";
     assert K[foo(3)] has value "aleph"

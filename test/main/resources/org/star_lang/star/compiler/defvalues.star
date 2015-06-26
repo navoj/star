@@ -22,7 +22,7 @@ type lvl2Fun is lvl2Fun {
   lhs has type lvl2Exp;
   rhs has type lvl2Exp;
   bindings has type dictionary of (string, lvl2Exp);
-  bindings default is dictionary of {};
+  bindings default is dictionary of [];
   rhs default is l2Integer(0);
   };
  

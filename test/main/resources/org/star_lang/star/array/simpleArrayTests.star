@@ -25,7 +25,7 @@ simpleArrayTests is package{
     assert size(A)=3;
     assert A=list of ["alpha", "beta", "gamma"];
     
-    assert A!=list of {};
+    assert A!=list of [];
     assert A!=list of ["alpha", "better", "gammer"];
     
     logMsg(info,"A is $A");
@@ -43,14 +43,14 @@ simpleArrayTests is package{
     assert F=list of [5.0, 4.0, 3.0, 2.0, 1.0];
   }
   
-  prc walkOver(sequence of {}) do nothing
-   |  walkOver(sequence of {H;..T}) do {
+  prc walkOver([]) do nothing
+   |  walkOver([H,..T]) do {
         logMsg(info,"got $H");
         walkOver(T);
       };
     
-  prc walkBack(sequence of {}) do nothing
-   |  walkBack(sequence of {T..;H}) do {
+  prc walkBack([]) do nothing
+   |  walkBack([T..,H]) do {
         logMsg(info,"got $H");
         walkBack(T);
       }

@@ -38,10 +38,10 @@ implementation sizeable over dictionary of (%s,%t) is {
 }
 
 implementation pPrint over dictionary of (%k,%v) where pPrint over %k and pPrint over %v is {
-  fun ppDisp(M) is ppSequence(0,cons(ppStr("dictionary of {"),
-	cons(ppSequence(2,dispEntries(M)),cons(ppStr("}"),nil))))
+  fun ppDisp(M) is ppSequence(0,cons(ppStr("dictionary of ["),
+	cons(ppSequence(2,dispEntries(M)),cons(ppStr("]"),nil))))
 } using {
-  fun dispEntries(M) is cons of { all ppSequence(0,cons(ppDisp(K),cons(ppStr("->"),cons(ppDisp(V),cons(ppStr(";"),cons(ppNl,nil)))))) where
+  fun dispEntries(M) is cons of { all ppSequence(0,cons(ppDisp(K),cons(ppStr("->"),cons(ppDisp(V),cons(ppStr(","),cons(ppNl,nil)))))) where
       K->V in M}
 }
 
@@ -87,7 +87,7 @@ implementation concatenate over dictionary of (%k,%v) is {
 }
 
 implementation grouping over cons determines (dictionary, %k,%v) is {
-  fun L group by C is groupByCons(L,C,dictionary of {})
+  fun L group by C is groupByCons(L,C,dictionary of [])
 } using {
   fun groupByCons(nil,_,M) is M
    |  groupByCons(cons(H,T),C,M) is valof{

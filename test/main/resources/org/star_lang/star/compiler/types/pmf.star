@@ -26,7 +26,7 @@ worksheet{
     fun _prob(D,K) is (someValue(D.data[K]) as float)/(D.total as float);
   }
 
-  var cookies := discrete{data = dictionary of { "Bowl 1" -> 0.5; "Bowl 2" -> 0.5 }}
+  var cookies := discrete{data = dictionary of [ "Bowl 1" -> 0.5, "Bowl 2" -> 0.5 ]}
 
   show cookies;
   
