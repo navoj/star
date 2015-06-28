@@ -109,8 +109,7 @@
 # unique ?C of ?E where ?Q :: expression --> Q::{indent:+2};
 # unique ?E where ?Q :: expression --> Q::{indent:+2};
 # all ?E where ?Q :: expression --> Q::{indent:+2};
-# anyof ?E where ?Q default ?D :: expression --> Q::{indent:+2; breakAfter:true};
-# anyof ?E where ?Q :: expression  --> Q::{indent:+2};
+# any of ?E where ?Q :: expression  --> Q::{indent:+2};
 # ?C of ?E where ?Q :: expression  --> Q::{indent:+2};
 */
 

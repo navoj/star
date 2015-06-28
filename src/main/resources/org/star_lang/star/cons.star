@@ -41,8 +41,7 @@ implementation sequence over cons of %e determines %e is {
   ptn _pair(H,T) from cons(H,T);
   ptn _back(nil,E) from cons(E,nil)
    |  _back(cons(E,B),El) from cons(E,B1) where B1 matches _back(B,El)
-   |  _back(cons(E,B),El) from cons(E,B1) where _back(B,El) bound to B1
-  
+     
   fun _nil() is nil;
 } using {
   fun append(nil,H) is cons(H,nil)

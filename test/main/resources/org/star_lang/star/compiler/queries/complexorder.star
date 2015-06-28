@@ -35,7 +35,7 @@ complexorder is package {
     
   prc main() do {
    def  QQ is -- query AA's LocalizedActualEventItems with
-      all x.event where x in LocalizedActualEventItems order by x.event.createdTimestamp;
+      list of { all x.event where x in LocalizedActualEventItems order by x.event.createdTimestamp};
       
     logMsg(info,"$QQ");
   }

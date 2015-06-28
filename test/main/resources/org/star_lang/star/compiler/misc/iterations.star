@@ -82,7 +82,7 @@ iterations is package{
     logMsg(info,"X0=$X0");
     assert X0=ContinueWith (cons of [ "s", "j" ]);
     
-    -- Emulate: anyof X where (X,Peter) in parent and (X,male) in gender
+    -- Emulate: any of X where (X,Peter) in parent and (X,male) in gender
     def X1 is iterates(parent,
       let{
         fun sF((X,J),NoneFound) where J="p" is

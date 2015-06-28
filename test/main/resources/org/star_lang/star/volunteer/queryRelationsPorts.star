@@ -36,7 +36,7 @@ queryRelationsPorts is package{
     prc calcTotal() do
       logMsg(info,"total balance is $(total(all U.balance where U in Users))");
        
-    fun getBalance(N) is anyof B where user{name=N;balance=B} in Users;
+    fun getBalance(N) is any of B where user{name=N;balance=B} in Users;
   };
   
   fun total(R) is valof{
@@ -64,7 +64,7 @@ queryRelationsPorts is package{
         user{name="delta";balance=4},
         user{name="fred"; balance=5} ];
         
-    assert (query P1's Users with any of U where U in Users and U.name="fred") = user{name="fred";balance=5}
+    assert (query P1's Users with any of U where U in Users and U.name="fred") has value user{name="fred";balance=5}
     
     request P1's calcTotal to calcTotal();
   }

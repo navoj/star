@@ -100,6 +100,7 @@ public class StandardNames
   public static final String NONEFOUND = "NoneFound";
   public static final String ABORT_ITER = "AbortIter";
   public static final String CHECKITERFUNC = "_checkIterState";
+  public static final String OPTIONITERSTATE = "_optionIterState";
   public static final String NEGATE = "_negate";
   public static final String OTHER = "_otherwise";
   public static final String POSSIBLE = "_possible";
@@ -135,7 +136,6 @@ public class StandardNames
   public static final String UPDATE = keyword("update");
   public static final String DELETE = keyword("delete");
 
-  public static final String ANYOF = keyword("anyof");
   public static final String ANY_OF = keyword("any of");
   public static final String ALL = keyword("all");
   public static final String UNIQUE = keyword("unique");
@@ -205,9 +205,7 @@ public class StandardNames
   public static final String ACTION = "action";
   public static final String TO = keyword("to");
   public static final String DEFAULT = keyword("default");
-  public static final String HAS = keyword("has");
   public static final String HAS_TYPE = keyword("has type");
-  public static final String HASTYPE = keyword("hastype");
   public static final String WHERE = keyword("where");
   public static final String IN = keyword("in");
   public static final String CASE = keyword("case");
@@ -466,8 +464,8 @@ public class StandardNames
     showList(graphics(), 8);
 
     showList(words(standard), 4);
-    
-    showList(Tokenizer.multiTokens(),4);
+
+    showList(Tokenizer.multiTokens(), 4);
   }
 
   public static void showList(String[] keyList, int cols)

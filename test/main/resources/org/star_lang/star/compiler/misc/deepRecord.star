@@ -35,7 +35,7 @@ deepRecord is package{
     
     def R is list of [ O];
     
-    def XX is anyof X.name where X in R and X.inner.val=10;
-    assert XX = "fred"
+    def XX is any of X.name where X in R and X.inner.val=10;
+    assert XX has value "fred"
   }
 }

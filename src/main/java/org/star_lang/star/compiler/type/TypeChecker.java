@@ -905,37 +905,34 @@ public class TypeChecker
         }
       } else
         return new VoidExp(loc);
-    } else if (Abstract.isBinary(term, StandardNames.DEFAULT) && Abstract.isBinary(Abstract.getArg(term, 0),
-        StandardNames.WHERE) && (Abstract.isUnary(Abstract.argPath(term, 0, 0), StandardNames.ANYOF) || Abstract
-            .isUnary(Abstract.argPath(term, 0, 0), StandardNames.ANY_OF))) {
-      IAbstract df = Abstract.getArg(term, 1);
-      IAbstract lhs = Abstract.argPath(term, 0, 0);
-      IAbstract rhs = Abstract.argPath(term, 0, 1);
-
-      Dictionary queryCxt = dict.fork();
-
-      Triple<ICondition, List<Variable>, List<Variable>> queryInfo = typeOfCondition(rhs, queryCxt, outer);
-      List<Variable> free = queryInfo.middle();
-
-      IContentExpression bound = typeOfExp(Abstract.getArg(lhs, 0), expectedType, queryCxt, dict);
-      IContentExpression deflt = typeOfExp(df, expectedType, dict, outer);
-
-      return QueryPlanner.transformReferenceExpression(queryInfo.left(), free, queryCxt, outer, bound, deflt,
-          expectedType, loc, errors);
-    } else if (Abstract.isBinary(term, StandardNames.WHERE) && (Abstract.isUnary(Abstract.binaryLhs(term),
-        StandardNames.ANYOF) || Abstract.isUnary(Abstract.getArg(term, 0), StandardNames.ANY_OF))) {
-      IAbstract lhs = Abstract.getArg(term, 0);
-      IAbstract rhs = Abstract.getArg(term, 1);
-
-      Dictionary queryCxt = dict.fork();
-
-      Triple<ICondition, List<Variable>, List<Variable>> queryInfo = typeOfCondition(rhs, queryCxt, outer);
-      List<Variable> free = queryInfo.middle();
-
-      final IContentExpression bound = typeOfExp(Abstract.unaryArg(lhs), expectedType, queryCxt, dict);
-
-      return QueryPlanner.transformReferenceExpression(loc, free, bound, expectedType, queryInfo.left(), queryCxt,
-          outer, errors);
+      // } else if (Abstract.isBinary(term, StandardNames.WHERE) &&
+      // Abstract.isUnary(Abstract.getArg(term, 0),
+      // StandardNames.ANY_OF)) {
+      // IAbstract lhs = Abstract.binaryLhs(term);
+      // IAbstract rhs = Abstract.binaryRhs(term);
+      //
+      // Dictionary queryCxt = dict.fork();
+      //
+      // Triple<ICondition, List<Variable>, List<Variable>> queryInfo = typeOfCondition(rhs,
+      // queryCxt, outer);
+      // List<Variable> free = queryInfo.middle();
+      //
+      // IType resltType = new TypeVar();
+      //
+      // try {
+      // Subsume.subsume(TypeUtils.optionType(resltType), expectedType, loc, dict);
+      // } catch (TypeConstraintException e) {
+      // errors.reportError(StringUtils.msg("expected type: ", expectedType, " not consistent with
+      // 'any of' query form"),
+      // merge(loc, e.getLocs()));
+      // }
+      //
+      // final IContentExpression bound = typeOfExp(Abstract.unaryArg(lhs), resltType, queryCxt,
+      // dict);
+      //
+      // return QueryPlanner.transformReferenceExpression(loc, free, bound, expectedType,
+      // queryInfo.left(), queryCxt,
+      // outer, errors);
     } else if (CompilerUtils.isQueryTerm(term))
       return queryExpression(term, expectedType, dict, outer);
     else if (CompilerUtils.isDefaultExp(term)) {
@@ -1401,6 +1398,10 @@ public class TypeChecker
 
   // Handle query expressions
 
+  private enum QueryForm {
+    sequenceQuery, reductionQuery, satisfactionQuery
+  };
+
   private IContentExpression queryExpression(IAbstract term, IType expectedType, Dictionary dict, Dictionary outer)
   {
     Location loc = term.getLoc();
@@ -1412,8 +1413,7 @@ public class TypeChecker
     IAbstract reducer = null;
     boolean isSorted = false;
     boolean ascending = true;
-    boolean isCollection = true;
-    boolean isReduction = false;
+    QueryForm queryForm = QueryForm.sequenceQuery;
     final boolean eliminateDuplicates;
 
     if (Abstract.isBinary(term, StandardNames.OF) && CompilerUtils.isBlockTerm(Abstract.binaryRhs(term))) {
@@ -1423,8 +1423,7 @@ public class TypeChecker
         elType = sequenceType(Abstract.getId(leftOf), collType, outer, loc, errors);
       } else if (Abstract.isUnary(leftOf, StandardNames.REDUCTION)) {
         reducer = Abstract.unaryArg(leftOf);
-        isCollection = false;
-        isReduction = true;
+        queryForm = QueryForm.reductionQuery;
       }
 
       query = CompilerUtils.blockContent(Abstract.binaryRhs(term));
@@ -1501,9 +1500,9 @@ public class TypeChecker
         eliminateDuplicates = false;
       }
       bound = typeOfExp(Abstract.getArg(cntTrm, 1), elType, queryCxt, dict);
-    } else if (Abstract.isUnary(cntTrm, StandardNames.ANYOF) || Abstract.isUnary(cntTrm, StandardNames.ANY_OF)) {
+    } else if (Abstract.isUnary(cntTrm, StandardNames.ANY_OF)) {
       bound = typeOfExp(Abstract.unaryArg(cntTrm), elType, queryCxt, dict);
-      isCollection = false;
+      queryForm = QueryForm.satisfactionQuery;
       countExp = null;
       eliminateDuplicates = false;
     } else {
@@ -1512,16 +1511,27 @@ public class TypeChecker
       eliminateDuplicates = false;
     }
 
-    if (isCollection) {
+    switch (queryForm) {
+    default:
+    case sequenceQuery:
       try {
         Subsume.subsume(collType, expectedType, loc, dict);
       } catch (TypeConstraintException e) {
         errors.reportError(StringUtils.msg("expected type: ", expectedType, " not consistent with query type: ",
             collType, "\nbecause ", e.getWords()), merge(loc, e.getLocs()));
       }
-    } else {
+      break;
+    case reductionQuery:
       try {
         Subsume.subsume(elType, expectedType, loc, dict);
+      } catch (TypeConstraintException e) {
+        errors.reportError(StringUtils.msg("expected type: ", expectedType, " not consistent with query type: ", elType,
+            "\nbecause ", e.getWords()), merge(loc, e.getLocs()));
+      }
+      break;
+    case satisfactionQuery:
+      try {
+        Subsume.subsume(TypeUtils.optionType(elType), expectedType, loc, dict);
       } catch (TypeConstraintException e) {
         errors.reportError(StringUtils.msg("expected type: ", expectedType, " not consistent with query type: ", elType,
             "\nbecause ", e.getWords()), merge(loc, e.getLocs()));
@@ -1539,10 +1549,8 @@ public class TypeChecker
 
       IContentExpression wrapBound = new ConstructorTerm(loc, bound, selector);
 
-      IType intSequenceType = (isCollection ? rewrapSequenceType(collType, wrapBound.getType())
-          : TypeUtils.arrayType(wrapBound.getType()));
-      IContentExpression transformed = QueryPlanner.transformQuery(loc, free, wrapBound, intSequenceType, queryInfo
-          .left(), dict, outer, errors);
+      IContentExpression transformed = QueryPlanner.transformQuery(loc, free, wrapBound, TypeUtils.arrayType(wrapBound
+          .getType()), queryInfo.left(), dict, outer, errors);
 
       // Define a lambda to do the comparison
       IContentExpression compLambda = compLambda(loc, boundType, selType, compWithTrm, ascending, dict, outer);
@@ -1557,7 +1565,9 @@ public class TypeChecker
           sortResultType, projectedType), dict, outer);
       IContentExpression result = Application.apply(loc, projectedType, project, sorted);
 
-      if (isCollection) {
+      switch (queryForm) {
+      default:
+      case sequenceQuery:
         if (eliminateDuplicates) {
           IType cmpType = TypeUtils.functionType(bound.getType(), bound.getType(), booleanType);
           IType makeType = TypeUtils.functionType(projectedType, cmpType, expectedType);
@@ -1574,7 +1584,7 @@ public class TypeChecker
               countExp);
         }
         return result;
-      } else if (isReduction) {
+      case reductionQuery:
         if (countExp != null) {
           IType sliceFunType = TypeUtils.functionType(projectedType, integerType, integerType, projectedType);
           IContentExpression sliceFun = typeOfExp(new Name(loc, StandardNames.SLICE), sliceFunType, dict, outer);
@@ -1588,96 +1598,109 @@ public class TypeChecker
         IType foldType = TypeUtils.functionType(reducerType, result.getType(), expectedType);
         IContentExpression fold1 = typeOfExp(new Name(loc, StandardNames.LEFTFOLD1), foldType, dict, outer);
         return Application.apply(loc, expectedType, fold1, reducerFun, result);
-      } else
+
+      case satisfactionQuery:
         return firstEl(loc, result, expectedType, dict, outer);
-    } else if (eliminateDuplicates && isCollection) {
-      // The expression we will be comparing against
-      IContentExpression transformed = QueryPlanner.transformQuery(loc, free, bound, rewrapSequenceType(collType, bound
-          .getType()), queryInfo.left(), dict, outer, errors);
-      IType eqType = TypeUtils.functionType(bound.getType(), bound.getType(), booleanType);
-      IType uniqueType = new TypeVar();
-      IType makeType = TypeUtils.functionType(uniqueType, eqType, expectedType);
-
-      IContentExpression equals = typeOfExp(new Name(loc, StandardNames.EQUAL), eqType, dict, outer);
-      IContentExpression unique = typeOfExp(new Name(loc, StandardNames.UNIQUE_F), makeType, dict, outer);
-      IContentExpression result = Application.apply(loc, expectedType, unique, transformed, equals);
-      if (countExp != null) {
-        IType sliceFunType = TypeUtils.functionType(expectedType, integerType, integerType, expectedType);
-        IContentExpression sliceFun = typeOfExp(new Name(loc, StandardNames.SLICE), sliceFunType, dict, outer);
-
-        return Application.apply(loc, expectedType, sliceFun, result, CompilerUtils.integerLiteral(loc, 0), countExp);
-      } else
-        return result;
-    } else if (reducer != null) {
-      if (eliminateDuplicates) {
-        // The expression we will be comparing against
-        IType collectionType = TypeUtils.arrayType(expectedType);
-        IContentExpression transformed = QueryPlanner.transformQuery(loc, free, bound, collectionType, queryInfo.left(),
-            dict, outer, errors);
-        IType eqType = TypeUtils.functionType(bound.getType(), bound.getType(), booleanType);
-        IType makeType = TypeUtils.functionType(collectionType, eqType, collectionType);
-
-        IContentExpression equals = typeOfExp(new Name(loc, StandardNames.EQUAL), eqType, dict, outer);
-        IContentExpression unique = typeOfExp(new Name(loc, StandardNames.UNIQUE_F), makeType, dict, outer);
-        IContentExpression result = Application.apply(loc, collectionType, unique, transformed, equals);
-
-        if (countExp != null) {
-          IType sliceFunType = TypeUtils.functionType(collectionType, integerType, integerType, collectionType);
-          IContentExpression sliceFun = typeOfExp(new Name(loc, StandardNames.SLICE), sliceFunType, dict, outer);
-
-          result = Application.apply(loc, collectionType, sliceFun, result, CompilerUtils.integerLiteral(loc, 0),
-              countExp);
-        }
-
-        IType reducerType = TypeUtils.functionType(expectedType, expectedType, expectedType);
-        IContentExpression reducerFun = typeOfExp(reducer, reducerType, dict, outer);
-        IType foldType = TypeUtils.functionType(reducerType, collectionType, expectedType);
-        IContentExpression fold1 = typeOfExp(new Name(loc, StandardNames.LEFTFOLD1), foldType, dict, outer);
-        return Application.apply(loc, expectedType, fold1, reducerFun, result);
-      } else {
-        IType reducerType = TypeUtils.functionType(expectedType, expectedType, expectedType);
-        IContentExpression reducerFun = typeOfExp(reducer, reducerType, dict, outer);
-
-        IContentExpression code = CompilerUtils.stringLiteral(loc, "error");
-        IContentExpression raised = CompilerUtils.stringLiteral(loc, "empty reduction");
-        IContentExpression location = Quoter.generateLocation(loc);
-        IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
-            raised, location);
-        RaiseExpression deflt = new RaiseExpression(loc, expectedType, ex);
-
-        return QueryPlanner.transformReduction(reducerFun, bound, queryInfo.left(), deflt, free, queryCxt, outer,
-            expectedType, loc, errors);
       }
     } else {
-      IContentExpression result = QueryPlanner.transformQuery(loc, free, bound, collType, queryInfo.left(), dict, outer,
-          errors);
-      if (isCollection) {
-        if (countExp != null) {
-          IType sliceFunType = TypeUtils.functionType(expectedType, integerType, integerType, expectedType);
-          IContentExpression sliceFun = typeOfExp(new Name(loc, StandardNames.SLICE), sliceFunType, dict, outer);
+      switch (queryForm) {
+      default:
+      case sequenceQuery:
+        if (eliminateDuplicates) {
+          // The expression we will be comparing against
+          IContentExpression transformed = QueryPlanner.transformQuery(loc, free, bound, rewrapSequenceType(collType,
+              bound.getType()), queryInfo.left(), dict, outer, errors);
+          IType eqType = TypeUtils.functionType(bound.getType(), bound.getType(), booleanType);
+          IType uniqueType = new TypeVar();
+          IType makeType = TypeUtils.functionType(uniqueType, eqType, expectedType);
 
-          return Application.apply(loc, expectedType, sliceFun, result, CompilerUtils.integerLiteral(loc, 0), countExp);
-        } else
-          return result;
-      } else
-        return firstEl(loc, result, expectedType, dict, outer);
+          IContentExpression equals = typeOfExp(new Name(loc, StandardNames.EQUAL), eqType, dict, outer);
+          IContentExpression unique = typeOfExp(new Name(loc, StandardNames.UNIQUE_F), makeType, dict, outer);
+          IContentExpression result = Application.apply(loc, expectedType, unique, transformed, equals);
+          if (countExp != null) {
+            IType sliceFunType = TypeUtils.functionType(expectedType, integerType, integerType, expectedType);
+            IContentExpression sliceFun = typeOfExp(new Name(loc, StandardNames.SLICE), sliceFunType, dict, outer);
+
+            return Application.apply(loc, expectedType, sliceFun, result, CompilerUtils.integerLiteral(loc, 0),
+                countExp);
+          } else
+            return result;
+        } else {
+          IContentExpression result = QueryPlanner.transformQuery(loc, free, bound, collType, queryInfo.left(), dict,
+              outer, errors);
+          if (countExp != null) {
+            IType sliceFunType = TypeUtils.functionType(expectedType, integerType, integerType, expectedType);
+            IContentExpression sliceFun = typeOfExp(new Name(loc, StandardNames.SLICE), sliceFunType, dict, outer);
+
+            return Application.apply(loc, expectedType, sliceFun, result, CompilerUtils.integerLiteral(loc, 0),
+                countExp);
+          } else
+            return result;
+        }
+      case reductionQuery:
+        if (eliminateDuplicates) {
+          // The expression we will be comparing against
+          IType collectionType = TypeUtils.arrayType(expectedType);
+          IContentExpression transformed = QueryPlanner.transformQuery(loc, free, bound, collectionType, queryInfo
+              .left(), dict, outer, errors);
+          IType eqType = TypeUtils.functionType(bound.getType(), bound.getType(), booleanType);
+          IType makeType = TypeUtils.functionType(collectionType, eqType, collectionType);
+
+          IContentExpression equals = typeOfExp(new Name(loc, StandardNames.EQUAL), eqType, dict, outer);
+          IContentExpression unique = typeOfExp(new Name(loc, StandardNames.UNIQUE_F), makeType, dict, outer);
+          IContentExpression result = Application.apply(loc, collectionType, unique, transformed, equals);
+
+          if (countExp != null) {
+            IType sliceFunType = TypeUtils.functionType(collectionType, integerType, integerType, collectionType);
+            IContentExpression sliceFun = typeOfExp(new Name(loc, StandardNames.SLICE), sliceFunType, dict, outer);
+
+            result = Application.apply(loc, collectionType, sliceFun, result, CompilerUtils.integerLiteral(loc, 0),
+                countExp);
+          }
+
+          IType reducerType = TypeUtils.functionType(expectedType, expectedType, expectedType);
+          IContentExpression reducerFun = typeOfExp(reducer, reducerType, dict, outer);
+          IType foldType = TypeUtils.functionType(reducerType, collectionType, expectedType);
+          IContentExpression fold1 = typeOfExp(new Name(loc, StandardNames.LEFTFOLD1), foldType, dict, outer);
+          return Application.apply(loc, expectedType, fold1, reducerFun, result);
+        } else {
+          IType reducerType = TypeUtils.functionType(expectedType, expectedType, expectedType);
+          IContentExpression reducerFun = typeOfExp(reducer, reducerType, dict, outer);
+
+          IContentExpression code = CompilerUtils.stringLiteral(loc, "error");
+          IContentExpression raised = CompilerUtils.stringLiteral(loc, "empty reduction");
+          IContentExpression location = Quoter.generateLocation(loc);
+          IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
+              raised, location);
+          RaiseExpression deflt = new RaiseExpression(loc, expectedType, ex);
+
+          return QueryPlanner.transformReduction(reducerFun, bound, queryInfo.left(), deflt, free, queryCxt, outer,
+              expectedType, loc, errors);
+        }
+      case satisfactionQuery:
+        IType resltType = new TypeVar();
+
+        try {
+          Subsume.subsume(TypeUtils.optionType(resltType), expectedType, loc, dict);
+        } catch (TypeConstraintException e) {
+          errors.reportError(StringUtils.msg("expected type: ", expectedType,
+              " not consistent with 'any of' query form"), merge(loc, e.getLocs()));
+        }
+
+        return QueryPlanner.transformReferenceExpression(loc, free, bound, expectedType, queryInfo.left(), queryCxt,
+            outer, errors);
+      }
     }
   }
 
   private IContentExpression firstEl(Location loc, IContentExpression result, IType expectedType, Dictionary dict,
       Dictionary outer)
   {
-    IType someExpType = TypeUtils.optionType(expectedType);
-    IType indexType = TypeUtils.functionType(result.getType(), integerType, someExpType);
+    IType indexType = TypeUtils.functionType(result.getType(), integerType, expectedType);
     IContentExpression indexFun = typeOfExp(new Name(loc, StandardNames.INDEX), indexType, dict, outer);
 
     IContentExpression index = CompilerUtils.integerLiteral(loc, 0);
-    IContentExpression some = Application.apply(loc, someExpType, indexFun, result, index);
-
-    IType someValueFunType = TypeUtils.functionType(someExpType, expectedType);
-    IContentExpression someFun = typeOfExp(new Name(loc, StandardNames.SOMEVALUE), someValueFunType, dict, outer);
-
-    return Application.apply(loc, expectedType, someFun, some);
+    return Application.apply(loc, expectedType, indexFun, result, index);
   }
 
   private IType rewrapSequenceType(IType orig, IType elType)

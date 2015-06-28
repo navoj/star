@@ -85,7 +85,7 @@ workedex is package{
   fun genTxIndex(Tx) is genIndex(Tx,idKey,ref transactionIndex);
   fun genAccountIndex(Act) is genIndex(Act,idKey,ref accountIndex);
   
-  fun getAccountIndex(Act) is any of Id where (Id,_) in accountIndex[idKey(Act)] default nonLong;
+  fun getAccountIndex(Act) is any of Id where (Id,_) in accountIndex[idKey(Act)];
   
   prc addAccount(Act) do {
     def Id is genAccountIndex(Act); -- pick up a unique id for the new tuple
@@ -101,9 +101,7 @@ workedex is package{
   }
   
   prc updateAccnt(Ptn,Updater) do {
-    def Ix is getAccountIndex(Ptn);
-    
-    if Ix!=nonLong then{ 
+    if getAccountIndex(Ptn) has value Ix then{ 
       accounts[Ix] := Updater(someValue(accounts[Ix]));
       redoResult(someValue(accntFollow[Ix]));
     }
@@ -181,9 +179,7 @@ workedex is package{
   }
 
   prc removeAccnt(Rec) do {
-    def Ky is getAccountIndex(Rec);
-    
-    if Ky!=nonLong then{ 
+    if getAccountIndex(Rec) has value Ky then{ 
       remove accounts[Ky];
       removeResult(someValue(accntFollow[Ky]));
     }

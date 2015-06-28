@@ -23,7 +23,7 @@ consUnique is package {
 
   def foo is
     let {
-      def routeOperationNames is unique x.F where x in R order by x.F;
+      def routeOperationNames is list of { unique x.F where x in R order by x.F};
     } in 
       constCons(routeOperationNames);
   

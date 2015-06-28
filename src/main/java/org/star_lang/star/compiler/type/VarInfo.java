@@ -178,8 +178,7 @@ public class VarInfo implements DictInfo
     if (!initialized)
       disp.append("[u]");
 
-    disp.appendWord(StandardNames.HAS);
-    disp.appendWord(StandardNames.TYPE);
+    disp.appendWord(StandardNames.HAS_TYPE);
     disp.append(" ");
     DisplayType.display(disp, getType());
   }

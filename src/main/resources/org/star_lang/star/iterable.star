@@ -35,6 +35,10 @@ contract indexed_iterable over s determines (k,v) is {
 
 type _possible of t is _impossible or _possible(t);
 
+fun _optionIterState(NoMore(X)) is some(X)
+ |  _optionIterState(ContinueWith(X)) is some(X)
+ |  _optionIterState(NoneFound) is none
+
 fun _checkIterState(NoMore(X),_) is X
  |  _checkIterState(ContinueWith(X),_) is X
  |  _checkIterState(NoneFound,D) is D()

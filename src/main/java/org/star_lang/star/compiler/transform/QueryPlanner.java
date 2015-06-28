@@ -68,10 +68,9 @@ public class QueryPlanner
   {
     final IContentExpression zero = CompilerUtils.integerLiteral(loc, 0);
     IType createType = TypeUtils.functionType(type);
-    IType sequenceType = TypeUtils
-        .overloadedType(TypeUtils.tupleType(TypeUtils.typeExp(TypeContracts
-            .contractImplTypeName(StandardNames.SEQUENCE), type, TypeUtils.determinedType(boundExp.getType()))),
-            createType);
+    IType sequenceType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.typeExp(TypeContracts
+        .contractImplTypeName(StandardNames.SEQUENCE), type, TypeUtils.determinedType(boundExp.getType()))),
+        createType);
 
     IContentExpression nil = Application.apply(loc, type, new MethodVariable(loc, StandardNames.NIL, createType,
         StandardNames.SEQUENCE, sequenceType));
@@ -88,19 +87,19 @@ public class QueryPlanner
     IContentExpression finalState = Application.apply(loc, nilTpl.getType(), checker, txedCon, new MemoExp(loc, nilTpl,
         new Variable[] {}));
 
-    IContentExpression project = new Variable(loc, TypeUtils.functionType(nilTpl.getType(), type, type), "_project_0_2");
+    IContentExpression project = new Variable(loc, TypeUtils.functionType(nilTpl.getType(), type, type),
+        "_project_0_2");
     return Application.apply(loc, type, project, finalState);
   }
 
-  public static IContentExpression transformQuery(Location loc, List<Variable> definedVars,
-      IContentExpression boundExp, IType type, ICondition query, Dictionary dict, Dictionary outer, ErrorReport errors)
+  public static IContentExpression transformQuery(Location loc, List<Variable> definedVars, IContentExpression boundExp,
+      IType type, ICondition query, Dictionary dict, Dictionary outer, ErrorReport errors)
   {
     IType createType = TypeUtils.functionType(type);
 
-    IType sequenceType = TypeUtils
-        .overloadedType(TypeUtils.tupleType(TypeUtils.typeExp(TypeContracts
-            .contractImplTypeName(StandardNames.SEQUENCE), type, TypeUtils.determinedType(boundExp.getType()))),
-            createType);
+    IType sequenceType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.typeExp(TypeContracts
+        .contractImplTypeName(StandardNames.SEQUENCE), type, TypeUtils.determinedType(boundExp.getType()))),
+        createType);
 
     IContentExpression nil = Application.apply(loc, type, new MethodVariable(loc, StandardNames.NIL, createType,
         StandardNames.SEQUENCE, sequenceType));
@@ -142,10 +141,9 @@ public class QueryPlanner
     IContentExpression txedCon = ConditionTransformer.transformConstraint(query, definedVars, succAdd, initState,
         queryCxt, outer, errors);
 
-    IContentExpression deflt = new MemoExp(loc, initState, new Variable[] {});
-    IContentExpression checker = checkIterFun(loc, expectedType, queryCxt, errors);
+    IContentExpression checker = optionIterFun(loc, resType, queryCxt, errors);
 
-    return Application.apply(loc, expectedType, checker, txedCon, deflt);
+    return Application.apply(loc, expectedType, checker, txedCon);
   }
 
   public static IContentExpression transformReferenceExpression(ICondition query, List<Variable> definedVars,
@@ -199,8 +197,8 @@ public class QueryPlanner
       IContentExpression test = transformReferenceExpression(cond, defined, cxt, outer, reslt, deflt, resltType, loc,
           errors);
 
-      ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn.tuplePtn(
-          loc, defined.toArray(new IContentPattern[defined.size()]))));
+      ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn.tuplePtn(loc,
+          defined.toArray(new IContentPattern[defined.size()]))));
       return new ConditionalAction(loc, matches, body, other);
     } else {
       IContentExpression ok = CompilerUtils.trueLiteral(loc);
@@ -230,6 +228,12 @@ public class QueryPlanner
     return Application.apply(loc, type, checker, txedCon, new MemoExp(loc, otherwise, freeVars));
   }
 
+  private static IContentExpression optionIterFun(Location loc, IType type, Dictionary cxt, ErrorReport errors)
+  {
+    IType checkerType = TypeUtils.functionType(TypeUtils.iterstateType(type), TypeUtils.optionType(type));
+    return TypeChecker.typeOfName(loc, StandardNames.OPTIONITERSTATE, checkerType, cxt, errors);
+  }
+
   private static IContentExpression checkIterFun(Location loc, IType type, Dictionary cxt, ErrorReport errors)
   {
     IType checkerType = TypeUtils.functionType(TypeUtils.iterstateType(type), TypeUtils.functionType(type), type);
@@ -239,8 +243,8 @@ public class QueryPlanner
   static ICondition pullupEqualities(ICondition query, Wrapper<ICondition> pulledEqualities, List<Variable> definedVars)
   {
     if (CompilerUtils.isEquality(query)) {
-      if (VarAnalysis.allDefined(CompilerUtils.equalityLhs(query), definedVars)
-          && VarAnalysis.allDefined(CompilerUtils.equalityRhs(query), definedVars)) {
+      if (VarAnalysis.allDefined(CompilerUtils.equalityLhs(query), definedVars) && VarAnalysis.allDefined(CompilerUtils
+          .equalityRhs(query), definedVars)) {
         CompilerUtils.extendCondition(pulledEqualities, query);
 
         return null;

@@ -28,7 +28,7 @@ queryforms is package{
     
     def Q1 is any of X where (1,X) in R;
     logMsg(info,"Q1=$Q1");
-    assert Q1="alpha";
+    assert Q1 has value "alpha";
     
     def Q2 is unique X where (_,X) in R;
     logMsg(info,"Q2=$Q2");

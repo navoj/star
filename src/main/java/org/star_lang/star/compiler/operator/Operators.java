@@ -98,7 +98,6 @@ public class Operators implements PrettyPrintable
 
     definePrefixAssoc(StandardNames.PRIVATE, 1320);
 
-    defineRight(StandardNames.HAS, 1300);
     definePrefix(StandardNames.TYPE, 1250, 1201); // type is not an operator when expected priority
     // is 1200 or less
     definePrefix(StandardNames.KIND, 900);
@@ -167,7 +166,6 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.SWITCH, 1020);
 
     defineInfix(StandardNames.HAS_TYPE, HAS_TYPE_PRIORITY);
-    defineInfix(StandardNames.HASTYPE, 1020);
 
     definePrefix(StandardNames.IMPORT, 1000);
 
@@ -285,7 +283,6 @@ public class Operators implements PrettyPrintable
 
     definePrefix(StandardNames.UNIQUE, 400);
     definePrefix(StandardNames.ALL, 400);
-    definePrefix(StandardNames.ANYOF, 400);
     definePrefix(StandardNames.ANY_OF, 400);
 
     defineInfix(StandardNames.APPLY, 200);
@@ -787,9 +784,9 @@ public class Operators implements PrettyPrintable
                 switch (form) {
                 case prefix:
                   if (op.isRightAssoc())
-                    System.out.print("right");
+                    System.out.print("prefix");
                   else
-                    System.out.print("nonassoc");
+                    System.out.print("nonpre");
                   break;
                 case infix:
                   if (op.isLeftAssoc())
@@ -797,20 +794,20 @@ public class Operators implements PrettyPrintable
                   else if (op.isRightAssoc())
                     System.out.print("right");
                   else
-                    System.out.print("nonassoc");
+                    System.out.print("infix");
                   break;
                 case postfix:
                   if (op.isLeftAssoc())
-                    System.out.print("left");
+                    System.out.print("postfix");
                   else
-                    System.out.print("nonassoc");
+                    System.out.print("nonpost");
                   break;
                 case none:
                   System.out.print("nonassoc");
                   break;
                 }
               }
-              System.out.print(" \"" + op.getOperator() + "\"");
+              System.out.print(" \"" + op.getOperator() +"\" "+op.getPriority());
             }
           }
           if (triggered)

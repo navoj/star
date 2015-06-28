@@ -25,11 +25,11 @@ queryer is package{
     }
   }
   
-  queryer is actor{
-    ageOf(N) is query anyof A where {name=N;age=A} in nameQ default -1;
+  def queryer is actor{
+    fun ageOf(N) is query an yof A where {name=N;age=A} in nameQ;
   };
   
-  startActors()
+  prc startActors() do
   { 
     logMsg(info,"starting");
     sleep(1000);

@@ -427,10 +427,7 @@ private import macrosupport;
 # unique ?C of ?E where ?Q :: expression :- E::expression :& Q::queryConstraint;
 # unique ?E where ?Q :: expression :- E::expression :& Q::queryConstraint;
 # all ?E where ?Q :: expression :- E::expression :& Q::queryConstraint;
-# any of ?E where ?Q default ?D :: expression :- E::expression :& Q::queryConstraint :& D::expression;
 # any of ?E where ?Q :: expression :- E::expression :& Q::queryConstraint;
-# anyof ?E where ?Q default ?D :: expression :- E::expression :& Q::queryConstraint :& D::expression;
-# anyof ?E where ?Q :: expression :- E::expression :& Q::queryConstraint;
 # ?C of ?E where ?Q :: expression :- C::expression :& E::expression :& Q::queryConstraint;
 
 # reduction ?F of { ?Q } :: expression :- F::expression :& Q::queryForm;
@@ -449,9 +446,6 @@ private import macrosupport;
 # unique ?C of ?E where ?Q :: queryForm :- E::expression :& Q::queryConstraint;
 # unique ?E where ?Q :: queryForm :- E::expression :& Q::queryConstraint;
 # all ?E where ?Q :: queryForm :- E::expression :& Q::queryConstraint;
-# anyof ?E where ?Q default ?D :: queryForm :- E::expression :& Q::queryConstraint :& D::expression;
-# anyof ?E where ?Q :: queryForm :- E::expression :& Q::queryConstraint;
-# any of ?E where ?Q default ?D :: queryForm :- E::expression :& Q::queryConstraint :& D::expression;
 # any of ?E where ?Q :: queryForm :- E::expression :& Q::queryConstraint;
 # ?C of ?E where ?Q :: queryForm :- C::expression :& E::expression :& Q::queryConstraint;
 

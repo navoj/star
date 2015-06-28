@@ -95,7 +95,7 @@ nanoKerberos is package {
     var foundFiles := list of [];
     
     fire() do {
-      Session is anyof Id where (request login(Name,Pass)) matches allowed(Id);
+      def Session is any of Id where (request login(Name,Pass)) matches allowed(Id);
        
       for F in Files do
       {

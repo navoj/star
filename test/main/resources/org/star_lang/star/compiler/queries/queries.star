@@ -77,15 +77,15 @@ queries is package{
    	logMsg(info,"Four=$Four");
     assert size(Four)<=4;
     
-    logMsg(info,"parent of sam = $(anyof P where {parent=P;child="sam"} in parent)");
+    logMsg(info,"parent of sam = $(any of P where {parent=P;child="sam"} in parent)");
     
     logMsg(info,"all about parents = $(all (P,C,D) where {parent=P;child=C;dob=D} in parent)");
     
-    def PS is anyof P where {parent=P;child="sam"} in parent;
+    def PS is someValue(any of P where {parent=P;child="sam"} in parent);
     assert PS in list of ["fred", "jane"];
     
-    logMsg(info,"parent of fred = $(anyof P where {parent=P;child="fred"} in parent default "not known")"); 
-    assert (anyof P where {parent=P;child="fred"} in parent default "not known") = "not known";
+    logMsg(info,"parent of fred = $(any of P where {parent=P;child="fred"} in parent)"); 
+    assert (any of P where {parent=P;child="fred"} in parent) = none;
     
     ns has type ref list of ((integer));
     var ns := list of [1,6,5,3,8,5,7,3,5,4];
