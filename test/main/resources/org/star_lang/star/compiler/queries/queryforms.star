@@ -22,7 +22,7 @@ queryforms is package{
   
   prc main() do {
     -- varying quantifier terms
-    def Q0 is all X where (1,X) in R;
+    def Q0 is list of { all X where (1,X) in R}
     logMsg(info,"Q0=$Q0");
     assert Q0=list of ["alpha"];
     
@@ -30,7 +30,7 @@ queryforms is package{
     logMsg(info,"Q1=$Q1");
     assert Q1 has value "alpha";
     
-    def Q2 is unique X where (_,X) in R;
+    def Q2 is list of { unique X where (_,X) in R};
     logMsg(info,"Q2=$Q2");
     assert Q2 complement (list of ["alpha", "beta", "gamma", "delta"]) = list of [];
     
@@ -38,20 +38,20 @@ queryforms is package{
     logMsg(info,"Q3=$Q3");
     assert size(Q3)=3;
     
-    def Q4 is unique 1 of X where (_, X) in R;
+    def Q4 is list of { unique 1 of X where (_, X) in R};
     logMsg(info,"Q4=$Q4");
     assert Q4=list of ["alpha"];
     
     -- varying sorting constraints
-    def S0 is all X where (X,Y) in R order by X;
+    def S0 is list of { all X where (X,Y) in R order by X }
     logMsg(info,"S0=$S0");
     assert S0=list of [1,2,3,4,10];
     
-    def S1 is all X where (X,Y) in R order descending by Y;
+    def S1 is list of { all X where (X,Y) in R order descending by Y }
     logMsg(info,"S1=$S1");
     assert S1=list of [3,4,2,1,10];
     
-    def S2 is all X where (X,Y) in R order by Y using (>);
+    def S2 is list of { all X where (X,Y) in R order by Y using (>) }
     logMsg(info,"S2=$S2");
     assert S2=list of [3,4,2,1,10];
     

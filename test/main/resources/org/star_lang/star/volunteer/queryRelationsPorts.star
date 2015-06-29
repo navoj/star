@@ -34,9 +34,9 @@ queryRelationsPorts is package{
     };
     
     prc calcTotal() do
-      logMsg(info,"total balance is $(total(all U.balance where U in Users))");
+      logMsg(info,"total balance is $(total(list of { all U.balance where U in Users} ))");
        
-    fun getBalance(N) is any of B where user{name=N;balance=B} in Users;
+    fun getBalance(N) is someValue(any of B where user{name=N;balance=B} in Users);
   };
   
   fun total(R) is valof{

@@ -200,6 +200,9 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.ORDERDESCENDINBY, 950);
     defineInfix(StandardNames.DESCENDINGBY, 950);
     defineInfix(StandardNames.WHERE, 940);
+    
+    definePrefix(StandardNames.ALL, 935);
+    definePrefix(StandardNames.ANY_OF, 935);
 
     defineRight(StandardNames.OR, 930);
     defineRight(StandardNames.OTHERWISE, 930);
@@ -282,8 +285,6 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.AS, 420);
 
     definePrefix(StandardNames.UNIQUE, 400);
-    definePrefix(StandardNames.ALL, 400);
-    definePrefix(StandardNames.ANY_OF, 400);
 
     defineInfix(StandardNames.APPLY, 200);
 
