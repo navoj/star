@@ -1,6 +1,7 @@
 package org.star_lang.star.code.repository;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import org.star_lang.star.CompileDriver;
 import org.star_lang.star.LanguageException;
@@ -44,6 +45,8 @@ import org.star_lang.star.resource.catalog.CatalogUtils;
 
 public class RepositoryManager
 {
+  private static final Logger logger = Logger.getAnonymousLogger();
+
   public static final String METAENTRY = "metaRulesEntry";
   public static final String MANIFEST = "starManifest";
   public static final String COMPILED = "compiledEntry";
@@ -77,6 +80,7 @@ public class RepositoryManager
       if (uri != null)
         return locatePackage(repository, uri);
     } catch (CatalogException e) {
+      logger.info("Cannot locate " + name + " in repository");
     }
 
     return null;
@@ -101,6 +105,7 @@ public class RepositoryManager
           return (MetaRules) importMeta;
       }
     } catch (RepositoryException e) {
+      logger.info("Cannot locate " + uri + " in repository");
     }
     return null;
   }

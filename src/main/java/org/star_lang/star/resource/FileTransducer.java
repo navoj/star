@@ -43,10 +43,10 @@ public class FileTransducer implements Transducer
       try {
         return new FileReader(file);
       } catch (FileNotFoundException e) {
-        throw new ResourceException(file + " not accessable");
+        throw new ResourceException("file " + file + " not accessable");
       }
     else
-      throw new ResourceException(file + " not accessable");
+      throw new ResourceException("file " + file + " not readable");
   }
 
   private static File fileFromURI(ResourceURI uri)
@@ -62,10 +62,10 @@ public class FileTransducer implements Transducer
       try {
         return new FileInputStream(file);
       } catch (FileNotFoundException e) {
-        throw new ResourceException(file + " not accessable");
+        throw new ResourceException("file " + file + " not accessable");
       }
     else
-      throw new ResourceException(file + " not accessable");
+      throw new ResourceException("file " + file + " not readable");
   }
 
   @Override
@@ -83,10 +83,10 @@ public class FileTransducer implements Transducer
       try {
         return new FileOutputStream(file);
       } catch (FileNotFoundException e) {
-        throw new ResourceException(file + " not accessable");
+        throw new ResourceException("cannot create output to file " + file);
       }
     else
-      throw new ResourceException(file + " not accessable");
+      throw new ResourceException("cannot write to file " + file);
   }
 
   @Override
@@ -97,11 +97,11 @@ public class FileTransducer implements Transducer
       try {
         FileUtil.writeFile(file, resource);
       } catch (FileNotFoundException e) {
-        throw new ResourceException(file + " not accessable");
+        throw new ResourceException("cannot write to resource " + file);
       } catch (IOException e) {
         throw new ResourceException(StringUtils.msg("I/O problem ", e.getMessage(), " in writing to ", file));
       }
     else
-      throw new ResourceException(file + " not accessable");
+      throw new ResourceException("cannot write to resource file" + file);
   }
 }

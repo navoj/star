@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import java.util.Set;
 
 import org.star_lang.star.code.repository.CodeRepository;
@@ -52,8 +53,9 @@ import org.star_lang.star.resource.catalog.URIBasedCatalog;
 @SuppressWarnings("serial")
 public class PackageGrapher implements PrettyPrintable
 {
-  // functions to build a dependency graph of which packages depend on which
+  private static final Logger logger = Logger.getAnonymousLogger();
 
+  // functions to build a dependency graph of which packages depend on which
   private final Map<ResourceURI, PkgGraph> graph = new HashMap<>();
   private final CodeRepository repository;
   private final ErrorReport errors;
@@ -128,7 +130,7 @@ public class PackageGrapher implements PrettyPrintable
   private PkgGraph processPkg(ResourceURI uri, Catalog catalog)
   {
     errors.startTimer(uri.toString());
-    assert !graph.containsKey(uri);
+    assert!graph.containsKey(uri);
 
     try {
       String srcText = Resources.getUriContent(uri);
@@ -168,9 +170,12 @@ public class PackageGrapher implements PrettyPrintable
           tok = tokenizer.nextToken();
         }
         return pkg;
-      } else
+      } else {
+        logger.info("cannot locate source for " + uri);
         return null;
+      }
     } catch (ResourceException e) {
+      logger.info("resource exception: " + e.getMessage());
       return null;
     } finally {
       errors.recordTime(uri.toString());

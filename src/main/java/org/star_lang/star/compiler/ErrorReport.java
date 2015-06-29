@@ -43,7 +43,7 @@ public class ErrorReport implements PrettyPrintable
 
     reportMsg(msg);
 
-    // System.err.println(msg);
+    System.err.println(msg);
   }
 
   private void reportMsg(CompilerMessage msg)
