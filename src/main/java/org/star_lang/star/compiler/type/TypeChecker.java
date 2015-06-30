@@ -4762,8 +4762,11 @@ public class TypeChecker
   private List<Pair<IContentPattern, IContentAction>> checkCaseBranches(Location loc, IAbstract caseTerms,
       IType selectorType, IType resultType, Dictionary dict)
   {
+    IContentExpression ex = MatchCompiler.genException(loc, dict, errors);
+    RaiseAction failure = new RaiseAction(loc, ex);
+
     Pair<IContentPattern, IContentAction> deflt = Pair.pair((IContentPattern) Variable.anonymous(loc, new TypeVar()),
-        (IContentAction) new NullAction(loc, resultType));
+        (IContentAction) failure);
 
     List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
 

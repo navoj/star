@@ -128,7 +128,7 @@ public class MatchCompiler
     return compileMatch(loc, newVars, list, failure, subCxt, outer, gen, definedVars, maxDepth, errors);
   }
 
-  private static IContentExpression genException(Location loc, Dictionary cxt, ErrorReport errors)
+  public static IContentExpression genException(Location loc, Dictionary cxt, ErrorReport errors)
   {
     IContentExpression code = CompilerUtils.stringLiteral(loc, "error");
     IContentExpression raised = new Scalar(loc, StandardTypes.stringType, Factory

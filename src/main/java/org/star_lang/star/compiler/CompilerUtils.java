@@ -1638,26 +1638,20 @@ public class CompilerUtils
     return Abstract.unaryArg(trm);
   }
 
-  public static boolean isCaseTerm(IAbstract term, Predicate<IAbstract> caseTest)
+  public static boolean isCaseTerm(IAbstract term)
   {
-    if (Abstract.isUnary(term, StandardNames.SWITCH) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IN)
-        && isBlockTerm(Abstract.binaryRhs(Abstract.unaryArg(term)))) {
-      IAbstract cases = blockContent(Abstract.binaryRhs(Abstract.unaryArg(term)));
-      return filterUnwrap(cases, StandardNames.TERM, caseTest);
-    } else
-      return false;
+    return Abstract.isUnary(term, StandardNames.SWITCH) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IN)
+        && isBlockTerm(Abstract.binaryRhs(Abstract.unaryArg(term)));
   }
 
   public static boolean isCaseExp(IAbstract term)
   {
-    return isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE) && Abstract.isBinary(Abstract.unaryArg(T),
-        StandardNames.IS));
+    return isCaseTerm(term);
   }
 
   public static boolean isCaseAction(IAbstract term)
   {
-    return isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE) && Abstract.isBinary(Abstract.unaryArg(T),
-        StandardNames.DO));
+    return isCaseTerm(term);
   }
 
   public static IAbstract caseTerm(Location loc, IAbstract sel, List<IAbstract> cases)
@@ -1668,14 +1662,14 @@ public class CompilerUtils
 
   public static IAbstract caseSel(IAbstract term)
   {
-    assert isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE));
+    assert isCaseTerm(term);
     term = Abstract.unaryArg(term);
     return Abstract.binaryLhs(term);
   }
 
   public static IAbstract caseRules(IAbstract term)
   {
-    assert isCaseTerm(term, (T) -> Abstract.isUnary(T, StandardNames.CASE));
+    assert isCaseTerm(term);
     term = Abstract.unaryArg(term);
     return blockContent(Abstract.binaryRhs(term));
   }
