@@ -4166,7 +4166,7 @@ public class TypeChecker
     }
   }
 
-  public static void charReference(Location loc, Sequencer<Integer> it, StringBuilder bldr, ErrorReport errors)
+  private static void charReference(Location loc, Sequencer<Integer> it, StringBuilder bldr, ErrorReport errors)
   {
     int ch = it.next();
     switch (ch) {
@@ -4230,7 +4230,7 @@ public class TypeChecker
     }
   }
 
-  public static int grabUnicode(Location loc, Sequencer<Integer> it, ErrorReport errors)
+  private static int grabUnicode(Location loc, Sequencer<Integer> it, ErrorReport errors)
   {
     int X = 0;
     int ch = it.next();
