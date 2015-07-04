@@ -193,7 +193,7 @@ public class TypeUtils
 
   public static IType typeExp(String name, IType... args)
   {
-    assert !isTupleLabel(name);
+    assert!isTupleLabel(name);
 
     if (args.length == 0)
       return new Type(name);
@@ -890,8 +890,8 @@ public class TypeUtils
   {
     if (isTupleLabel(type))
       return true;
-    else if (type.equals(StandardNames.FUN_ARROW) || type.equals(StandardNames.PTN_TYPE)
-        || type.equals(StandardNames.CONSTRUCTOR_TYPE))
+    else if (type.equals(StandardNames.FUN_ARROW) || type.equals(StandardNames.PTN_TYPE) || type.equals(
+        StandardNames.CONSTRUCTOR_TYPE))
       return true;
     else
       return Intrinsics.isIntrinsicType(type);
@@ -912,6 +912,7 @@ public class TypeUtils
   }
 
   public static IType getAttributeType(Dictionary cxt, IType type, String att, boolean testOnly)
+      throws TypeConstraintException
   {
     type = deRef(type);
 
@@ -946,11 +947,7 @@ public class TypeUtils
             if (aggCon.hasMember(att)) {
               IType conType = Freshen.freshenForUse(aggCon.getConType());
 
-              try {
-                Subsume.same(TypeUtils.getConstructorResultType(conType), type, Location.nullLoc, cxt);
-              } catch (TypeConstraintException e) {
-                return null;
-              }
+              Subsume.same(TypeUtils.getConstructorResultType(conType), type, Location.nullLoc, cxt);
 
               IType conArgType = TypeUtils.getConstructorArgType(conType);
 
@@ -1421,9 +1418,9 @@ public class TypeUtils
   {
     type = deRef(type);
 
-    return type instanceof Type
-        && (isRawBoolType(type) || isRawCharType(type) || isRawIntType(type) || isRawLongType(type)
-            || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type) || isRawBinaryType(type));
+    return type instanceof Type && (isRawBoolType(type) || isRawCharType(type) || isRawIntType(type) || isRawLongType(
+        type) || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type)
+        || isRawBinaryType(type));
   }
 
   public static IType cookedType(IType type)
@@ -1553,8 +1550,8 @@ public class TypeUtils
     return isType(type, StandardNames.ITERSTATE, 1);
   }
 
-  public static void addFieldConstraint(TypeVar var, Location loc, String att, IType type, Dictionary cxt, boolean allow)
-      throws TypeConstraintException
+  public static void addFieldConstraint(TypeVar var, Location loc, String att, IType type, Dictionary cxt,
+      boolean allow) throws TypeConstraintException
   {
     var.addConstraint(new FieldConstraint(var, att, type), allow, loc, cxt);
   }
@@ -1593,8 +1590,8 @@ public class TypeUtils
         if (o2 instanceof TypeExp) {
           TypeExp t1 = (TypeExp) o1;
           TypeExp t2 = (TypeExp) o2;
-          int comp = t1.typeArity() == t2.typeArity() ? compare(t1.getTypeCon(), t2.getTypeCon()) : t1.typeArity()
-              - t2.typeArity();
+          int comp = t1.typeArity() == t2.typeArity() ? compare(t1.getTypeCon(), t2.getTypeCon())
+              : t1.typeArity() - t2.typeArity();
 
           if (comp == 0) {
             for (int ix = 0; ix < t1.typeArity() && comp == 0; ix++)

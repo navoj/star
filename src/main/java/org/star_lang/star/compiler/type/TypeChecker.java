@@ -2018,7 +2018,7 @@ public class TypeChecker
   }
 
   private static IType fieldType(Location loc, IType rType, String field, IType expectedType, Dictionary dict,
-      ErrorReport errors)
+      ErrorReport errors) throws TypeConstraintException
   {
     rType = TypeUtils.deRef(rType);
 
@@ -2149,13 +2149,19 @@ public class TypeChecker
         return new Variable(loc, expectedType, field);
       }
     } else {
-      fieldType = TypeUtils.getAttributeType(dict, rType, field, false);
+      try {
+        fieldType = TypeUtils.getAttributeType(dict, rType, field, false);
 
-      if (fieldType == null) {
-        errors.reportError(StringUtils.msg("'", rType, "' not known to have field '", field, "'"), loc);
+        if (fieldType == null) {
+          errors.reportError(StringUtils.msg("'", rType, "' not known to have field '", field, "'"), loc);
+          return new Variable(loc, expectedType, field);
+        }
+        fieldType = Freshen.freshen(fieldType, readOnly, readWrite).left();
+      } catch (TypeConstraintException e) {
+        errors.reportError(StringUtils.msg("'", rType, "' not consistent with field '", field, "'\nbecause ", e
+            .getWords()), loc);
         return new Variable(loc, expectedType, field);
       }
-      fieldType = Freshen.freshen(fieldType, readOnly, readWrite).left();
     }
 
     final IContentExpression access;
@@ -3589,21 +3595,29 @@ public class TypeChecker
         if (CompilerUtils.isEquals(el)) {
           if (CompilerUtils.isIdentifier(Abstract.getArg(el, 0))) {
             String member = Abstract.getId(Abstract.getArg(el, 0));
-            IType memType = fieldType(loc, expectedType, member, new TypeVar(), cxt, errors);
+            try {
+              IType memType = fieldType(loc, expectedType, member, new TypeVar(), cxt, errors);
 
-            IContentPattern elPtn = typeOfPtn(Abstract.getArg(el, 1), memType, condition, cxt, outer, varHandler);
-            CompilerUtils.extendCondition(condition, new Matches(loc, FieldAccess.create(loc, memType, recordVar,
-                member), elPtn));
+              IContentPattern elPtn = typeOfPtn(Abstract.getArg(el, 1), memType, condition, cxt, outer, varHandler);
+              CompilerUtils.extendCondition(condition, new Matches(loc, FieldAccess.create(loc, memType, recordVar,
+                  member), elPtn));
+            } catch (TypeConstraintException e) {
+              errors.reportError(StringUtils.msg(member, " not valid\nbecause ", e.getWords()), el.getLoc());
+            }
           }
         } else if (CompilerUtils.isAssignment(el)) {
           if (CompilerUtils.isIdentifier(CompilerUtils.assignedVar(el))) {
             String member = Abstract.getId(CompilerUtils.assignedVar(el));
-            IType memType = fieldType(loc, expectedType, member, TypeUtils.referenceType(new TypeVar()), cxt, errors);
+            try {
+              IType memType = fieldType(loc, expectedType, member, TypeUtils.referenceType(new TypeVar()), cxt, errors);
 
-            IContentPattern elPtn = typeOfPtn(CompilerUtils.assignedValue(el), memType, condition, cxt, outer,
-                varHandler);
-            CompilerUtils.extendCondition(condition, new Matches(loc, FieldAccess.create(loc, memType, recordVar,
-                member), elPtn));
+              IContentPattern elPtn = typeOfPtn(CompilerUtils.assignedValue(el), memType, condition, cxt, outer,
+                  varHandler);
+              CompilerUtils.extendCondition(condition, new Matches(loc, FieldAccess.create(loc, memType, recordVar,
+                  member), elPtn));
+            } catch (TypeConstraintException e) {
+              errors.reportError(StringUtils.msg(member, " not valid\nbecause ", e.getWords()), el.getLoc());
+            }
           }
         } else if (CompilerUtils.isTypeEquality(el)) {
           String name = Abstract.getId(CompilerUtils.typeEqualField(el));
@@ -3961,12 +3975,16 @@ public class TypeChecker
             } else if (CompilerUtils.isAssignment(el)) {
               if (CompilerUtils.isIdentifier(CompilerUtils.assignedVar(el))) {
                 String member = Abstract.getId(CompilerUtils.assignedVar(el));
-                IType memType = fieldType(loc, expectedType, member, TypeUtils.referenceType(new TypeVar()), cxt,
-                    errors);
+                try {
+                  IType memType = fieldType(loc, expectedType, member, TypeUtils.referenceType(new TypeVar()), cxt,
+                      errors);
 
-                IContentPattern elPtn = typeOfPtn(CompilerUtils.assignedValue(el), memType, condition, cxt, outer,
-                    varHandler);
-                els.put(member, elPtn);
+                  IContentPattern elPtn = typeOfPtn(CompilerUtils.assignedValue(el), memType, condition, cxt, outer,
+                      varHandler);
+                  els.put(member, elPtn);
+                } catch (TypeConstraintException e) {
+                  errors.reportError(StringUtils.msg(member, " not valid\nbecause ", e.getWords()), el.getLoc());
+                }
               }
             } else if (CompilerUtils.isTypeEquality(el)) {
               String name = Abstract.getId(CompilerUtils.typeEqualField(el));

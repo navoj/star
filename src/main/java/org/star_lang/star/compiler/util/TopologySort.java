@@ -142,7 +142,7 @@ public class TopologySort<T>
     return sorter.sort();
   }
 
-  public List<List<IDefinition<T>>> sort()
+  private List<List<IDefinition<T>>> sort()
   {
     for (DefEntry def : definitions) {
       if (!def.done)
