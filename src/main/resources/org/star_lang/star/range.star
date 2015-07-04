@@ -48,6 +48,7 @@ private fun iotaIterate(Fr,To,Stp,Fn,S) is valof{
   }
   valis St;
 }
+/*
 
 implementation for all t such that sequence over range of t determines t where coercion over (integer,t) and equality over t is {
     ptn _empty() from range(F,T,I) where F*I>=T*I
@@ -59,6 +60,7 @@ implementation for all t such that sequence over range of t determines t where c
     ptn _back(range(F,E-I,I),E) from range(F,E,I);
     fun _nil() is range(0 as t,0 as t,1 as t);
   }
+*/
 
 implementation for all t such that foldable over range of t determines t is {
   fun leftFold(F,I,range(Fr,To,Inc)) is  valof{

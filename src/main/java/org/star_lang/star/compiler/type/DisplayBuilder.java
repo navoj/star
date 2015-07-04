@@ -76,8 +76,8 @@ public class DisplayBuilder
         lookForAnonTypes(CompilerUtils.typeAliasAlias(stmt), dict, theta, printers);
       else if (CompilerUtils.isTypeDefn(stmt) && !CompilerUtils.isTypeAlias(stmt) && !checkExistentials(stmt)) {
         String tpLabel = CompilerUtils.typeDefnName(stmt);
-        if (tpLabel != null && !checkThetaForImplementation(tpLabel, StandardNames.PPRINT, theta, dict)
-            && !printers.containsKey(tpLabel)) {
+        if (tpLabel != null && !checkThetaForImplementation(tpLabel, StandardNames.PPRINT, theta, dict) && !printers
+            .containsKey(tpLabel)) {
           if (checkThetaForImplementation(tpLabel, StandardNames.SEQUENCE, theta, dict)) {
             IAbstract pp = seqPPimplementation(stmt, dict);
             if (pp != null)
@@ -124,8 +124,8 @@ public class DisplayBuilder
           lookForAnonTypes((IAbstract) el, dict, theta, printers);
       } else
         lookForAnonTypes(tpArgs, dict, theta, printers);
-    } else if (Abstract.isBinary(tp, StandardNames.UNI_TILDA)
-        && Abstract.isUnary(Abstract.binaryLhs(tp), StandardNames.TYPEVAR))
+    } else if (Abstract.isBinary(tp, StandardNames.UNI_TILDA) && Abstract.isUnary(Abstract.binaryLhs(tp),
+        StandardNames.TYPEVAR))
       lookForAnonTypes(Abstract.binaryRhs(tp), dict, theta, printers);
     else if (Abstract.isBinary(tp, StandardNames.FUN_ARROW)) {
       IAbstract arg = Abstract.binaryLhs(tp);
@@ -172,8 +172,8 @@ public class DisplayBuilder
     Location loc = tp.getLoc();
     String label = CompilerUtils.anonRecordTypeLabel(tp) + "$display";
 
-    IAbstract eqn = CompilerUtils.function(loc, displayRecordContents(loc, label, tp, "", CompilerUtils
-        .blockContent(tp)));
+    IAbstract eqn = CompilerUtils.function(loc, displayRecordContents(loc, label, tp, "", CompilerUtils.blockContent(
+        tp)));
 
     IAbstract constraint = null;
     List<IAbstract> fieldTypes = new ArrayList<>();
@@ -279,8 +279,8 @@ public class DisplayBuilder
     for (IAbstract con : CompilerUtils.unWrap(cons, StandardNames.AND)) {
       if (CompilerUtils.isContractSpec(con)) {
         IAbstract c = CompilerUtils.contractSpecName(con);
-        if (Abstract.isIdentifier(c, StandardNames.PPRINT)
-            && Abstract.isIdentifier(CompilerUtils.contractSpecType(con), lbl))
+        if (Abstract.isIdentifier(c, StandardNames.PPRINT) && Abstract.isIdentifier(CompilerUtils.contractSpecType(con),
+            lbl))
           return true;
       }
     }
@@ -353,8 +353,8 @@ public class DisplayBuilder
     IAbstract arg = new Name(loc, GenSym.genSym("V$"));
     List<IAbstract> args = FixedList.create(arg);
 
-    IAbstract eqn = CompilerUtils.function(loc, CompilerUtils.equation(loc, StandardNames.PPDISP, args, Abstract
-        .binary(loc, "sequenceDisplay", new StringLiteral(loc, tpLabel), arg)));
+    IAbstract eqn = CompilerUtils.function(loc, CompilerUtils.equation(loc, StandardNames.PPDISP, args, Abstract.binary(
+        loc, "sequenceDisplay", new StringLiteral(loc, tpLabel), arg)));
 
     IAbstract defn = CompilerUtils.blockTerm(loc, eqn);
     return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
@@ -504,7 +504,7 @@ public class DisplayBuilder
     ArrayList<IAbstract> lArgs = new ArrayList<>();
     IAbstract dispSequence = cons(loc, str(loc, suffix), nil(loc));
 
-    for (IAbstract el : CompilerUtils.unWrap(content)) {
+    for (IAbstract el : CompilerUtils.reverseUnwrap(content, StandardNames.TERM)) {
       if (CompilerUtils.isTypeAnnotation(el)) {
         if (vNo > 0)
           dispSequence = cons(loc, sep, cons(loc, nl(loc), dispSequence));
@@ -522,8 +522,8 @@ public class DisplayBuilder
             : field.toString() + equals));
         Name lV = new Name(loc, "$F" + vNo++);
 
-        IAbstract disp = conLabel.equals("") ? Abstract.unary(loc, StandardNames.PPDISP, lV) : display(loc, tp, type,
-            lV, label);
+        IAbstract disp = conLabel.equals("") ? Abstract.unary(loc, StandardNames.PPDISP, lV)
+            : display(loc, tp, type, lV, label);
 
         IAbstract fldDisp = seq(loc, 2, cons(loc, fldPrefix, cons(loc, disp, nil(loc))));
 

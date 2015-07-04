@@ -1479,18 +1479,18 @@ public class TypeChecker
 
     if (Abstract.isUnary(cntTrm, StandardNames.ALL)) {
       countExp = null;
-      bound = typeOfExp(Abstract.unaryArg(cntTrm), elType, queryCxt, dict);
+      bound = boundElType(Abstract.unaryArg(cntTrm), elType, queryCxt, dict);
       eliminateDuplicates = false;
     } else if (Abstract.isUnary(cntTrm, StandardNames.UNIQUE)) {
       countExp = null;
-      bound = typeOfExp(Abstract.unaryArg(cntTrm), elType, queryCxt, dict);
+      bound = boundElType(Abstract.unaryArg(cntTrm), elType, queryCxt, dict);
       eliminateDuplicates = true;
       if (compWithTrm == null)
         compWithTrm = Abstract.name(loc, StandardNames.LESS);
       sortbyTrm = Abstract.unaryArg(cntTrm);
     } else if (Abstract.isBinary(cntTrm, StandardNames.OF)) {
       if (Abstract.isUnary(Abstract.getArg(cntTrm, 0), StandardNames.UNIQUE)) {
-        countExp = typeOfExp(Abstract.argPath(cntTrm, 0, 0), integerType, dict, outer);
+        countExp = boundElType(Abstract.argPath(cntTrm, 0, 0), integerType, dict, outer);
         eliminateDuplicates = true;
         if (compWithTrm == null)
           compWithTrm = Abstract.name(loc, StandardNames.LESS);
@@ -1499,7 +1499,7 @@ public class TypeChecker
         countExp = typeOfExp(Abstract.getArg(cntTrm, 0), integerType, dict, outer);
         eliminateDuplicates = false;
       }
-      bound = typeOfExp(Abstract.getArg(cntTrm, 1), elType, queryCxt, dict);
+      bound = boundElType(Abstract.getArg(cntTrm, 1), elType, queryCxt, dict);
     } else if (Abstract.isUnary(cntTrm, StandardNames.ANY_OF)) {
       bound = typeOfExp(Abstract.unaryArg(cntTrm), elType, queryCxt, dict);
       queryForm = QueryForm.satisfactionQuery;
@@ -1691,6 +1691,15 @@ public class TypeChecker
             outer, errors);
       }
     }
+  }
+
+  private IContentExpression boundElType(IAbstract el, IType expectedType, Dictionary dict, Dictionary outer)
+  {
+    if (Abstract.isBinary(el, StandardNames.MAP_ARROW))
+      return typeOfExp(Abstract.tupleTerm(el.getLoc(), Abstract.binaryLhs(el), Abstract.binaryRhs(el)), expectedType, dict,
+          outer);
+    else
+      return typeOfExp(el, expectedType, dict, outer);
   }
 
   private IContentExpression firstEl(Location loc, IContentExpression result, IType expectedType, Dictionary dict,

@@ -2353,7 +2353,7 @@ public class CompilerUtils
   public static IAbstract implementationContractType(IAbstract term)
   {
     assert isImplementationStmt(term);
-    IAbstract spec = implementedContractSpec(term);
+    IAbstract spec = unwrapQuants(implementedContractSpec(term));
 
     boolean flag = true;
     while (flag) {
