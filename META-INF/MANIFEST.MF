@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Star Language System
-Bundle-SymbolicName: com.starview.star
+Bundle-SymbolicName: org.star_lang.star
 Bundle-Version: 7.0.0.qualifier
 StarLib-Version: 2.2.0.build-${env.BUILD_NUMBER}-${env.MERCURIAL_REVISION}
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

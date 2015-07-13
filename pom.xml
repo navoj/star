@@ -22,7 +22,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -50,7 +50,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.11</version>
         <configuration>
-          <argLine>-Xmx3g -Xss16m -XX:MaxPermSize=256m -Dfile.encoding=UTF8 -XX:-DoEscapeAnalysis</argLine>
+          <argLine>-Xmx3g -Xss16m -Dfile.encoding=UTF8 -XX:-DoEscapeAnalysis</argLine>
           <includes>
             <include>**/StarTestSuite.java</include>
           </includes>
