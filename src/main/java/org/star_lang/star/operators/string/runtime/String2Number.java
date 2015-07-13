@@ -282,7 +282,7 @@ public abstract class String2Number
           txt = txt.substring(0, txt.indexOf('A'));
         return Factory.newDecimal(new BigDecimal(txt));
       } catch (NumberFormatException e) {
-        return BigNumWrap.nonDecimalEnum;
+        throw new EvaluationException("invalid decimal number");
       }
     }
 

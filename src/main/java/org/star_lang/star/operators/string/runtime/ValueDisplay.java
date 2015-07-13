@@ -18,25 +18,22 @@ import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p/>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
 
-public class ValueDisplay implements IValueVisitor
-{
+public class ValueDisplay implements IValueVisitor {
   private final PrettyPrintDisplay disp;
   public static final String LIST = "list";
   public static final String HASH = "map";
@@ -44,43 +41,38 @@ public class ValueDisplay implements IValueVisitor
   public static final String INDEXED = "indexed";
   public static final String RELATION = "relation";
 
-  private ValueDisplay(PrettyPrintDisplay disp)
-  {
+  private ValueDisplay(PrettyPrintDisplay disp) {
     this.disp = disp;
   }
 
-  public static String display(IValue term)
-  {
+  public static String display(IValue term) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
     ValueDisplay displayer = new ValueDisplay(disp);
     term.accept(displayer);
     return disp.toString();
   }
 
-  public static void display(PrettyPrintDisplay disp, IValue term)
-  {
+  public static void display(PrettyPrintDisplay disp, IValue term) {
     ValueDisplay displayer = new ValueDisplay(disp);
     term.accept(displayer);
   }
 
   @Override
-  public void visitList(IList list)
-  {
+  public void visitList(IList list) {
     disp.appendWord("list of [");
     int mark = disp.markIndent(2);
     String sep = "";
     for (IValue el : list) {
       disp.append(sep);
       sep = ", ";
-      el.accept(this);
+      visit(el);
     }
     disp.popIndent(mark);
     disp.append("]");
   }
 
   @Override
-  public void visitConstructor(IConstructor con)
-  {
+  public void visitConstructor(IConstructor con) {
     String label = con.getLabel();
 
     if (!TypeUtils.isTupleLabel(label) && !TypeUtils.isAnonRecordLabel(label))
@@ -91,31 +83,28 @@ public class ValueDisplay implements IValueVisitor
       for (int ix = 0; ix < con.size(); ix++) {
         disp.append(sep);
         sep = ", ";
-        con.getCell(ix).accept(this);
+        visit(con.getCell(ix));
       }
       disp.append(")");
     }
   }
 
   @Override
-  public void visitFunction(IFunction fn)
-  {
+  public void visitFunction(IFunction fn) {
     disp.append("<<function: ");
     DisplayType.display(disp, fn.getType());
     disp.append(">>");
   }
 
   @Override
-  public void visitPattern(IPattern ptn)
-  {
+  public void visitPattern(IPattern ptn) {
     disp.append("<<pattern: ");
     DisplayType.display(disp, ptn.getType());
     disp.append(">>");
   }
 
   @Override
-  public void visitMap(IMap map)
-  {
+  public void visitMap(IMap map) {
     disp.append(StandardNames.DICTIONARY);
     disp.appendWord(StandardNames.OF);
     disp.append("{");
@@ -124,17 +113,16 @@ public class ValueDisplay implements IValueVisitor
     for (Entry<IValue, IValue> entry : map) {
       disp.append(sep);
       sep = ";\n";
-      entry.getKey().accept(this);
+      visit(entry.getKey());
       disp.append("->");
-      entry.getValue().accept(this);
+      visit(entry.getValue());
     }
     disp.popIndent(mark);
     disp.append("}");
   }
 
   @Override
-  public void visitRecord(IRecord record)
-  {
+  public void visitRecord(IRecord record) {
     if (!TypeUtils.isAnonRecordLabel(record.getLabel()))
       disp.appendId(record.getLabel());
     disp.append("{");
@@ -147,22 +135,26 @@ public class ValueDisplay implements IValueVisitor
       disp.appendId(fields[ix]);
       disp.appendWord(EQUAL);
       disp.append(" ");
-      IValue value = record.getCell(ix);
-      if (value != null)
-        value.accept(this);
-      else
-        disp.append("(null)");
+      visit(record.getCell(ix));
     }
     disp.popIndent(mark);
     disp.append("}");
   }
 
   @Override
-  public void visitScalar(IScalar<?> scalar)
-  {
+  public void visitScalar(IScalar<?> scalar) {
     if (scalar instanceof PrettyPrintable)
       ((PrettyPrintable) scalar).prettyPrint(disp);
     else
       disp.append(scalar.getValue().toString());
+  }
+
+  private void visit(IValue term) {
+    if (term instanceof PrettyPrintable)
+      ((PrettyPrintable) term).prettyPrint(disp);
+    else if (term != null)
+      term.accept(this);
+    else
+      disp.append("<null>");
   }
 }
