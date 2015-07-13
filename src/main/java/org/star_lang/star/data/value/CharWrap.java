@@ -1,28 +1,18 @@
 package org.star_lang.star.data.value;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.star_lang.star.compiler.cafe.compile.Utils;
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
-import org.star_lang.star.data.EvaluationException;
-import org.star_lang.star.data.IConstructor;
-import org.star_lang.star.data.IScalar;
-import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.IValueVisitor;
-import org.star_lang.star.data.type.ConstructorSpecifier;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeContext;
-import org.star_lang.star.data.type.ITypeDescription;
-import org.star_lang.star.data.type.IValueSpecifier;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.*;
+import org.star_lang.star.data.type.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Wrap a char in an {@link org.star_lang.data.IValue} object. Used only when viewing pieces of a
+ * Wrap a char in an {@link org.star_lang.star.data.IValue} object. Used only when viewing pieces of a
  * value. I.e., if you do a getMember of an IRecord field that is an char, you will actually get an
  * CharWrap value; even though the field is actually represented as an int. CharWrap is a way of
  * boxing character values.
@@ -46,8 +36,6 @@ import org.star_lang.star.data.type.StandardTypes;
 @SuppressWarnings("serial")
 public abstract class CharWrap implements PrettyPrintable, IConstructor
 {
-  public static final NonCharacter nonCharEnum = new NonCharacter();
-
   @Override
   public IType getType()
   {
@@ -103,12 +91,9 @@ public abstract class CharWrap implements PrettyPrintable, IConstructor
     // here
     ConstructorSpecifier strSpec = new ConstructorSpecifier(Location.nullLoc, null, StandardTypes.CHAR,
         CharWrapper.CONIX, CharWrapper.conType(), CharWrapper.class, CharWrap.class);
-    ConstructorSpecifier nonSpec = new ConstructorSpecifier(Location.nullLoc, null, StandardTypes.NON_CHAR,
-        NonCharacter.CONIX, TypeUtils.constructorType(charType), NonCharacter.class, CharWrap.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(strSpec);
-    specs.add(nonSpec);
     ITypeDescription type = new CafeTypeDescription(Location.nullLoc, charType, Utils
         .javaInternalClassName(CharWrap.class), specs);
     cxt.defineType(type);
@@ -122,7 +107,7 @@ public abstract class CharWrap implements PrettyPrintable, IConstructor
     /**
      * Construct an char wrapper as an {@link IValue} value.
      * 
-     * @param ix
+     * @param ix to wrap
      */
     public CharWrapper(int ix)
     {
