@@ -1,4 +1,19 @@
 package org.star_lang.star.compiler.util;
+/*
+ * Copyright 2013 Francis G. McCabe
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *   http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import java.io.File;
 import java.io.FileWriter;
@@ -19,59 +34,37 @@ import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
-/*
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- *
- */
+
 /**
  * Pretty printer implementation support
- * 
+ *
  * @author fgm
- * 
  */
-public class PrettyPrintDisplay
-{
+public class PrettyPrintDisplay {
   private final PrettyPrintFormatProperties properties;
 
-  Stack<State> marks = new Stack<State>();
+  Stack<State> marks = new Stack<>();
   int lineOffset = 0;
-  List<Integer> newLines = new ArrayList<Integer>();
+  List<Integer> newLines = new ArrayList<>();
 
   private StringBuilder blder = new StringBuilder();
 
-  public PrettyPrintDisplay(PrettyPrintFormatProperties properties)
-  {
+  public PrettyPrintDisplay(PrettyPrintFormatProperties properties) {
     this.properties = properties;
   }
 
-  public PrettyPrintDisplay()
-  {
+  public PrettyPrintDisplay() {
     this(new PrettyPrintFormatProperties());
   }
 
-  public PrettyPrintFormatProperties getProperties()
-  {
+  public PrettyPrintFormatProperties getProperties() {
     return properties;
   }
 
   int pos;
   int lastAppended = ' ';
 
-  public PrettyPrintDisplay append(String frag)
-  {
+  public PrettyPrintDisplay append(String frag) {
     if (frag == null)
       return this;
 
@@ -80,8 +73,7 @@ public class PrettyPrintDisplay
     return this;
   }
 
-  public void appendChar(int ch)
-  {
+  public void appendChar(int ch) {
     if (ch == '\n') {
       blder.appendCodePoint(ch);
       lastAppended = ch;
@@ -96,69 +88,59 @@ public class PrettyPrintDisplay
       pos++;
     }
   }
-  
-  public void space()
-  {
+
+  public void space() {
     appendChar(' ');
   }
 
-  public void append(int i)
-  {
+  public void append(int i) {
     append(Long.toString(i));
   }
 
-  public void append(long i)
-  {
+  public void append(long i) {
     append(Long.toString(i));
     appendChar('L');
   }
 
-  public void append(double d)
-  {
+  public void append(double d) {
     append(Double.toString(d));
   }
 
-  public void append(BigDecimal a)
-  {
+  public void append(BigDecimal a) {
     append(a.toString());
   }
 
-  public void appendWord(long i)
-  {
+  public void appendWord(long i) {
     if (!isWordBoundarySafe())
       space();
     append(Long.toString(i));
     appendChar('L');
   }
 
-  public void appendWord(int i)
-  {
+  public void appendWord(int i) {
     if (!isWordBoundarySafe())
       space();
     append(Integer.toString(i));
   }
 
-  public void appendWord(double d)
-  {
+  public void appendWord(double d) {
     appendWord(Double.toString(d));
   }
 
-  public void appendWord(BigDecimal a)
-  {
+  public void appendWord(BigDecimal a) {
     appendWord(a.toString());
   }
 
-  public void append(String[] words)
-  {
+  public void append(String[] words) {
     if (words.length == 1)
       append(words[0]);
     else {
       append("(");
       String sep = "";
-      for (int ix = 0; ix < words.length; ix++) {
+      for (String word : words) {
         append(sep);
         sep = ", ";
-        append(words[ix]);
+        append(word);
       }
       append(")");
     }
@@ -166,11 +148,10 @@ public class PrettyPrintDisplay
 
   /**
    * Potentially insert an extra space in front of a string that is supposed to be a word
-   * 
-   * @param str
+   *
+   * @param str append this to the buffer
    */
-  public void appendWord(String str)
-  {
+  public void appendWord(String str) {
     if (!str.isEmpty()) {
       if (!isWordBoundarySafe())
         space();
@@ -179,8 +160,7 @@ public class PrettyPrintDisplay
     }
   }
 
-  public void appendWords(Collection<String> words, String sep)
-  {
+  public void appendWords(Collection<String> words, String sep) {
     String s = sep;
     for (String word : words) {
       append(s);
@@ -189,8 +169,7 @@ public class PrettyPrintDisplay
     }
   }
 
-  public void appendId(String str)
-  {
+  public void appendId(String str) {
     if (StandardNames.isKeyword(str) || Operators.operatorRoot().isOperator(str, 0)) {
       append("(");
       append(str);
@@ -201,63 +180,59 @@ public class PrettyPrintDisplay
       appendWord(str);
   }
 
-  public void appendIden(String str)
-  {
+  public void appendIden(String str) {
     if (!isWordBoundarySafe())
       space();
     for (int ix = 0; ix < str.length(); ix = str.offsetByCodePoints(ix, 1)) {
       int ch = str.codePointAt(ix);
 
       switch (Character.getType(ch)) {
-      case Character.CONNECTOR_PUNCTUATION:
-      case Character.LETTER_NUMBER:
-      case Character.LOWERCASE_LETTER:
-      case Character.TITLECASE_LETTER:
-      case Character.UPPERCASE_LETTER:
-      case Character.OTHER_LETTER:
-      case Character.OTHER_NUMBER:
-      case Character.DECIMAL_DIGIT_NUMBER:
-        appendChar(ch);
-        continue;
-      case Character.MODIFIER_SYMBOL:
-      case Character.MATH_SYMBOL:
-      case Character.OTHER_SYMBOL:
-      case Character.OTHER_PUNCTUATION:
-      case Character.START_PUNCTUATION:
-      case Character.DASH_PUNCTUATION:
-      case Character.END_PUNCTUATION:
-      case Character.CURRENCY_SYMBOL:
-      case Character.COMBINING_SPACING_MARK:
-      case Character.MODIFIER_LETTER:
-      case Character.NON_SPACING_MARK:
-      case Character.PARAGRAPH_SEPARATOR:
-      case Character.PRIVATE_USE:
-      case Character.SPACE_SEPARATOR:
-      case Character.SURROGATE:
-        append("\\");
-        appendChar(ch);
-        continue;
-      default:
-        StringUtils.strChr(this, ch);
+        case Character.CONNECTOR_PUNCTUATION:
+        case Character.LETTER_NUMBER:
+        case Character.LOWERCASE_LETTER:
+        case Character.TITLECASE_LETTER:
+        case Character.UPPERCASE_LETTER:
+        case Character.OTHER_LETTER:
+        case Character.OTHER_NUMBER:
+        case Character.DECIMAL_DIGIT_NUMBER:
+          appendChar(ch);
+          continue;
+        case Character.MODIFIER_SYMBOL:
+        case Character.MATH_SYMBOL:
+        case Character.OTHER_SYMBOL:
+        case Character.OTHER_PUNCTUATION:
+        case Character.START_PUNCTUATION:
+        case Character.DASH_PUNCTUATION:
+        case Character.END_PUNCTUATION:
+        case Character.CURRENCY_SYMBOL:
+        case Character.COMBINING_SPACING_MARK:
+        case Character.MODIFIER_LETTER:
+        case Character.NON_SPACING_MARK:
+        case Character.PARAGRAPH_SEPARATOR:
+        case Character.PRIVATE_USE:
+        case Character.SPACE_SEPARATOR:
+        case Character.SURROGATE:
+          append("\\");
+          appendChar(ch);
+          continue;
+        default:
+          StringUtils.strChr(this, ch);
       }
     }
   }
 
-  public void appendQuoted(String str)
-  {
+  public void appendQuoted(String str) {
     append("\"");
     for (int ix = 0; ix < str.length(); ix = str.offsetByCodePoints(ix, 1))
       StringUtils.strChr(this, str.codePointAt(ix));
     append("\"");
   }
 
-  private boolean isWordBoundarySafe()
-  {
+  private boolean isWordBoundarySafe() {
     return pos == 0 || " ([{'\"".indexOf(lastAppended) >= 0;
   }
 
-  public void prettyPrint(Iterator<? extends PrettyPrintable> it, String sep)
-  {
+  public void prettyPrint(Iterator<? extends PrettyPrintable> it, String sep) {
     while (it.hasNext()) {
       final PrettyPrintable next = it.next();
       if (next != null)
@@ -269,8 +244,7 @@ public class PrettyPrintDisplay
     }
   }
 
-  public void prettyPrint(Iterable<? extends PrettyPrintable> coll, String sep)
-  {
+  public void prettyPrint(Iterable<? extends PrettyPrintable> coll, String sep) {
     String s = "";
     for (PrettyPrintable el : coll) {
       append(s);
@@ -282,8 +256,7 @@ public class PrettyPrintDisplay
     }
   }
 
-  public void prettyPrint(PrettyPrintable coll[], String sep)
-  {
+  public void prettyPrint(PrettyPrintable coll[], String sep) {
     String s = "";
     for (PrettyPrintable el : coll) {
       append(s);
@@ -296,13 +269,11 @@ public class PrettyPrintDisplay
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return blder.toString();
   }
 
-  public static String toString(PrettyPrintable pp)
-  {
+  public static String toString(PrettyPrintable pp) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
 
     pp.prettyPrint(disp);
@@ -310,8 +281,7 @@ public class PrettyPrintDisplay
     return disp.toString();
   }
 
-  public static void write(File out, PrettyPrintable pp) throws IOException
-  {
+  public static void write(File out, PrettyPrintable pp) throws IOException {
     if (out.exists() && !out.canWrite())
       throw new IOException("cannot write to " + out);
     else {
@@ -323,35 +293,31 @@ public class PrettyPrintDisplay
     }
   }
 
-  public int markIndent()
-  {
+  public int markIndent() {
     return markIndent(0);
   }
 
-  public int markIndent(int offset)
-  {
+  public int markIndent(int offset) {
     marks.push(new State(newLines, lineOffset));
     if (properties.isRelativeTabs())
       lineOffset = pos + offset;
     else
       lineOffset += offset;
-    newLines = new ArrayList<Integer>();
+    newLines = new ArrayList<>();
     return marks.size() - 1;
   }
 
-  public int markAlignment(int offset)
-  {
+  public int markAlignment(int offset) {
     marks.push(new State(newLines, lineOffset));
 
     lineOffset = offset;
     for (int ix = pos; ix < offset; ix++)
       space();
-    newLines = new ArrayList<Integer>();
+    newLines = new ArrayList<>();
     return marks.size() - 1;
   }
 
-  public void popIndent(int mark)
-  {
+  public void popIndent(int mark) {
     while (marks.size() > mark) {
       State state = marks.pop();
       lineOffset = state.lineMark;
@@ -360,8 +326,7 @@ public class PrettyPrintDisplay
     trimToIndent();
   }
 
-  private void trimToIndent()
-  {
+  private void trimToIndent() {
     int indent = 0;
     for (int ix = blder.length(); ix > 0 && blder.charAt(ix - 1) == ' '; ix--)
       indent++;
@@ -369,8 +334,7 @@ public class PrettyPrintDisplay
       blder.setLength(blder.length() - indent + lineOffset);
   }
 
-  public static String msg(Object... args)
-  {
+  public static String msg(Object... args) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
 
     for (Object o : args) {
@@ -399,20 +363,17 @@ public class PrettyPrintDisplay
     return disp.toString();
   }
 
-  private static class State
-  {
+  private static class State {
     List<Integer> newLines;
     int lineMark;
 
-    State(List<Integer> newLines, int lineMark)
-    {
+    State(List<Integer> newLines, int lineMark) {
       this.newLines = newLines;
       this.lineMark = lineMark;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
       return newLines.toString() + "@" + lineMark;
     }
   }

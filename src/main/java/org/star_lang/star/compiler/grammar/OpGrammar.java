@@ -37,26 +37,23 @@ import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.ResourceURI;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p/>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
 
 @SuppressWarnings("serial")
-public class OpGrammar implements PrettyPrintable
-{
+public class OpGrammar implements PrettyPrintable {
   private Tokenizer tokenizer;
 
   public final static String LPAR = "(";
@@ -80,20 +77,17 @@ public class OpGrammar implements PrettyPrintable
 
   private final List<TermListener<IAbstract>> listeners = new ArrayList<>();
 
-  public OpGrammar(Operators operators, ErrorReport errors)
-  {
+  public OpGrammar(Operators operators, ErrorReport errors) {
     this.errors = errors;
     this.operators = operators;
   }
 
-  public static IAbstract parse(Location loc, Reader rdr, Operators operators, ErrorReport errors)
-  {
+  public static IAbstract parse(Location loc, Reader rdr, Operators operators, ErrorReport errors) {
     OpGrammar parser = new OpGrammar(operators, errors);
     return parser.parse(loc.getUri(), rdr, loc);
   }
 
-  public IAbstract parse(ResourceURI uri, Reader input, Location loc)
-  {
+  public IAbstract parse(ResourceURI uri, Reader input, Location loc) {
     tokenizer = new Tokenizer(uri, errors, input, loc);
     // tokenizer.addListener(new DumpToken());
 
@@ -124,7 +118,7 @@ public class OpGrammar implements PrettyPrintable
         IAbstract right = termStack.pop();
         IAbstract left = termStack.pop();
         termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-            OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
+                OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
       }
       wrapCount--;
     }
@@ -140,8 +134,7 @@ public class OpGrammar implements PrettyPrintable
     return termStack.pop();
   }
 
-  public IAbstract parse(Reader input, Location loc)
-  {
+  public IAbstract parse(Reader input, Location loc) {
     tokenizer = new Tokenizer(errors, input, loc);
 
     termStack.clear();
@@ -159,164 +152,187 @@ public class OpGrammar implements PrettyPrintable
     return termStack.pop();
   }
 
-  private int term(int priority, String bracket)
-  {
+  private int term(int priority, String bracket) {
     if (DEBUG_PARSER)
       System.out.println("looking for term of priority: " + priority);
 
     return termRight(termLeft(priority, bracket), priority, bracket);
   }
 
-  private int termLeft(int priority, String bracket)
-  {
+  private int termLeft(int priority, String bracket) {
     Token hed = tokenizer.headToken();
 
     switch (hed.getType()) {
-    case character:
-    case string:
-    case blob:
-    case regexp:
-    case integer:
-    case longint:
-    case floating:
-    case decimal:
-      return term0();
-    case identifier: {
-      if (operators.isRightBracket(hed.getImage()))
-        reportError("not expecting a `" + hed.toString() + "' here" + bracket, hed.getLoc());
+      case character:
+      case string:
+      case blob:
+      case regexp:
+      case integer:
+      case longint:
+      case floating:
+      case decimal:
+        return term0();
+      case identifier: {
+        if (operators.isRightBracket(hed.getImage()))
+          reportError("not expecting a `" + hed.toString() + "' here" + bracket, hed.getLoc());
 
-      Operator prefix = operators.isPrefixOperator(hed.getImage(), priority);
-      Location leftLoc = hed.getLoc();
+        Operator prefix = operators.isPrefixOperator(hed.getImage(), priority);
+        Location leftLoc = hed.getLoc();
 
-      if (prefix != null) {
-        tokenizer.commitToken();
-        termStack.push(new Name(hed.getLoc(), hed.getImage()));
+        if (prefix != null) {
+          tokenizer.commitToken();
+          termStack.push(new Name(hed.getLoc(), hed.getImage()));
 
-        hed = tokenizer.headToken();
-        if ((hed.getType() == TokenType.identifier) && operators.isRightBracket(hed.getImage()))
-          return MIN_PRIORITY;
-        else if (prefix.getPriority() <= priority) {
-          if (DEBUG_PARSER)
-            System.out.println("using prefix op: " + hed.getImage() + " at " + hed.getLoc());
-          int mark = termStack.size();
-          term(prefix.rightPriority(), bracket);
-          if (termStack.size() == mark + 1) {
-            Location opLoc = termStack.peek().getLoc().extendWith(leftLoc);
+          hed = tokenizer.headToken();
+          if ((hed.getType() == TokenType.identifier) && operators.isRightBracket(hed.getImage()))
+            return MIN_PRIORITY;
+          else if (prefix.getPriority() <= priority) {
+            if (DEBUG_PARSER)
+              System.out.println("using prefix op: " + hed.getImage() + " at " + hed.getLoc());
+            int mark = termStack.size();
+            term(prefix.rightPriority(), bracket);
+            if (termStack.size() == mark + 1) {
+              Location opLoc = termStack.peek().getLoc().extendWith(leftLoc);
 
-            buildApply(opLoc, 1, prefix.getForm(), prefix.getPriority());
+              buildApply(opLoc, 1, prefix.getForm(), prefix.getPriority());
 
-            if (prefix.getOperator().equals(StandardNames.MINUS)) {
-              IAbstract arg = Abstract.unaryArg(termStack.peek());
-              boolean isRaw = false;
-              if (Abstract.isUnary(arg, StandardNames.RAW)) {
-                isRaw = true;
-                arg = Abstract.unaryArg(arg);
-              }
-              if (arg instanceof IntegerLiteral) {
-                IntegerLiteral intArg = (IntegerLiteral) arg;
-                termStack.pop();
-                termStack.push(rawWrap(new IntegerLiteral(arg.getLoc(), -intArg.getLit()), isRaw));
-              } else if (arg instanceof LongLiteral) {
-                LongLiteral lngArg = (LongLiteral) arg;
-                termStack.pop();
-                termStack.push(rawWrap(new LongLiteral(arg.getLoc(), -lngArg.getLit()), isRaw));
-              } else if (arg instanceof FloatLiteral) {
-                FloatLiteral fltArg = (FloatLiteral) arg;
-                termStack.pop();
-                termStack.push(rawWrap(new FloatLiteral(arg.getLoc(), -fltArg.getLit()), isRaw));
-              } else if (arg instanceof BigDecimalLiteral) {
-                BigDecimalLiteral decArg = (BigDecimalLiteral) arg;
-                termStack.pop();
-                termStack.push(rawWrap(new BigDecimalLiteral(arg.getLoc(), decArg.getLit().negate()), isRaw));
+              if (prefix.getOperator().equals(StandardNames.MINUS)) {
+                IAbstract arg = Abstract.unaryArg(termStack.peek());
+                boolean isRaw = false;
+                if (Abstract.isUnary(arg, StandardNames.RAW)) {
+                  isRaw = true;
+                  arg = Abstract.unaryArg(arg);
+                }
+                if (arg instanceof IntegerLiteral) {
+                  IntegerLiteral intArg = (IntegerLiteral) arg;
+                  termStack.pop();
+                  termStack.push(rawWrap(new IntegerLiteral(arg.getLoc(), -intArg.getLit()), isRaw));
+                } else if (arg instanceof LongLiteral) {
+                  LongLiteral lngArg = (LongLiteral) arg;
+                  termStack.pop();
+                  termStack.push(rawWrap(new LongLiteral(arg.getLoc(), -lngArg.getLit()), isRaw));
+                } else if (arg instanceof FloatLiteral) {
+                  FloatLiteral fltArg = (FloatLiteral) arg;
+                  termStack.pop();
+                  termStack.push(rawWrap(new FloatLiteral(arg.getLoc(), -fltArg.getLit()), isRaw));
+                } else if (arg instanceof BigDecimalLiteral) {
+                  BigDecimalLiteral decArg = (BigDecimalLiteral) arg;
+                  termStack.pop();
+                  termStack.push(rawWrap(new BigDecimalLiteral(arg.getLoc(), decArg.getLit().negate()), isRaw));
+                }
               }
             }
+            return prefix.getPriority();
+          } else {
+            reportError("prefix operator '" + prefix.getOperator() + "' of priority " + prefix.getPriority()
+                    + " not permitted here (expecting " + priority + ")", leftLoc);
+            return MIN_PRIORITY;
           }
-          return prefix.getPriority();
-        } else {
-          reportError("prefix operator '" + prefix.getOperator() + "' of priority " + prefix.getPriority()
-              + " not permitted here (expecting " + priority + ")", leftLoc);
-          return MIN_PRIORITY;
-        }
-      } else
-        return term0();
-    }
+        } else
+          return term0();
+      }
 
-    case terminal:
-      reportError("unexpected end of input", hed.getLoc());
-      termStack.push(Abstract.tupleTerm(hed.getLoc()));
-      return MIN_PRIORITY;
+      case terminal:
+        reportError("unexpected end of input", hed.getLoc());
+        termStack.push(Abstract.tupleTerm(hed.getLoc()));
+        return MIN_PRIORITY;
 
-    default:
-      reportError("unexpected token: '" + hed.toString() + "'", hed.getLoc());
-      return MIN_PRIORITY;
+      default:
+        reportError("unexpected token: '" + hed.toString() + "'", hed.getLoc());
+        return MIN_PRIORITY;
     }
   }
 
-  private int termRight(int leftPrior, int priority, String bracket)
-  {
+  private int termRight(int leftPrior, int priority, String bracket) {
     Token hed = tokenizer.headToken();
 
     switch (hed.getType()) {
-    case terminal:
-      return leftPrior;
-
-    case identifier: {
-      if (operators.isRightBracket(hed.getImage()))
+      case terminal:
         return leftPrior;
 
-      Operator postfix = operators.isPostfixOperator(hed.getImage(), leftPrior);
-      Operator infix = operators.isInfixOperator(hed.getImage(), leftPrior);
+      case identifier: {
+        if (operators.isRightBracket(hed.getImage()))
+          return leftPrior;
 
-      if (postfix != null && postfix.leftPriority() >= leftPrior && postfix.getPriority() <= priority) {
-        Token token = tokenizer.commitToken();
+        Operator postfix = operators.isPostfixOperator(hed.getImage(), leftPrior);
+        Operator infix = operators.isInfixOperator(hed.getImage(), leftPrior);
 
-        if (infix != null && infix.leftPriority() >= leftPrior && infix.getPriority() <= priority) {
-          // Look ahead, the operator is both infix and postfix ...
-          Token next = tokenizer.headToken();
+        if (postfix != null && postfix.leftPriority() >= leftPrior && postfix.getPriority() <= priority) {
+          Token token = tokenizer.commitToken();
 
-          // We want to see if the token is a legitimate start to an
-          // expression
-          // to see how to disambiguate
+          if (infix != null && infix.leftPriority() >= leftPrior && infix.getPriority() <= priority) {
+            // Look ahead, the operator is both infix and postfix ...
+            Token next = tokenizer.headToken();
 
-          boolean treatAsPostfix = true;
-          switch (next.getType()) {
-          case integer:
-          case longint:
-          case floating:
-          case decimal:
-          case character:
-          case string:
-          case regexp:
-          case blob:
-            treatAsPostfix = false;
-            break;
-          case identifier: { // This may be a prefix operator ...
-            if (operators.isRightBracket(next.getImage())) {
-              treatAsPostfix = true;
-              break;
-            } else {
-              Operator prefix = operators.isPrefixOperator(next.getImage(), priority);
-              if (prefix != null) {
-                treatAsPostfix = prefix.getPriority() > infix.rightPriority();
+            // We want to see if the token is a legitimate start to an
+            // expression
+            // to see how to disambiguate
+
+            boolean treatAsPostfix = true;
+            switch (next.getType()) {
+              case integer:
+              case longint:
+              case floating:
+              case decimal:
+              case character:
+              case string:
+              case regexp:
+              case blob:
+                treatAsPostfix = false;
+                break;
+              case identifier: { // This may be a prefix operator ...
+                if (operators.isRightBracket(next.getImage())) {
+                  treatAsPostfix = true;
+                  break;
+                } else {
+                  Operator prefix = operators.isPrefixOperator(next.getImage(), priority);
+                  if (prefix != null) {
+                    treatAsPostfix = prefix.getPriority() > infix.rightPriority();
+                    break;
+                  }
+                }
+
+                Operator nxtInfix = operators.isInfixOperator(next.getImage(), priority);
+                if (nxtInfix != null) {
+                  treatAsPostfix = nxtInfix.getPriority() > infix.rightPriority();
+                  break;
+                }
+
+                treatAsPostfix = false; // identifier can be infix
                 break;
               }
+              default:
             }
+            if (treatAsPostfix) {
+              if (DEBUG_PARSER)
+                System.out.println("using postfix op: " + token.getImage() + " at " + token.getLoc());
 
-            Operator nxtInfix = operators.isInfixOperator(next.getImage(), priority);
-            if (nxtInfix != null) {
-              treatAsPostfix = nxtInfix.getPriority() > infix.rightPriority();
-              break;
+              IAbstract arg = termStack.pop();
+              IAbstract op = new Name(token.getLoc(), token.getImage());
+              IAbstract term = Abstract.unary(arg.getLoc().extendWith(token.getLoc()), op, arg);
+              setOpForm(postfix, term);
+              termStack.push(term);
+
+              return termRight(postfix.getPriority(), priority, bracket);
+            } else {
+              if (DEBUG_PARSER)
+                System.out.println("using infix op: " + token.getImage() + " at " + token.getLoc());
+              IAbstract leftArg = termStack.pop();
+              IAbstract op = new Name(token.getLoc(), token.getImage());
+
+              int mark = termStack.size();
+              term(infix.rightPriority(), bracket);
+              if (termStack.size() == mark + 1) {
+                IAbstract term = Abstract.binary(leftArg.getLoc().extendWith(tokenizer.headToken().getLoc()), op,
+                        leftArg, termStack.pop());
+                setOpForm(infix, term);
+                termStack.push(term);
+              }
+              return termRight(infix.getPriority(), priority, bracket);
             }
-
-            treatAsPostfix = false; // identifier can be infix
-            break;
-          }
-          default:
-          }
-          if (treatAsPostfix) {
+          } else {// treat as postfix ...
             if (DEBUG_PARSER)
               System.out.println("using postfix op: " + token.getImage() + " at " + token.getLoc());
-
             IAbstract arg = termStack.pop();
             IAbstract op = new Name(token.getLoc(), token.getImage());
             IAbstract term = Abstract.unary(arg.getLoc().extendWith(token.getLoc()), op, arg);
@@ -324,144 +340,108 @@ public class OpGrammar implements PrettyPrintable
             termStack.push(term);
 
             return termRight(postfix.getPriority(), priority, bracket);
-          } else {
-            if (DEBUG_PARSER)
-              System.out.println("using infix op: " + token.getImage() + " at " + token.getLoc());
-            IAbstract leftArg = termStack.pop();
-            IAbstract op = new Name(token.getLoc(), token.getImage());
-
-            int mark = termStack.size();
-            term(infix.rightPriority(), bracket);
-            if (termStack.size() == mark + 1) {
-              IAbstract term = Abstract.binary(leftArg.getLoc().extendWith(tokenizer.headToken().getLoc()), op,
-                  leftArg, termStack.pop());
-              setOpForm(infix, term);
-              termStack.push(term);
-            }
-            return termRight(infix.getPriority(), priority, bracket);
           }
-        } else {// treat as postfix ...
+        } else if (infix != null && infix.leftPriority() >= leftPrior && infix.getPriority() <= priority) {
+          Token token = tokenizer.commitToken();
           if (DEBUG_PARSER)
-            System.out.println("using postfix op: " + token.getImage() + " at " + token.getLoc());
-          IAbstract arg = termStack.pop();
+            System.out.println("using infix op: " + token.getImage() + " at " + token.getLoc());
+
+          IAbstract left = termStack.pop();
           IAbstract op = new Name(token.getLoc(), token.getImage());
-          IAbstract term = Abstract.unary(arg.getLoc().extendWith(token.getLoc()), op, arg);
-          setOpForm(postfix, term);
-          termStack.push(term);
 
-          return termRight(postfix.getPriority(), priority, bracket);
-        }
-      } else if (infix != null && infix.leftPriority() >= leftPrior && infix.getPriority() <= priority) {
-        Token token = tokenizer.commitToken();
-        if (DEBUG_PARSER)
-          System.out.println("using infix op: " + token.getImage() + " at " + token.getLoc());
-
-        IAbstract left = termStack.pop();
-        IAbstract op = new Name(token.getLoc(), token.getImage());
-
-        term(infix.rightPriority(), bracket);
-        if (!termStack.isEmpty()) // only false in case of syntax errors
-        {
-          IAbstract right = termStack.pop();
-          termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), op, left, right,
-              OpFormAttribute.name, new OpFormAttribute(infix.getPriority(), infix.getForm())));
-        }
-        return termRight(infix.getPriority(), priority, bracket);
-      } else
+          term(infix.rightPriority(), bracket);
+          if (!termStack.isEmpty()) // only false in case of syntax errors
+          {
+            IAbstract right = termStack.pop();
+            termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), op, left, right,
+                    OpFormAttribute.name, new OpFormAttribute(infix.getPriority(), infix.getForm())));
+          }
+          return termRight(infix.getPriority(), priority, bracket);
+        } else
+          return leftPrior;
+      }
+      case integer:
+      case longint:
+      case floating:
+      case decimal:
+      case character:
+      case string:
+      case regexp:
+      case blob:
+      default:
         return leftPrior;
-    }
-    case integer:
-    case longint:
-    case floating:
-    case decimal:
-    case character:
-    case string:
-    case regexp:
-    case blob:
-    default:
-      return leftPrior;
     }
   }
 
-  private void setOpForm(Operator op, IAbstract term)
-  {
+  private void setOpForm(Operator op, IAbstract term) {
     IAttribute opform = new OpFormAttribute(op.getPriority(), op.getForm());
     term.setAttribute(OpFormAttribute.name, opform);
   }
 
-  private int term0()
-  {
+  private int term0() {
     Token hed = tokenizer.headToken();
     final Location loc = hed.getLoc();
 
     switch (hed.getType()) {
-    case character:
-      tokenizer.commitToken();
-      termStack.push(new CharLiteral(loc, hed.getImage().codePointAt(0)));
-      return MIN_PRIORITY;
-    case string: {
-      boolean isRaw = hed.isRaw();
-      tokenizer.commitToken();
+      case character:
+        tokenizer.commitToken();
+        termStack.push(new CharLiteral(loc, hed.getImage().codePointAt(0)));
+        return MIN_PRIORITY;
+      case string: {
+        boolean isRaw = hed.isRaw();
+        tokenizer.commitToken();
 
-      return stringParse(loc, hed.getImage(), isRaw);
-    }
-    case blob:
-      tokenizer.commitToken();
-      termStack.push(rawWrap(new StringLiteral(loc, hed.getImage()), hed.isRaw()));
-      return MIN_PRIORITY;
-    case regexp:
-      tokenizer.commitToken();
-      termStack.push(CompilerUtils.regexp(loc, hed.getImage()));
-      return MIN_PRIORITY;
-    case integer:
-      tokenizer.commitToken();
-      termStack.push(rawWrap(new IntegerLiteral(loc, (int) hed.getIntVal()), hed.isRaw()));
-      return MIN_PRIORITY;
-    case longint:
-      tokenizer.commitToken();
-      termStack.push(rawWrap(Abstract.newLong(loc, hed.getIntVal()), hed.isRaw()));
-      return MIN_PRIORITY;
-    case floating:
-      tokenizer.commitToken();
-      termStack.push(rawWrap(Abstract.newFloat(loc, hed.getFloatingValue()), hed.isRaw()));
-      return MIN_PRIORITY;
-    case decimal:
-      tokenizer.commitToken();
-      termStack.push(rawWrap(Abstract.newBigdecimal(loc, (BigDecimal) hed.getValue()), hed.isRaw()));
-      return MIN_PRIORITY;
-    default: {
-      int prior = term00();
-
-      if (prior == 0)
-        return termArgs();
-      else
-        return prior;
-    }
+        return stringParse(loc, hed.getImage(), isRaw);
+      }
+      case blob:
+        tokenizer.commitToken();
+        termStack.push(rawWrap(new StringLiteral(loc, hed.getImage()), hed.isRaw()));
+        return MIN_PRIORITY;
+      case regexp:
+        tokenizer.commitToken();
+        termStack.push(CompilerUtils.regexp(loc, hed.getImage()));
+        return MIN_PRIORITY;
+      case integer:
+        tokenizer.commitToken();
+        termStack.push(rawWrap(new IntegerLiteral(loc, (int) hed.getIntVal()), hed.isRaw()));
+        return MIN_PRIORITY;
+      case longint:
+        tokenizer.commitToken();
+        termStack.push(rawWrap(Abstract.newLong(loc, hed.getIntVal()), hed.isRaw()));
+        return MIN_PRIORITY;
+      case floating:
+        tokenizer.commitToken();
+        termStack.push(rawWrap(Abstract.newFloat(loc, hed.getFloatingValue()), hed.isRaw()));
+        return MIN_PRIORITY;
+      case decimal:
+        tokenizer.commitToken();
+        termStack.push(rawWrap(Abstract.newBigdecimal(loc, (BigDecimal) hed.getValue()), hed.isRaw()));
+        return MIN_PRIORITY;
+      default: {
+        return termArgs(term00());
+      }
     }
   }
 
-  private static IAbstract rawWrap(IAbstract term, boolean isRaw)
-  {
+  private static IAbstract rawWrap(IAbstract term, boolean isRaw) {
     if (isRaw)
       return Abstract.unary(term.getLoc(), StandardNames.RAW, term);
     else
       return term;
   }
 
-  private interface Interpolator
-  {
+  private interface Interpolator {
     IAbstract interpolate(Location loc, IAbstract term);
 
     IAbstract format(Location loc, IAbstract term, IAbstract format);
   }
 
   // Implements the syntactic sugar for string interpolation
-  private int stringParse(Location loc, String str, boolean isRaw)
-  {
+  private int stringParse(Location loc, String str, boolean isRaw) {
     int mark = termStack.size();
     StringBuilder buffer = new StringBuilder();
 
-    for (int ix = 0; ix < str.length();) {
+    for (int ix = 0; ix < str.length(); ) {
       int ch = str.codePointAt(ix);
 
       if (ch == Tokenizer.QUOTE) {
@@ -472,14 +452,12 @@ public class OpGrammar implements PrettyPrintable
       } else if (ch == '#' && ix < str.length() - 1) {
         Interpolator hasher = new Interpolator() {
           @Override
-          public IAbstract interpolate(Location loc, IAbstract term)
-          {
+          public IAbstract interpolate(Location loc, IAbstract term) {
             return Abstract.binary(loc, StandardNames.AS, term, Abstract.name(loc, StandardTypes.STRING));
           }
 
           @Override
-          public IAbstract format(Location loc, IAbstract term, IAbstract format)
-          {
+          public IAbstract format(Location loc, IAbstract term, IAbstract format) {
             return Abstract.binary(loc, StandardNames.FORMAT, term, format);
           }
         };
@@ -490,14 +468,12 @@ public class OpGrammar implements PrettyPrintable
       } else if (ch == '$' && ix < str.length() - 1) {
         Interpolator hasher = new Interpolator() {
           @Override
-          public IAbstract interpolate(Location loc, IAbstract term)
-          {
+          public IAbstract interpolate(Location loc, IAbstract term) {
             return Abstract.unary(loc, StandardNames.DISPLAY, term);
           }
 
           @Override
-          public IAbstract format(Location loc, IAbstract term, IAbstract format)
-          {
+          public IAbstract format(Location loc, IAbstract term, IAbstract format) {
             return Abstract.binary(loc, StandardNames.FORMAT, term, format);
           }
         };
@@ -524,7 +500,7 @@ public class OpGrammar implements PrettyPrintable
         termStack.push(lft);
       else {
         IAbstract join = Abstract.binary(lft.getLoc().extendWith(rgt.getLoc()), StandardNames.STRING_CATENATE, lft,
-            rgt, OpFormAttribute.name, new OpFormAttribute(Operators.CATENATE_PRIORITY, OperatorForm.infix));
+                rgt, OpFormAttribute.name, new OpFormAttribute(Operators.CATENATE_PRIORITY, OperatorForm.infix));
         termStack.push(join);
       }
       fragmentCount--;
@@ -532,8 +508,7 @@ public class OpGrammar implements PrettyPrintable
     return MIN_PRIORITY;
   }
 
-  private int parseInterpolation(Location loc, StringBuilder buffer, String str, int ix, Interpolator interpolator)
-  {
+  private int parseInterpolation(Location loc, StringBuilder buffer, String str, int ix, Interpolator interpolator) {
     if (buffer.length() > 0) {
       termStack.push(new StringLiteral(loc.offset(str.offsetByCodePoints(ix, 1), buffer.length()), buffer.toString()));
       buffer.setLength(0);
@@ -609,128 +584,127 @@ public class OpGrammar implements PrettyPrintable
     }
   }
 
-  private int term00()
-  {
+  private Location term00() {
     Token token = tokenizer.nextToken();
 
     final Location loc = token.getLoc();
 
     switch (token.getType()) {
-    case identifier: {
-      String image = token.getImage();
+      case identifier: {
+        String image = token.getImage();
 
-      if (image.equals(MLPAR)) {
-        term(Operators.STATEMENT_PRIORITY, MRPAR);
+        if (image.equals(MLPAR)) {
+          term(Operators.STATEMENT_PRIORITY, MRPAR);
 
-        token = tokenizer.nextToken();
-        if (!token.isIdentifier(MRPAR))
-          reportError("missing a )#, got [" + token.toString() + "]\nleft #( at " + loc, token.getLoc());
+          token = tokenizer.nextToken();
+          if (!token.isIdentifier(MRPAR))
+            reportError("missing a )#, got [" + token.toString() + "]\nleft #( at " + loc, token.getLoc());
 
-        extendTopLocation(loc, token.getLoc());
-        return MIN_PRIORITY;
-      } else if (image.equals(LPAR)) {
-        Token hed = tokenizer.headToken();
-        if (hed.isIdentifier(RPAR)) {
-          tokenizer.commitToken();
-          termStack.push(Abstract.tupleTerm(loc.extendWith(hed.getLoc())));
-        } else {
+          extendTopLocation(loc, token.getLoc());
+          return token.getLoc();
+        } else if (image.equals(LPAR)) {
+          Token hed = tokenizer.headToken();
+          if (hed.isIdentifier(RPAR)) {
+            tokenizer.commitToken();
+            termStack.push(Abstract.tupleTerm(loc.extendWith(hed.getLoc())));
+            return hed.getLoc();
+          } else {
+            BracketPair brackets = operators.getBracketPair(token.getImage());
+
+            term(brackets.innerPriority, RPAR);
+            token = tokenizer.nextToken();
+            if (!token.isIdentifier(RPAR))
+              reportError("missing a ), got [" + token.toString() + "]\nleft ( at " + loc, token.getLoc());
+            else
+              termStack.push(tupleize(loc, termStack.pop()));
+            extendTopLocation(loc, token.getLoc());
+            return token.getLoc();
+          }
+        } else if (operators.isLeftBracket(token.getImage())) {
           BracketPair brackets = operators.getBracketPair(token.getImage());
 
-          term(brackets.innerPriority, RPAR);
-          token = tokenizer.nextToken();
-          if (!token.isIdentifier(RPAR))
-            reportError("missing a ), got [" + token.toString() + "]\nleft ( at " + loc, token.getLoc());
-          else
-            termStack.push(tupleize(loc, termStack.pop()));
-          extendTopLocation(loc, token.getLoc());
-        }
-        return MIN_PRIORITY;
-      } else if (operators.isLeftBracket(token.getImage())) {
-        BracketPair brackets = operators.getBracketPair(token.getImage());
+          if (DEBUG_PARSER)
+            System.out.println("Left bracket: " + token.toString() + " at " + loc);
 
-        if (DEBUG_PARSER)
-          System.out.println("Left bracket: " + token.toString() + " at " + loc);
+          Token hed = tokenizer.headToken();
+          if (isRightBracket(hed, brackets)) {
+            tokenizer.commitToken();
+            termStack.push(new Name(loc.extendWith(hed.getLoc()), brackets.operator));
+            return hed.getLoc();
+          } else
+            termStack.push(new Name(loc, brackets.operator));
 
-        Token hed = tokenizer.headToken();
-        if (isRightBracket(hed, brackets)) {
-          tokenizer.commitToken();
-          termStack.push(new Name(loc.extendWith(hed.getLoc()), brackets.operator));
-          return MIN_PRIORITY;
-        } else
-          termStack.push(new Name(loc, brackets.operator));
+          int mark = termStack.size();
 
-        int mark = termStack.size();
+          if (brackets.innerPriority < Operators.STATEMENT_PRIORITY)
+            term(brackets.innerPriority, brackets.rightBracket);
+          else { // We process this level specially
+            int wrapCount = 0;
+            Location hedLoc = hed.getLoc();
 
-        if (brackets.innerPriority < Operators.STATEMENT_PRIORITY)
-          term(brackets.innerPriority, brackets.rightBracket);
-        else { // We process this level specially
-          int wrapCount = 0;
-          Location hedLoc = hed.getLoc();
-
-          while (!isTerminal(hed) && !isRightBracket(hed, brackets)) {
-            term(brackets.innerPriority - 1, brackets.rightBracket);
-            IAbstract peek = termStack.peek();
-
-            hed = tokenizer.headToken();
-            if (hed.isIdentifier(StandardNames.TERM)) {
-              tokenizer.commitToken();
-              peek.setLoc(peek.getLoc().extendWith(hed.getLoc()));
+            while (!isTerminal(hed) && !isRightBracket(hed, brackets)) {
+              term(brackets.innerPriority - 1, brackets.rightBracket);
+              IAbstract peek = termStack.peek();
 
               hed = tokenizer.headToken();
-            } else if (hed.getType() == TokenType.terminal)
-              reportError("expecting a `" + StandardNames.TERM + "', or `" + brackets.rightBracket, hed.getLoc());
+              if (hed.isIdentifier(StandardNames.TERM)) {
+                tokenizer.commitToken();
+                peek.setLoc(peek.getLoc().extendWith(hed.getLoc()));
 
-            checkForOperators(peek);
-            pushToListeners(peek);
-            wrapCount++;
-            hedLoc = hed.getLoc();
-          }
-          if (!isRightBracket(hed, brackets))
-            reportError("missing a " + brackets.rightBracket + "\nleft " + brackets.leftBracket + " at " + loc, hedLoc);
+                hed = tokenizer.headToken();
+              } else if (hed.getType() == TokenType.terminal)
+                reportError("expecting a `" + StandardNames.TERM + "', or `" + brackets.rightBracket, hed.getLoc());
 
-          while (wrapCount > 1) {
-            if (termStack.size() > 1) {
-              IAbstract right = termStack.pop();
-              IAbstract left = termStack.pop();
-              termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-                  OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
+              checkForOperators(peek);
+              pushToListeners(peek);
+              wrapCount++;
+              hedLoc = hed.getLoc();
             }
-            wrapCount--;
+            if (!isRightBracket(hed, brackets))
+              reportError("missing a " + brackets.rightBracket + "\nleft " + brackets.leftBracket + " at " + loc, hedLoc);
+
+            while (wrapCount > 1) {
+              if (termStack.size() > 1) {
+                IAbstract right = termStack.pop();
+                IAbstract left = termStack.pop();
+                termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
+                        OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
+              }
+              wrapCount--;
+            }
+          }
+          token = tokenizer.nextToken();
+          if (!isRightBracket(token, brackets))
+            reportError("'" + token.toString() + "' not permitted here, expecting '" + brackets.rightBracket + "', '"
+                    + brackets.leftBracket + "' at " + loc, token.getLoc());
+          else if (DEBUG_PARSER)
+            System.out.print("Right bracket from " + brackets.leftBracket + ":" + token.toString() + " at " + loc);
+
+          if (termStack.size() == mark + 1)
+            buildApply(loc.extendWith(token.getLoc()), 1, OperatorForm.none, 0);
+          return token.getLoc();
+        } else if (operators.isRightBracket(token.getImage())) {
+          reportError("not expecting '" + token.getImage() + "' here", loc);
+          return token.getLoc();
+        } else if (operators.isOperator(image, 0)) {
+          Token hed = tokenizer.headToken();
+          if (!hed.isIdentifier(RPAR)) {
+            errors.reportError("operator '" + token.toString() + "' not valid here", loc);
+            return hed.getLoc();
           }
         }
-        token = tokenizer.nextToken();
-        if (!isRightBracket(token, brackets))
-          reportError("'" + token.toString() + "' not permitted here, expecting '" + brackets.rightBracket + "', '"
-              + brackets.leftBracket + "' at " + loc, token.getLoc());
-        else if (DEBUG_PARSER)
-          System.out.print("Right bracket from " + brackets.leftBracket + ":" + token.toString() + " at " + loc);
-
-        if (termStack.size() == mark + 1)
-          buildApply(loc.extendWith(token.getLoc()), 1, OperatorForm.none, 0);
-        return MIN_PRIORITY;
-      } else if (operators.isRightBracket(token.getImage())) {
-        reportError("not expecting '" + token.getImage() + "' here", loc);
-        return MIN_PRIORITY;
-      } else if (operators.isOperator(image, 0)) {
-        Token hed = tokenizer.headToken();
-        if (!hed.isIdentifier(RPAR)) {
-          errors.reportError("operator '" + token.toString() + "' not valid here", loc);
-          return MIN_PRIORITY;
-        }
+        termStack.push(new Name(loc, token.getImage()));
+        return loc;
       }
-      termStack.push(new Name(loc, token.getImage()));
-      return MIN_PRIORITY;
-    }
-    default:
-      reportError("expecting an identifier, got '" + token.toString() + "'", loc);
-      return MIN_PRIORITY;
+      default:
+        reportError("expecting an identifier, got '" + token.toString() + "'", loc);
+        return loc;
     }
   }
 
-  private int termArgs()
-  {
-    while (true) {
-      Token hed = tokenizer.headToken();
+  private int termArgs(Location lastLoc) {
+    Token hed = tokenizer.headToken();
+    while (hed.getLoc().sameLine(lastLoc)) {
       Location leftLoc = hed.getLoc();
 
       if (LPAR.equals(hed.getImage())) {
@@ -757,13 +731,14 @@ public class OpGrammar implements PrettyPrintable
           reportError("expecting a comma or close paren, got '" + hed.toString() + "'", hed.getLoc());
         else
           tokenizer.commitToken();
+        lastLoc = hed.getLoc();
 
         if (termStack.size() == mark + argCount)
           buildApply(opLoc.extendWith(hed.getLoc()), argCount, OperatorForm.none, 0); // construct
         // F(a1,a2,..,an)
       } else if (hed.getType() == TokenType.identifier && operators.isLeftBracket(hed.getImage())) {// begin
-                                                                                                    // term
-                                                                                                    // end
+        // term
+        // end
         // = begin(term)
         BracketPair pair = operators.getBracketPair(hed.getImage());
 
@@ -776,7 +751,8 @@ public class OpGrammar implements PrettyPrintable
         hed = tokenizer.headToken();
         if (isRightBracket(hed, pair)) {
           tokenizer.commitToken();
-          termStack.push(new Apply(opLoc.extendWith(hed.getLoc()), label, new IAbstract[] { bkOp }));
+          termStack.push(new Apply(opLoc.extendWith(hed.getLoc()), label, new IAbstract[]{bkOp}));
+          lastLoc = hed.getLoc();
         } else if (pair.innerPriority == Operators.STATEMENT_PRIORITY) {
           // We process this level specially
           int wrapCount = 0;
@@ -799,16 +775,16 @@ public class OpGrammar implements PrettyPrintable
           }
           if (!isRightBracket(hed, pair))
             reportError("missing a " + pair.rightBracket + "\nleft " + pair.leftBracket + " at " + leftLoc, hed
-                .getLoc());
+                    .getLoc());
 
           hed = tokenizer.commitToken();
-
+          lastLoc = hed.getLoc();
           while (wrapCount > 1) {
             if (termStack.size() > 1) {
               IAbstract right = termStack.pop();
               IAbstract left = termStack.pop();
               termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-                  OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
+                      OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
             }
             wrapCount--;
           }
@@ -820,29 +796,30 @@ public class OpGrammar implements PrettyPrintable
           Token token = tokenizer.nextToken();
           if (!isRightBracket(token, pair))
             reportError("expecting " + pair.rightBracket + ", got '" + token.toString() + "', left " + pair.leftBracket
-                + " at " + hed.getLoc(), token.getLoc());
+                    + " at " + hed.getLoc(), token.getLoc());
           Location termLoc = opLoc.extendWith(hed.getLoc());
           // build <bk>(label,args)
           termStack.push(Abstract.binary(termLoc, bkOp, label, termStack.pop()));
+          lastLoc = hed.getLoc();
         }
       } else
-        return MIN_PRIORITY;
+        break;
+
+      hed = tokenizer.headToken();
     }
+    return MIN_PRIORITY;
   }
 
-  private boolean isRightBracket(Token token, BracketPair pair)
-  {
+  private boolean isRightBracket(Token token, BracketPair pair) {
     TokenType tokType = token.getType();
     return (tokType == TokenType.identifier && token.getImage().equals(pair.rightBracket));
   }
 
-  private boolean isTerminal(Token token)
-  {
+  private boolean isTerminal(Token token) {
     return token.getType() == TokenType.terminal;
   }
 
-  private void buildApply(Location loc, int argCount, OperatorForm form, int priority)
-  {
+  private void buildApply(Location loc, int argCount, OperatorForm form, int priority) {
     if (termStack.size() >= argCount + 1) {
       IAbstract args[] = new IAbstract[argCount];
 
@@ -862,8 +839,7 @@ public class OpGrammar implements PrettyPrintable
     }
   }
 
-  private String getOperator(IAbstract term)
-  {
+  private String getOperator(IAbstract term) {
     if (term instanceof Name)
       return ((Name) term).getId();
     else if (Abstract.isParenTerm(term))
@@ -876,13 +852,11 @@ public class OpGrammar implements PrettyPrintable
     }
   }
 
-  private void reportError(String msg, Location loc)
-  {
+  private void reportError(String msg, Location loc) {
     errors.reportError(msg, loc);
   }
 
-  private boolean checkForOperators(IAbstract term)
-  {
+  private boolean checkForOperators(IAbstract term) {
     if (Abstract.isUnary(term, StandardNames.META_HASH)) {
       IAbstract stmt = Abstract.getArg(term, 0);
       Location loc = stmt.getLoc();
@@ -915,9 +889,7 @@ public class OpGrammar implements PrettyPrintable
           return true;
         } else
           reportError("infix operator must have priority in range 0..1999", term.getLoc());
-      } else
-
-      if (Abstract.isBinary(stmt, StandardNames.LEFT)) {
+      } else if (Abstract.isBinary(stmt, StandardNames.LEFT)) {
         IAbstract o1 = Abstract.getArg(stmt, 1);
         String op = getOperator(Abstract.getArg(stmt, 0));
 
@@ -1025,8 +997,8 @@ public class OpGrammar implements PrettyPrintable
         } else
           reportError("bracket pair priority must be between 0 and " + MAX_PRIORITY, term.getLoc());
       } else if (Abstract.isBinary(stmt, StandardNames.MACRORULE) || Abstract.isBinary(stmt, StandardNames.WFF_RULE)
-          || Abstract.isBinary(stmt, StandardNames.WFF_DEFINES) || Abstract.isBinary(stmt, StandardNames.FMT_RULE)
-          || CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isIsStatement(stmt))
+              || Abstract.isBinary(stmt, StandardNames.WFF_DEFINES) || Abstract.isBinary(stmt, StandardNames.FMT_RULE)
+              || CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isIsStatement(stmt))
         return true;
       else
         reportError("cannot understand meta statement:: " + term, term.getLoc());
@@ -1034,8 +1006,7 @@ public class OpGrammar implements PrettyPrintable
     return false;
   }
 
-  private static int getPriority(IAbstract term)
-  {
+  private static int getPriority(IAbstract term) {
     if (Abstract.isUnary(term, StandardTypes.INTEGER))
       term = Abstract.unaryArg(term);
     if (term instanceof IntegerLiteral)
@@ -1044,8 +1015,7 @@ public class OpGrammar implements PrettyPrintable
       return -1;
   }
 
-  private IAbstract tupleize(Location loc, IAbstract term)
-  {
+  private IAbstract tupleize(Location loc, IAbstract term) {
     List<IAbstract> els = new ArrayList<>();
 
     while (Abstract.isBinary(term, StandardNames.COMMA)) {
@@ -1058,15 +1028,13 @@ public class OpGrammar implements PrettyPrintable
     return Abstract.tupleTerm(loc, els);
   }
 
-  private void extendTopLocation(Location start, Location end)
-  {
+  private void extendTopLocation(Location start, Location end) {
     if (!termStack.isEmpty())
       termStack.peek().setLoc(start.extendWith(end));
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     int depth = termStack.size();
     for (IAbstract el : termStack) {
       disp.append(--depth);
@@ -1078,18 +1046,15 @@ public class OpGrammar implements PrettyPrintable
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 
-  public void addListener(TermListener<IAbstract> listener)
-  {
+  public void addListener(TermListener<IAbstract> listener) {
     listeners.add(listener);
   }
 
-  private void pushToListeners(IAbstract term)
-  {
+  private void pushToListeners(IAbstract term) {
     for (TermListener<IAbstract> listener : listeners)
       listener.processTerm(term);
   }

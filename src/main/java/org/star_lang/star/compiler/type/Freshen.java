@@ -1,81 +1,47 @@
 package org.star_lang.star.compiler.type;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.star_lang.star.compiler.type.FindTypeVars.VarHandler;
-import org.star_lang.star.compiler.util.AccessMode;
-import org.star_lang.star.compiler.util.GenSym;
-import org.star_lang.star.compiler.util.HistoricalMap;
-import org.star_lang.star.compiler.util.Lambda;
-import org.star_lang.star.compiler.util.Lambda2;
-import org.star_lang.star.compiler.util.Pair;
+import org.star_lang.star.compiler.util.*;
 import org.star_lang.star.data.indextree.IndexSet;
-import org.star_lang.star.data.type.ContractConstraint;
-import org.star_lang.star.data.type.ExistentialType;
-import org.star_lang.star.data.type.FieldConstraint;
-import org.star_lang.star.data.type.FieldTypeConstraint;
-import org.star_lang.star.data.type.HasKind;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeConstraint;
-import org.star_lang.star.data.type.ITypeContext;
-import org.star_lang.star.data.type.InstanceOf;
-import org.star_lang.star.data.type.Kind;
-import org.star_lang.star.data.type.QuantifiedType;
-import org.star_lang.star.data.type.Quantifier;
-import org.star_lang.star.data.type.TupleConstraint;
-import org.star_lang.star.data.type.TupleType;
-import org.star_lang.star.data.type.Type;
-import org.star_lang.star.data.type.TypeExp;
-import org.star_lang.star.data.type.TypeInterfaceType;
-import org.star_lang.star.data.type.TypeTransformer;
-import org.star_lang.star.data.type.TypeVar;
-import org.star_lang.star.data.type.UniversalType;
+import org.star_lang.star.data.type.*;
 import org.star_lang.star.data.type.Quantifier.Existential;
 import org.star_lang.star.data.type.Quantifier.Universal;
 
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p/>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
-public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet<String>>
-{
+public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet<String>> {
   private final Map<String, Quantifier> bound;
   private final Set<IType> vars;
 
   /**
    * 'Refresh' a type expression, generating a new copy of the type.
-   * 
-   * @param type
-   * @param accessExist
-   *          Variables that are existentially quantified are replaced by variables that are marked
-   *          with accessExist access.
-   * @param accessUniv
-   *          Variables that are universally quantified are replaced by variables that are marked
-   *          with accessUniv access.
+   *
+   * @param type        type to freshen
+   * @param accessExist Variables that are existentially quantified are replaced by variables that are marked
+   *                    with accessExist access.
+   * @param accessUniv  Variables that are universally quantified are replaced by variables that are marked
+   *                    with accessUniv access.
    * @return a pair consisting of the rewritten type and a map of variable names to quantifiers.
    */
-  public static Pair<IType, Map<String, Quantifier>> freshen(IType type, AccessMode accessExist, AccessMode accessUniv)
-  {
+  public static Pair<IType, Map<String, Quantifier>> freshen(IType type, AccessMode accessExist, AccessMode accessUniv) {
     Map<String, Quantifier> bounds = new HashMap<>();
     IType tp = TypeUtils.deRef(type);
 
@@ -95,7 +61,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
         tp = TypeUtils.deRef(univ.getBoundType());
       }
     }
-    Freshen trans = new Freshen(bounds, new HashSet<IType>());
+    Freshen trans = new Freshen(bounds, new HashSet<>());
     IndexSet<String> exclusions = new IndexSet<>();
     IType transformed = TypeUtils.deRef(tp.transform(trans, exclusions));
 
@@ -124,8 +90,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
     return Pair.pair(transformed, bounds);
   }
 
-  public static IType freshenForUse(IType type)
-  {
+  public static IType freshenForUse(IType type) {
     Pair<IType, Map<String, Quantifier>> fresh = freshen(type, AccessMode.readOnly, AccessMode.readWrite);
 
     if (TypeUtils.isTypeInterface(fresh.left)) {
@@ -158,13 +123,11 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
     return fresh.left;
   }
 
-  public static IType freshenForEvidence(IType type)
-  {
+  public static IType freshenForEvidence(IType type) {
     return freshen(type, AccessMode.readWrite, AccessMode.readOnly).left;
   }
 
-  public static IType openType(IType type)
-  {
+  public static IType openType(IType type) {
     Map<IType, IType> map = new HashMap<>();
 
     IType tp = TypeUtils.deRef(type);
@@ -225,8 +188,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   // unseal is a little like openType except that a new type is generated for existentials
-  public static IType unsealType(IType type)
-  {
+  public static IType unsealType(IType type) {
     Map<IType, IType> map = new HashMap<>();
 
     IType tp = TypeUtils.deRef(type);
@@ -243,39 +205,36 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
     return TypeSubstitute.substitute(map, tp);
   }
 
-  public static IType generalizeType(IType type, Dictionary dict)
-  {
+  public static IType generalizeType(IType type, Dictionary dict) {
     Map<String, Quantifier> bounds = FindTypeVars.findTypeVars(type, new HandleVars());
 
     if (!bounds.isEmpty()) {
-      for (Iterator<Entry<String, Quantifier>> it = bounds.entrySet().iterator(); it.hasNext();) {
+      for (Iterator<Entry<String, Quantifier>> it = bounds.entrySet().iterator(); it.hasNext(); ) {
         if (dict.isTypeVarInScope(it.next().getValue().getVar()))
           it.remove();
       }
 
-      Freshen freshen = new Freshen(bounds, new HashSet<IType>());
-      IType gen = type.transform(freshen, new IndexSet<String>());
+      Freshen freshen = new Freshen(bounds, new HashSet<>());
+      IType gen = type.transform(freshen, new IndexSet<>());
 
       return requant(gen, bounds);
     } else
       return type;
   }
 
-  public static IType generalizeType(IType type)
-  {
+  public static IType generalizeType(IType type) {
     Map<String, Quantifier> bounds = FindTypeVars.findTypeVars(type, new HandleVars());
 
     if (!bounds.isEmpty()) {
-      Freshen freshen = new Freshen(bounds, new HashSet<IType>());
-      IType gen = type.transform(freshen, new IndexSet<String>());
+      Freshen freshen = new Freshen(bounds, new HashSet<>());
+      IType gen = type.transform(freshen, new IndexSet<>());
 
       return requant(gen, bounds);
     } else
       return type;
   }
 
-  public static IType existentializeType(TypeInterfaceType face, ITypeContext dict)
-  {
+  public static IType existentializeType(TypeInterfaceType face, ITypeContext dict) {
     if (!face.getAllTypes().isEmpty()) {
       Map<IType, IType> subMap = new HashMap<>();
       SortedMap<String, IType> exists = new TreeMap<>();
@@ -307,7 +266,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
 
       if (!subMap.isEmpty()) {
         face = (TypeInterfaceType) TypeSubstitute
-            .substitute(subMap, new TypeInterfaceType(exists, face.getAllFields()));
+                .substitute(subMap, new TypeInterfaceType(exists, face.getAllFields()));
       }
 
       IType txType = face;
@@ -320,19 +279,16 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
       return face;
   }
 
-  private static class HandleVars implements VarHandler<Map<String, Quantifier>>
-  {
+  private static class HandleVars implements VarHandler<Map<String, Quantifier>> {
     protected final Map<String, Quantifier> foundTypes = new HistoricalMap<>();
 
     @Override
-    public boolean checkVar(TypeVar var)
-    {
+    public boolean checkVar(TypeVar var) {
       return !foundTypes.containsKey(var.getVarName());
     }
 
     @Override
-    public void foundVar(TypeVar var)
-    {
+    public void foundVar(TypeVar var) {
       String name = var.getVarName();
       if (!foundTypes.containsKey(name)) {
         // var.markReadOnly();
@@ -341,28 +297,24 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
     }
 
     @Override
-    public void foundExists(String name, TypeVar var)
-    {
+    public void foundExists(String name, TypeVar var) {
       String vName = var.getVarName();
       if (!foundTypes.containsKey(vName))
         foundTypes.put(vName, new Existential(new TypeVar(name, AccessMode.readOnly)));
     }
 
     @Override
-    public Map<String, Quantifier> readOff()
-    {
+    public Map<String, Quantifier> readOff() {
       return foundTypes;
     }
   }
 
   // We need to ensure that the quantified form honors the found order of variables
-  public static IType requant(IType type, Map<String, Quantifier> quants)
-  {
+  public static IType requant(IType type, Map<String, Quantifier> quants) {
     return requant(type, quants.entrySet().iterator());
   }
 
-  private static IType requant(IType type, Iterator<Entry<String, Quantifier>> it)
-  {
+  private static IType requant(IType type, Iterator<Entry<String, Quantifier>> it) {
     if (it.hasNext()) {
       Entry<String, Quantifier> n = it.next();
       return n.getValue().wrap(requant(type, it));
@@ -370,21 +322,18 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
       return type;
   }
 
-  private Freshen(Map<String, Quantifier> bound, Set<IType> vars)
-  {
+  private Freshen(Map<String, Quantifier> bound, Set<IType> vars) {
     this.bound = bound;
     this.vars = vars;
   }
 
   @Override
-  public IType transformSimpleType(Type t, IndexSet<String> cxt)
-  {
+  public IType transformSimpleType(Type t, IndexSet<String> cxt) {
     return t;
   }
 
   @Override
-  public IType transformTypeExp(TypeExp t, IndexSet<String> cxt)
-  {
+  public IType transformTypeExp(TypeExp t, IndexSet<String> cxt) {
     IType con = t.getTypeCon().transform(this, cxt);
     boolean clean = con == t.getTypeCon();
     IType[] typeArgs = t.getTypeArgs();
@@ -400,8 +349,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public IType transformTupleType(TupleType t, IndexSet<String> cxt)
-  {
+  public IType transformTupleType(TupleType t, IndexSet<String> cxt) {
     boolean clean = true;
     IType[] typeArgs = t.getElTypes();
     IType args[] = new IType[typeArgs.length];
@@ -416,8 +364,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public IType transformTypeInterface(TypeInterfaceType t, IndexSet<String> cxt)
-  {
+  public IType transformTypeInterface(TypeInterfaceType t, IndexSet<String> cxt) {
     SortedMap<String, IType> nF = new TreeMap<>();
     SortedMap<String, IType> nT = new TreeMap<>();
     boolean clean = true;
@@ -440,14 +387,13 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public IType transformTypeVar(TypeVar var, IndexSet<String> exclusions)
-  {
+  public IType transformTypeVar(TypeVar var, IndexSet<String> exclusions) {
     if (!exclusions.isMember(var.getVarName())) {
       Quantifier b = bound.get(var.getVarName());
       if (b != null) {
         IType refreshed = b.getVar();
-        if (var.hasConstraints() && refreshed instanceof TypeVar && !((TypeVar) refreshed).hasConstraints()
-            && !vars.contains(refreshed)) {
+        if (var.hasConstraints() && !((TypeVar) refreshed).hasConstraints()
+                && !vars.contains(refreshed)) {
           vars.add(refreshed);
           TypeVar refreshedVar = (TypeVar) refreshed;
 
@@ -466,32 +412,17 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public IType transformExistentialType(ExistentialType t, IndexSet<String> exclusions)
-  {
-    return transformQuantified(t, exclusions, new Lambda<TypeVar, Quantifier>() {
-      @Override
-      public Quantifier apply(TypeVar v)
-      {
-        return new Existential(v);
-      }
-    }, new Lambda2<TypeVar, IType, IType>() {
-      @Override
-      public IType apply(TypeVar v, IType bndType)
-      {
-        return new ExistentialType(v, bndType);
-      }
-    });
+  public IType transformExistentialType(ExistentialType t, IndexSet<String> exclusions) {
+    return transformQuantified(t, exclusions, Existential::new, ExistentialType::new);
   }
 
   @Override
-  public IType transformUniversalType(UniversalType t, IndexSet<String> exclusions)
-  {
-    return transformQuantified(t, exclusions, (v) -> new Universal(v), (v, bndType) -> new UniversalType(v, bndType));
+  public IType transformUniversalType(UniversalType t, IndexSet<String> exclusions) {
+    return transformQuantified(t, exclusions, Universal::new, UniversalType::new);
   }
 
-  private IType transformQuantified(QuantifiedType t, IndexSet<String> exclusions, Lambda<TypeVar, Quantifier> quant,
-      Lambda2<TypeVar, IType, IType> quantifier)
-  {
+  private IType transformQuantified(QuantifiedType t, IndexSet<String> exclusions, Function<TypeVar, Quantifier> quant,
+                                    BiFunction<TypeVar, IType, IType> quantifier) {
     TypeVar v = t.getBoundVar();
     String varName = v.getVarName();
     if (v.hasConstraints()) {
@@ -515,8 +446,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public ITypeConstraint transformContractConstraint(ContractConstraint con, IndexSet<String> exclusions)
-  {
+  public ITypeConstraint transformContractConstraint(ContractConstraint con, IndexSet<String> exclusions) {
     IType conType = con.getContract().transform(this, exclusions);
     if (conType == con.getContract())
       return con;
@@ -525,8 +455,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public ITypeConstraint transformHasKindConstraint(HasKind has, IndexSet<String> exclusions)
-  {
+  public ITypeConstraint transformHasKindConstraint(HasKind has, IndexSet<String> exclusions) {
     TypeVar v = (TypeVar) has.getVar().transform(this, exclusions);
     if (v == has.getVar())
       return has;
@@ -535,8 +464,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public ITypeConstraint transformInstanceOf(InstanceOf inst, IndexSet<String> exclusions)
-  {
+  public ITypeConstraint transformInstanceOf(InstanceOf inst, IndexSet<String> exclusions) {
     IType instType = inst.getType().transform(this, exclusions);
     TypeVar v = (TypeVar) inst.getVar().transform(this, exclusions);
     if (v == inst.getVar() && instType == inst.getType())
@@ -546,8 +474,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public ITypeConstraint transformFieldConstraint(FieldConstraint fc, IndexSet<String> exclusions)
-  {
+  public ITypeConstraint transformFieldConstraint(FieldConstraint fc, IndexSet<String> exclusions) {
     TypeVar v = (TypeVar) fc.getVar().transform(this, exclusions);
     IType t = fc.getType().transform(this, exclusions);
     if (t == fc.getType() && v == fc.getVar())
@@ -557,8 +484,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public ITypeConstraint transformFieldTypeConstraint(FieldTypeConstraint tc, IndexSet<String> exclusions)
-  {
+  public ITypeConstraint transformFieldTypeConstraint(FieldTypeConstraint tc, IndexSet<String> exclusions) {
     TypeVar v = (TypeVar) tc.getVar().transform(this, exclusions);
     IType t = tc.getType().transform(this, exclusions);
     if (t == tc.getType() && v == tc.getVar())
@@ -568,8 +494,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   @Override
-  public ITypeConstraint transformTupleContraint(TupleConstraint t, IndexSet<String> exclusions)
-  {
+  public ITypeConstraint transformTupleContraint(TupleConstraint t, IndexSet<String> exclusions) {
     TypeVar v = (TypeVar) t.getVar().transform(this, exclusions);
     if (v == t.getVar())
       return t;
