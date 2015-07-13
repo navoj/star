@@ -68,16 +68,12 @@ fun isIdentifierStart(string(S)) is __isIdentifierStart(__get_char(S,0_));
 fun isUnicodeIdentifier(string(S)) is __isUnicodeIdentifier(S);
 
 fun isUpperCase(char(C)) is __isUpperCase(C)
- |  isUpperCase(nonChar) is false;
 
 fun isLowerCase(char(C)) is __isLowerCase(C)
- |  isLowerCase(nonChar) is false;
 
 fun toUpperCase(string(S)) is string(__uppercase(S))
- |  toUpperCase(nonString) is nonString;
 
 fun toLowerCase(string(S)) is string(__lowercase(S))
- |  toLowerCase(nonString) is nonString;
 
 fun trim(`[ \t\n\r]*(.*:A)[ \t\n\r]+`) is A
  |  trim(`[ \t\n\r]*(.*:A)`) is A;
@@ -187,7 +183,6 @@ implementation pPrint over boolean is {
 
 implementation pPrint over char is {
   fun ppDisp(char(ch)) is ppSequence(0,cons(ppStr("'"),cons(ppStr(string(__char_string(ch))),cons(ppStr("'"),nil))))
-   |  ppDisp(nonChar) is ppStr("nonChar");
 }
 
 implementation pPrint over ((%s,%t)) where pPrint over %s and pPrint over %t is {
@@ -208,27 +203,22 @@ implementation pPrint over %t default is {
 
 implementation pPrint over integer is {
   fun ppDisp(integer(I)) is ppStr(string(__integer_string(I)))
-   |  ppDisp(nonInteger) is ppStr("nonInteger");
 }
  
 implementation pPrint over long is {
   fun ppDisp(long(L)) is ppStr(string(__long_string(L)))
-   |  ppDisp(nonLong) is ppStr("nonLong");
 }
 
 implementation pPrint over float is {
-  fun ppDisp(nonFloat) is ppStr("nonFloat")
-   |  ppDisp(float(F)) is ppStr(string(__float_string(F)));
+  fun ppDisp(float(F)) is ppStr(string(__float_string(F)));
 }
 
 implementation pPrint over decimal is {
-  fun ppDisp(nonDecimal) is ppStr("nonDecimal")
-   |  ppDisp(decimal(D)) is ppStr(string(__decimal_string(D)));
+  fun ppDisp(decimal(D)) is ppStr(string(__decimal_string(D)));
 }
 
 implementation pPrint over string is {
   fun ppDisp(string(S)) is ppStr(string(__string_quote(S)))
-   |  ppDisp(nonString) is ppStr("nonString");
 }
 
 implementation pPrint over astLocation is {

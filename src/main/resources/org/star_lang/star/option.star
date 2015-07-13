@@ -69,3 +69,18 @@ implementation for all t,e such that
 } using {
   fun iterate(M,F,S) is _iterate(M,F,S)
 }
+
+implementation for all t such that
+  coercion over (quoted,option of t) where coercion over (quoted,t) is {
+    coerce = optionDeQuote
+  } using {
+    fun optionDeQuote(Q) is some(Q as t)
+  }
+
+implementation for all t such that
+  coercion over (option of t,quoted) where coercion over (t,quoted) is {
+    coerce = optionQuote
+  } using {
+    fun optionQuote(some(Q)) is Q as quoted
+     |  optionQuote(none) is <|none|>
+  }

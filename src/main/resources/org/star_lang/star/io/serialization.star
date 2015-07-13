@@ -462,7 +462,6 @@ serialization is package {
     yank is yankChar;
   } using {
     MAGIC_CHAR is 0xE08080;
-    shoveChar(nonChar) is shoveChar0(MAGIC_CHAR);
     shoveChar(c) default is shoveChar0(c as integer);
 
     shoveChar0(sv) is shoverM computation {
@@ -475,9 +474,7 @@ serialization is package {
       _word8(o1) is valof yankWord8;
       _word16(s2) is valof yankWord16;
       i is (o1 .|. (s2 .<<. 8));
-      valis (i = MAGIC_CHAR
-       ? nonChar
-	 | (i as char));
+      valis i as char;
     };
   };
 

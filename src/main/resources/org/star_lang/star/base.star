@@ -30,37 +30,31 @@ implementation equality over boolean is {
 
 implementation equality over char is {
   fun char(X) = char(Y) is __char_eq(X,Y)
-   |  nonChar = nonChar is true
    |  _ = _ default is false
 };
 
 implementation equality over integer is {
   fun integer(X) = integer(Y) is __integer_eq(X,Y)
-   |  nonInteger=nonInteger is true
    |  _ = _ default is false
 };
 
 implementation equality over long is {
   fun long(X) = long(Y) is __long_eq(X,Y)
-   |  nonLong = nonLong is true
    |  _ = _ default is false
 };
 
 implementation equality over float is {
   fun float(X) = float(Y) is __float_eq(X,Y)
-   |  nonFloat = nonFloat is true
    |  _ = _ default is false
 };
 
 implementation equality over decimal is {
   fun decimal(X) = decimal(Y) is __decimal_eq(X,Y)
-   |  nonDecimal = nonDecimal is true
    |  _ = _ default is false
 };
 
 implementation equality over string is {
   fun string(X) = string(Y) is __string_eq(X,Y) 
-   | nonString = nonString is true
    | _ = _ default is false
 };
 
