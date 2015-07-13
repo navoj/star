@@ -24,11 +24,11 @@ person is package{
     
     gender has type gender;
     gender default is male;
-    
-    age has type ref float;
-    age default := nonFloat;
-    
-    assert age=nonFloat or age>0.0;
+
+    age has type ref option of float;
+    age default := none;
+
+    assert age=none or someValue(age)>0.0;
   } or noone;
   
   type gender is male or female;

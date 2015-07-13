@@ -48,11 +48,11 @@ tokens is package{
 
     fun reportId(Id,Cnt,L,Lc) is (idTok(Id,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
-    fun reportChr(ch,Cnt,L,Lc) is (charTok(ch[0], locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+    fun reportChr(S,Cnt,L,Lc) where S[0] has value ch is (charTok(ch, locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
     fun reportString(S,Cnt,L,Lc) is (stringTok(S,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
-    fun reportChrInteger(ch,Cnt,L,Lc) is (integerTok(ch[0] as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
+    fun reportChrInteger(S,Cnt,L,Lc) where S[0] has value ch is (integerTok(ch as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
 	fun reportInteger(I,Cnt,L,Lc) is  (integerTok(I as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
 		
@@ -73,7 +73,7 @@ tokens is package{
      |  skipComments(L,Lc) default is (L,Lc)
 
     fun lineComment(['\n',..L],Lc) is skipComments(L,nxtLne(Lc))
-     |  lineComment([{_,..L],Lc) is lineComment(L,nxtLoc(Lc,1))
+     |  lineComment([_,..L],Lc) is lineComment(L,nxtLoc(Lc,1))
      |  lineComment(L,Lc) default is (L,Lc)
 
     fun blockComment(['*','/',..L],Lc) is skipComments(L,nxtLoc(Lc,2))

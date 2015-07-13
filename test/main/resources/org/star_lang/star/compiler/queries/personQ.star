@@ -25,10 +25,10 @@ person is package{
     gender has type gender;
     gender default is male;
     
-    age has type float;
-    age default is nonFloat;
+    age has type option of float;
+    age default is none;
     
-    assert age=nonFloat or age>0.0;
+    assert age=none or someValue(age)>0.0;
   } or noone implementing quotable;
   
   type gender is male or female implementing quotable;

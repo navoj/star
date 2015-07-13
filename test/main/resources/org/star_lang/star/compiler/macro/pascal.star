@@ -18,7 +18,7 @@
 pascal is package{
   import beginEnd;
    
-  procedure iFact(N) begin
+  procedure iFact(N)
     var F := 1;
     var Ix := 1;
     while Ix < N do 
@@ -30,8 +30,8 @@ pascal is package{
   end;
   
   procedure main()
-  begin
     logMsg(info,"iFact(10)=$(iFact(10))")
+    assert iFact(10)=362880
   end
   
 }

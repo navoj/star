@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.star_lang.star.compiler.SRTest;
+import org.star_lang.star.operators.general.runtime.Assert;
 
 /**
  * 
@@ -139,11 +140,5 @@ public class ContractTest extends SRTest
     exception.expectMessage("four over integer not known to be implemented");
 
     runStar("badFour.star");
-  }
-
-  @Test
-  public void rangeContracts()
-  {
-    runStar("rangeTest.star");
   }
 }

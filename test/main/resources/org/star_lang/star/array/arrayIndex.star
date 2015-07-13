@@ -27,8 +27,8 @@ arrayIndex is package{
     assert II[2] has value "gamma";
     assert II[3] has value "delta";
     
-    assert (II[4] or else nonString)=nonString;
-    assert (II[-1] or else nonString)=nonString;
+    assert II[4] = none;
+    assert II[-1] = none
     
     var C := list of [0,1,2];
     

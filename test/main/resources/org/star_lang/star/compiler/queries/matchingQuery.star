@@ -29,11 +29,12 @@ matchingQuery is package{
   def E is list of [ Joe,  Peter, John ];
                   
   fun findEmpl(N,I,S,EE) is 
-    list of { all Em where Em matching empl{ name = Nm; id = ID; ssn = SSN} in EE and (N=Nm or N=nonString) and (ID=I or I=nonInteger) and (SSN=S or S=nonString)};
+    list of { all Em where Em matching empl{ name = Nm; id = ID; ssn = SSN} in EE and
+                           (N has value NN implies NN=Nm) and (I has value II implies ID=II) and (S has value SS implies SS=SSN)};
      
   prc main() do {
-    assert findEmpl("joe",nonInteger,nonString,E) = list of [ Joe ];
-    assert findEmpl(nonString,1,nonString,E) = list of [Peter];
-    assert findEmpl(nonString,4,nonString,E) = list of []
+    assert findEmpl(some("joe"),none,none,E) = list of [ Joe ];
+    assert findEmpl(none,some(1),none,E) = list of [Peter];
+    assert findEmpl(none,some(4),none,E) = list of []
   }
 }

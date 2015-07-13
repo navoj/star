@@ -26,8 +26,8 @@ defaults is package{
     gender has type gender;
     gender default is male;
     
-    age has type float;
-    age default is nonFloat;
+    age has type option of float;
+    age default is none;
   } or noone;
   
   type gender is male or female;
@@ -39,7 +39,7 @@ defaults is package{
     logMsg(info,"$JJ");
     
     assert JJ.name="fred";
-    assert JJ.age=nonFloat;
+    assert JJ.age=none;
   }
 }
   

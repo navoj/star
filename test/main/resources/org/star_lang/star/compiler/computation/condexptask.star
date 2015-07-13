@@ -36,7 +36,7 @@ condexptask is package{
   
   def L is list of [1,2,3];
 
-  fun S2(X) is task{ valis X in L ? valof task { valis X} : nonInteger };
+  fun S2(X) is task{ valis X in L ? valof task { valis some(X)} : none };
   
   prc main() do{
     def R0a is valof S0(1);
@@ -54,7 +54,7 @@ condexptask is package{
     assert R1a="2";
     assert R1b=beta;
    
-    assert R2a=1;
-    assert R2b=nonInteger;
+    assert R2a=some(1);
+    assert R2b=none;
   }
 }

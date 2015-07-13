@@ -55,7 +55,7 @@ indextest is package{
     assert MM["a"] has value 1;
     assert MM["b"] has value 2;
     assert MM["c"] has value 3;
-    assert (MM["e"] or else nonInteger)=nonInteger;
+    assert MM["e"] = none;
     
     assert CC[0] has value "a";
     assert CC[1] has value "b";

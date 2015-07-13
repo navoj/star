@@ -24,11 +24,6 @@ person is package{
     
     gender has type gender;
     gender default is male;
-    
-    age has type float;
-    age default is nonFloat;
-    
-    assert age=nonFloat or age>0.0;
   } or noone;
   
   type gender is male or female;

@@ -27,7 +27,7 @@ hashes is package{
     assert M["b"] has value 2;
     assert M["c"] has value 3;
     
-    assert (M["d"] or else nonInteger) = nonInteger;
+    assert not M["d"] has value _;
     
     -- test sizeable
     assert size(M)=3;

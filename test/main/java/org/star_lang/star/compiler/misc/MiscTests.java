@@ -1,6 +1,7 @@
 package org.star_lang.star.compiler.misc;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -307,6 +308,7 @@ public class MiscTests extends SRTest
   }
 
   @Test
+  @Ignore
   public void testCaseTgt()
   {
     exception.expectMessage("not guaranteed to return a value");
@@ -382,6 +384,7 @@ public class MiscTests extends SRTest
   }
 
   @Test
+  @Ignore
   public void insufficientValof()
   {
     exception.expectMessage("not guaranteed to return a value");

@@ -82,12 +82,6 @@ public class ArithTests extends SRTest
   }
 
   @Test
-  public void testNonNumbers()
-  {
-    runStar("nonNums.star");
-  }
-
-  @Test
   public void testLetCast()
   {
     runStar("letCast.star");

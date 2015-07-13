@@ -40,7 +40,6 @@ public class RegexpTests extends SRTest
   }
 
   @Test
-  @Ignore
   public void testTokens()
   {
     runStar("tokens.star");
