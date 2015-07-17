@@ -17,6 +17,7 @@ import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IMap;
+import org.star_lang.star.data.ISet;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.ITypeDescription;
@@ -70,6 +71,8 @@ import org.star_lang.star.operators.general.General;
 import org.star_lang.star.operators.hash.HashTreeOps;
 import org.star_lang.star.operators.misc.MiscOps;
 import org.star_lang.star.operators.resource.ResourceOps;
+import org.star_lang.star.operators.sets.SetOpsDecl;
+import org.star_lang.star.operators.sets.runtime.SetOps;
 import org.star_lang.star.operators.spawn.SpawnOps;
 import org.star_lang.star.operators.string.CharOps;
 import org.star_lang.star.operators.string.DateOps;
@@ -87,27 +90,22 @@ import org.star_lang.star.operators.system.GStopHere;
 import org.star_lang.star.operators.system.SystemUtils;
 import org.star_lang.star.operators.uri.URIOps;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 @SuppressWarnings("serial")
-public class Intrinsics extends Dict
-{
+public class Intrinsics extends Dict {
   private static final Intrinsics intrinsics = new Intrinsics();
 
   private final LayeredMap<String, ICafeBuiltin> builtins = new LayeredHash<String, ICafeBuiltin>();
@@ -125,7 +123,8 @@ public class Intrinsics extends Dict
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.voidType, Object.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.anyType, IValue.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils
-        .dictionaryType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
+            .dictionaryType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
+    intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils.setType(new TypeVar())), ISet.class.getCanonicalName()));
 
     // Define standard types
     VoidWrap.declare(intrinsics);
@@ -176,6 +175,7 @@ public class Intrinsics extends Dict
     LongCompare.declare(intrinsics);
     LongUnary.declare(intrinsics);
     HashTreeOps.declare(intrinsics);
+    SetOpsDecl.declare(intrinsics);
     MiscOps.declare(intrinsics);
     Number2Number.declare(intrinsics);
     BinaryEquality.declare(intrinsics);
@@ -201,31 +201,30 @@ public class Intrinsics extends Dict
 
     Location noWhere = Location.nullLoc;
     intrinsics.defineTypeAlias(noWhere, new TypeAlias(Location.nullLoc, TypeUtils.typeExp(StandardNames.ALIAS,
-        TypeUtils.typeExp("double"), StandardTypes.floatType)));
+            TypeUtils.typeExp("double"), StandardTypes.floatType)));
     intrinsics.defineTypeAlias(noWhere, new TypeAlias(Location.nullLoc, TypeUtils.typeExp(StandardNames.ALIAS,
-        TypeUtils.typeExp("arbitrary"), StandardTypes.decimalType)));
+            TypeUtils.typeExp("arbitrary"), StandardTypes.decimalType)));
   }
 
-  private Intrinsics()
-  {
+  private Intrinsics() {
     super(null);
   }
 
   /**
    * Declare a built-in function to the type context.
-   * 
+   * <p>
    * Although an instance value is passed to the {@code declareBuiltin} method, this value is NOT
    * used in actual code. It MUST be the case that a new copy of the passed-in built-in is
    * sufficient for execution.
-   * 
+   * <p>
    * I.e., the following code fragments MUST be equivalent:
-   * 
+   * <p>
    * <pre>
    * XX = builtin.enter(X, Y);
    * </pre>
-   * 
+   * <p>
    * and
-   * 
+   * <p>
    * <pre>
    * Class<? extends ICafeBuiltin> klass = builtin.getClass();
    *   ...
@@ -233,13 +232,11 @@ public class Intrinsics extends Dict
    *   ...
    * XX = nFun.enter(X,Y)
    * </pre>
-   * 
-   * @param builtin
-   *          an instance of the built-in function object.
+   *
+   * @param builtin an instance of the built-in function object.
    */
 
-  public void declareBuiltin(ICafeBuiltin builtin)
-  {
+  public void declareBuiltin(ICafeBuiltin builtin) {
     String name = builtin.getName();
     assert !builtins.containsKey(name);
     builtins.put(name, builtin);
@@ -248,53 +245,44 @@ public class Intrinsics extends Dict
 
   /**
    * Retrieve a built-in operator associated with a given name.
-   * 
+   *
    * @param name
    * @return the built-in function object (if it exists) associated with a given name
    */
 
-  public ICafeBuiltin getBuiltinOperator(String name)
-  {
+  public ICafeBuiltin getBuiltinOperator(String name) {
     return builtins.get(name);
   }
 
-  public boolean isBuiltin(String name)
-  {
+  public boolean isBuiltin(String name) {
     return builtins.containsKey(name);
   }
 
-  public static Collection<? extends ICafeBuiltin> allBuiltins()
-  {
+  public static Collection<? extends ICafeBuiltin> allBuiltins() {
     return intrinsics.builtins.values();
   }
 
-  public static Collection<ITypeDescription> builtinTypes()
-  {
+  public static Collection<ITypeDescription> builtinTypes() {
     return intrinsics.getAllTypes().values();
   }
 
-  public static ICafeBuiltin getBuiltin(String name)
-  {
+  public static ICafeBuiltin getBuiltin(String name) {
     return intrinsics.getBuiltinOperator(name);
   }
 
-  public static boolean isIntrinsicType(String name)
-  {
+  public static boolean isIntrinsicType(String name) {
     return intrinsics.getTypeDescription(name) != null;
   }
 
-  public static ITypeDescription intrinsicType(String name)
-  {
+  public static ITypeDescription intrinsicType(String name) {
     return intrinsics.getTypeDescription(name);
   }
 
-  public static Intrinsics intrinsics()
-  {
+  public static Intrinsics intrinsics() {
     return intrinsics;
   }
 
-  public static Map<String, IType> standardTypes()
-  {
+  public static Map<String, IType> standardTypes() {
     Map<String, IType> standards = new TreeMap<>();
 
     for (Entry<String, ITypeDescription> entry : intrinsics.getAllTypes().entrySet()) {

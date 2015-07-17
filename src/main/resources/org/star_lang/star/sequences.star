@@ -90,16 +90,6 @@ contract sorting over %c determines %t is {
 contract reversible over t is {
   reverse has type (t)=>t;
 }
-  
-#right((union),700);
-#right((intersect),600);
-#right((complement),500);
-  
-contract sets over t is {
-  (union) has type (t,t)=>t;
-  (intersect) has type (t,t)=>t;
-  (complement) has type (t,t)=>t;
-}
 
 contract explosion over (t,c) determines e is {
   explode has type (t)=>c of e;

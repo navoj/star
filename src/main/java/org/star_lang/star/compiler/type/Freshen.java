@@ -388,7 +388,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
 
   @Override
   public IType transformTypeVar(TypeVar var, IndexSet<String> exclusions) {
-    if (!exclusions.isMember(var.getVarName())) {
+    if (!exclusions.contains(var.getVarName())) {
       Quantifier b = bound.get(var.getVarName());
       if (b != null) {
         IType refreshed = b.getVar();

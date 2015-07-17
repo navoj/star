@@ -1,58 +1,52 @@
 package org.star_lang.star.data.indextree;
 
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
+import org.star_lang.star.compiler.util.WrapIterator;
+import org.star_lang.star.data.IValue;
 
 /*
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
+ * Copyright (c) 2015. Francis G. McCabe
  *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 @SuppressWarnings("serial")
-public class IndexSet<T> implements PrettyPrintable
-{
+public class IndexSet<T> implements Sets<T>, PrettyPrintable {
   private final IndexTree<T, Object> tree;
 
-  public IndexSet()
-  {
+  public IndexSet() {
     this.tree = IndexTree.emptyTree();
   }
 
-  private IndexSet(IndexTree<T, Object> tree)
-  {
+  public static<T> IndexSet<T> emptySet(){
+    return new IndexSet<>();
+  }
+
+  private IndexSet(IndexTree<T, Object> tree) {
     this.tree = tree;
   }
 
-  public IndexSet<T> add(T el)
-  {
+  public IndexSet<T> add(T el) {
     if (!tree.contains(el))
       return new IndexSet<>(tree.insrt(el, el));
     else
       return this;
   }
 
-  public boolean isMember(T el)
-  {
-    return tree.contains(el);
-  }
-
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     String sep = "";
     disp.append("{");
     for (Entry<T, Object> e : tree) {
@@ -68,9 +62,47 @@ public class IndexSet<T> implements PrettyPrintable
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 
+  @Override
+  public boolean isEmpty() {
+    return tree.isEmpty();
+  }
+
+  @Override
+  public int size() {
+    return tree.size();
+  }
+
+  @Override
+  public boolean contains(T el) {
+    return tree.contains(el);
+  }
+
+  @Override
+  public IndexSet insert(T key) {
+    return add(key);
+  }
+
+  @Override
+  public Sets<T> delete(T key) {
+    return null;
+  }
+
+  @Override
+  public <S> S fold(Fold<T, S> folder, S init) {
+    return null;
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return new WrapIterator<Entry<T,Object>,T>((e)->e.getKey(),tree.iterator());
+  }
+
+  @Override
+  public Iterator<T> reverseIterator() {
+    return new WrapIterator<Entry<T,Object>,T>((e)->e.getKey(),tree.reverseIterator());
+  }
 }

@@ -84,6 +84,7 @@ public class StarRules
       cat.addEntry("arrays", URIUtils.parseUri("std:arrays.star"));
       cat.addEntry("altarrays", URIUtils.parseUri("std:altarrays.star"));
       cat.addEntry("maps", URIUtils.parseUri("std:maps.star"));
+      cat.addEntry("sets", URIUtils.parseUri("std:sets.star"));
       cat.addEntry("range", URIUtils.parseUri("std:range.star"));
       cat.addEntry("indexed", URIUtils.parseUri("std:indexed.star"));
       cat.addEntry("queue", URIUtils.parseUri("std:queue.star"));

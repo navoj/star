@@ -9,63 +9,49 @@ import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
 import org.star_lang.star.compiler.util.StringIterator;
 import org.star_lang.star.compiler.util.StringUtils;
-import org.star_lang.star.data.IConstructor;
-import org.star_lang.star.data.IFunction;
-import org.star_lang.star.data.IList;
-import org.star_lang.star.data.IMap;
-import org.star_lang.star.data.IPattern;
-import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IScalar;
-import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.IValueVisitor;
+import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.StandardTypes;
 
 /**
  * The QuoteDisplay visitor ensures that the value is displayed in a way that enables re-reading the
  * value.
- * 
- * 
+ * <p>
+ * <p>
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
-public class QuoteDisplay implements IValueVisitor
-{
+public class QuoteDisplay implements IValueVisitor {
   private final PrettyPrintDisplay disp;
 
-  private QuoteDisplay(PrettyPrintDisplay disp)
-  {
+  private QuoteDisplay(PrettyPrintDisplay disp) {
     this.disp = disp;
   }
 
-  public static String display(IValue term)
-  {
+  public static String display(IValue term) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
     QuoteDisplay displayer = new QuoteDisplay(disp);
     term.accept(displayer);
     return disp.toString();
   }
 
-  public static void display(PrettyPrintDisplay disp, IValue term)
-  {
+  public static void display(PrettyPrintDisplay disp, IValue term) {
     QuoteDisplay displayer = new QuoteDisplay(disp);
     term.accept(displayer);
   }
 
   @Override
-  public void visitList(IList list)
-  {
+  public void visitList(IList list) {
     disp.appendId(StandardTypes.LIST);
     disp.appendWord(StandardNames.OF);
     disp.append("{");
@@ -81,8 +67,7 @@ public class QuoteDisplay implements IValueVisitor
   }
 
   @Override
-  public void visitConstructor(IConstructor con)
-  {
+  public void visitConstructor(IConstructor con) {
     if (!TypeUtils.isTupleLabel(con.getLabel()))
       disp.appendId(con.getLabel());
     disp.append("(");
@@ -96,43 +81,55 @@ public class QuoteDisplay implements IValueVisitor
   }
 
   @Override
-  public void visitFunction(IFunction fn)
-  {
+  public void visitFunction(IFunction fn) {
     disp.append("<<function: ");
     DisplayType.display(disp, fn.getType());
     disp.append(">>");
   }
 
   @Override
-  public void visitPattern(IPattern ptn)
-  {
+  public void visitPattern(IPattern ptn) {
     disp.append("<<pattern: ");
     DisplayType.display(disp, ptn.getType());
     disp.append(">>");
   }
 
   @Override
-  public void visitMap(IMap map)
-  {
+  public void visitMap(IMap map) {
     disp.appendWord(StandardNames.DICTIONARY);
     disp.appendWord(StandardNames.OF);
-    disp.append("{");
+    disp.append("[");
     int mark = disp.markIndent(2);
     String sep = "";
     for (Entry<IValue, IValue> entry : map) {
       disp.append(sep);
-      sep = ";\n";
+      sep = ",\n";
       entry.getKey().accept(this);
       disp.append("->");
       entry.getValue().accept(this);
     }
     disp.popIndent(mark);
-    disp.append("}");
+    disp.append("]");
   }
 
   @Override
-  public void visitRecord(IRecord agg)
-  {
+  public void visitSet(ISet set) {
+    disp.appendWord(StandardNames.SET);
+    disp.appendWord(StandardNames.OF);
+    disp.append("[");
+    int mark = disp.markIndent(2);
+    String sep = "";
+    for (IValue entry : set) {
+      disp.append(sep);
+      sep = ", ";
+      entry.accept(this);
+    }
+    disp.popIndent(mark);
+    disp.append("]");
+  }
+
+  @Override
+  public void visitRecord(IRecord agg) {
     disp.appendId(agg.getLabel());
     disp.append("{");
     int mark = disp.markIndent(2);
@@ -150,13 +147,12 @@ public class QuoteDisplay implements IValueVisitor
   }
 
   @Override
-  public void visitScalar(IScalar<?> scalar)
-  {
+  public void visitScalar(IScalar<?> scalar) {
     Object value = scalar.getValue();
     if (value instanceof String) {
       String orig = (String) value;
       disp.append("\"");
-      for (StringIterator it = new StringIterator(orig); it.hasNext();)
+      for (StringIterator it = new StringIterator(orig); it.hasNext(); )
         StringUtils.strChr(disp, it.next());
       disp.append("\"");
     } else if (value instanceof Long)

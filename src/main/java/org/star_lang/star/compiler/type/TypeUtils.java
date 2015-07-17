@@ -72,23 +72,19 @@ import org.star_lang.star.operators.Intrinsics;
  * 
  */
 
-public class TypeUtils
-{
+public class TypeUtils {
 
-  public static boolean isType(IType type, String name)
-  {
+  public static boolean isType(IType type, String name) {
     type = deRef(type);
     return type.typeLabel().equals(name);
   }
 
-  public static boolean isType(IType type, String name, int arity)
-  {
+  public static boolean isType(IType type, String name, int arity) {
     type = unwrap(type);
     return type.typeLabel().equals(name) && TypeUtils.typeArity(type) == arity;
   }
 
-  public static boolean isType(IType type, IType tf, int arity)
-  {
+  public static boolean isType(IType type, IType tf, int arity) {
     type = unwrap(type);
     if (type instanceof TypeExp) {
       TypeExp tpExp = (TypeExp) type;
@@ -101,28 +97,24 @@ public class TypeUtils
     return false;
   }
 
-  public static boolean isTypeExp(IType type)
-  {
+  public static boolean isTypeExp(IType type) {
     type = deRef(type);
     return type instanceof TypeExp;
   }
 
-  public static IType getTypeArg(IType type, int ix)
-  {
+  public static IType getTypeArg(IType type, int ix) {
     type = deRef(type);
     assert type instanceof TypeExp;
 
     return ((TypeExp) type).getTypeArg(ix);
   }
 
-  public static boolean isTypeVar(IType type)
-  {
+  public static boolean isTypeVar(IType type) {
     type = deRef(type);
     return type instanceof TypeVar;
   }
 
-  public static int typeArity(IType type)
-  {
+  public static int typeArity(IType type) {
     type = unwrap(type);
 
     if (type instanceof Type)
@@ -137,8 +129,7 @@ public class TypeUtils
       return -1;
   }
 
-  public static Kind typeKind(IType type)
-  {
+  public static Kind typeKind(IType type) {
     type = unwrap(type);
     if (type instanceof TypeVar) {
       TypeVar tv = (TypeVar) type;
@@ -149,8 +140,7 @@ public class TypeUtils
     return type.kind();
   }
 
-  public static IType typeLabel(IType type)
-  {
+  public static IType typeLabel(IType type) {
     type = unwrap(type);
     if (type instanceof TypeExp)
       return ((TypeExp) type).getTypeCon();
@@ -162,8 +152,7 @@ public class TypeUtils
     return null;
   }
 
-  public static IType[] typeArgs(IType type)
-  {
+  public static IType[] typeArgs(IType type) {
     type = deRef(type);
 
     if (type instanceof TypeExp)
@@ -171,11 +160,10 @@ public class TypeUtils
     else if (type instanceof TupleType)
       return ((TupleType) type).getElTypes();
     else
-      return new IType[] {};
+      return new IType[]{};
   }
 
-  public static IType getTypeCon(IType type)
-  {
+  public static IType getTypeCon(IType type) {
     if (type instanceof Type)
       return type;
     else if (type instanceof TypeExp)
@@ -186,14 +174,12 @@ public class TypeUtils
       return type;
   }
 
-  public static IType typeCon(String label, int arity)
-  {
+  public static IType typeCon(String label, int arity) {
     return new Type(label, Kind.kind(arity));
   }
 
-  public static IType typeExp(String name, IType... args)
-  {
-    assert!isTupleLabel(name);
+  public static IType typeExp(String name, IType... args) {
+    assert !isTupleLabel(name);
 
     if (args.length == 0)
       return new Type(name);
@@ -201,8 +187,7 @@ public class TypeUtils
       return new TypeExp(name, args);
   }
 
-  public static IType typeExp(IType con, IType... args)
-  {
+  public static IType typeExp(IType con, IType... args) {
     if (!con.kind().check(args.length))
       throw new IllegalArgumentException("bad type constructor");
 
@@ -212,60 +197,51 @@ public class TypeUtils
       return new TypeExp(con, args);
   }
 
-  public static IType typeExp(String label, List<IType> args)
-  {
+  public static IType typeExp(String label, List<IType> args) {
     return typeExp(new Type(label, Kind.kind(args.size())), args);
   }
 
-  public static IType typeExp(IType con, List<IType> args)
-  {
+  public static IType typeExp(IType con, List<IType> args) {
     if (!con.kind().check(args.size()))
       throw new IllegalArgumentException(StringUtils.msg(con, " expects ", con.kind().arity(), " type arguments, got ",
-          args.size()));
+              args.size()));
     else if (con instanceof Type && args.isEmpty())
       return con;
     else
       return new TypeExp(con, args.toArray(new IType[args.size()]));
   }
 
-  public static IType functionType(IType... argTypes)
-  {
+  public static IType functionType(IType... argTypes) {
     IType args[] = new IType[argTypes.length - 1];
     for (int ix = 0; ix < args.length; ix++)
       args[ix] = argTypes[ix];
     return typeExp(StandardNames.FUN_ARROW, tupleType(args), argTypes[args.length]);
   }
 
-  public static IType funcType(IType argTypes, IType resType)
-  {
+  public static IType funcType(IType argTypes, IType resType) {
     return typeExp(StandardNames.FUN_ARROW, argTypes, resType);
   }
 
-  public static IType functionType(IType[] argTypes, IType resType)
-  {
+  public static IType functionType(IType[] argTypes, IType resType) {
     return typeExp(StandardNames.FUN_ARROW, tupleType(argTypes), resType);
   }
 
-  public static IType funType(TypeInterfaceType face, IType resType)
-  {
+  public static IType funType(TypeInterfaceType face, IType resType) {
     return typeExp(StandardNames.FUN_ARROW, face, resType);
   }
 
-  public static IType functionType(List<IType> argTypes, IType resType)
-  {
+  public static IType functionType(List<IType> argTypes, IType resType) {
     return typeExp(StandardNames.FUN_ARROW, tupleType(argTypes), resType);
   }
 
-  public static IType[] getFunArgTypes(IType type)
-  {
+  public static IType[] getFunArgTypes(IType type) {
     type = unwrap(type);
 
     assert isFunType(type) && isTupleType(getTypeArg(type, 0));
     return tupleTypes(getTypeArg(type, 0));
   }
 
-  public static IType getFunResultType(IType type)
-  {
+  public static IType getFunResultType(IType type) {
     type = unwrap(type);
 
     assert isFunType(type) : "not function type but " + type;
@@ -273,50 +249,42 @@ public class TypeUtils
     return getTypeArg(type, 1);
   }
 
-  public static IType getFunArgType(IType type)
-  {
+  public static IType getFunArgType(IType type) {
     type = unwrap(type);
     assert isFunType(type);
     return deRef(getTypeArg(type, 0));
   }
 
-  public static boolean isFunType(IType type)
-  {
+  public static boolean isFunType(IType type) {
     return isType(unwrap(type), StandardNames.FUN_ARROW, 2);
   }
 
-  public static boolean isFunctionType(IType type)
-  {
+  public static boolean isFunctionType(IType type) {
     type = unwrap(type);
     return isFunType(type) && !isProcedureReturnType(getFunResultType(type));
   }
 
-  public static IType actionType(IType resType)
-  {
+  public static IType actionType(IType resType) {
     return typeExp(StandardNames.ACTION_TYPE, resType);
   }
 
-  public static boolean isTupleFunctionType(IType type)
-  {
+  public static boolean isTupleFunctionType(IType type) {
     type = unwrap(type);
     return isFunType(type) && isTupleType(getFunArgType(type));
   }
 
-  public static boolean isRecordFunctionType(IType type)
-  {
+  public static boolean isRecordFunctionType(IType type) {
     type = unwrap(type);
     return isFunType(type) && isTypeInterface(getFunArgType(type));
   }
 
-  public static TypeInterface getRecordFunctionArgs(IType type)
-  {
+  public static TypeInterface getRecordFunctionArgs(IType type) {
     type = unwrap(type);
     assert isRecordFunctionType(type);
     return (TypeInterface) unwrap(getFunArgType(type));
   }
 
-  public static int arityOfFunctionType(IType type)
-  {
+  public static int arityOfFunctionType(IType type) {
     assert isFunType(type);
 
     type = unwrap(type);
@@ -330,34 +298,28 @@ public class TypeUtils
       throw new IllegalStateException("invalid form of function type");
   }
 
-  public static boolean isConstructorType(IType type)
-  {
+  public static boolean isConstructorType(IType type) {
     return isType(unwrap(type), StandardNames.CONSTRUCTOR_TYPE, 2);
   }
 
-  public static IType constructorType(List<IType> argTypes, IType resType)
-  {
+  public static IType constructorType(List<IType> argTypes, IType resType) {
     return typeExp(StandardNames.CONSTRUCTOR_TYPE, tupleType(argTypes), resType);
   }
 
-  public static IType constructorType(IType argTypes[], IType resType)
-  {
+  public static IType constructorType(IType argTypes[], IType resType) {
     return typeExp(StandardNames.CONSTRUCTOR_TYPE, tupleType(argTypes), resType);
   }
 
-  public static IType constructorType(IType argsType, IType resType)
-  {
+  public static IType constructorType(IType argsType, IType resType) {
     return typeExp(StandardNames.CONSTRUCTOR_TYPE, argsType, resType);
   }
 
-  public static IType funTypeFromConType(IType type)
-  {
+  public static IType funTypeFromConType(IType type) {
     assert isConstructorType(type);
     return funcType(getConstructorArgType(type), getConstructorResultType(type));
   }
 
-  public static IType tupleConstructorType(IType... types)
-  {
+  public static IType tupleConstructorType(IType... types) {
     assert types.length > 0;
     IType argTypes[] = new IType[types.length - 1];
     for (int ix = 0; ix < types.length - 1; ix++)
@@ -365,13 +327,11 @@ public class TypeUtils
     return typeExp(StandardNames.CONSTRUCTOR_TYPE, tupleType(argTypes), types[types.length - 1]);
   }
 
-  public static IType constructorType(IType resType)
-  {
+  public static IType constructorType(IType resType) {
     return typeExp(StandardNames.CONSTRUCTOR_TYPE, tupleType(), resType);
   }
 
-  public static IType[] getConstructorArgTypes(IType type)
-  {
+  public static IType[] getConstructorArgTypes(IType type) {
     type = unwrap(type);
 
     IType arg = unwrap(getTypeArg(type, 0));
@@ -385,8 +345,7 @@ public class TypeUtils
     }
   }
 
-  public static IType getConstructorResultType(IType type)
-  {
+  public static IType getConstructorResultType(IType type) {
     type = unwrap(type);
 
     assert isConstructorType(type) : "not constructor type but " + type;
@@ -394,34 +353,29 @@ public class TypeUtils
     return getTypeArg(type, 1);
   }
 
-  public static IType getConstructorArgType(IType type)
-  {
+  public static IType getConstructorArgType(IType type) {
     type = unwrap(type);
     assert isConstructorType(type);
     return deRef(getTypeArg(type, 0));
   }
 
-  public static boolean isTupleConstructorType(IType type)
-  {
+  public static boolean isTupleConstructorType(IType type) {
     type = unwrap(type);
     return isConstructorType(type) && isTupleType(getConstructorArgType(type));
   }
 
-  public static boolean isRecordConstructorType(IType type)
-  {
+  public static boolean isRecordConstructorType(IType type) {
     type = unwrap(type);
     return isConstructorType(type) && isTypeInterface(getConstructorArgType(type));
   }
 
-  public static TypeInterfaceType getRecordConstructorArgs(IType type)
-  {
+  public static TypeInterfaceType getRecordConstructorArgs(IType type) {
     type = unwrap(type);
     assert isRecordConstructorType(type);
     return (TypeInterfaceType) unwrap(getConstructorArgType(type));
   }
 
-  public static int arityOfConstructorType(IType type)
-  {
+  public static int arityOfConstructorType(IType type) {
     assert isConstructorType(type);
 
     type = unwrap(type);
@@ -435,87 +389,73 @@ public class TypeUtils
       throw new IllegalStateException("invalid form of constructor type");
   }
 
-  public static boolean isProcedureType(IType type)
-  {
+  public static boolean isProcedureType(IType type) {
     type = unwrap(type);
 
     return isFunType(type) && isProcedureReturnType(getTypeArg(type, 1));
   }
 
-  public static IType procedureType(IType... argTypes)
-  {
+  public static IType procedureType(IType... argTypes) {
     return functionType(argTypes, StandardTypes.unitType);
   }
 
-  public static IType procedureType(List<IType> argTypes)
-  {
+  public static IType procedureType(List<IType> argTypes) {
     return functionType(argTypes, StandardTypes.unitType);
   }
 
-  public static IType[] getProcedureArgTypes(IType type)
-  {
+  public static IType[] getProcedureArgTypes(IType type) {
     return getFunArgTypes(type);
   }
 
-  public static IType getProcArgType(IType type)
-  {
+  public static IType getProcArgType(IType type) {
     return getFunArgType(type);
   }
 
-  public static int arityOfProcedureType(IType type)
-  {
+  public static int arityOfProcedureType(IType type) {
     type = deRef(type);
 
     assert isProcedureType(type);
     return arityOfFunctionType(type);
   }
 
-  public static boolean isProcedureReturnType(IType type)
-  {
+  public static boolean isProcedureReturnType(IType type) {
     type = deRef(type);
     return type.equals(StandardTypes.unitType);
   }
 
-  public static boolean isProgramType(IType t)
-  {
+  public static boolean isProgramType(IType t) {
     return isFunType(t) || isPatternType(t) || isConstructorType(t);
   }
 
-  public static boolean isDetermines(IType t)
-  {
+  public static boolean isDetermines(IType t) {
     t = deRef(t);
     return isType(t, StandardNames.DETERMINES);
   }
 
-  public static IType[] determinedTypes(IType t)
-  {
+  public static IType[] determinedTypes(IType t) {
     t = deRef(t);
     assert isDetermines(t);
 
     return typeArgs(t);
   }
 
-  public static IType threadType(IType argType)
-  {
+  public static IType threadType(IType argType) {
     return typeExp(StandardNames.THREAD, argType);
   }
 
-  public static boolean isTypeInterface(IType type)
-  {
+  public static boolean isTypeInterface(IType type) {
     type = unwrap(type);
 
     return type instanceof TypeInterface;
   }
 
-  public static int typeInterfaceSize(IType type)
-  {
+  public static int typeInterfaceSize(IType type) {
     type = unwrap(type);
     assert type instanceof TypeInterface;
     return ((TypeInterface) type).numOfFields();
   }
 
-  public static IType interfaceOfType(Location loc, IType tipe, Dictionary dict)
-  {
+  public static IType interfaceOfType(Location loc, IType tipe, Dictionary dict) {
     List<Quantifier> quants = new ArrayList<>();
     IType type = unwrap(tipe, quants);
 
@@ -592,8 +532,7 @@ public class TypeUtils
     return new TypeInterfaceType();
   }
 
-  public static IType[] tupleOfInterface(TypeInterfaceType face)
-  {
+  public static IType[] tupleOfInterface(TypeInterfaceType face) {
     SortedMap<String, IType> fieldMap = face.getAllFields();
     IType[] els = new IType[fieldMap.size()];
 
@@ -604,37 +543,32 @@ public class TypeUtils
     return els;
   }
 
-  public static IType getInterfaceField(IType type, String name)
-  {
+  public static IType getInterfaceField(IType type, String name) {
     type = deRef(type);
     if (type instanceof TypeInterfaceType)
       return ((TypeInterface) type).getFieldType(name);
     return null;
   }
 
-  public static IType getInterfaceMemberType(IType type, String name)
-  {
+  public static IType getInterfaceMemberType(IType type, String name) {
     type = deRef(type);
     if (type instanceof TypeInterfaceType)
       return ((TypeInterface) type).getType(name);
     return null;
   }
 
-  public static SortedMap<String, IType> getInterfaceFields(IType type)
-  {
+  public static SortedMap<String, IType> getInterfaceFields(IType type) {
     type = deRef(type);
     assert type instanceof TypeInterfaceType;
     return ((TypeInterfaceType) type).getAllFields();
   }
 
-  public static String anonRecordLabel(IType type)
-  {
+  public static String anonRecordLabel(IType type) {
     TypeInterfaceType face = (TypeInterfaceType) unwrap(type);
     return anonRecordLabel(face.getAllTypes(), face.getAllFields());
   }
 
-  public static String anonRecordLabel(Map<String, IType> types, Map<String, IType> members)
-  {
+  public static String anonRecordLabel(Map<String, IType> types, Map<String, IType> members) {
     StringBuilder bldr = new StringBuilder();
     bldr.append(StandardNames.RECORD_LABEL);
     int hash = 0;
@@ -652,8 +586,7 @@ public class TypeUtils
     return bldr.toString();
   }
 
-  public static String anonRecordLabel(String[] types, String[] members)
-  {
+  public static String anonRecordLabel(String[] types, String[] members) {
     StringBuilder bldr = new StringBuilder();
     bldr.append(StandardNames.RECORD_LABEL);
     int hash = 0;
@@ -670,16 +603,14 @@ public class TypeUtils
     return bldr.toString();
   }
 
-  public static IType deRef(IType t)
-  {
+  public static IType deRef(IType t) {
     if (t instanceof TypeVar)
       return ((TypeVar) t).deRef();
     else
       return t;
   }
 
-  public static int deRefChainLength(IType t)
-  {
+  public static int deRefChainLength(IType t) {
     int len = 0;
     while (t instanceof TypeVar) {
       len++;
@@ -688,20 +619,17 @@ public class TypeUtils
     return len;
   }
 
-  public static void unify(IType t1, IType t2, Location loc, Dictionary cxt) throws TypeConstraintException
-  {
+  public static void unify(IType t1, IType t2, Location loc, Dictionary cxt) throws TypeConstraintException {
     UnifyTypes.unify(t1, t2, loc, cxt, false);
   }
 
-  public static boolean isUniversalType(IType type)
-  {
+  public static boolean isUniversalType(IType type) {
     type = deRef(type);
 
     return type instanceof UniversalType;
   }
 
-  public static IType unwrap(IType type)
-  {
+  public static IType unwrap(IType type) {
     type = deRef(type);
     while (type instanceof QuantifiedType)
       type = deRef(((QuantifiedType) type).getBoundType());
@@ -709,8 +637,7 @@ public class TypeUtils
     return type;
   }
 
-  public static IType unwrap(IType type, Collection<TypeVar> tVars)
-  {
+  public static IType unwrap(IType type, Collection<TypeVar> tVars) {
     type = deRef(type);
 
     while (type instanceof QuantifiedType) {
@@ -722,8 +649,7 @@ public class TypeUtils
     return type;
   }
 
-  public static IType unwrap(IType type, List<Quantifier> quants)
-  {
+  public static IType unwrap(IType type, List<Quantifier> quants) {
     type = deRef(type);
 
     while (type instanceof QuantifiedType) {
@@ -741,8 +667,7 @@ public class TypeUtils
     return type;
   }
 
-  public static IType unwrapQuant(IType type, Map<String, Quantifier> quants)
-  {
+  public static IType unwrapQuant(IType type, Map<String, Quantifier> quants) {
     type = deRef(type);
 
     while (type instanceof QuantifiedType) {
@@ -760,8 +685,7 @@ public class TypeUtils
     return type;
   }
 
-  public static IType unwrap(IType type, Map<String, TypeVar> tVars)
-  {
+  public static IType unwrap(IType type, Map<String, TypeVar> tVars) {
     type = deRef(type);
 
     while (type instanceof UniversalType) {
@@ -774,75 +698,66 @@ public class TypeUtils
     return type;
   }
 
-  public static IType rewrap(IType type, Map<String, TypeVar> tVars)
-  {
+  public static IType rewrap(IType type, Map<String, TypeVar> tVars) {
     return UniversalType.univ(tVars.values(), type);
   }
 
-  public static IType requant(List<Quantifier> quants, IType type)
-  {
+  public static IType requant(List<Quantifier> quants, IType type) {
     for (int ix = quants.size(); ix > 0; ix--) {
       type = quants.get(ix - 1).wrap(type);
     }
     return type;
   }
 
-  public static IType dictionaryType(IType ky, IType vl)
-  {
+  public static IType dictionaryType(IType ky, IType vl) {
     return typeExp(StandardNames.DICTIONARY, ky, vl);
   }
 
-  public static IType optionType(IType vl)
-  {
+  public static IType setType(IType vl) {
+    return typeExp(StandardNames.SET, vl);
+  }
+
+  public static IType optionType(IType vl) {
     return typeExp(Option.typeLabel, vl);
   }
 
-  public static IType resultType(IType vl)
-  {
+  public static IType resultType(IType vl) {
     return typeExp(Result.typeLabel, vl);
   }
 
-  public static boolean isUnitType(IType tp)
-  {
+  public static boolean isUnitType(IType tp) {
     return deRef(tp).equals(StandardTypes.unitType);
   }
 
-  public static boolean unifyUnitType(IType tp, Location loc, Dictionary cxt)
-  {
+  public static boolean unifyUnitType(IType tp, Location loc, Dictionary cxt) {
     return UnifyTypes.testUnify(tp, StandardTypes.unitType, loc, cxt);
   }
 
-  public static IType arrayType(IType elType)
-  {
+  public static IType arrayType(IType elType) {
     return typeExp(Array.label, elType);
   }
 
-  public static IType consType(IType elType)
-  {
+  public static IType consType(IType elType) {
     return typeExp(Cons.typeLabel, elType);
   }
 
-  public static IType tupleType(IType... elTypes)
-  {
+  public static IType tupleType(IType... elTypes) {
     return new TupleType(elTypes);
   }
 
-  public static IType tupleType(List<IType> types)
-  {
+  public static IType tupleType(List<IType> types) {
     return new TupleType(types.toArray(new IType[types.size()]));
   }
 
-  public static boolean isTupleType(IType type)
-  {
+  public static boolean isTupleType(IType type) {
     type = deRef(type);
 
     return type instanceof TupleType;
   }
 
-  public static boolean isTupleLabel(String label)
-  {
+  public static boolean isTupleLabel(String label) {
     if (label.startsWith(StandardNames.TUPLE_LABEL)) {
-      for (StringSequence it = new StringSequence(label, StandardNames.TUPLE_LABEL.length()); it.hasNext();)
+      for (StringSequence it = new StringSequence(label, StandardNames.TUPLE_LABEL.length()); it.hasNext(); )
         if (!Character.isDigit(it.next()))
           return false;
       return true;
@@ -850,35 +765,31 @@ public class TypeUtils
     return false;
   }
 
-  public static int tupleTypeArity(IType type)
-  {
+  public static int tupleTypeArity(IType type) {
     assert isTupleType(type);
     return ((TupleType) type).arity();
   }
 
-  public static String tupleLabel(int arity)
-  {
+  public static String tupleLabel(int arity) {
     switch (arity) {
-    case 0:
-      return StandardNames.TUPLE_LABEL + "0";
-    case 1:
-      return StandardNames.TUPLE_LABEL + "1";
-    case 2:
-      return StandardNames.TUPLE_LABEL + "2";
-    default:
-      return StandardNames.TUPLE_LABEL + arity;
+      case 0:
+        return StandardNames.TUPLE_LABEL + "0";
+      case 1:
+        return StandardNames.TUPLE_LABEL + "1";
+      case 2:
+        return StandardNames.TUPLE_LABEL + "2";
+      default:
+        return StandardNames.TUPLE_LABEL + arity;
     }
   }
 
-  public static IType nthTplType(IType type, int ix)
-  {
+  public static IType nthTplType(IType type, int ix) {
     assert isTupleType(type);
 
     return ((TupleType) type).nth(ix);
   }
 
-  public static IType[] tupleTypes(IType type)
-  {
+  public static IType[] tupleTypes(IType type) {
     type = deRef(type);
 
     assert isTupleType(type);
@@ -886,21 +797,19 @@ public class TypeUtils
     return ((TupleType) type).getElTypes();
   }
 
-  public static boolean isStdType(String type)
-  {
+  public static boolean isStdType(String type) {
     if (isTupleLabel(type))
       return true;
     else if (type.equals(StandardNames.FUN_ARROW) || type.equals(StandardNames.PTN_TYPE) || type.equals(
-        StandardNames.CONSTRUCTOR_TYPE))
+            StandardNames.CONSTRUCTOR_TYPE))
       return true;
     else
       return Intrinsics.isIntrinsicType(type);
   }
 
-  public static boolean isAnonRecordLabel(String label)
-  {
+  public static boolean isAnonRecordLabel(String label) {
     if (label.startsWith(StandardNames.RECORD_LABEL)) {
-      for (StringSequence it = new StringSequence(label, StandardNames.RECORD_LABEL.length()); it.hasNext();) {
+      for (StringSequence it = new StringSequence(label, StandardNames.RECORD_LABEL.length()); it.hasNext(); ) {
         int ch = it.next();
         if (!Character.isDigit(ch) && ch != '_')
           return false;
@@ -912,8 +821,7 @@ public class TypeUtils
   }
 
   public static IType getAttributeType(Dictionary cxt, IType type, String att, boolean testOnly)
-      throws TypeConstraintException
-  {
+          throws TypeConstraintException {
     type = deRef(type);
 
     if (type instanceof TypeInterfaceType)
@@ -953,7 +861,7 @@ public class TypeUtils
 
               if (conArgType instanceof ExistentialType) {
                 Pair<IType, Map<String, Quantifier>> ref = Freshen.freshen(conArgType, AccessMode.readOnly,
-                    AccessMode.readWrite);
+                        AccessMode.readWrite);
                 conArgType = ref.left;
                 if (conArgType instanceof TypeInterface) {
                   return Freshen.requant(((TypeInterface) conArgType).getFieldType(att), ref.right);
@@ -969,8 +877,7 @@ public class TypeUtils
     return null;
   }
 
-  public static boolean hasAttributeType(Dictionary cxt, IType type, String att)
-  {
+  public static boolean hasAttributeType(Dictionary cxt, IType type, String att) {
     type = deRef(type);
 
     if (type instanceof TypeInterfaceType)
@@ -1014,8 +921,7 @@ public class TypeUtils
     }
   }
 
-  public static IType getFieldTypeMember(Dictionary cxt, IType type, String att, boolean testOnly)
-  {
+  public static IType getFieldTypeMember(Dictionary cxt, IType type, String att, boolean testOnly) {
     type = deRef(type);
 
     if (type instanceof TypeInterfaceType)
@@ -1059,7 +965,7 @@ public class TypeUtils
 
               if (conArgType instanceof ExistentialType) {
                 Pair<IType, Map<String, Quantifier>> ref = Freshen.freshen(conArgType, AccessMode.readOnly,
-                    AccessMode.readWrite);
+                        AccessMode.readWrite);
                 conArgType = ref.left;
                 if (conArgType instanceof TypeInterface) {
                   return Freshen.requant(((TypeInterface) conArgType).getType(att), ref.right);
@@ -1075,8 +981,7 @@ public class TypeUtils
     return null;
   }
 
-  public static boolean hasContractDependencies(IType type)
-  {
+  public static boolean hasContractDependencies(IType type) {
     type = deRef(type);
 
     if (!isOverloadedType(unwrap(type))) {
@@ -1091,14 +996,12 @@ public class TypeUtils
     return false;
   }
 
-  public static boolean isUnresolved(IType type)
-  {
+  public static boolean isUnresolved(IType type) {
     final Wrapper<Boolean> isResolved = Wrapper.create(true);
 
     ITypeVisitor<Void> visitor = new AbstractTypeVisitor<Void>() {
       @Override
-      public void visitTypeVar(TypeVar var, Void cxt)
-      {
+      public void visitTypeVar(TypeVar var, Void cxt) {
         IType type = var.deRef();
 
         if (type instanceof TypeVar) {
@@ -1122,34 +1025,29 @@ public class TypeUtils
     return !isResolved.get();
   }
 
-  public static boolean implementsContract(String type, String contract, Dictionary dict)
-  {
+  public static boolean implementsContract(String type, String contract, Dictionary dict) {
     String instName = Over.instanceFunName(contract, type);
     return dict.isDefinedVar(instName);
   }
 
-  public static boolean isPatternType(IType type)
-  {
+  public static boolean isPatternType(IType type) {
     type = unwrap(type);
     return isType(type, StandardNames.PTN_TYPE) && isTupleType(((TypeExp) type).getTypeArg(0));
   }
 
-  public static IType patternType(IType resultType, IType ptnType)
-  {
+  public static IType patternType(IType resultType, IType ptnType) {
     assert isTupleType(resultType);
     return typeExp(StandardNames.PTN_TYPE, resultType, ptnType);
   }
 
-  public static IType getPtnResultType(IType type)
-  {
+  public static IType getPtnResultType(IType type) {
     type = unwrap(type);
 
     assert isPatternType(type);
     return ((TypeExp) type).getTypeArg(0);
   }
 
-  public static IType getPtnMatchType(IType type)
-  {
+  public static IType getPtnMatchType(IType type) {
     type = unwrap(type);
 
     assert isPatternType(type);
@@ -1158,13 +1056,11 @@ public class TypeUtils
     return funType.getTypeArg(1);
   }
 
-  public static TypeInterfaceType typeInterface(SortedMap<String, IType> members)
-  {
+  public static TypeInterfaceType typeInterface(SortedMap<String, IType> members) {
     return new TypeInterfaceType(members);
   }
 
-  public static SortedMap<String, Integer> getMemberIndex(IType type)
-  {
+  public static SortedMap<String, Integer> getMemberIndex(IType type) {
     type = unwrap(type);
     assert type instanceof TypeInterfaceType;
     TypeInterfaceType face = (TypeInterfaceType) type;
@@ -1178,8 +1074,7 @@ public class TypeUtils
     return memberIndex;
   }
 
-  public static void defineTypeContract(Dictionary dict, TypeContract contract)
-  {
+  public static void defineTypeContract(Dictionary dict, TypeContract contract) {
     String name = contract.getName();
     dict.defineTypeContract(contract);
 
@@ -1209,25 +1104,21 @@ public class TypeUtils
     dict.defineType(conDesc);
   }
 
-  public static IType overloadedType(List<IType> contractRefs, IType type)
-  {
+  public static IType overloadedType(List<IType> contractRefs, IType type) {
     return typeExp(StandardNames.OVERLOADED_TYPE, tupleType(contractRefs), type);
   }
 
-  public static IType overloadedType(IType contract, IType deliver)
-  {
+  public static IType overloadedType(IType contract, IType deliver) {
     return typeExp(StandardNames.OVERLOADED_TYPE, contract, deliver);
   }
 
-  public static boolean isOverloadedType(IType type)
-  {
+  public static boolean isOverloadedType(IType type) {
     type = unwrap(type);
 
     return isType(type, StandardNames.OVERLOADED_TYPE, 2);
   }
 
-  public static IType getOverloadArgType(IType type)
-  {
+  public static IType getOverloadArgType(IType type) {
     assert isOverloadedType(type);
 
     type = unwrap(type);
@@ -1235,8 +1126,7 @@ public class TypeUtils
     return getTypeArg(type, 0);
   }
 
-  public static IType[] getOverloadRequirements(IType type)
-  {
+  public static IType[] getOverloadRequirements(IType type) {
     assert isOverloadedType(type);
 
     type = unwrap(type);
@@ -1244,8 +1134,7 @@ public class TypeUtils
     return typeArgs(getTypeArg(type, 0));
   }
 
-  public static IType getOverloadedType(IType type)
-  {
+  public static IType getOverloadedType(IType type) {
     assert isOverloadedType(type);
 
     type = unwrap(type);
@@ -1253,15 +1142,13 @@ public class TypeUtils
     return ((TypeExp) type).getTypeArg(1);
   }
 
-  public static IType getOverloadedContract(IType type)
-  {
+  public static IType getOverloadedContract(IType type) {
     assert isOverloadedType(type) && isTupleType(getTypeArg(type, 0));
     type = unwrap(type);
     return getTypeArg(type, 0);
   }
 
-  public static IType getContract(IType type)
-  {
+  public static IType getContract(IType type) {
     type = unwrap(type);
 
     assert isOverloadedType(type) && isTupleType(getTypeArg(type, 0)) && tupleTypeArity(getTypeArg(type, 0)) == 1;
@@ -1269,13 +1156,11 @@ public class TypeUtils
     return nthTplType(getTypeArg(type, 0), 0);
   }
 
-  public static IType refreshOverloaded(IType overload)
-  {
+  public static IType refreshOverloaded(IType overload) {
     return Freshen.freshenForUse(overloadedRefresh(overload).left);
   }
 
-  public static Pair<IType, Map<String, Quantifier>> overloadedRefresh(IType overload)
-  {
+  public static Pair<IType, Map<String, Quantifier>> overloadedRefresh(IType overload) {
     Pair<IType, Map<String, Quantifier>> freshen = Freshen.freshen(overload, AccessMode.readOnly, AccessMode.readWrite);
     IType[] requirements = getOverloadRequirements(freshen.left);
     for (IType requirement : requirements) {
@@ -1293,30 +1178,25 @@ public class TypeUtils
     return freshen;
   }
 
-  public static IType determinedType(IType... types)
-  {
+  public static IType determinedType(IType... types) {
     return typeExp(StandardNames.DETERMINES, types);
   }
 
-  public static TypeExp determinedContractType(String contract, IType type, IType... detType)
-  {
+  public static TypeExp determinedContractType(String contract, IType type, IType... detType) {
     return new TypeExp(contract, type, typeExp(StandardNames.DETERMINES, detType));
   }
 
-  public static IType referenceType(IType varType)
-  {
+  public static IType referenceType(IType varType) {
     return typeExp(StandardNames.REF, varType);
   }
 
-  public static boolean isReferenceType(IType type)
-  {
+  public static boolean isReferenceType(IType type) {
     type = deRef(type);
 
     return isType(type, StandardNames.REF, 1);
   }
 
-  public static IType referencedType(IType type)
-  {
+  public static IType referencedType(IType type) {
     assert isReferenceType(type);
 
     type = deRef(type);
@@ -1324,131 +1204,110 @@ public class TypeUtils
     return ((TypeExp) type).getTypeArg(0);
   }
 
-  public static boolean isRawBoolType(IType type)
-  {
+  public static boolean isRawBoolType(IType type) {
     return isType(type, Names.RAW_BOOL_TYPE);
   }
 
-  public static boolean isRawCharType(IType type)
-  {
+  public static boolean isRawCharType(IType type) {
     return isType(type, Names.RAW_CHAR_TYPE);
   }
 
-  public static boolean isRawIntType(IType type)
-  {
+  public static boolean isRawIntType(IType type) {
     return isType(type, Names.RAW_INT_TYPE);
   }
 
-  public static boolean isRawLongType(IType type)
-  {
+  public static boolean isRawLongType(IType type) {
     return isType(type, Names.RAW_LONG_TYPE);
   }
 
-  public static boolean isRawFloatType(IType type)
-  {
+  public static boolean isRawFloatType(IType type) {
     return isType(type, Names.RAW_FLOAT_TYPE);
   }
 
-  public static boolean isRawDecimalType(IType type)
-  {
+  public static boolean isRawDecimalType(IType type) {
     return isType(type, Names.RAW_DECIMAL_TYPE);
   }
 
-  public static boolean isRawBinaryType(IType type)
-  {
+  public static boolean isRawBinaryType(IType type) {
     return isType(type, Names.RAW_BINARY_TYPE);
   }
 
-  public static boolean isRawFileType(IType type)
-  {
+  public static boolean isRawFileType(IType type) {
     return isType(type, Names.RAW_FILE_TYPE);
   }
 
-  public static boolean isRawStringType(IType type)
-  {
+  public static boolean isRawStringType(IType type) {
     return isType(type, Names.RAW_STRING_TYPE);
   }
 
-  public static boolean isRawBoolType(String name)
-  {
+  public static boolean isRawBoolType(String name) {
     return name.equals(Names.RAW_BOOL_TYPE);
   }
 
-  public static boolean isRawCharType(String name)
-  {
+  public static boolean isRawCharType(String name) {
     return name.equals(Names.RAW_CHAR_TYPE);
   }
 
-  public static boolean isRawIntType(String name)
-  {
+  public static boolean isRawIntType(String name) {
     return name.equals(Names.RAW_INT_TYPE);
   }
 
-  public static boolean isRawLongType(String name)
-  {
+  public static boolean isRawLongType(String name) {
     return name.equals(Names.RAW_LONG_TYPE);
   }
 
-  public static boolean isRawFloatType(String name)
-  {
+  public static boolean isRawFloatType(String name) {
     return name.equals(Names.RAW_FLOAT_TYPE);
   }
 
-  public static boolean isRawDecimalType(String name)
-  {
+  public static boolean isRawDecimalType(String name) {
     return name.equals(Names.RAW_DECIMAL_TYPE);
   }
 
-  public static boolean isRawBinaryType(String name)
-  {
+  public static boolean isRawBinaryType(String name) {
     return name.equals(Names.RAW_BINARY_TYPE);
   }
 
-  public static boolean isRawFileType(String name)
-  {
+  public static boolean isRawFileType(String name) {
     return name.equals(Names.RAW_FILE_TYPE);
   }
 
-  public static boolean isRawStringType(String name)
-  {
+  public static boolean isRawStringType(String name) {
     return name.equals(Names.RAW_STRING_TYPE);
   }
 
-  public static boolean isRawType(IType type)
-  {
+  public static boolean isRawType(IType type) {
     type = deRef(type);
 
     return type instanceof Type && (isRawBoolType(type) || isRawCharType(type) || isRawIntType(type) || isRawLongType(
-        type) || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type)
-        || isRawBinaryType(type));
+            type) || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type)
+            || isRawBinaryType(type));
   }
 
-  public static IType cookedType(IType type)
-  {
+  public static IType cookedType(IType type) {
     switch (Types.varType(type)) {
-    case rawBool:
-      return StandardTypes.booleanType;
-    case rawChar:
-      return StandardTypes.charType;
-    case rawInt:
-      return StandardTypes.integerType;
-    case rawLong:
-      return StandardTypes.longType;
-    case rawFloat:
-      return StandardTypes.floatType;
-    case rawDecimal:
-      return StandardTypes.decimalType;
-    case rawString:
-      return StandardTypes.stringType;
-    case rawBinary:
-      return StandardTypes.binaryType;
-    default:
-      return type;
+      case rawBool:
+        return StandardTypes.booleanType;
+      case rawChar:
+        return StandardTypes.charType;
+      case rawInt:
+        return StandardTypes.integerType;
+      case rawLong:
+        return StandardTypes.longType;
+      case rawFloat:
+        return StandardTypes.floatType;
+      case rawDecimal:
+        return StandardTypes.decimalType;
+      case rawString:
+        return StandardTypes.stringType;
+      case rawBinary:
+        return StandardTypes.binaryType;
+      default:
+        return type;
     }
   }
 
-  public static IType rawType(IType type)
-  {
+  public static IType rawType(IType type) {
     type = deRef(type);
     if (type.equals(StandardTypes.booleanType))
       return StandardTypes.rawBoolType;
@@ -1470,8 +1329,7 @@ public class TypeUtils
       return null;
   }
 
-  public static boolean isCookedType(IType type, IType rawType)
-  {
+  public static boolean isCookedType(IType type, IType rawType) {
     type = deRef(type);
     rawType = deRef(rawType);
     if (type.equals(StandardTypes.booleanType))
@@ -1494,8 +1352,7 @@ public class TypeUtils
       return false;
   }
 
-  public static boolean isGroundSurface(IType tp)
-  {
+  public static boolean isGroundSurface(IType tp) {
     if (tp instanceof TypeExp) {
       TypeExp tExp = (TypeExp) tp;
       if (isTypeVar(tExp.getTypeCon()))
@@ -1509,8 +1366,7 @@ public class TypeUtils
       return tp instanceof Type;
   }
 
-  public static boolean isVarSurface(IType tp)
-  {
+  public static boolean isVarSurface(IType tp) {
     tp = deRef(tp);
     if (tp instanceof TypeExp) {
       TypeExp tExp = (TypeExp) tp;
@@ -1523,8 +1379,7 @@ public class TypeUtils
     return false;
   }
 
-  public static IType checkAlias(IType type, Dictionary face, Location loc) throws TypeConstraintException
-  {
+  public static IType checkAlias(IType type, Dictionary face, Location loc) throws TypeConstraintException {
     type = deRef(type);
     if (type instanceof TypeExp) {
       TypeExp tExp = (TypeExp) type;
@@ -1540,44 +1395,36 @@ public class TypeUtils
     return type;
   }
 
-  public static IType iterstateType(IType stType)
-  {
+  public static IType iterstateType(IType stType) {
     return typeExp(StandardNames.ITERSTATE, stType);
   }
 
-  public static boolean isIterstateType(IType type)
-  {
+  public static boolean isIterstateType(IType type) {
     return isType(type, StandardNames.ITERSTATE, 1);
   }
 
   public static void addFieldConstraint(TypeVar var, Location loc, String att, IType type, Dictionary cxt,
-      boolean allow) throws TypeConstraintException
-  {
+                                        boolean allow) throws TypeConstraintException {
     var.addConstraint(new FieldConstraint(var, att, type), allow, loc, cxt);
   }
 
-  public static void setFieldConstraint(TypeVar var, Location loc, String att, IType type)
-  {
+  public static void setFieldConstraint(TypeVar var, Location loc, String att, IType type) {
     var.setConstraint(new FieldConstraint(var, att, type));
   }
 
   public static void addTypeConstraint(TypeVar var, Location loc, String att, IType type, Dictionary cxt, boolean allow)
-      throws TypeConstraintException
-  {
+          throws TypeConstraintException {
     var.addConstraint(new FieldTypeConstraint(var, att, type), allow, loc, cxt);
   }
 
-  public static void setTypeConstraint(TypeVar var, String att, IType type)
-  {
+  public static void setTypeConstraint(TypeVar var, String att, IType type) {
     var.setConstraint(new FieldTypeConstraint(var, att, type));
   }
 
-  public static class CompareTypes implements Comparator<IType>
-  {
+  public static class CompareTypes implements Comparator<IType> {
 
     @Override
-    public int compare(IType o1, IType o2)
-    {
+    public int compare(IType o1, IType o2) {
       o1 = TypeUtils.deRef(o1);
       o2 = TypeUtils.deRef(o2);
 
@@ -1591,7 +1438,7 @@ public class TypeUtils
           TypeExp t1 = (TypeExp) o1;
           TypeExp t2 = (TypeExp) o2;
           int comp = t1.typeArity() == t2.typeArity() ? compare(t1.getTypeCon(), t2.getTypeCon())
-              : t1.typeArity() - t2.typeArity();
+                  : t1.typeArity() - t2.typeArity();
 
           if (comp == 0) {
             for (int ix = 0; ix < t1.typeArity() && comp == 0; ix++)

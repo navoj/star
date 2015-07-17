@@ -36,4 +36,6 @@ public interface IValueVisitor
   void visitConstructor(IConstructor con);
 
   void visitMap(IMap map);
+
+  void visitSet(ISet set);
 }

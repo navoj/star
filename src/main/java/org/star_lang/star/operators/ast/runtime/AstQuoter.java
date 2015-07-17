@@ -6,16 +6,7 @@ import java.util.Stack;
 import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.type.TypeUtils;
-import org.star_lang.star.data.EvaluationException;
-import org.star_lang.star.data.IConstructor;
-import org.star_lang.star.data.IFunction;
-import org.star_lang.star.data.IList;
-import org.star_lang.star.data.IMap;
-import org.star_lang.star.data.IPattern;
-import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IScalar;
-import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.IValueVisitor;
+import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
@@ -131,9 +122,12 @@ public class AstQuoter implements IFunction
     @Override
     public void visitMap(IMap map)
     {
-      // TODO Auto-generated method stub
-
+      throw new UnsupportedOperationException("not implemented");
     }
 
+    @Override
+    public void visitSet(ISet set) {
+
+    }
   }
 }

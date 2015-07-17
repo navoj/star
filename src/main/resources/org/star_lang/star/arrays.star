@@ -24,6 +24,7 @@ private import updateable;
 private import folding;
 private import casting;
 private import maps;
+private import sets
 private import option;
 
 implementation equality over list of %t where equality over %t is {
@@ -89,10 +90,13 @@ implementation reversible over list of %t is {
   fun reverse(A) is __array_reverse(A);
 }
 
-implementation sets over list of %e where equality over %e is {
+implementation sets over list of %e determines %e where equality over %e is {
   fun L union R is __array_union(L,R,(=));
   fun L intersect R is __array_intersect(L,R,(=));
   fun L complement R is __array_complement(L,R,(=));
+  fun add_element(A,E) is __array_append(A,E);
+  fun remove_element(A,E) is __delete_from_array(A,(() from EE where E=EE));
+  fun contains_element(A,E) is __array_search(A,E,(=))
 }
  
 implementation mappable over list is {

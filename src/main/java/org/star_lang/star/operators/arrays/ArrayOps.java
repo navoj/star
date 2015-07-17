@@ -37,6 +37,7 @@ import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.ArrayTailMat
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.BinaryArray;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.TernaryArray;
 import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.UnaryArray;
+import org.star_lang.star.operators.arrays.runtime.ArraySetOps;
 import org.star_lang.star.operators.arrays.runtime.ArraySetOps.ArrayComplement;
 import org.star_lang.star.operators.arrays.runtime.ArraySetOps.ArrayIntersect;
 import org.star_lang.star.operators.arrays.runtime.ArraySetOps.ArrayUnion;
@@ -94,6 +95,7 @@ public class ArrayOps
     cxt.declareBuiltin(new Builtin(BinaryArray.name, BinaryArray.type(), BinaryArray.class));
     cxt.declareBuiltin(new Builtin(TernaryArray.name, TernaryArray.type(), TernaryArray.class));
 
+    cxt.declareBuiltin(new Builtin(ArraySetOps.ArraySearch.name, ArraySetOps.ArraySearch.type(), ArraySetOps.ArraySearch.class));
     cxt.declareBuiltin(new Builtin(ArrayDelete.name, ArrayDelete.type(), ArrayDelete.class));
     cxt.declareBuiltin(new Builtin(UpdateIntoArray.name, UpdateIntoArray.type(), UpdateIntoArray.class));
 

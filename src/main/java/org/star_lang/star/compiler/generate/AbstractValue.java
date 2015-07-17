@@ -9,15 +9,7 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
-import org.star_lang.star.data.IConstructor;
-import org.star_lang.star.data.IFunction;
-import org.star_lang.star.data.IList;
-import org.star_lang.star.data.IMap;
-import org.star_lang.star.data.IPattern;
-import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IScalar;
-import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.IValueVisitor;
+import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
@@ -129,6 +121,11 @@ public class AbstractValue implements IValueVisitor
   @Override
   public void visitMap(IMap map)
   {
+    throw new UnsupportedOperationException("not implemented");
+  }
+
+  @Override
+  public void visitSet(ISet set) {
     throw new UnsupportedOperationException("not implemented");
   }
 }

@@ -19,6 +19,7 @@ import org.star_lang.star.compiler.misc.MiscTests;
 import org.star_lang.star.compiler.overload.OverloadTests;
 import org.star_lang.star.compiler.queries.QueryTests;
 import org.star_lang.star.compiler.regexp.RegexpTests;
+import org.star_lang.star.compiler.sets.SetTests;
 import org.star_lang.star.compiler.spawn.SpawnTest;
 import org.star_lang.star.compiler.types.TypeJTest;
 import org.star_lang.star.compiler.types.TypeTests;
@@ -62,7 +63,7 @@ import org.star_lang.star.volunteer.VolunteerTest;
     ImportTest.class, JavaImportTest.class, LibraryTestSuite.class, ListTests.class, MacroTests.class, MapTests.class,
     MetaModelTest.class, MiscTests.class, OverloadTests.class, PtnTest.class, PtnTests.class, QueryTest.class,
     QueryTests.class, RdfMacroTest.class, RegexpTests.class, RepositorySuite.class, SortTest.class, SpawnTest.class,
-    StdLibTests.class, StringTests.class, TestRelations.class, TestUpdate.class, TransformerTest.class,
+    StdLibTests.class, StringTests.class, TestRelations.class, TestUpdate.class, TransformerTest.class, SetTests.class,
     TypesResolutionPOCTest.class, TaskExpTest.class, TaskTest.class, TypeTests.class, TypeJTest.class,
     UnifyTests.class, URITests.class, ValidationTest.class, VolunteerTest.class, TestIO.class })
 public class CompilerTestSuite
