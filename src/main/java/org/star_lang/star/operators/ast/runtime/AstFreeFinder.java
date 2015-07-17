@@ -14,36 +14,31 @@ import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.data.IValue;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
-final class AstFreeFinder extends DefaultAbstractVisitor
-{
+final class AstFreeFinder extends DefaultAbstractVisitor {
   private final Set<Name> found;
   private final Stack<Set<Name>> excludes = new Stack<Set<Name>>();
 
-  AstFreeFinder(Set<Name> found, Set<Name> excludes)
-  {
+  AstFreeFinder(Set<Name> found, Set<Name> excludes) {
     this.found = found;
     this.excludes.push(excludes);
   }
 
   @Override
-  public void visitApply(Apply app)
-  {
+  public void visitApply(Apply app) {
     if (CompilerUtils.isQuoted(app)) {
 
     } else if (CompilerUtils.isAnonAggConLiteral(app)) {
@@ -56,8 +51,11 @@ final class AstFreeFinder extends DefaultAbstractVisitor
         if (Abstract.isBinary(el, StandardNames.EQUAL) || Abstract.isBinary(el, StandardNames.ASSIGN))
           Abstract.binaryRhs(el).accept(this);
       }
-    } else if (CompilerUtils.isSequenceTerm(app)) {
-      for (IAbstract el : CompilerUtils.unWrap(CompilerUtils.sequenceContent(app)))
+    } else if (CompilerUtils.isLabeledSequenceTerm(app)) {
+      for (IAbstract el : CompilerUtils.unWrap(CompilerUtils.labeledContent(app)))
+        el.accept(this);
+    } else if (CompilerUtils.isSquareSequenceTerm(app)) {
+      for (IAbstract el : CompilerUtils.unWrap(CompilerUtils.squareContent(app)))
         el.accept(this);
     } else if (CompilerUtils.isQueryTerm(app)) {
       CompilerUtils.queryQuantifier(app).accept(this);
@@ -123,22 +121,19 @@ final class AstFreeFinder extends DefaultAbstractVisitor
   }
 
   @Override
-  public void visitName(Name name)
-  {
+  public void visitName(Name name) {
     if (!excludes.peek().contains(name) && !StandardNames.isKeyword(name) && !StandardNames.isStandard(name))
       found.add(name);
   }
 
-  private Set<Name> exclude(IAbstract term)
-  {
+  private Set<Name> exclude(IAbstract term) {
     Set<Name> exclusions = new HashSet<Name>(excludes.peek());
     AstFreeFinder finder = new AstFreeFinder(exclusions, found);
     term.accept(finder);
     return exclusions;
   }
 
-  private Set<Name> excludeDefs(Iterable<IAbstract> stmts)
-  {
+  private Set<Name> excludeDefs(Iterable<IAbstract> stmts) {
     Set<Name> exclusions = new HashSet<Name>(excludes.peek());
     AstFreeFinder finder = new AstFreeFinder(exclusions, found);
 
