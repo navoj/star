@@ -56,21 +56,20 @@ import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.value.Option;
 
-/* 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 public class CompilerUtils {
   public static ICondition truth = new TrueCondition(Location.nullLoc);
   public static ICondition falseity = new FalseCondition(Location.nullLoc);
@@ -340,59 +339,12 @@ public class CompilerUtils {
     return ((Application) ((IsTrue) cond).getExp()).getArg(1);
   }
 
-  public static ICondition notEquals(Location loc, IContentExpression lhs, IContentExpression rhs) {
-    IType type = lhs.getType();
-    return new Negation(loc, new IsTrue(loc, new Application(loc, StandardTypes.booleanType, new MethodVariable(loc,
-            StandardNames.EQUAL, type, StandardNames.EQUALITY, TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils
-            .typeExp(StandardNames.EQUALITY, type)), TypeUtils.functionType(type, type, StandardTypes.booleanType))),
-            lhs, rhs)));
-  }
-
   public static ICondition greaterEquals(Location loc, IContentExpression lhs, IContentExpression rhs) {
     IType type = lhs.getType();
     IType compType = TypeUtils.functionType(type, type, StandardTypes.booleanType);
     return new IsTrue(loc, new Application(loc, StandardTypes.booleanType, new MethodVariable(loc,
             StandardNames.GREATER_EQUAL, compType, StandardNames.COMPARABLE, TypeUtils.overloadedType(TypeUtils.tupleType(
             TypeUtils.typeExp(StandardNames.COMPARABLE, type)), compType)), lhs, rhs));
-  }
-
-  public static Variable[] mergeVars(Variable[] left, Variable right[]) {
-    List<Variable> vars = new ArrayList<>();
-    Collections.addAll(vars, left);
-    varLoop:
-    for (Variable var : right) {
-      for (Variable v : vars)
-        if (v.getName().equals(var.getName()))
-          continue varLoop;
-      vars.add(var);
-    }
-    return vars.toArray(new Variable[vars.size()]);
-  }
-
-  /**
-   * Return all variables that are in s1 but not in s2;
-   *
-   * @param s1
-   * @param s2
-   * @return
-   */
-  public static Variable[] diff(List<Variable> s1, List<Variable> s2) {
-    List<Variable> vars = new ArrayList<Variable>();
-
-    for (Variable v : s1) {
-      if (!s2.contains(v))
-        vars.add(v);
-    }
-    return vars.toArray(new Variable[vars.size()]);
-  }
-
-  public static Location getIdLocation(IAbstract term) {
-    if (term instanceof Name)
-      return term.getLoc();
-    else if (Abstract.isParenTerm(term))
-      return getIdLocation(Abstract.getArg(term, 0));
-    else
-      throw new IllegalArgumentException("expecting an identifier");
   }
 
   public static boolean isPackageIdentifier(IAbstract term) {
@@ -411,21 +363,6 @@ public class CompilerUtils {
       return ((Apply) term).getOp();
     else
       throw new IllegalArgumentException("expecting an identifier");
-  }
-
-  public static IAbstract parsePkgTemplate(IAbstract term) {
-    if (term instanceof Name || term instanceof StringLiteral)
-      return term;
-    else if (Abstract.isParenTerm(term))
-      return parsePkgTemplate(Abstract.deParen(term));
-    else if (Abstract.isBinary(term, StandardNames.EXPORTS))
-      return parsePkgTemplate(Abstract.binaryLhs(term));
-    else if (term instanceof Apply) {
-      Apply apply = (Apply) term;
-      IAbstract op = apply.getOperator();
-      return Abstract.apply(term.getLoc(), Abstract.deParen(op), apply.getArgs());
-    } else
-      throw new IllegalArgumentException("expecting a package identifier");
   }
 
   public static boolean isJavaStmt(IAbstract stmt) {
@@ -512,18 +449,13 @@ public class CompilerUtils {
   }
 
   public static boolean isTrivial(IContentExpression cond) {
-    if (cond == null)
-      return true;
-    return isTrueLiteral(cond);
+    return cond == null || isTrueLiteral(cond);
   }
 
   public static boolean isTrivial(IAbstract cond) {
-    if (cond == null)
-      return true;
-    else if (Abstract.isName(cond, StandardNames.TRUE))
-      return true;
-    else
-      return CafeSyntax.isConstructor(cond) && CafeSyntax.constructorOp(cond).equals(StandardNames.TRUE);
+    return cond == null ||
+            Abstract.isName(cond, StandardNames.TRUE) ||
+            CafeSyntax.isConstructor(cond) && CafeSyntax.constructorOp(cond).equals(StandardNames.TRUE);
   }
 
   public static boolean isTrivialFunction(IAbstract term) {
@@ -637,10 +569,6 @@ public class CompilerUtils {
       return def;
   }
 
-  public static boolean isVoid(IContentExpression exp) {
-    return exp == null || exp instanceof VoidExp;
-  }
-
   public static boolean isRegexp(IAbstract term) {
     return Abstract.isUnary(term, StandardNames.REGEXP) && Abstract.getArg(term, 0) instanceof StringLiteral;
   }
@@ -653,11 +581,6 @@ public class CompilerUtils {
   public static Location regexpLoc(IAbstract term) {
     assert isRegexp(term);
     return Abstract.unaryArg(term).getLoc();
-  }
-
-  public static IAbstract recordContent(IAbstract rec) {
-    assert isRecordLiteral(rec);
-    return braceArg(rec);
   }
 
   public static boolean isEquals(IAbstract term) {
@@ -692,14 +615,7 @@ public class CompilerUtils {
   }
 
   public static boolean isTrivial(IContentAction action) {
-    if (action == null)
-      return true;
-    else
-      return action instanceof NullAction;
-  }
-
-  public static boolean isAnonymousVar(IContentPattern ptn) {
-    return ptn instanceof Variable && ((Variable) ptn).getName().equals(StandardNames.ANONYMOUS);
+    return action == null || action instanceof NullAction;
   }
 
   public static boolean isBraceTerm(IAbstract term, String name) {
@@ -769,11 +685,6 @@ public class CompilerUtils {
       stmts.add(term);
   }
 
-  // look for name{} = name('{}')
-  public static boolean isEmptyBrace(IAbstract term, String name) {
-    return Abstract.isUnary(term, name) && Abstract.isName(Abstract.argPath(term, 0), StandardNames.BRACES);
-  }
-
   public static IAbstract emptyBrace(Location loc, String name) {
     return Abstract.unary(loc, name, new Name(loc, StandardNames.BRACES));
   }
@@ -810,13 +721,6 @@ public class CompilerUtils {
       return Abstract.binary(loc, StandardNames.BRACES, label, tupleUp(loc, StandardNames.TERM, args));
   }
 
-  public static IAbstract braceTerm(Location loc, String label, IAbstract... args) {
-    if (args.length > 0)
-      return Abstract.binary(loc, StandardNames.BRACES, new Name(loc, label), tupleUp(loc, StandardNames.TERM, args));
-    else
-      return emptyBrace(loc, label);
-  }
-
   public static IAbstract braceTerm(Location loc, String label, List<IAbstract> args) {
     return braceTerm(loc, new Name(loc, label), args);
   }
@@ -833,14 +737,11 @@ public class CompilerUtils {
             Abstract.binaryLhs(term), StandardNames.REDUCTION)) && CompilerUtils.isBlockTerm(Abstract.binaryRhs(term)))
       term = blockContent(Abstract.binaryRhs(term));
 
-    if ((Abstract.isBinary(term, StandardNames.ORDERBY) || Abstract.isBinary(term, StandardNames.ORDERDESCENDINBY)
-            || Abstract.isBinary(term, StandardNames.DESCENDINGBY)) && Abstract.isBinary(Abstract.binaryLhs(term),
-            StandardNames.WHERE))
-      return true;
-    else if (Abstract.isBinary(term, StandardNames.WHERE))
-      return true;
-    else
-      return false;
+    return (Abstract.isBinary(term, StandardNames.ORDERBY) ||
+            Abstract.isBinary(term, StandardNames.ORDERDESCENDINBY) ||
+            Abstract.isBinary(term, StandardNames.DESCENDINGBY)) &&
+            Abstract.isBinary(Abstract.binaryLhs(term), StandardNames.WHERE) ||
+            Abstract.isBinary(term, StandardNames.WHERE);
   }
 
   public static IAbstract queryQuantifier(IAbstract term) {
@@ -895,7 +796,7 @@ public class CompilerUtils {
   public static IAbstract queryOrderUsing(IAbstract term) {
     assert isQueryTerm(term);
     if (Abstract.isBinary(term, StandardNames.OF) && (Abstract.isName(Abstract.binaryLhs(term)) || Abstract.isUnary(
-            Abstract.binaryLhs(term), StandardNames.REDUCTION)) && CompilerUtils.isBlockTerm(Abstract.binaryRhs(term)))
+            Abstract.binaryLhs(term), StandardNames.REDUCTION)) && isBlockTerm(Abstract.binaryRhs(term)))
       term = blockContent(Abstract.binaryRhs(term));
 
     if ((Abstract.isBinary(term, StandardNames.ORDERBY) || Abstract.isBinary(term, StandardNames.ORDERDESCENDINBY)
@@ -910,11 +811,8 @@ public class CompilerUtils {
   }
 
   public static boolean isSequenceTerm(IAbstract term) {
-    if (Abstract.isBinary(term, StandardNames.OF) && Abstract.isName(Abstract.binaryLhs(term)) && CompilerUtils
-            .isBlockTerm(Abstract.binaryRhs(term)))
-      return !isQueryTerm(term);
-    else
-      return false;
+    return Abstract.isBinary(term, StandardNames.OF) && Abstract.isName(Abstract.binaryLhs(term)) &&
+            CompilerUtils.isBlockTerm(Abstract.binaryRhs(term)) && !isQueryTerm(term);
   }
 
   public static String sequenceLabel(IAbstract term) {
@@ -924,12 +822,8 @@ public class CompilerUtils {
   }
 
   public static boolean isMapTerm(IAbstract term) {
-    if (isBraceTerm(term, StandardNames.HASH))
-      return true;
-    else if (Abstract.isBinary(term, StandardNames.OF) && isBlockTerm(Abstract.binaryRhs(term)))
-      return true;
-    else
-      return false;
+    return isBraceTerm(term, StandardNames.HASH) ||
+            Abstract.isBinary(term, StandardNames.OF) && isBlockTerm(Abstract.binaryRhs(term));
   }
 
   public static IAbstract mapContents(IAbstract term) {
@@ -962,27 +856,6 @@ public class CompilerUtils {
     return Abstract.binary(loc, StandardNames.PERIOD, record, field);
   }
 
-  // An optional field access expression
-  public static boolean isOptionFieldAccess(IAbstract term) {
-    return Abstract.isBinary(term, StandardNames.OPTIONPERIOD);
-  }
-
-  public static IAbstract optionRecord(IAbstract term) {
-    assert isOptionFieldAccess(term);
-
-    return Abstract.binaryLhs(term);
-  }
-
-  public static IAbstract optionField(IAbstract term) {
-    assert isOptionFieldAccess(term);
-
-    return Abstract.binaryRhs(term);
-  }
-
-  public static IAbstract optionFieldExp(Location loc, IAbstract record, IAbstract field) {
-    return Abstract.binary(loc, StandardNames.OPTIONPERIOD, record, field);
-  }
-
   // A square term uses the [] as the binary operator... A[x] = A([](x))
   public static boolean isSquareTerm(IAbstract term) {
     return Abstract.isBinary(term, StandardNames.SQUARE);
@@ -998,10 +871,6 @@ public class CompilerUtils {
     assert isSquareTerm(term);
 
     return Abstract.binaryRhs(term);
-  }
-
-  public static IAbstract squareTerm(Location loc, IAbstract label, IAbstract index) {
-    return Abstract.binary(loc, StandardNames.SQUARE, label, index);
   }
 
   public static boolean isSquareSequenceTerm(IAbstract term) {
@@ -1066,17 +935,6 @@ public class CompilerUtils {
     return Abstract.binaryRhs(term);
   }
 
-  public static boolean isAggConLiteral(IAbstract term) {
-    if (isBraceTerm(term)) {
-      for (IAbstract el : unWrap(braceArg(term), StandardNames.TERM)) {
-        if (!(Abstract.isBinary(el, StandardNames.EQUAL) && Abstract.getArg(el, 0) instanceof Name))
-          return false;
-      }
-      return true;
-    } else
-      return false;
-  }
-
   public static boolean isRecordLiteral(IAbstract term) {
     if (isBraceTerm(term)) {
       for (IAbstract el : unWrap(braceArg(term), StandardNames.TERM)) {
@@ -1093,10 +951,6 @@ public class CompilerUtils {
 
   public static Iterable<IAbstract> contentsOfRecord(IAbstract term) {
     return contentsOfTheta(braceArg(term));
-  }
-
-  public static IAbstract recordLiteral(Location loc, String label, IAbstract... content) {
-    return braceTerm(loc, label, tupleUp(loc, StandardNames.TERM, content));
   }
 
   public static boolean isThetaLiteral(IAbstract term) {
@@ -1119,10 +973,8 @@ public class CompilerUtils {
           return false;
       }
       return true;
-    } else if (isIdentifier(term, StandardNames.BRACES))
-      return true;
-    else
-      return false;
+    } else
+      return isIdentifier(term, StandardNames.BRACES);
   }
 
   public static IAbstract attributes(IAbstract term) {
@@ -1146,15 +998,14 @@ public class CompilerUtils {
   public static String anonRecordTypeLabel(IAbstract term) {
     assert isAnonAggConLiteral(term);
     Set<String> typeNames = new TreeSet<>();
-    Set<String> labels = new TreeSet<String>();
+    Set<String> labels = new TreeSet<>();
 
-    for (IAbstract el : unWrap(blockContent(term), StandardNames.TERM)) {
+    for (IAbstract el : unWrap(blockContent(term), StandardNames.TERM))
       if (isTypeAnnotation(el) && isIdentifier(typeAnnotatedTerm(el))) {
         String name = Abstract.getId(typeAnnotatedTerm(el));
         labels.add(name);
       } else if (isKindAnnotation(el))
         typeNames.add(Abstract.getId(kindAnnotatedTerm(el)));
-    }
 
     StringBuilder bldr = new StringBuilder();
     bldr.append(StandardNames.RECORD_LABEL);
@@ -1192,10 +1043,6 @@ public class CompilerUtils {
     return blockContent(type);
   }
 
-  public static IContentExpression emptyTuple(Location loc) {
-    return new ConstructorTerm(loc);
-  }
-
   public static boolean isLetTerm(IAbstract term) {
     return (Abstract.isUnary(term, StandardNames.LET) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IN))
             || (Abstract.isBinary(term, StandardNames.USING) && isBlockTerm(Abstract.binaryRhs(term)));
@@ -1222,26 +1069,6 @@ public class CompilerUtils {
     return Abstract.unary(loc, StandardNames.LET, Abstract.binary(loc, StandardNames.IN, defs, bound));
   }
 
-  public static boolean isUsingExp(IAbstract term) {
-    return Abstract.isBinary(term, StandardNames.USING) && !isBlockTerm(Abstract.binaryRhs(term));
-  }
-
-  public static IAbstract usingUsing(IAbstract term) {
-    assert isUsingExp(term);
-
-    return Abstract.binaryRhs(term);
-  }
-
-  public static IAbstract usingBound(IAbstract term) {
-    assert isUsingExp(term);
-
-    return Abstract.binaryLhs(term);
-  }
-
-  public static IAbstract usingExp(Location loc, IAbstract defs, IAbstract bound) {
-    return Abstract.binary(loc, StandardNames.USING, bound, defs);
-  }
-
   public static boolean isValofExp(IAbstract term) {
     return Abstract.isUnary(term, StandardNames.VALOF) && CompilerUtils.isBlockTerm(Abstract.unaryArg(term));
   }
@@ -1257,8 +1084,7 @@ public class CompilerUtils {
 
   public static IAbstract valofValis(Location loc, IAbstract exp, IAbstract... stmts) {
     IAbstract defs[] = new IAbstract[stmts.length + 1];
-    for (int ix = 0; ix < stmts.length; ix++)
-      defs[ix] = stmts[ix];
+    System.arraycopy(stmts, 0, defs, 0, stmts.length);
     defs[stmts.length] = Abstract.unary(loc, StandardNames.VALIS, exp);
     return valofExp(loc, defs);
   }
@@ -1277,10 +1103,6 @@ public class CompilerUtils {
   public static IAbstract computationBody(IAbstract term) {
     assert isComputationExpression(term);
     return CompilerUtils.blockContent(Abstract.binaryRhs(term));
-  }
-
-  public static IAbstract computationExpression(Location loc, IAbstract type, IAbstract... stmts) {
-    return Abstract.binary(loc, StandardNames.COMPUTATION, type, blockTerm(loc, stmts));
   }
 
   public static boolean isRunComputation(IAbstract term) {
@@ -1312,10 +1134,7 @@ public class CompilerUtils {
   public static boolean isPerformAction(IAbstract term) {
     if (Abstract.isUnary(term, StandardNames.PERFORM)) {
       IAbstract performed = Abstract.unaryArg(term);
-      if (Abstract.isBinary(performed, StandardNames.ON_ABORT))
-        return isBlockTerm(Abstract.binaryRhs(performed));
-      else
-        return true;
+      return !Abstract.isBinary(performed, StandardNames.ON_ABORT) || isBlockTerm(Abstract.binaryRhs(performed));
     }
     return false;
   }
@@ -1344,19 +1163,6 @@ public class CompilerUtils {
       Name XX = Abstract.name(loc, GenSym.genSym("$X"));
       return defaultCaseRule(loc, XX, raise(loc, XX));
     }
-  }
-
-  public static IAbstract performAction(Location loc, IAbstract action) {
-    return Abstract.unary(loc, StandardNames.PERFORM, action);
-  }
-
-  public static boolean isActionExpression(IAbstract term) {
-    return isBraceTerm(term, StandardNames.ACTION);
-  }
-
-  public static IAbstract actionBody(IAbstract term) {
-    assert isActionExpression(term);
-    return CompilerUtils.blockContent(term);
   }
 
   public static boolean isLambdaExp(IAbstract term) {
@@ -1468,10 +1274,7 @@ public class CompilerUtils {
   }
 
   public static boolean isDefaultCaseRule(IAbstract term) {
-    if (isCaseRule(term)) {
-      return Abstract.isUnary(Abstract.binaryLhs(Abstract.unaryArg(term)), StandardNames.DEFAULT);
-    } else
-      return false;
+    return isCaseRule(term) && Abstract.isUnary(Abstract.binaryLhs(Abstract.unaryArg(term)), StandardNames.DEFAULT);
   }
 
   public static IAbstract caseRulePtn(IAbstract term) {
@@ -1498,11 +1301,10 @@ public class CompilerUtils {
   }
 
   public static boolean isDefaultRule(IAbstract term) {
-    if (Abstract.isBinary(term, StandardNames.IS) || Abstract.isBinary(term, StandardNames.DO) || Abstract.isBinary(
-            term, StandardNames.ASSIGN))
-      return Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.DEFAULT);
-    else
-      return false;
+    return (Abstract.isBinary(term, StandardNames.IS) ||
+            Abstract.isBinary(term, StandardNames.DO) ||
+            Abstract.isBinary(term, StandardNames.ASSIGN)) &&
+            Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.DEFAULT);
   }
 
   public static IAbstract defaultRulePtn(IAbstract term) {
@@ -1574,10 +1376,6 @@ public class CompilerUtils {
     return Abstract.binaryRhs(term);
   }
 
-  public static IAbstract castExp(Location loc, IAbstract exp, IAbstract type) {
-    return Abstract.binary(loc, StandardNames.CAST, exp, type);
-  }
-
   public static boolean isCoerce(IAbstract term) {
     return Abstract.isBinary(term, StandardNames.AS);
   }
@@ -1592,16 +1390,8 @@ public class CompilerUtils {
     return Abstract.binaryRhs(term);
   }
 
-  public static IAbstract coerceExp(IAbstract exp, IAbstract type) {
-    return Abstract.binary(exp.getLoc(), StandardNames.AS, exp, type);
-  }
-
   public static boolean isDefaultExp(IAbstract term) {
     return Abstract.isBinary(term, StandardNames.OR_ELSE);
-  }
-
-  public static IAbstract defaultExp(Location loc, IAbstract term, IAbstract deflt) {
-    return Abstract.binary(loc, StandardNames.OR_ELSE, term, deflt);
   }
 
   public static IAbstract defaultExpDefault(IAbstract term) {
@@ -1623,10 +1413,6 @@ public class CompilerUtils {
     return Abstract.unaryArg(term);
   }
 
-  public static IAbstract quoteExp(IAbstract exp) {
-    return Abstract.unary(exp.getLoc(), StandardNames.QUOTE, exp);
-  }
-
   public static boolean isUnQuoted(IAbstract term) {
     return Abstract.isUnary(term, StandardNames.UNQUOTE) || Abstract.isUnary(term, StandardNames.QUESTION);
   }
@@ -1635,32 +1421,9 @@ public class CompilerUtils {
     return Abstract.isUnary(term, StandardNames.QUESTION) && Abstract.isIdentifier(Abstract.unaryArg(term));
   }
 
-  public static IAbstract macroVariable(IAbstract term) {
-    assert isQuestion(term);
-    return Abstract.unaryArg(term);
-  }
-
-  public static boolean isMacroVariable(IAbstract term) {
-    return Abstract.isBinary(term, StandardNames.QUESTION) && Abstract.isIdentifier(Abstract.binaryRhs(term));
-  }
-
-  public static IAbstract macroVarName(IAbstract term) {
-    assert isMacroVariable(term);
-    return Abstract.binaryRhs(term);
-  }
-
-  public static IAbstract macroVarPtn(IAbstract term) {
-    assert isMacroVariable(term);
-    return Abstract.binaryLhs(term);
-  }
-
   public static IAbstract unquotedExp(IAbstract term) {
     assert isUnQuoted(term);
     return Abstract.unaryArg(term);
-  }
-
-  public static IAbstract unquoteExp(IAbstract exp) {
-    return Abstract.unary(exp.getLoc(), StandardNames.UNQUOTE, exp);
   }
 
   public static boolean isRef(IAbstract term) {
@@ -1674,10 +1437,6 @@ public class CompilerUtils {
   public static IAbstract referencedTerm(IAbstract term) {
     assert isReference(term);
     return Abstract.unaryArg(term);
-  }
-
-  public static IAbstract refTerm(IAbstract exp) {
-    return Abstract.unary(exp.getLoc(), StandardNames.REF, exp);
   }
 
   public static boolean isShriek(IAbstract term) {
@@ -1745,10 +1504,6 @@ public class CompilerUtils {
   public static IAbstract syncConditionAction(IAbstract stmt) {
     assert isSyncCondition(stmt);
     return Abstract.binaryRhs(stmt);
-  }
-
-  public static IAbstract syncAction(Location loc, IAbstract sel, IAbstract body) {
-    return braceTerm(loc, Abstract.unary(loc, StandardNames.SYNC, sel), body);
   }
 
   public static boolean isForLoop(IAbstract act) {
@@ -1908,10 +1663,8 @@ public class CompilerUtils {
       return isContractSpec(Abstract.binaryLhs(term));
     else if (Abstract.isParenTerm(term))
       return isContractSpec(Abstract.deParen(term));
-    else if (Abstract.isBinary(term, StandardNames.OVER) && Abstract.isIdentifier(Abstract.binaryLhs(term)))
-      return true;
     else
-      return false;
+      return Abstract.isBinary(term, StandardNames.OVER) && Abstract.isIdentifier(Abstract.binaryLhs(term));
   }
 
   public static IAbstract contractSpecName(IAbstract term) {
@@ -2093,18 +1846,6 @@ public class CompilerUtils {
     return Abstract.binaryLhs(term);
   }
 
-  public static IAbstract implementationDeclarationContract(IAbstract term) {
-    assert isImplementationDeclaration(term);
-    if (Abstract.isUnary(term, StandardNames.DEFAULT))
-      term = Abstract.unaryArg(term);
-    if (Abstract.isBinary(term, StandardNames.WHERE))
-      term = Abstract.binaryLhs(term);
-    assert Abstract.isBinary(term, StandardNames.IMPLEMENTS);
-    IAbstract con = Abstract.binaryRhs(term);
-    assert Abstract.isBinary(con, StandardNames.OVER);
-    return Abstract.binaryLhs(con);
-  }
-
   public static IAbstract defStatement(Location loc, IAbstract lhs, IAbstract rhs) {
     return Abstract.unary(loc, StandardNames.DEF, Abstract.binary(loc, StandardNames.IS, lhs, rhs));
   }
@@ -2112,10 +1853,8 @@ public class CompilerUtils {
   public static boolean isIsStatement(IAbstract term) {
     if (isPrivate(term))
       return isIsStatement(privateTerm(term));
-    else if (Abstract.isUnary(term, StandardNames.DEF))
-      return Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS);
     else
-      return false;
+      return Abstract.isUnary(term, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS);
   }
 
   public static IAbstract isStmtPattern(IAbstract term) {
@@ -2159,15 +1898,11 @@ public class CompilerUtils {
   }
 
   public static boolean isMacroVar(IAbstract term) {
-    if (isMacroDef(term))
-      return macroRulePtn(term) instanceof Name;
-    return false;
+    return isMacroDef(term) && macroRulePtn(term) instanceof Name;
   }
 
   public static boolean isMacroDef(IAbstract term) {
-    if (Abstract.isUnary(term, StandardNames.META_HASH))
-      return Abstract.isBinary(Abstract.unaryArg(term), StandardNames.MACRORULE);
-    return false;
+    return Abstract.isUnary(term, StandardNames.META_HASH) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.MACRORULE);
   }
 
   public static IAbstract macroRulePtn(IAbstract term) {
@@ -2377,21 +2112,8 @@ public class CompilerUtils {
     return Abstract.binaryRhs(term);
   }
 
-  public static IAbstract actionRule(Location loc, String label, List<IAbstract> args, IAbstract value) {
-    return Abstract.binary(loc, StandardNames.DO, new Apply(loc, label, args), value);
-  }
-
-  public static IAbstract actionRule(Location loc, String label, IAbstract[] args, IAbstract value) {
-    return Abstract.binary(loc, StandardNames.DO, new Apply(loc, label, args), value);
-  }
-
   public static IAbstract actionRule(Location loc, IAbstract lhs, IAbstract body) {
     return Abstract.binary(loc, StandardNames.DO, lhs, body);
-  }
-
-  public static IAbstract defaultActionRule(Location loc, String label, List<IAbstract> args, IAbstract value) {
-    return Abstract.binary(loc, StandardNames.DO, Abstract.unary(loc, StandardNames.DEFAULT, new Apply(loc, label,
-            args)), value);
   }
 
   public static boolean isPatternStatement(IAbstract stmt) {
@@ -2439,16 +2161,6 @@ public class CompilerUtils {
     assert isPatternRule(term);
 
     return Abstract.binaryLhs(term);
-  }
-
-  public static String patternRuleName(IAbstract term) {
-    assert isPatternRule(term);
-
-    IAbstract head = Abstract.binaryLhs(term);
-    if (Abstract.isApply(head))
-      return Abstract.getOp(head);
-    else
-      return null;
   }
 
   public static IAbstract patternRuleBody(IAbstract term) {
@@ -2573,15 +2285,6 @@ public class CompilerUtils {
     return Abstract.getId(Abstract.unaryArg(tp));
   }
 
-  public static IAbstract typeFunVar(Location loc, IAbstract name) {
-    return Abstract.unary(loc, StandardNames.DBLCENT, name);
-  }
-
-  public static boolean isTypeExp(IAbstract term) {
-    return Abstract.isBinary(term, StandardNames.OF) && (Abstract.isIdentifier(Abstract.binaryLhs(term)) || isTypeVar(
-            Abstract.binaryLhs(term)));
-  }
-
   public static boolean isDerived(IAbstract term) {
     return Abstract.isBinary(term, StandardNames.DETERMINES);
   }
@@ -2639,12 +2342,9 @@ public class CompilerUtils {
   public static boolean isKindAnnotation(IAbstract stmt) {
     if (isPrivate(stmt))
       return isKindAnnotation(privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.HAS_KIND) && Abstract.isIdentifier(Abstract.binaryLhs(stmt)))
-      return true;
-    else if (Abstract.isBinary(stmt, StandardNames.WHERE) && isKindAnnotation(Abstract.binaryLhs(stmt)))
-      return true;
     else
-      return false;
+      return Abstract.isBinary(stmt, StandardNames.HAS_KIND) && Abstract.isIdentifier(Abstract.binaryLhs(stmt))
+              || Abstract.isBinary(stmt, StandardNames.WHERE) && isKindAnnotation(Abstract.binaryLhs(stmt));
   }
 
   public static IAbstract kindAnnotation(IAbstract stmt) {
@@ -2655,10 +2355,6 @@ public class CompilerUtils {
       return kindAnnotation(Abstract.binaryLhs(stmt));
     else
       return Abstract.binaryRhs(stmt);
-  }
-
-  public static IAbstract kindAnnotationStmt(Location loc, IAbstract name, IAbstract type) {
-    return Abstract.binary(loc, StandardNames.HAS_KIND, name, type);
   }
 
   public static IAbstract kindAnnotatedTerm(IAbstract stmt) {
@@ -2675,10 +2371,6 @@ public class CompilerUtils {
       return Abstract.binaryRhs(stmt);
     else
       return null;
-  }
-
-  public static boolean isFunctionType(IAbstract tp) {
-    return Abstract.isApply(tp, StandardNames.FUN_ARROW);
   }
 
   public static IAbstract functionType(Location loc, List<IAbstract> argTypes, IAbstract resType) {
@@ -2815,16 +2507,8 @@ public class CompilerUtils {
     return vars;
   }
 
-  public static String pkgFunName(String pkgName) {
-    return pkgName + "$package$";
-  }
-
   public static String defaultLabel(String typeLabel, String specLabel, String member) {
     return typeLabel + "#" + specLabel + "$" + member;
-  }
-
-  public static String defaultLabel(String typeLabel, String member) {
-    return typeLabel + "$" + member;
   }
 
   public static String integrityLabel(String typeLabel, String specLabel) {
@@ -2832,7 +2516,7 @@ public class CompilerUtils {
   }
 
   public static SortedMap<String, Integer> buildInterfaceIndex(Map<String, IType> memberTypes) {
-    SortedMap<String, Integer> index = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> index = new TreeMap<>();
 
     int ix = 0;
     for (Entry<String, IType> entry : memberTypes.entrySet()) {
@@ -3004,10 +2688,7 @@ public class CompilerUtils {
   }
 
   public static boolean isTypeWitness(IAbstract stmt) {
-    if (Abstract.isUnary(stmt, AbstractType.TYPE))
-      return Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.COUNTS_AS);
-    else
-      return false;
+    return Abstract.isUnary(stmt, AbstractType.TYPE) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.COUNTS_AS);
   }
 
   public static IAbstract typeWitness(IAbstract stmt) {
@@ -3018,11 +2699,6 @@ public class CompilerUtils {
   public static IAbstract witnessedType(IAbstract stmt) {
     assert isTypeWitness(stmt);
     return Abstract.binaryRhs(Abstract.unaryArg(stmt));
-  }
-
-  public static IAbstract typeWitnessStmt(Location loc, IAbstract tp, IAbstract witness) {
-    assert Abstract.isIdentifier(witness);
-    return Abstract.unary(loc, StandardNames.TYPE, Abstract.binary(loc, StandardNames.COUNTS_AS, tp, witness));
   }
 
   public static boolean isTypeEquality(IAbstract stmt) {
@@ -3053,11 +2729,6 @@ public class CompilerUtils {
     else
       return typeForm;
 
-  }
-
-  public static IAbstract typeEqualityStmt(Location loc, IAbstract name, IAbstract type) {
-    assert Abstract.isIdentifier(name);
-    return Abstract.unary(loc, StandardNames.TYPE, Abstract.binary(loc, StandardNames.EQUAL, name, type));
   }
 
   public static IAbstract nameOfProcedure(IAbstract stmt) {
@@ -3100,15 +2771,6 @@ public class CompilerUtils {
 
   public static IContentExpression falseLiteral(Location loc) {
     return new ConstructorTerm(loc, StandardNames.FALSE, booleanType);
-  }
-
-  public static boolean isFalseLiteral(IContentExpression exp) {
-    return exp instanceof ConstructorTerm && ((ConstructorTerm) exp).getLabel().equals(StandardNames.FALSE)
-            && ((ConstructorTerm) exp).arity() == 0;
-  }
-
-  public static IContentExpression boolLiteral(Location loc, boolean bool) {
-    return new ConstructorTerm(loc, bool ? StandardNames.TRUE : StandardNames.FALSE, booleanType);
   }
 
   public static IContentExpression stringLiteral(Location loc, String str) {
@@ -3182,12 +2844,6 @@ public class CompilerUtils {
   public static ConstructorTerm impossible(Location loc, IType t) {
     IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, t);
     return new ConstructorTerm(loc, StandardNames.IMPOSSIBLE, resltType);
-  }
-
-  public static ConstructorPtn impossiblePtn(Location loc) {
-    TypeVar tv = new TypeVar();
-    IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, tv);
-    return new ConstructorPtn(loc, StandardNames.IMPOSSIBLE, resltType);
   }
 
   public static IContentExpression none(Location loc, IType stType) {

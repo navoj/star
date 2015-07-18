@@ -91,9 +91,7 @@ public class ManifestParser implements CodeParser
   {
     try (Reader rdr = Resources.getReader(uri)) {
       return parse(uri, rdr, errors);
-    } catch (ResourceException e) {
-      errors.reportError("problem in accessing resource " + uri + ":" + e.getMessage(), Location.location(uri));
-    } catch (IOException e) {
+    } catch (ResourceException | IOException e) {
       errors.reportError("problem in accessing resource " + uri + ":" + e.getMessage(), Location.location(uri));
     }
     return null;
@@ -122,12 +120,12 @@ public class ManifestParser implements CodeParser
         && CompilerUtils.isPackageIdentifier(CompilerUtils.isFormPattern(term))
         && CompilerUtils.isBraceTerm(CompilerUtils.isFormValue(term), MANIFEST)) {
       String manifestName = CompilerUtils.getPackageIdentifier(CompilerUtils.isFormPattern(term));
-      List<ITypeDescription> types = new ArrayList<ITypeDescription>();
-      List<ITypeAlias> aliases = new ArrayList<ITypeAlias>();
-      Map<String, TypeContract> contracts = new HashMap<String, TypeContract>();
-      Map<String, Set<ContractImplementation>> implementations = new HashMap<String, Set<ContractImplementation>>();
-      Map<String, Pair<IAbstract, IType>> defaults = new HashMap<String, Pair<IAbstract, IType>>();
-      Map<String, IAbstract> integrities = new HashMap<String, IAbstract>();
+      List<ITypeDescription> types = new ArrayList<>();
+      List<ITypeAlias> aliases = new ArrayList<>();
+      Map<String, TypeContract> contracts = new HashMap<>();
+      Map<String, Set<ContractImplementation>> implementations = new HashMap<>();
+      Map<String, Pair<IAbstract, IType>> defaults = new HashMap<>();
+      Map<String, IAbstract> integrities = new HashMap<>();
       IType pkgType = null;
       String pkgName = null;
       ResourceURI manifestURI = null;
@@ -156,8 +154,8 @@ public class ManifestParser implements CodeParser
             isDefault = false;
 
           Dictionary iCxt = cxt.fork();
-          LayeredMap<String, TypeVar> tVars = new LayeredHash<String, TypeVar>();
-          List<IType> required = new ArrayList<IType>();
+          LayeredMap<String, TypeVar> tVars = new LayeredHash<>();
+          List<IType> required = new ArrayList<>();
           final IAbstract conTerm;
           TypeNameHandler varHandler = new RegularTypeName(iCxt, tVars, AccessMode.readWrite, true, errors);
           if (Abstract.isBinary(stmt, StandardNames.WHERE)) {
@@ -179,7 +177,7 @@ public class ManifestParser implements CodeParser
               ContractImplementation implementation = new ContractImplementation(conName, implVar, isDefault);
               Set<ContractImplementation> impls = implementations.get(conName);
               if (impls == null) {
-                impls = new HashSet<ContractImplementation>();
+                impls = new HashSet<>();
                 implementations.put(conName, impls);
               }
               impls.add(implementation);
@@ -216,24 +214,6 @@ public class ManifestParser implements CodeParser
       errors.reportError("not a valid manifest", Location.location(uri));
     return null;
 
-  }
-
-  public Manifest parseBin(ResourceURI uri, ErrorReport errors)
-  {
-    FileInputStream fis = null;
-    ObjectInputStream in = null;
-    Manifest newManifest = null;
-    try {
-      fis = new FileInputStream(uri.getPath());
-      in = new ObjectInputStream(fis);
-      newManifest = (Manifest) in.readObject();
-      in.close();
-    } catch (IOException ex) {
-      errors.reportError("IOException: " + ex.getMessage());
-    } catch (ClassNotFoundException ex) {
-      errors.reportError("ClassNotFoundException: " + ex.getMessage());
-    }
-    return newManifest;
   }
 
   @Override
