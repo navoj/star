@@ -29,5 +29,10 @@ basicsets is package{
 
     assert not contains_element(S,"one")
 
+    S := remove_element(S,"ten")
+    logMsg(info,"$S");
+
+    assert not contains_element(S,"ten")
+
   }
 }

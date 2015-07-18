@@ -111,8 +111,7 @@ public class SetTree implements ISet, PrettyPrintable {
   public ISet updateUsingPattern(IPattern filter, IFunction transform) throws EvaluationException {
     IndexSet<IValue> result = IndexSet.emptySet();
     for (IValue el : set) {
-      IValue tpl = NTuple.tuple(el);
-      if (filter.match(tpl) != null)
+      if (filter.match(el) != null)
         result = result.insert(transform.enter(el));
       else
         result = result.insert(el);
@@ -167,10 +166,7 @@ public class SetTree implements ISet, PrettyPrintable {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof ISet)
-      return equals((ISet) obj);
-    else
-      return false;
+    return obj instanceof ISet && equals((ISet) obj);
   }
 
   @Override

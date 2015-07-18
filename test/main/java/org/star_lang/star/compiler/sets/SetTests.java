@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.star_lang.star.compiler.SRTest;
 
-/**
+/*
  * Created by fgm on 7/15/15.
  */
 public class SetTests extends SRTest {
@@ -58,5 +58,10 @@ public class SetTests extends SRTest {
   public void largeSetTest()
   {
     runStar("largeSetTest.star");
+  }
+
+  @Test
+  public void updateSets(){
+    runStar("setupdates.star");
   }
 }

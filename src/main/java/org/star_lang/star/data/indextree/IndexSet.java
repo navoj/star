@@ -1,12 +1,11 @@
 package org.star_lang.star.data.indextree;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
 import org.star_lang.star.compiler.util.WrapIterator;
-import org.star_lang.star.data.IValue;
+
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -48,7 +47,7 @@ public class IndexSet<T> implements Sets<T>, PrettyPrintable {
   @Override
   public void prettyPrint(PrettyPrintDisplay disp) {
     String sep = "";
-    disp.append("{");
+    disp.append("[");
     for (Entry<T, Object> e : tree) {
       disp.append(sep);
       sep = ", ";
@@ -58,7 +57,7 @@ public class IndexSet<T> implements Sets<T>, PrettyPrintable {
       else
         disp.append(el.toString());
     }
-    disp.append("}");
+    disp.append("]");
   }
 
   @Override
@@ -82,27 +81,31 @@ public class IndexSet<T> implements Sets<T>, PrettyPrintable {
   }
 
   @Override
-  public IndexSet insert(T key) {
+  public IndexSet<T> insert(T key) {
     return add(key);
   }
 
   @Override
   public Sets<T> delete(T key) {
-    return null;
+    return new IndexSet<>(tree.delete(key));
   }
 
   @Override
   public <S> S fold(Fold<T, S> folder, S init) {
-    return null;
+    S result = init;
+    for(Entry<T,Object> entry:tree){
+      result = folder.apply(entry.getKey(),result);
+    }
+    return result;
   }
 
   @Override
   public Iterator<T> iterator() {
-    return new WrapIterator<Entry<T,Object>,T>((e)->e.getKey(),tree.iterator());
+    return new WrapIterator<>(Entry::getKey,tree.iterator());
   }
 
   @Override
   public Iterator<T> reverseIterator() {
-    return new WrapIterator<Entry<T,Object>,T>((e)->e.getKey(),tree.reverseIterator());
+    return new WrapIterator<>(Entry::getKey,tree.reverseIterator());
   }
 }
