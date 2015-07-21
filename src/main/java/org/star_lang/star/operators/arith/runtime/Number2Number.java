@@ -37,7 +37,7 @@ public abstract class Number2Number
     @CafeEnter
     public static int enter(int ix)
     {
-      return (int) ix;
+      return ix;
     }
 
     @Override

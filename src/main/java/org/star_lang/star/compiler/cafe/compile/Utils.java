@@ -37,8 +37,7 @@ public class Utils
 
   public static String javaInternalName(String name)
   {
-    String replace = name.replace('.', '/');
-    return replace;
+    return name.replace('.', '/');
   }
 
   public static String javaTypeSig(Class<?> klass)

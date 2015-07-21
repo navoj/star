@@ -108,7 +108,7 @@ public abstract class IntWrap implements PrettyPrintable, IConstructor
     ConstructorSpecifier nonSpec = new ConstructorSpecifier(Location.nullLoc, null, StandardTypes.NON_INTEGER,
         NonInteger.CONIX, NonInteger.conType(), NonInteger.class, IntWrap.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(strSpec);
     specs.add(nonSpec);
     ITypeDescription type = new CafeTypeDescription(Location.nullLoc, intType, Utils

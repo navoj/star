@@ -42,8 +42,6 @@ public class ErrorReport implements PrettyPrintable
     CompilerMessage msg = new CompilerMessage(type, text, locs);
 
     reportMsg(msg);
-
-    // System.err.println(msg);
   }
 
   private void reportMsg(CompilerMessage msg)

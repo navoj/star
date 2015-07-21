@@ -500,7 +500,7 @@ public class CafeSyntax
 
   public static IAbstract letExp(Location loc, IAbstract def, IAbstract bound)
   {
-    List<IAbstract> defs = new ArrayList<IAbstract>();
+    List<IAbstract> defs = new ArrayList<>();
     defs.add(def);
     return letExp(loc, defs, bound);
   }
@@ -1150,7 +1150,7 @@ public class CafeSyntax
 
   public static IAbstract arrowType(Location loc, List<IAbstract> typeArgs, IAbstract res)
   {
-    List<IAbstract> args = new ArrayList<IAbstract>(typeArgs);
+    List<IAbstract> args = new ArrayList<>(typeArgs);
     args.add(res);
     return new Apply(loc, Names.ARROW, args);
   }
@@ -1180,7 +1180,7 @@ public class CafeSyntax
 
   public static IAbstract procedureType(Location loc, List<IAbstract> argTypes)
   {
-    List<IAbstract> args = new ArrayList<IAbstract>(argTypes);
+    List<IAbstract> args = new ArrayList<>(argTypes);
     args.add(new Name(loc, Names.VOID));
     return new Apply(loc, Names.ARROW, args);
   }
@@ -1207,7 +1207,7 @@ public class CafeSyntax
     assert isPatternType(trm);
 
     IList tArgs = ((Apply) trm).getArgs();
-    List<IAbstract> args = new ArrayList<IAbstract>();
+    List<IAbstract> args = new ArrayList<>();
     for (int ix = 0; ix < tArgs.size() - 1; ix++)
       args.add((IAbstract) tArgs.getCell(ix));
     return args;

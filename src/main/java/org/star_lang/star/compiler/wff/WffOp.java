@@ -26,7 +26,7 @@ public interface WffOp extends PrettyPrintable
 {
   enum applyMode {
     validates, notValidates, notApply
-  };
+  }
 
   applyMode apply(IAbstract term, IAbstract env[], Location loc, WffEngine engine);
 

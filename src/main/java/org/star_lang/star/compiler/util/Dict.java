@@ -36,7 +36,7 @@ public abstract class Dict<E> implements Iterable<Entry<String, E>>, PrettyPrint
 
   public Dict()
   {
-    this(null, new HashMap<String, E>());
+    this(null, new HashMap<>());
   }
 
   public abstract Dict<E> fork();

@@ -67,7 +67,7 @@ public class UniversalType extends QuantifiedType
   {
     if (!vars.isEmpty()) {
       HistoricalMap<String, TypeVar> tVars = TypeVarFinder.findTypeVars(bound);
-      List<TypeVar> boundVars = new ArrayList<TypeVar>();
+      List<TypeVar> boundVars = new ArrayList<>();
       for (Entry<String, TypeVar> entry : tVars.entrySet()) {
         if (vars.contains(entry.getValue()))
           boundVars.add(0, entry.getValue());

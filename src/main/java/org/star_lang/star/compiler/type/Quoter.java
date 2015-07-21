@@ -137,7 +137,6 @@ public class Quoter implements IAbstractVisitor
       if (!Abstract.isUnary(rhs, StandardNames.QUESTION)) {
         checker.getErrorReport().reportError(StringUtils.msg("expecting a ? after ", StandardNames.MACRO_APPLY),
             rhs.getLoc());
-        return;
       } else {
         IContentExpression args = checker.typeOfExp(Abstract.binaryRhs(app), astArrayType, cxt, outer);
         IContentExpression op = stack.pop();

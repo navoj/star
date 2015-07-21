@@ -572,7 +572,7 @@ public class TypeChecker
           errors.reportError(StringUtils.msg(type, " not consistent with expected type ", expectedType, "\nbecause ", e
               .getWords()), Location.merge(loc, e.getLocs()));
         }
-        return new RecordTerm(loc, type, els, new TreeMap<String, IType>());
+        return new RecordTerm(loc, type, els, new TreeMap<>());
       } else if (TypeUtils.isTypeInterface(expectedType)) {
         TypeInterfaceType face = (TypeInterfaceType) Freshen.freshenForEvidence(expectedType);
         final Map<String, ContractConstraint> constraintMap = constraintMap(face);
@@ -1375,8 +1375,8 @@ public class TypeChecker
     } else if (name.equals(StandardNames.BRACES)) {
       TypeInterfaceType type = new TypeInterfaceType();
 
-      return verifyType(type, expectedType, loc, new RecordTerm(loc, type, new TreeMap<String, IContentExpression>(),
-          new TreeMap<String, IType>()), dict, errors);
+      return verifyType(type, expectedType, loc, new RecordTerm(loc, type, new TreeMap<>(),
+              new TreeMap<>()), dict, errors);
     } else if (name.equals(StandardNames.SQUARE)) {
       IContentExpression op = typeOfName(loc, StandardNames.NIL, TypeUtils.functionType(expectedType), dict, errors);
       return new Application(loc, expectedType, op);
@@ -1400,7 +1400,7 @@ public class TypeChecker
 
   private enum QueryForm {
     sequenceQuery, reductionQuery, satisfactionQuery
-  };
+  }
 
   private IContentExpression queryExpression(IAbstract term, IType expectedType, Dictionary dict, Dictionary outer)
   {
@@ -1748,7 +1748,7 @@ public class TypeChecker
 
     Variable[] compFree = FreeVariables.findFreeVars(comp, dict);
 
-    return MatchCompiler.generateFunction(new ArrayList<Triple<IContentPattern[], ICondition, IContentExpression>>(),
+    return MatchCompiler.generateFunction(new ArrayList<>(),
         eqn, pairCompType, compFree, compFunName, loc, dict, outer, errors);
   }
 
@@ -3012,7 +3012,7 @@ public class TypeChecker
           kyType, elType));
       rlType.setConstraint(constraint);
 
-      Wrapper<ICondition> cond = new Wrapper<ICondition>(CompilerUtils.truth);
+      Wrapper<ICondition> cond = new Wrapper<>(CompilerUtils.truth);
 
       IContentExpression rhs = typeOfExp(Abstract.binaryRhs(condition), rlType, cxt, outer);
       IAbstract ptn = Abstract.binaryLhs(condition);
@@ -3515,7 +3515,7 @@ public class TypeChecker
       else if (vrName.equals(StandardNames.BRACES)) {
         Map<String, Integer> index = new HashMap<>();
         Map<String, IContentPattern> els = new HashMap<>();
-        IType type = TypeUtils.typeInterface(new TreeMap<String, IType>());
+        IType type = TypeUtils.typeInterface(new TreeMap<>());
         return verifyType(expectedType, loc, new RecordPtn(loc, type, els, index), cxt, errors);
       } else if (vrName.equals(StandardNames.SQUARE)) {
         return typeOfPtn(Abstract.zeroary(loc, StandardNames.EMPTY), expectedType, condition, cxt, outer, varHandler);
@@ -4565,7 +4565,7 @@ public class TypeChecker
          */
 
         if (!definedVars.isEmpty()) {
-          List<IContentExpression> freeExps = new ArrayList<IContentExpression>(definedVars);
+          List<IContentExpression> freeExps = new ArrayList<>(definedVars);
           IContentExpression freeTpl = new ConstructorTerm(loc, freeExps);
 
           IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, freeTpl.getType());
@@ -4625,7 +4625,7 @@ public class TypeChecker
          */
 
         if (!definedVars.isEmpty()) {
-          List<IContentExpression> freeExps = new ArrayList<IContentExpression>(definedVars);
+          List<IContentExpression> freeExps = new ArrayList<>(definedVars);
           IContentExpression freeTpl = new ConstructorTerm(loc, freeExps);
 
           IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, freeTpl.getType());
@@ -4665,7 +4665,7 @@ public class TypeChecker
 
       if (QueryPlanner.isTransformable(cond)) {
         if (definedVars.size() > 1) {
-          List<IContentExpression> freeExps = new ArrayList<IContentExpression>(definedVars);
+          List<IContentExpression> freeExps = new ArrayList<>(definedVars);
           IContentExpression freeTpl = new ConstructorTerm(loc, freeExps);
           IContentPattern freeMtch = new ConstructorPtn(loc, definedVars.toArray(new IContentPattern[definedVars
               .size()]));

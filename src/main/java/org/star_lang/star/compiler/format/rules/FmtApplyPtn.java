@@ -60,8 +60,7 @@ public class FmtApplyPtn implements FmtPtnOp
   public int getSpecificity()
   {
     int count = opOp.getSpecificity();
-    for (int ix = 0; ix < argOps.length; ix++)
-      count += argOps[ix].getSpecificity();
+    for (FmtPtnOp argOp : argOps) count += argOp.getSpecificity();
     return count;
   }
 

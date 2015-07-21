@@ -78,14 +78,14 @@ public class CContext implements PrettyPrintable
 
   public CContext(CContext template)
   {
-    this(new LayeredHash<String, DictEntry>(), template.rewrites.fork(), template.introducedTypes, template.extra,
+    this(new LayeredHash<>(), template.rewrites.fork(), template.introducedTypes, template.extra,
         template.cond, template.errors, template, template.loc, template.isDeep, template.access);
   }
 
   public CContext(Location loc, ErrorReport errors)
   {
-    this(new LayeredHash<String, DictEntry>(), new LayeredHash<String, IContentExpression>(),
-        new HashMap<String, IAlgebraicType>(), new ArrayList<IAbstract>(), Wrapper.create(CompilerUtils.truth), errors,
+    this(new LayeredHash<>(), new LayeredHash<>(),
+            new HashMap<>(), new ArrayList<>(), Wrapper.create(CompilerUtils.truth), errors,
         null, loc, false, AccessMode.readOnly);
   }
 
@@ -202,7 +202,7 @@ public class CContext implements PrettyPrintable
 
   public List<Variable> definedVariables()
   {
-    List<Variable> vars = new ArrayList<Variable>();
+    List<Variable> vars = new ArrayList<>();
     for (DictEntry entry : dict.values()) {
       Variable v = entry.getVariable();
       if (!vars.contains(v))

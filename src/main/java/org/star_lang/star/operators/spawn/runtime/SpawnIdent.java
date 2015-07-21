@@ -58,7 +58,7 @@ public abstract class SpawnIdent implements PrettyPrintable, IConstructor
     ConstructorSpecifier nonSpec = new ConstructorSpecifier(Location.nullLoc, null, StandardNames.NON_THREAD,
         NoSpawn.CONIX, conType, NoSpawn.class, SpawnIdent.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(strSpec);
     specs.add(nonSpec);
     cxt.defineType(new CafeTypeDescription(Location.nullLoc, new UniversalType(tv, thrType), Utils

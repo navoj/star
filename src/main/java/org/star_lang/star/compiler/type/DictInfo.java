@@ -56,7 +56,7 @@ public interface DictInfo extends PrettyPrintable
    * @param var
    * @return
    */
-  public boolean isTypeVarInScope(TypeVar var);
+  boolean isTypeVarInScope(TypeVar var);
 
   /**
    * Is this entry initialized?

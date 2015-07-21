@@ -32,7 +32,7 @@ import org.star_lang.star.data.type.UniversalType;
  */
 public abstract class AbstractTypeVisitor<C> implements ITypeVisitor<C>
 {
-  private final Stack<String> exclusions = new Stack<String>();
+  private final Stack<String> exclusions = new Stack<>();
 
   @Override
   public void visitSimpleType(Type t, C cxt)
@@ -85,8 +85,8 @@ public abstract class AbstractTypeVisitor<C> implements ITypeVisitor<C>
     exclusions.pop();
   }
 
-  protected boolean isExcluded(String name)
+  protected boolean isNotExcluded(String name)
   {
-    return exclusions.contains(name);
+    return !exclusions.contains(name);
   }
 }

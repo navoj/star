@@ -38,7 +38,7 @@ public class SyncAction extends Action
   {
     super(loc, type);
     this.sel = sel;
-    this.body = new HashMap<ICondition, IContentAction>();
+    this.body = new HashMap<>();
     this.body.put(CompilerUtils.truth, body);
   }
 

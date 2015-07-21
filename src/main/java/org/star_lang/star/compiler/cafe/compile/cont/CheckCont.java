@@ -53,7 +53,7 @@ public class CheckCont implements IContinuation
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
     
-    Expressions.checkType(src, expect, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(src, expect, mtd, dict, hwm);
     InsnList ins = mtd.instructions;
     if (!JumpCont.isUnconditionalJump(ins.getLast().getOpcode()))
       ins.add(new JumpInsnNode(Opcodes.GOTO, jmp));

@@ -44,7 +44,7 @@ public class OverContext
 
   public OverContext(Dictionary localCxt, ErrorReport errors, int varNo)
   {
-    this(new Stack<Pair<IType, IContentExpression>>(), localCxt, errors, varNo);
+    this(new Stack<>(), localCxt, errors, varNo);
   }
 
   public int getVarNo()

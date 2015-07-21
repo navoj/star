@@ -11,7 +11,10 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.Set;
 
+import org.star_lang.star.code.Manifest;
 import org.star_lang.star.code.repository.CodeRepository;
+import org.star_lang.star.code.repository.RepositoryException;
+import org.star_lang.star.code.repository.RepositoryManager;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.grammar.Token;
 import org.star_lang.star.compiler.grammar.Token.TokenType;
@@ -33,26 +36,22 @@ import org.star_lang.star.resource.catalog.CatalogException;
 import org.star_lang.star.resource.catalog.CatalogUtils;
 import org.star_lang.star.resource.catalog.URIBasedCatalog;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 @SuppressWarnings("serial")
-public class PackageGrapher implements PrettyPrintable
-{
+public class PackageGrapher implements PrettyPrintable {
   private static final Logger logger = Logger.getAnonymousLogger();
 
   // functions to build a dependency graph of which packages depend on which
@@ -60,15 +59,13 @@ public class PackageGrapher implements PrettyPrintable
   private final CodeRepository repository;
   private final ErrorReport errors;
 
-  private PackageGrapher(CodeRepository repository, ErrorReport errors)
-  {
+  private PackageGrapher(CodeRepository repository, ErrorReport errors) {
     this.repository = repository;
     this.errors = errors;
   }
 
   public static PackageGrapher buildImportGraph(ResourceURI uri, CodeRepository repository, Catalog catalog,
-      ErrorReport errors)
-  {
+                                                ErrorReport errors) {
     errors.startTimer("dependency for " + uri);
 
     PackageGrapher grapher = new PackageGrapher(repository, errors);
@@ -85,8 +82,7 @@ public class PackageGrapher implements PrettyPrintable
   }
 
   public static PackageGrapher buildImportGraph(Collection<ResourceURI> pkgs, CodeRepository repository,
-      Catalog catalog, ErrorReport errors)
-  {
+                                                Catalog catalog, ErrorReport errors) {
     PackageGrapher grapher = new PackageGrapher(repository, errors);
 
     for (ResourceURI pkg : pkgs)
@@ -99,8 +95,7 @@ public class PackageGrapher implements PrettyPrintable
     return grapher;
   }
 
-  public List<List<PkgSpec>> sortDependencies()
-  {
+  public List<List<PkgSpec>> sortDependencies() {
     errors.startTimer("sort dependencies");
     List<List<IDefinition<ResourceURI>>> groups = TopologySort.sort(graph.values());
     List<List<PkgSpec>> sortd = new ArrayList<>();
@@ -109,7 +104,7 @@ public class PackageGrapher implements PrettyPrintable
       for (IDefinition<ResourceURI> def : entry) {
         PkgGraph pkgGraph = (PkgGraph) def;
         group.add(new PkgSpec(pkgGraph.uri, pkgGraph.getText(), pkgGraph.getHash(), pkgGraph.getCatalog(),
-            pkgGraph.links));
+                pkgGraph.links));
       }
       sortd.add(group);
     }
@@ -117,8 +112,7 @@ public class PackageGrapher implements PrettyPrintable
     return sortd;
   }
 
-  public Map<ResourceURI, Collection<ResourceURI>> linkMap()
-  {
+  public Map<ResourceURI, Collection<ResourceURI>> linkMap() {
     Map<ResourceURI, Collection<ResourceURI>> links = new HashMap<>();
 
     for (Entry<ResourceURI, PkgGraph> entry : graph.entrySet()) {
@@ -127,10 +121,9 @@ public class PackageGrapher implements PrettyPrintable
     return links;
   }
 
-  private PkgGraph processPkg(ResourceURI uri, Catalog catalog)
-  {
+  private PkgGraph processPkg(ResourceURI uri, Catalog catalog) {
     errors.startTimer(uri.toString());
-    assert!graph.containsKey(uri);
+    assert !graph.containsKey(uri);
 
     try {
       String srcText = Resources.getUriContent(uri);
@@ -140,34 +133,43 @@ public class PackageGrapher implements PrettyPrintable
 
         graph.put(uri, pkg);
 
-        Tokenizer tokenizer = new Tokenizer(new ErrorReport.NullErrorReporter(), new StringReader(srcText), Location
-            .location(uri));
-        Token tok = tokenizer.nextToken();
-        while (tok.getType() != TokenType.terminal) {
-          if (tok.isIdentifier(StandardNames.IMPORT)) {
-            tok = tokenizer.nextToken();
+        Manifest manifest = RepositoryManager.locateStarManifest(repository, uri);
 
-            try {
-              final ResourceURI refUri;
-
-              switch (tok.getType()) {
-              case identifier:
-                refUri = catalog.resolve(tok.getImage());
-                break;
-              case string:
-                refUri = catalog.resolve(URIUtils.parseUri(tok.getImage()));
-                break;
-              default:
-                refUri = null;
-              }
-              if (refUri != null) {
-                if (!pkg.references.contains(refUri))
-                  referToPkg(pkg, refUri);
-              }
-            } catch (CatalogException e) {
-            }
+        if (manifest != null && hash.equals(manifest.getPkgHash())) {
+          for (ResourceURI refUri : manifest.getImports()) {
+            if (!pkg.references.contains(refUri))
+              referToPkg(pkg, refUri);
           }
-          tok = tokenizer.nextToken();
+        } else {
+          Tokenizer tokenizer = new Tokenizer(new ErrorReport.NullErrorReporter(), new StringReader(srcText), Location
+                  .location(uri));
+          Token tok = tokenizer.nextToken();
+          while (tok.getType() != TokenType.terminal) {
+            if (tok.isIdentifier(StandardNames.IMPORT)) {
+              tok = tokenizer.nextToken();
+
+              try {
+                final ResourceURI refUri;
+
+                switch (tok.getType()) {
+                  case identifier:
+                    refUri = catalog.resolve(tok.getImage());
+                    break;
+                  case string:
+                    refUri = catalog.resolve(URIUtils.parseUri(tok.getImage()));
+                    break;
+                  default:
+                    refUri = null;
+                }
+                if (refUri != null) {
+                  if (!pkg.references.contains(refUri))
+                    referToPkg(pkg, refUri);
+                }
+              } catch (CatalogException e) {
+              }
+            }
+            tok = tokenizer.nextToken();
+          }
         }
         return pkg;
       } else {
@@ -177,13 +179,15 @@ public class PackageGrapher implements PrettyPrintable
     } catch (ResourceException e) {
       logger.info("resource exception: " + e.getMessage());
       return null;
+    } catch (CatalogException | RepositoryException e) {
+      logger.info("catalog or repository exception: " + e.getMessage());
+      return null;
     } finally {
       errors.recordTime(uri.toString());
     }
   }
 
-  private void referToPkg(PkgGraph pkg, final ResourceURI refUri)
-  {
+  private void referToPkg(PkgGraph pkg, final ResourceURI refUri) {
     // Handle this carefully, the source may not be accessible
     PkgGraph refPkg = graph.get(refUri);
 
@@ -198,8 +202,7 @@ public class PackageGrapher implements PrettyPrintable
     }
   }
 
-  private class PkgGraph implements IDefinition<ResourceURI>, PrettyPrintable
-  {
+  private class PkgGraph implements IDefinition<ResourceURI>, PrettyPrintable {
     private final ResourceURI uri;
     private final Catalog catalog;
     private final Set<ResourceURI> references = new HashSet<>();
@@ -207,67 +210,56 @@ public class PackageGrapher implements PrettyPrintable
     private final String text;
     private final String hash;
 
-    public PkgGraph(ResourceURI uri, String text, String hash, Catalog catalog)
-    {
+    public PkgGraph(ResourceURI uri, String text, String hash, Catalog catalog) {
       this.uri = uri;
       this.catalog = catalog;
       this.text = text;
       this.hash = hash;
     }
 
-    private void linkFromReferringPkg(PkgGraph referring)
-    {
+    private void linkFromReferringPkg(PkgGraph referring) {
       ResourceURI refUri = referring.getUri();
       if (!links.contains(refUri))
         links.add(refUri);
     }
 
-    public Collection<ResourceURI> getLinks()
-    {
+    public Collection<ResourceURI> getLinks() {
       return links;
     }
 
-    public Catalog getCatalog()
-    {
+    public Catalog getCatalog() {
       return catalog;
     }
 
-    public ResourceURI getUri()
-    {
+    public ResourceURI getUri() {
       return uri;
     }
 
-    public String getText()
-    {
+    public String getText() {
       return text;
     }
 
-    public String getHash()
-    {
+    public String getHash() {
       return hash;
     }
 
     @Override
-    public boolean defines(ResourceURI uri)
-    {
+    public boolean defines(ResourceURI uri) {
       return this.uri.equals(uri);
     }
 
     @Override
-    public Collection<ResourceURI> definitions()
-    {
+    public Collection<ResourceURI> definitions() {
       return FixedList.create(uri);
     }
 
     @Override
-    public Collection<ResourceURI> references()
-    {
+    public Collection<ResourceURI> references() {
       return references;
     }
 
     @Override
-    public void prettyPrint(PrettyPrintDisplay disp)
-    {
+    public void prettyPrint(PrettyPrintDisplay disp) {
       uri.prettyPrint(disp);
       if (!references.isEmpty()) {
         disp.append("->");
@@ -277,22 +269,19 @@ public class PackageGrapher implements PrettyPrintable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
       return PrettyPrintDisplay.toString(this);
     }
   }
 
-  private void processGraph(ResourceURI pkg, Catalog catalog) throws ResourceException
-  {
+  private void processGraph(ResourceURI pkg, Catalog catalog) throws ResourceException {
     if (pkg != null) {
       if (!graph.containsKey(pkg))
         processPkg(pkg, catalog);
     }
   }
 
-  public static Catalog lookForCatalog(ResourceURI uri, Catalog fallback, CodeRepository repository)
-  {
+  public static Catalog lookForCatalog(ResourceURI uri, Catalog fallback, CodeRepository repository) {
     try {
       return CatalogUtils.parseCatalog(uri.resolve(Catalog.CATALOG), fallback);
     } catch (Exception e) {
@@ -301,8 +290,7 @@ public class PackageGrapher implements PrettyPrintable
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     for (Entry<ResourceURI, PkgGraph> entry : graph.entrySet()) {
       entry.getKey().prettyPrint(disp);
       disp.append(": ");
@@ -312,8 +300,7 @@ public class PackageGrapher implements PrettyPrintable
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 }

@@ -19,28 +19,28 @@ import org.star_lang.star.data.type.IType;
  * @author fgm
  *
  */
-public interface IContentAction extends Canonical
-{
+public interface IContentAction extends Canonical {
   void accept(ActionVisitor visitor);
 
   /**
    * Allow a transformer to transform this action
-   * 
+   *
    * @param transform
-   * @param context TODO
+   * @param context   cotext of transformation
+   * @param context   cotext of transformation
    * @return the transformed entity. May not be an action, depends on the transform
    */
   <A, E, P, C, D, T> A transform(TransformAction<A, E, P, C, D, T> transform, T context);
 
   /**
    * Actions have a type associated with them. This is generally of the form
-   * 
+   * <p>
    * <pre>
    * action of %t
    * </pre>
-   * 
+   * <p>
    * where %t is a state type associated with the action.
-   * 
+   *
    * @return an expression denoting the type of the expression.
    */
 

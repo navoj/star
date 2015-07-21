@@ -87,7 +87,7 @@ public abstract class BoolWrap implements IScalar<Boolean>, PrettyPrintable
         TrueValue.class, BoolWrap.class);
     ConstructorSpecifier falseSpec = new ConstructorSpecifier(Location.nullLoc, null, FalseValue.name, 0, conType(),
         FalseValue.class, BoolWrap.class);
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(falseSpec);
     specs.add(trueSpec);
     cxt.defineType(new CafeTypeDescription(Location.nullLoc, booleanType, Utils.javaInternalClassName(BoolWrap.class),

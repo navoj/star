@@ -13,47 +13,40 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IValue;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
-public class Display implements IAbstractVisitor
-{
+public class Display implements IAbstractVisitor {
   protected PrettyPrintDisplay disp;
 
-  protected Display(PrettyPrintDisplay disp)
-  {
+  protected Display(PrettyPrintDisplay disp) {
     this.disp = disp;
   }
 
-  public static void display(PrettyPrintDisplay disp, IAbstract term)
-  {
+  public static void display(PrettyPrintDisplay disp, IAbstract term) {
     Display display = new Display(disp);
     term.accept(display);
   }
 
-  public static String display(IAbstract term)
-  {
+  public static String display(IAbstract term) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
     Display display = new Display(disp);
     term.accept(display);
     return disp.toString();
   }
 
-  public static void display(PrettyPrintDisplay disp, Collection<IAbstract> terms, String sep)
-  {
+  public static void display(PrettyPrintDisplay disp, Collection<IAbstract> terms, String sep) {
     Display display = new Display(disp);
     String sp = "";
     for (IAbstract term : terms) {
@@ -64,14 +57,12 @@ public class Display implements IAbstractVisitor
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return disp.toString();
   }
 
   @Override
-  public void visitApply(Apply app)
-  {
+  public void visitApply(Apply app) {
     if (CompilerUtils.isBraceTerm(app)) {
       CompilerUtils.braceLabel(app).accept(this);
       display(CompilerUtils.unWrap(CompilerUtils.braceArg(app)), "{ ", ";\n", "\n}", 2);
@@ -86,34 +77,36 @@ public class Display implements IAbstractVisitor
       append("]");
     } else if (CompilerUtils.isSquareSequenceTerm(app)) {
       append("[");
-      CompilerUtils.squareContent(app).accept(this);
+      IAbstract content = CompilerUtils.squareContent(app);
+      if (content != null)
+        content.accept(this);
       append("]");
     } else if (Abstract.isTupleTerm(app))
       display(app.getArgs(), " (", ", ", ")");
     else if (app.hasAttribute(OpFormAttribute.name)) {
       OpFormAttribute opForm = (OpFormAttribute) app.getAttribute(OpFormAttribute.name);
       switch (opForm.getForm()) {
-      case infix:
-        assert Abstract.isBinary(app);
-        Abstract.binaryLhs(app).accept(this);
-        appendWord(Abstract.getOp(app));
-        Abstract.binaryRhs(app).accept(this);
-        return;
-      default:
-      case none:
-        app.getOperator().accept(this);
-        display(app.getArgs(), "(", ", ", ")");
-        return;
-      case prefix:
-        assert Abstract.isUnary(app);
-        appendWord(Abstract.getOp(app));
-        Abstract.unaryArg(app).accept(this);
-        return;
-      case postfix:
-        assert Abstract.isUnary(app);
-        Abstract.unaryArg(app).accept(this);
-        appendWord(Abstract.getOp(app));
-        return;
+        case infix:
+          assert Abstract.isBinary(app);
+          Abstract.binaryLhs(app).accept(this);
+          appendWord(Abstract.getOp(app));
+          Abstract.binaryRhs(app).accept(this);
+          return;
+        default:
+        case none:
+          app.getOperator().accept(this);
+          display(app.getArgs(), "(", ", ", ")");
+          return;
+        case prefix:
+          assert Abstract.isUnary(app);
+          appendWord(Abstract.getOp(app));
+          Abstract.unaryArg(app).accept(this);
+          return;
+        case postfix:
+          assert Abstract.isUnary(app);
+          Abstract.unaryArg(app).accept(this);
+          appendWord(Abstract.getOp(app));
+          return;
       }
     } else {
       app.getOperator().accept(this);
@@ -122,8 +115,7 @@ public class Display implements IAbstractVisitor
   }
 
   @Override
-  public void visitBooleanLiteral(BooleanLiteral lit)
-  {
+  public void visitBooleanLiteral(BooleanLiteral lit) {
     if (lit.getLit())
       appendWord(Names.TRUE);
     else
@@ -131,52 +123,44 @@ public class Display implements IAbstractVisitor
   }
 
   @Override
-  public void visitCharLiteral(CharLiteral lit)
-  {
+  public void visitCharLiteral(CharLiteral lit) {
     disp.append("'");
     appendChar(lit.getLit());
     disp.append("'");
   }
 
   @Override
-  public void visitFloatLiteral(FloatLiteral flt)
-  {
+  public void visitFloatLiteral(FloatLiteral flt) {
     disp.append(flt.getLit());
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit)
-  {
+  public void visitBigDecimal(BigDecimalLiteral lit) {
     disp.append(lit.getLit().toString());
     disp.append("a");
   }
 
   @Override
-  public void visitIntegerLiteral(IntegerLiteral lit)
-  {
+  public void visitIntegerLiteral(IntegerLiteral lit) {
     disp.appendWord(lit.getLit());
   }
 
   @Override
-  public void visitLongLiteral(LongLiteral lit)
-  {
+  public void visitLongLiteral(LongLiteral lit) {
     disp.appendWord(lit.getLit());
   }
 
   @Override
-  public void visitName(Name name)
-  {
+  public void visitName(Name name) {
     appendName(name.getId());
   }
 
   @Override
-  public void visitStringLiteral(StringLiteral str)
-  {
+  public void visitStringLiteral(StringLiteral str) {
     disp.append(StringUtils.quoteString(str.getLit()));
   }
 
-  protected void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble)
-  {
+  protected void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble) {
     disp.append(preamble);
     String s = "";
     for (IAbstract el : seq) {
@@ -187,8 +171,7 @@ public class Display implements IAbstractVisitor
     disp.append(postamble);
   }
 
-  protected void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble, int indent)
-  {
+  protected void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble, int indent) {
     disp.append(preamble);
     int mark = disp.markIndent(indent);
     String s = "";
@@ -201,8 +184,7 @@ public class Display implements IAbstractVisitor
     disp.append(postamble);
   }
 
-  protected void display(IList seq, String preamble, String sep, String postamble)
-  {
+  protected void display(IList seq, String preamble, String sep, String postamble) {
     disp.append(preamble);
     String s = "";
     for (IValue el : seq) {
@@ -213,8 +195,7 @@ public class Display implements IAbstractVisitor
     disp.append(postamble);
   }
 
-  protected void display(IList seq, String preamble, String sep, String postamble, int indent)
-  {
+  protected void display(IList seq, String preamble, String sep, String postamble, int indent) {
     disp.append(preamble);
     int mark = disp.markIndent(indent);
     String s = "";
@@ -227,13 +208,11 @@ public class Display implements IAbstractVisitor
     disp.append(postamble);
   }
 
-  protected void appendWord(String str)
-  {
+  protected void appendWord(String str) {
     disp.appendWord(str);
   }
 
-  protected void appendName(String str)
-  {
+  protected void appendName(String str) {
     if (StandardNames.SQUARE.equals(str) || StandardNames.BRACES.equals(str))
       appendWord(str);
     else if (!Pattern.matches("[a-zA-Z_#$.@][a-zA-Z_#$.@0-9]*", str)) {
@@ -244,13 +223,11 @@ public class Display implements IAbstractVisitor
       appendWord(str);
   }
 
-  protected void append(String str)
-  {
+  protected void append(String str) {
     disp.append(str);
   }
 
-  private void appendChar(int ch)
-  {
+  private void appendChar(int ch) {
     disp.appendChar(ch);
   }
 }

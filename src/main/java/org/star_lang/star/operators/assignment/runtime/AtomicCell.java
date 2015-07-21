@@ -164,7 +164,7 @@ public abstract class AtomicCell extends AtomicReference<IValue> implements ICon
   {
     Location nullLoc = Location.nullLoc;
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
 
     specs.add(new ConstructorSpecifier(nullLoc, null, AtomCell.label, AtomCell.conIx, AtomCell.conType(),
         AtomCell.class, AtomicCell.class));

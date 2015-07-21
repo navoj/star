@@ -29,8 +29,7 @@ public class TypeAttribute extends BaseAttribute<IType>
   @Override
   public IType attribute(IType original)
   {
-    // TODO Auto-generated method stub
-    return null;
+    return type;
   }
 
 }

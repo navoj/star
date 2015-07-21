@@ -344,7 +344,7 @@ public abstract class Cons implements IConstructor, PrettyPrintable, Iterable<IV
     ConstructorSpecifier nilSpec = new ConstructorSpecifier(nullLoc, null, Nil.label, Nil.conIx, nilConType, Nil.class,
         Cons.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(consSpec);
     specs.add(nilSpec);
 

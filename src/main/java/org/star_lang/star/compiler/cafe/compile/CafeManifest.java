@@ -52,8 +52,8 @@ public class CafeManifest implements CodeTree, CodeParser
 
   public CafeManifest(ResourceURI src, String javaClassName)
   {
-    this(src, javaClassName, new HashMap<String, VarInfo>(), new TreeSet<ResourceURI>(),
-        new HashMap<String, CafeTypeDescription>());
+    this(src, javaClassName, new HashMap<>(), new TreeSet<>(),
+            new HashMap<>());
   }
 
   public CafeManifest(ResourceURI src, String javaClassName, Map<String, VarInfo> defs, Set<ResourceURI> imports,
@@ -74,7 +74,7 @@ public class CafeManifest implements CodeTree, CodeParser
   public CafeManifest()
   {
     // For parsing CafeManifest files
-    this(null, null, new HashMap<String, VarInfo>(), null, null);
+    this(null, null, new HashMap<>(), null, null);
   }
 
   public ResourceURI getSrcUri()
@@ -100,7 +100,7 @@ public class CafeManifest implements CodeTree, CodeParser
 
   public Map<String, CafeTypeDescription> getCleanedTypes()
   {
-    Map<String, CafeTypeDescription> cleanTypes = new HashMap<String, CafeTypeDescription>();
+    Map<String, CafeTypeDescription> cleanTypes = new HashMap<>();
 
     for (Entry<String, CafeTypeDescription> entry : types.entrySet()) {
       cleanTypes.put(entry.getKey(), entry.getValue().cleanCopy());

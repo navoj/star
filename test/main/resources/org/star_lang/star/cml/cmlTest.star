@@ -227,7 +227,7 @@ cmlTest is package {
     
     sending is task {
       -- we also need a delay here, so that the sending side will always (more likely) be the synchronizing side
-      sleep(100L); -- TODO differently
+      sleep(100L);
 
       x is valof await(sendRv1);
       y is valof await(sendRv1);

@@ -88,7 +88,7 @@ public class Expressions
 {
   public static final boolean CHECK_NONNULL = false;
 
-  private final static Map<String, ICompileExpression> handlers = new HashMap<String, ICompileExpression>();
+  private final static Map<String, ICompileExpression> handlers = new HashMap<>();
   private static final String SHALLOW_COPY = "shallowCopy";
   public static final String EQUALS = "equals";
   public static String EQUAL_SIG;
@@ -152,7 +152,7 @@ public class Expressions
       hwm.bump(1);
       return cont.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
     } else if (exp instanceof Name)
-      return handleName((Name) exp, errors, dict, outer, inFunction, cont, exit, ccxt);
+      return handleName((Name) exp, errors, dict, outer, cont, ccxt);
     else if (exp instanceof BooleanLiteral) {
       ins.add(new InsnNode(((BooleanLiteral) exp).getLit() ? Opcodes.ICONST_1 : Opcodes.ICONST_0));
       hwm.bump(1);
@@ -314,7 +314,7 @@ public class Expressions
               ((Inliner) builtin).preamble(mtd, hwm);
             else if (!var.isStatic()) {
               hwm.bump(1);
-              String javaName = escapeReference(var.getName(), dict, var.getJavaType(), var.getJavaSig(), errors);
+              String javaName = escapeReference(var.getName(), dict, var.getJavaType(), var.getJavaSig());
 
               ins.add(new FieldInsnNode(Opcodes.GETSTATIC, escapeOwner(var.getName(), dict), javaName, var.getJavaSig()));
             }
@@ -575,7 +575,7 @@ public class Expressions
     assert CafeSyntax.isField(arg);
     ISpec actual = compileExp(CafeSyntax.fieldValue(arg), errors, dict, outer, inFunction, cont, exit, ccxt);
     Utils.jumpTarget(mtd.instructions, nxLbl);
-    checkType(actual, argSpecs[ix], mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+    checkType(actual, argSpecs[ix], mtd, dict, hwm);
   }
 
   public static int compileArgs(IList args, ISpec[] argSpecs, ErrorReport errors, CafeDictionary dict,
@@ -593,7 +593,7 @@ public class Expressions
 
         ISpec actual = compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
         Utils.jumpTarget(mtd.instructions, nxLbl);
-        checkType(actual, argSpecs[ix], mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+        checkType(actual, argSpecs[ix], mtd, dict, hwm);
       }
       return args.size();
     } else
@@ -620,7 +620,7 @@ public class Expressions
             argCont = new ComboCont(new NonNullCont(), argCont);
           ISpec actual = compileExp(arg, errors, dict, outer, inFunction, argCont, exit, ccxt);
           Utils.jumpTarget(mtd.instructions, nxLbl);
-          checkType(actual, argSpecs[ix], mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+          checkType(actual, argSpecs[ix], mtd, dict, hwm);
         }
         return argTpl.size();
       } else
@@ -642,8 +642,8 @@ public class Expressions
    *          TODO
    */
   public static boolean compileArgsToFrame(List<IAbstract> args, ISpec[] argSpecs, ErrorReport errors,
-      CodeRepository repository, CodeCatalog bldCat, CafeDictionary dict, CafeDictionary outer, String inFunction,
-      Exit exit, VarInfo[] vars, CodeContext ccxt)
+                                           CodeCatalog bldCat, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                                           Exit exit, VarInfo[] vars, CodeContext ccxt)
   {
     if (args.size() >= Theta.MAX_ARGS || args.size() <= 3)
       return false;
@@ -659,7 +659,7 @@ public class Expressions
       String varName = "$field" + Integer.toString(ix);
       vars[ix] = dict.declareLocal(varName, argSpecs[ix], true, AccessMode.readOnly);
       Utils.jumpTarget(mtd.instructions, nxLbl);
-      checkType(actual, argSpecs[ix], mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+      checkType(actual, argSpecs[ix], mtd, dict, hwm);
       vars[ix].storeValue(mtd, hwm, dict);
     }
     return true;
@@ -670,8 +670,8 @@ public class Expressions
    *          TODO
    */
   public static boolean compileArgsToFrame(IAbstract argTpl, ISpec[] argSpecs, ErrorReport errors,
-      CodeRepository repository, CodeCatalog bldCat, CafeDictionary dict, CafeDictionary outer, String inFunction,
-      Exit exit, VarInfo[] vars, CodeContext ccxt)
+                                           CodeCatalog bldCat, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                                           Exit exit, VarInfo[] vars, CodeContext ccxt)
   {
     if (!CafeSyntax.isTuple(argTpl) || (argTpl.size() >= Theta.MAX_ARGS || argTpl.size() <= 3))
       return false;
@@ -689,7 +689,7 @@ public class Expressions
       String varName = "$field" + Integer.toString(ix);
       vars[ix] = dict.declareLocal(varName, argSpecs[ix], true, AccessMode.readOnly);
       Utils.jumpTarget(mtd.instructions, nxLbl);
-      checkType(actual, argSpecs[ix], mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+      checkType(actual, argSpecs[ix], mtd, dict, hwm);
       vars[ix].storeValue(mtd, hwm, dict);
     }
     return true;
@@ -750,7 +750,7 @@ public class Expressions
         ((Inliner) builtin).preamble(mtd, hwm);
       else if (!var.isStatic()) {
         hwm.bump(1);
-        String javaName = escapeReference(funName, dict, var.getJavaType(), var.getJavaSig(), errors);
+        String javaName = escapeReference(funName, dict, var.getJavaType(), var.getJavaSig());
 
         ins.add(new FieldInsnNode(Opcodes.GETSTATIC, escapeOwner(funName, dict), javaName, var.getJavaSig()));
       }
@@ -823,7 +823,7 @@ public class Expressions
           ((Inliner) builtin).preamble(mtd, hwm);
         else if (!var.isStatic()) {
           hwm.bump(1);
-          String javaName = escapeReference(funName, dict, var.getJavaType(), var.getJavaSig(), errors);
+          String javaName = escapeReference(funName, dict, var.getJavaType(), var.getJavaSig());
 
           ins.add(new FieldInsnNode(Opcodes.GETSTATIC, escapeOwner(funName, dict), javaName, var.getJavaSig()));
         }
@@ -867,8 +867,7 @@ public class Expressions
     return SrcSpec.prcSrc;
   }
 
-  public static String escapeReference(String name, CafeDictionary dict, String javaType, String javaSig,
-      ErrorReport errors)
+  public static String escapeReference(String name, CafeDictionary dict, String javaType, String javaSig)
   {
     String javaName = Utils.javaIdentifierOf(name);
     dict.addReference(javaName, new BuiltinInliner(javaName, javaType, javaSig, dict.getOwnerName()));
@@ -949,7 +948,7 @@ public class Expressions
       if (!(record instanceof Name))
         errors.reportError("expecting an identifier", loc);
 
-      String id = ((Name) record).getId();
+      String id = Abstract.getId(record);
       VarInfo var = Theta.varReference(id, dict, outer, loc, errors);
       if (var == null) {
         errors.reportError("(internal) " + id + " not found", loc);
@@ -1000,7 +999,6 @@ public class Expressions
       case rawFloat:
         hwm.bump(1);
       default:
-        ;
       }
       return cont.cont(fieldSpec, dict, loc, errors, ccxt);
     }
@@ -1149,7 +1147,7 @@ public class Expressions
   }
 
   public static ISpec handleName(Name name, ErrorReport errors, CafeDictionary dict, CafeDictionary outer,
-      String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
+                                 IContinuation cont, CodeContext ccxt)
   {
     String id = name.getId();
     MethodNode mtd = ccxt.getMtd();
@@ -1307,14 +1305,13 @@ public class Expressions
   // This is messy because of the weird conflict between pushing types through
   // the JVM and an equality based type
   // system.
-  public static void checkType(ISpec actual, ISpec exp, MethodNode mtd, CafeDictionary dict, HWM hwm, Location loc,
-      ErrorReport errors, CodeCatalog bldCat)
+  public static void checkType(ISpec actual, ISpec exp, MethodNode mtd, CafeDictionary dict, HWM hwm)
   {
     IType expectedType = exp.getType();
     IType actualType = actual.getType();
 
-    if (actual.getJavaType().equals(exp.getJavaType()))
-      return;
+    if (actual.getJavaType().equals(exp.getJavaType())) {
+    }
     else if (actualType.equals(TypeUtils.rawType(expectedType)))
       AutoBoxing.boxValue(actualType, mtd.instructions, dict);
     else if (expectedType.equals(TypeUtils.rawType(actualType)))
@@ -1379,7 +1376,7 @@ public class Expressions
 
       ISpec actual = compileExp(arg, errors, dict, outer, inFunction, argCont, exit, ccxt);
       Utils.jumpTarget(mtd.instructions, nxLbl);
-      checkType(actual, argSpecs[ix], mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+      checkType(actual, argSpecs[ix], mtd, dict, hwm);
       ins.add(new InsnNode(Opcodes.AASTORE));
       hwm.reset(mark);
     }

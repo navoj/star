@@ -5,12 +5,10 @@ import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
-import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.operators.CafeEnter;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -33,7 +31,7 @@ public class SetIterableOps {
 
     @CafeEnter
     public static IValue enter(ISet set, IFunction iter, IValue state) throws EvaluationException {
-      for (Iterator<IValue> it = set.iterator(); it.hasNext() && !ArrayOps.isAllDone(state); ) {
+      for (Iterator<IValue> it = set.iterator(); it.hasNext() && ArrayOps.moreToDo(state); ) {
         IValue entry = it.next();
         state = iter.enter(entry, state);
       }

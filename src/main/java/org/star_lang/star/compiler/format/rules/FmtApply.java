@@ -39,9 +39,8 @@ public class FmtApply implements FmtBuildOp
   @Override
   public IAbstract build(IAbstract[] env, Location loc)
   {
-    List<IAbstract> args = new ArrayList<IAbstract>();
-    for (int ix = 0; ix < argOps.length; ix++)
-      args.add(argOps[ix].build(env, loc));
+    List<IAbstract> args = new ArrayList<>();
+    for (FmtBuildOp argOp : argOps) args.add(argOp.build(env, loc));
     return new Apply(loc, op.build(env, loc), args);
   }
 

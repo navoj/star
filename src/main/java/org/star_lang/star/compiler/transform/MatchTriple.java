@@ -40,7 +40,7 @@ public class MatchTriple<T extends PrettyPrintable> implements PrettyPrintable
   {
     this.args = ConsList.nil();
     for (int ix = args.length; ix > 0; ix--)
-      this.args = new ConsList<IContentPattern>(args[ix - 1], this.args);
+      this.args = new ConsList<>(args[ix - 1], this.args);
     this.cond = cond;
     this.body = body;
   }
@@ -48,7 +48,7 @@ public class MatchTriple<T extends PrettyPrintable> implements PrettyPrintable
   MatchTriple(IContentPattern ptn, ICondition cond, T body)
   {
     this.args = ConsList.nil();
-    this.args = new ConsList<IContentPattern>(ptn, this.args);
+    this.args = new ConsList<>(ptn, this.args);
     this.cond = cond;
     this.body = body;
   }

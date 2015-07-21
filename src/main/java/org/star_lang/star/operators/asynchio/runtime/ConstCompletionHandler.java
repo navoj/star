@@ -58,4 +58,4 @@ public class ConstCompletionHandler implements CompletionHandler<Void, IFunction
     } catch (EvaluationException e) {
     }
   }
-};
+}

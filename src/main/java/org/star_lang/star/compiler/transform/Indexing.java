@@ -26,28 +26,24 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
- * @author fgm
  *
+ * @author fgm
  */
-public class Indexing
-{
+public class Indexing {
 
   static void pullOutIndexTermsFromPtn(IContentPattern ptn, ICondition cond, List<Variable> definedVars,
-      List<IContentExpression> keyExps, List<IContentExpression> columns)
-  {
+                                       List<IContentExpression> keyExps, List<IContentExpression> columns) {
     if (ptn instanceof ConstructorPtn) {
       ConstructorPtn psCon = (ConstructorPtn) ptn;
       Location loc = ptn.getLoc();
@@ -72,7 +68,8 @@ public class Indexing
 
       Map<String, Integer> memberIndex = agCon.getIndex();
 
-      argLoop: for (Entry<String, IContentPattern> entry : agCon.getElements().entrySet()) {
+      argLoop:
+      for (Entry<String, IContentPattern> entry : agCon.getElements().entrySet()) {
         IContentPattern argPtn = entry.getValue();
 
         IContentExpression column = TypeCheckerUtils.integerLiteral(ptn.getLoc(), memberIndex.get(entry.getKey()));
@@ -94,26 +91,25 @@ public class Indexing
       }
     } else if (ptn instanceof Variable && TypeUtils.isTypeInterface(ptn.getType()))
       pulloutIndexTermsFromCond(cond, definedVars, (Variable) ptn, keyExps, columns, TypeUtils.getMemberIndex(ptn
-          .getType()));
+              .getType()));
     else if (ptn instanceof WherePattern) {
       WherePattern where = (WherePattern) ptn;
       pullOutIndexTermsFromPtn(where.getPtn(), CompilerUtils.conjunction(cond, where.getCond()), definedVars, keyExps,
-          columns);
+              columns);
     }
   }
 
   static void pulloutIndexTermsFromCond(ICondition cond, List<Variable> definedVars, Variable var,
-      List<IContentExpression> keyExps, List<IContentExpression> columns, Map<String, Integer> memberIndex)
-  {
+                                        List<IContentExpression> keyExps, List<IContentExpression> columns, Map<String, Integer> memberIndex) {
     if (cond instanceof Conjunction) {
       pulloutIndexTermsFromCond(((Conjunction) cond).getLhs(), definedVars, var, keyExps, columns, memberIndex);
       pulloutIndexTermsFromCond(((Conjunction) cond).getRhs(), definedVars, var, keyExps, columns, memberIndex);
     } else if (CompilerUtils.isEquality(cond)) {
       // Do this twice, for symmetry
       Indexing.pulloutAccessTerms(var, memberIndex, CompilerUtils.equalityLhs(cond), CompilerUtils.equalityRhs(cond),
-          keyExps, columns);
+              keyExps, columns);
       Indexing.pulloutAccessTerms(var, memberIndex, CompilerUtils.equalityRhs(cond), CompilerUtils.equalityLhs(cond),
-          keyExps, columns);
+              keyExps, columns);
     } else if (cond instanceof Matches) {
       Matches match = (Matches) cond;
       IContentExpression lhs = match.getExp();
@@ -127,19 +123,17 @@ public class Indexing
   }
 
   public static Pair<IContentExpression, IContentExpression> pullOutIndexTerms(IContentPattern ptn, ICondition cond,
-      List<Variable> definedVars)
-  {
+                                                                               List<Variable> definedVars) {
     Location loc = ptn.getLoc();
-    List<IContentExpression> keyExps = new ArrayList<IContentExpression>();
-    List<IContentExpression> columns = new ArrayList<IContentExpression>();
+    List<IContentExpression> keyExps = new ArrayList<>();
+    List<IContentExpression> columns = new ArrayList<>();
     pullOutIndexTermsFromPtn(ptn, cond, definedVars, keyExps, columns);
 
     return Indexing.createKeysnColumns(loc, keyExps, columns);
   }
 
   public static Pair<IContentExpression, IContentExpression> createKeysnColumns(Location loc,
-      List<IContentExpression> keyExps, List<IContentExpression> columns)
-  {
+                                                                                List<IContentExpression> keyExps, List<IContentExpression> columns) {
     int keyVecLen = columns.size();
     IContentExpression columnIxs[] = new IContentExpression[keyVecLen];
     IContentExpression keys[] = new IContentExpression[keyVecLen];
@@ -163,21 +157,19 @@ public class Indexing
   }
 
   static void pulloutAccessTerms(IContentExpression var, Map<String, Integer> memberIndex, IContentExpression lhs,
-      IContentExpression exp, List<IContentExpression> keyExps, List<IContentExpression> columns)
-  {
+                                 IContentExpression exp, List<IContentExpression> keyExps, List<IContentExpression> columns) {
     if (lhs instanceof FieldAccess) {
       // Maybe this the only way to get more indexing?
       FieldAccess acc = (FieldAccess) lhs;
 
       if (acc.getRecord().equals(var))
         Indexing.addColumnIndex(TypeCheckerUtils.integerLiteral(acc.getLoc(), memberIndex.get(acc.getField())), exp,
-            keyExps, columns);
+                keyExps, columns);
     }
   }
 
   static void pulloutFromCond(Variable var, IContentExpression column, ICondition cond,
-      List<IContentExpression> keyExps, List<IContentExpression> columns)
-  {
+                              List<IContentExpression> keyExps, List<IContentExpression> columns) {
     if (cond instanceof Conjunction) {
       pulloutFromCond(var, column, ((Conjunction) cond).getLhs(), keyExps, columns);
       pulloutFromCond(var, column, ((Conjunction) cond).getRhs(), keyExps, columns);
@@ -193,20 +185,16 @@ public class Indexing
   }
 
   static void addColumnIndex(IContentExpression column, IContentExpression exp, List<IContentExpression> keyExps,
-      List<IContentExpression> columns)
-  {
+                             List<IContentExpression> columns) {
     if (!columns.contains(column)) {
       columns.add(column);
       keyExps.add(exp);
     }
   }
 
-  static IContentExpression[] equalArgs(ICondition query)
-  {
-    if (CompilerUtils.isEquality(query))
-      return new IContentExpression[] { CompilerUtils.equalityLhs(query), CompilerUtils.equalityRhs(query) };
-
-    return null;
+  static IContentExpression[] equalArgs(ICondition query) {
+    assert CompilerUtils.isEquality(query);
+    return new IContentExpression[]{CompilerUtils.equalityLhs(query), CompilerUtils.equalityRhs(query)};
   }
 
 }

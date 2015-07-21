@@ -49,7 +49,7 @@ public class MacroDescriptor implements PrettyPrintable
 
   public enum MacroRuleType {
     macroRule, macroVar, quotedFun, builtin, macroBuiltin
-  };
+  }
 
   public int getArity()
   {

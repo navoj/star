@@ -33,19 +33,19 @@ public class PrimitiveOverloader
    * This special handling is required because primitive types may not be passed in generic type
    * arguments; making them unsuitable for normal handling of overloading
    */
-  private static Map<String, Map<String, Map<IType, String>>> primitiveContracts = new HashMap<String, Map<String, Map<IType, String>>>();
+  private static Map<String, Map<String, Map<IType, String>>> primitiveContracts = new HashMap<>();
 
   public static void declarePrimitiveImplementation(String contract, String method, IType rawType, String escape)
   {
     Map<String, Map<IType, String>> conMap = primitiveContracts.get(contract);
     if (conMap == null) {
-      conMap = new HashMap<String, Map<IType, String>>();
+      conMap = new HashMap<>();
       primitiveContracts.put(contract, conMap);
     }
 
     Map<IType, String> typeMap = conMap.get(method);
     if (typeMap == null) {
-      typeMap = new HashMap<IType, String>();
+      typeMap = new HashMap<>();
       conMap.put(method, typeMap);
     }
 

@@ -39,7 +39,7 @@ public class Definition implements PrettyPrintable
   private final Location loc;
   private IAbstract definition;
   private Visibility visibility;
-  private final Map<DefinitionKind, String[]> defined = new HashMap<DefinitionKind, String[]>();
+  private final Map<DefinitionKind, String[]> defined = new HashMap<>();
 
   public Definition(Location loc, IAbstract definition, String defines[], DefinitionKind kind, Visibility visibility)
   {

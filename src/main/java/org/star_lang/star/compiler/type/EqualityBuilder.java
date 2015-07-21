@@ -76,7 +76,7 @@ public class EqualityBuilder
     }
 
     if (!equalities.isEmpty())
-      return new ComboIterable<IAbstract>(theta, equalities);
+      return new ComboIterable<>(theta, equalities);
     else
       return theta;
   }

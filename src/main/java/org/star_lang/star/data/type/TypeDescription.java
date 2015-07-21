@@ -55,7 +55,7 @@ public class TypeDescription implements IAlgebraicType
   final private Location loc;
   final protected IType type;
   final private int arity;
-  protected final SortedSet<IValueSpecifier> valueSpecifiers = new TreeSet<IValueSpecifier>(new CompareLabels());
+  protected final SortedSet<IValueSpecifier> valueSpecifiers = new TreeSet<>(new CompareLabels());
   private TypeInterface typeInterface;
 
   /**
@@ -69,12 +69,12 @@ public class TypeDescription implements IAlgebraicType
    */
   public TypeDescription(Location loc, IType type)
   {
-    this(loc, type, new ArrayList<IValueSpecifier>());
+    this(loc, type, new ArrayList<>());
   }
 
   public TypeDescription(Location loc, IType type, TypeInterface face)
   {
-    this(loc, type, new ArrayList<IValueSpecifier>(), face);
+    this(loc, type, new ArrayList<>(), face);
   }
 
   /**
@@ -187,7 +187,7 @@ public class TypeDescription implements IAlgebraicType
   {
     for (IValueSpecifier spec : valueSpecifiers)
       if (spec instanceof ConstructorSpecifier)
-        if (((ConstructorSpecifier) spec).getLabel().equals(label))
+        if (spec.getLabel().equals(label))
           return spec;
     return null;
   }
@@ -316,7 +316,7 @@ public class TypeDescription implements IAlgebraicType
         cQuants.put(q.getVar(), q.getVar().getVarName());
 
       if (!(TypeUtils.isTupleType(conArgType) && TypeUtils.tupleTypeArity(conArgType) == 0))
-        DisplayType.display(disp, conArgType, new HashMap<String, TypeVar>(), cQuants);
+        DisplayType.display(disp, conArgType, new HashMap<>(), cQuants);
     }
 
     disp.popIndent(mark);
@@ -367,7 +367,6 @@ public class TypeDescription implements IAlgebraicType
     do {
       if (type instanceof UniversalType) {
         type = ((UniversalType) type).getBoundType();
-        continue;
       } else
         break;
     } while (true);

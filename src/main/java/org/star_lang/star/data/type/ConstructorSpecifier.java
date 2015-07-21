@@ -287,9 +287,7 @@ public class ConstructorSpecifier implements IValueSpecifier, ICafeConstructorSp
       throw new EvaluationException("security violation", e);
     } catch (IllegalArgumentException e) {
       throw new EvaluationException("illegal argument", e);
-    } catch (InstantiationException e) {
-      throw new EvaluationException("problem in initialization", e);
-    } catch (InvocationTargetException e) {
+    } catch (InstantiationException | InvocationTargetException e) {
       throw new EvaluationException("problem in initialization", e);
     }
   }

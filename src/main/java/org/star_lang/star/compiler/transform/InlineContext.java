@@ -39,7 +39,7 @@ public class InlineContext
 
   public InlineContext fork()
   {
-    return new InlineContext(new TreeMap<String, IContentExpression>(varMap), new HashSet<String>(excludes));
+    return new InlineContext(new TreeMap<>(varMap), new HashSet<>(excludes));
   }
 
   void exclude(Collection<String> excl)

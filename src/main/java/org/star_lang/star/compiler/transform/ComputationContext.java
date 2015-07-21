@@ -57,7 +57,7 @@ public class ComputationContext implements PrettyPrintable
 
   public ComputationContext(IType mType, Dictionary dict, Dictionary outer, ErrorReport errors)
   {
-    this(mType, null, new ArrayList<Pair<Variable, IContentExpression>>(), dict, outer, errors);
+    this(mType, null, new ArrayList<>(), dict, outer, errors);
   }
 
   public IContentExpression getExp()
@@ -92,7 +92,7 @@ public class ComputationContext implements PrettyPrintable
 
   public ComputationContext fork(IContentExpression exp)
   {
-    return new ComputationContext(mType, exp, new ArrayList<Pair<Variable, IContentExpression>>(), dict, outer, errors);
+    return new ComputationContext(mType, exp, new ArrayList<>(), dict, outer, errors);
   }
 
   public ComputationContext fork()

@@ -85,7 +85,7 @@ import org.star_lang.star.data.type.UniversalType;
  */
 public class Over extends DefaultTransformer<OverContext>
 {
-  private final UndoableMap<String, IContentExpression> substitutions = new UndoableHash<String, IContentExpression>();
+  private final UndoableMap<String, IContentExpression> substitutions = new UndoableHash<>();
 
   @Override
   public IContentExpression transformFunctionLiteral(FunctionLiteral fun, OverContext context)
@@ -132,7 +132,7 @@ public class Over extends DefaultTransformer<OverContext>
       }
     }
 
-    List<IStatement> newEnv = new ArrayList<IStatement>();
+    List<IStatement> newEnv = new ArrayList<>();
     for (IStatement entry : let.getEnvironment()) {
       newEnv.add(entry.transform(this, subCxt));
     }
@@ -155,7 +155,7 @@ public class Over extends DefaultTransformer<OverContext>
       }
     }
 
-    List<IStatement> newEnv = new ArrayList<IStatement>();
+    List<IStatement> newEnv = new ArrayList<>();
     for (IStatement entry : let.getEnvironment()) {
       newEnv.add(entry.transform(this, subCxt));
     }
@@ -358,7 +358,7 @@ public class Over extends DefaultTransformer<OverContext>
               nArgs[jx] = args[jx];
           }
           nArgs[ix] = arg;
-          continue argLoop;
+          continue;
         }
 
         if (nArgs != null)
@@ -436,12 +436,12 @@ public class Over extends DefaultTransformer<OverContext>
 
         Variable dictVar = reqVars[ix] = new Variable(loc, reqType, reqType.typeLabel() + context.nextVarNo());
         context.getLocalCxt().declareVar(dictVar.getName(), dictVar, AccessMode.readOnly, Visibility.priVate, true);
-        context.define(reqType, (IContentExpression) dictVar);
+        context.define(reqType, dictVar);
       }
 
       IContentExpression resolvedExp = expression.transform(this, context);
 
-      List<IStatement> inner = new ArrayList<IStatement>();
+      List<IStatement> inner = new ArrayList<>();
 
       inner.add(new VarEntry(loc, innerVar, resolvedExp, AccessMode.readOnly, Visibility.priVate));
 
@@ -564,7 +564,7 @@ public class Over extends DefaultTransformer<OverContext>
 
       Variable dictVar = reqVars[ix] = new Variable(loc, reqType, reqType.typeLabel() + varNo++);
       instDict.declareVar(dictVar.getName(), dictVar, AccessMode.readOnly, Visibility.priVate, true);
-      context.define(reqType, (IContentExpression) dictVar);
+      context.define(reqType, dictVar);
     }
 
     implementation = implementation.transform(over, context);
@@ -736,7 +736,7 @@ public class Over extends DefaultTransformer<OverContext>
   {
     if (testTheta(stmts)) {
       errors.addToCount("overload theta", stmts.size());
-      List<IStatement> result = new ArrayList<IStatement>();
+      List<IStatement> result = new ArrayList<>();
       List<List<IStatement>> groups = ContractDependencies.dependencySort(stmts);
 
       OverContext subCxt = new OverContext(cxt.fork(), errors, 0);
@@ -802,12 +802,12 @@ public class Over extends DefaultTransformer<OverContext>
                 Variable dictVar = reqVars[ix] = new Variable(loc, reqType, reqType.typeLabel() + subCxt.nextVarNo());
                 subCxt.getLocalCxt().declareVar(dictVar.getName(), dictVar, AccessMode.readOnly, Visibility.priVate,
                     true);
-                subCxt.define(reqType, (IContentExpression) dictVar);
+                subCxt.define(reqType, dictVar);
               }
 
               IContentExpression resolvedExp = expression.transform(this, subCxt);
 
-              List<IStatement> inner = new ArrayList<IStatement>();
+              List<IStatement> inner = new ArrayList<>();
 
               inner.add(new VarEntry(loc, innerVar, resolvedExp, AccessMode.readOnly, Visibility.priVate));
 
@@ -848,23 +848,23 @@ public class Over extends DefaultTransformer<OverContext>
 
   public static IType computeDictionaryType(IType conType, Location loc, AccessMode access)
   {
-    List<TypeVar> uniVars = new ArrayList<TypeVar>();
+    List<TypeVar> uniVars = new ArrayList<>();
     IType unwrapped = TypeUtils.unwrap(conType, uniVars);
     Set<IType> reqVars = new TreeSet<>(new CompareTypes());
 
     findTypeContracts(reqVars, uniVars);
 
-    Map<String, TypeVar> boundMap = new HashMap<String, TypeVar>();
+    Map<String, TypeVar> boundMap = new HashMap<>();
 
     for (TypeVar tVar : uniVars)
       boundMap.put(tVar.typeLabel(), new TypeVar(tVar.getVarName(), tVar.getOriginalName(), access));
 
-    List<IType> requires = new ArrayList<IType>();
+    List<IType> requires = new ArrayList<>();
 
     for (TypeVar tVar : uniVars) {
-      TypeVar repl = (TypeVar) boundMap.get(tVar.typeLabel());
+      TypeVar repl = boundMap.get(tVar.typeLabel());
 
-      for (ITypeConstraint con : (TypeVar) tVar) {
+      for (ITypeConstraint con : tVar) {
         if (con instanceof FieldConstraint) {
           FieldConstraint recCon = (FieldConstraint) con;
           TypeUtils.setFieldConstraint(repl, loc, recCon.getField(), Refresher.rewrite(recCon.getType(), boundMap));
@@ -885,7 +885,7 @@ public class Over extends DefaultTransformer<OverContext>
   public static IType computeConstrainedType(IType type)
   {
     if (TypeUtils.isOverloadedType(type)) {
-      Map<String, TypeVar> tVars = new HashMap<String, TypeVar>();
+      Map<String, TypeVar> tVars = new HashMap<>();
       IType tp = TypeUtils.deRef(type);
 
       while (tp instanceof UniversalType) {

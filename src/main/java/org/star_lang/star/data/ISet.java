@@ -33,7 +33,7 @@ public interface ISet extends IValue, Iterable<IValue> {
    *
    * @return the number of elements
    */
-  public int size();
+  int size();
 
   /**
    * test to see if an element is present

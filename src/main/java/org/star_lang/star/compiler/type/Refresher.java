@@ -51,8 +51,8 @@ import org.star_lang.star.data.type.UniversalType;
 public class Refresher implements ITypeVisitor<Void>
 {
   private final Map<String, TypeVar> bound;
-  private final Stack<String> exclusions = new Stack<String>();
-  protected final Stack<IType> stack = new Stack<IType>();
+  private final Stack<String> exclusions = new Stack<>();
+  protected final Stack<IType> stack = new Stack<>();
 
   private Refresher(Map<String, TypeVar> bound)
   {
@@ -177,7 +177,7 @@ public class Refresher implements ITypeVisitor<Void>
   public static IType rewrite(IType type, final Map<String, TypeVar> binding)
   {
     Refresher rewriter = new Refresher(binding) {
-      Stack<String> exclusions = new Stack<String>();
+      Stack<String> exclusions = new Stack<>();
 
       @Override
       public void visitTypeVar(TypeVar var, Void cxt)
@@ -240,8 +240,8 @@ public class Refresher implements ITypeVisitor<Void>
   @Override
   public void visitTypeInterface(TypeInterfaceType t, Void cxt)
   {
-    SortedMap<String, IType> nF = new TreeMap<String, IType>();
-    SortedMap<String, IType> nT = new TreeMap<String, IType>();
+    SortedMap<String, IType> nF = new TreeMap<>();
+    SortedMap<String, IType> nT = new TreeMap<>();
 
     for (Entry<String, IType> entry : t.getAllFields().entrySet()) {
       entry.getValue().accept(this, cxt);

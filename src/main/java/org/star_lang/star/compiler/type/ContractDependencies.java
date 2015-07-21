@@ -53,7 +53,7 @@ public class ContractDependencies
       List<List<IDefinition<String>>> groups = TopologySort.sort(initGroup);
       List<List<IStatement>> sortd = new ArrayList<>();
       for (List<IDefinition<String>> entry : groups) {
-        List<IStatement> group = new ArrayList<IStatement>();
+        List<IStatement> group = new ArrayList<>();
         sortd.add(group);
         for (IDefinition<String> def : entry)
           group.add(((Implementation) def).getStmt());
@@ -106,8 +106,8 @@ public class ContractDependencies
         this.defs = new HashSet<>(Variable.varNames(((VarEntry) stmt).getDefined()));
         this.refs = allOverloadRefs(stmt, pick);
       } else {
-        this.defs = new HashSet<String>();
-        this.refs = new HashSet<String>();
+        this.defs = new HashSet<>();
+        this.refs = new HashSet<>();
       }
     }
 
@@ -177,7 +177,7 @@ public class ContractDependencies
     @Override
     public void visitMethodVariable(MethodVariable method)
     {
-      if (!isExcluded(method.getName())) {
+      if (isNotExcluded(method.getName())) {
         IType contract = TypeUtils.deRef(method.getContract());
         if (contract instanceof TypeExp) {
           String funName = Over.instanceFunName(contract);
@@ -191,7 +191,7 @@ public class ContractDependencies
     @Override
     public void visitVariable(Variable variable)
     {
-      if (!isExcluded(variable.getName())) {
+      if (isNotExcluded(variable.getName())) {
         String name = variable.getName();
         if (pick.contains(name) && !refs.contains(name))
           refs.add(name);

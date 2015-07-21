@@ -96,7 +96,7 @@ public class TypeContract implements PrettyPrintable
 
     disp.append(" is ");
     if (spec instanceof RecordSpecifier)
-      ((TypeInterfaceType) (((RecordSpecifier) spec).getTypeInterface())).accept(displayType, null);
+      ((RecordSpecifier) spec).getTypeInterface().accept(displayType, null);
 
     disp.popIndent(mrk);
   }

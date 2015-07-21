@@ -30,7 +30,7 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public class LayeredHash<K, V> implements LayeredMap<K, V>
 {
-  private final Map<K, V> map = new HashMap<K, V>();
+  private final Map<K, V> map = new HashMap<>();
   private LayeredHash<K, V> parent;
 
   public LayeredHash()
@@ -122,7 +122,7 @@ public class LayeredHash<K, V> implements LayeredMap<K, V>
   public Set<K> keySet()
   {
     if (parent != null) {
-      Set<K> entries = new HashSet<K>();
+      Set<K> entries = new HashSet<>();
 
       addKeys(entries, this);
       return entries;
@@ -176,7 +176,7 @@ public class LayeredHash<K, V> implements LayeredMap<K, V>
   public Collection<V> values()
   {
     if (parent != null) {
-      List<V> values = new ArrayList<V>();
+      List<V> values = new ArrayList<>();
 
       addValues(values, this);
       return values;
@@ -194,7 +194,7 @@ public class LayeredHash<K, V> implements LayeredMap<K, V>
   @Override
   public LayeredHash<K, V> fork()
   {
-    return new LayeredHash<K, V>(this);
+    return new LayeredHash<>(this);
   }
 
   @Override
@@ -230,7 +230,7 @@ public class LayeredHash<K, V> implements LayeredMap<K, V>
     disp.append("{");
     String sep = "";
     LayeredHash<K, V> hash = this;
-    Set<K> visited = new HashSet<K>();
+    Set<K> visited = new HashSet<>();
 
     while (hash != null) {
       for (Entry<K, V> entry : hash.map.entrySet()) {

@@ -165,7 +165,7 @@ public class SrcSpec implements ISpec
   {
     StringSequence seq = new StringSequence(javaSig);
 
-    List<ISpec> specs = new ArrayList<ISpec>();
+    List<ISpec> specs = new ArrayList<>();
     try {
       if (seq.next() != '(')
         errors.reportError("invalid java method signature: " + javaSig, loc);
@@ -298,14 +298,16 @@ public class SrcSpec implements ISpec
 
   public static Object frameRep(String javaType)
   {
-    if (javaType.equals(Types.JAVA_INT_SIG))
-      return Opcodes.INTEGER;
-    else if (javaType.equals(Types.JAVA_LNG_SIG))
-      return Opcodes.LONG;
-    else if (javaType.equals(Types.JAVA_DBL_SIG))
-      return Opcodes.DOUBLE;
-    else
-      return javaType;
+    switch (javaType) {
+      case Types.JAVA_INT_SIG:
+        return Opcodes.INTEGER;
+      case Types.JAVA_LNG_SIG:
+        return Opcodes.LONG;
+      case Types.JAVA_DBL_SIG:
+        return Opcodes.DOUBLE;
+      default:
+        return javaType;
+    }
   }
 
   public JavaKind getJavaKind()

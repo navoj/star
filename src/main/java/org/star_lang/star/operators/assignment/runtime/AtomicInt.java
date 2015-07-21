@@ -163,7 +163,7 @@ public abstract class AtomicInt extends AtomicInteger implements IConstructor, P
   {
     Location nullLoc = Location.nullLoc;
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
 
     specs.add(new ConstructorSpecifier(nullLoc, null, AtomIntCell.label, AtomIntCell.conIx, AtomIntCell.conType(),
         AtomIntCell.class, AtomicInt.class));

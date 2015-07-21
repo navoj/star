@@ -54,7 +54,7 @@ public class TypeSubstitute implements TypeTransformer<IType, ITypeConstraint, V
    */
   public static IType rename(IType type, Map<IType, IType> bound)
   {
-    Stack<IType> exclusions = new Stack<IType>();
+    Stack<IType> exclusions = new Stack<>();
     TypeSubstitute renamer = new TypeSubstitute(bound, exclusions);
     return type.transform(renamer, null);
   }
@@ -99,8 +99,8 @@ public class TypeSubstitute implements TypeTransformer<IType, ITypeConstraint, V
   @Override
   public IType transformTypeInterface(TypeInterfaceType t, Void cxt)
   {
-    SortedMap<String, IType> nF = new TreeMap<String, IType>();
-    SortedMap<String, IType> nT = new TreeMap<String, IType>();
+    SortedMap<String, IType> nF = new TreeMap<>();
+    SortedMap<String, IType> nT = new TreeMap<>();
 
     for (Entry<String, IType> entry : t.getAllFields().entrySet()) {
       nF.put(entry.getKey(), entry.getValue().transform(this, cxt));

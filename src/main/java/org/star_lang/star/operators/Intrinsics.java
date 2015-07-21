@@ -72,7 +72,6 @@ import org.star_lang.star.operators.hash.HashTreeOps;
 import org.star_lang.star.operators.misc.MiscOps;
 import org.star_lang.star.operators.resource.ResourceOps;
 import org.star_lang.star.operators.sets.SetOpsDecl;
-import org.star_lang.star.operators.sets.runtime.SetOps;
 import org.star_lang.star.operators.spawn.SpawnOps;
 import org.star_lang.star.operators.string.CharOps;
 import org.star_lang.star.operators.string.DateOps;
@@ -108,7 +107,7 @@ import org.star_lang.star.operators.uri.URIOps;
 public class Intrinsics extends Dict {
   private static final Intrinsics intrinsics = new Intrinsics();
 
-  private final LayeredMap<String, ICafeBuiltin> builtins = new LayeredHash<String, ICafeBuiltin>();
+  private final LayeredMap<String, ICafeBuiltin> builtins = new LayeredHash<>();
 
   static {
     intrinsics.defineType(new TypeDescription(StandardTypes.rawBoolType));
@@ -135,15 +134,15 @@ public class Intrinsics extends Dict {
     BinaryWrap.declare(intrinsics);
     Location.declare(intrinsics);
     ResourceURI.declare(intrinsics);
-    RefCell.declare(intrinsics);
+    RefCell.declare();
     AtomicCell.declare(intrinsics);
     AtomicInt.declare(intrinsics);
     Cons.declare(intrinsics);
     Option.declare(intrinsics);
-    Reason.declare(intrinsics);
+    Reason.declare();
     Result.declare(intrinsics);
-    Array.declare(intrinsics);
-    ArrayOps.declare(intrinsics);
+    Array.declare();
+    ArrayOps.declare();
 
     IntWrap.declare(intrinsics);
     LongWrap.declare(intrinsics);
@@ -157,7 +156,7 @@ public class Intrinsics extends Dict {
     LongBitString.declare(intrinsics);
     IntegerBitString.declare(intrinsics);
 
-    Arithmetic.declare(intrinsics);
+    Arithmetic.declare();
     BigNumUnary.declare(intrinsics);
     SystemUtils.declare(intrinsics);
     Clock.declare(intrinsics);
@@ -181,7 +180,7 @@ public class Intrinsics extends Dict {
     BinaryEquality.declare(intrinsics);
     BinaryCoercion.declare(intrinsics);
     RegexpOps.declare(intrinsics);
-    AsynchIo.declare(intrinsics);
+    AsynchIo.declare();
     SpawnOps.declare(intrinsics);
     BoolCompare.declare(intrinsics);
     CharOps.declare(intrinsics);
@@ -190,10 +189,10 @@ public class Intrinsics extends Dict {
     StringCompare.declare(intrinsics);
     DateOps.declare(intrinsics);
     Number2String.declare(intrinsics);
-    URIOps.declare(intrinsics);
+    URIOps.declare();
     ResourceOps.declare(intrinsics);
 
-    AstOperators.declare(intrinsics);
+    AstOperators.declare();
 
     NTuple.declare(intrinsics);
 
@@ -243,6 +242,14 @@ public class Intrinsics extends Dict {
     declareVar(name, new BuiltinInfo(builtin));
   }
 
+  public static void declare(ICafeBuiltin builtin) {
+    intrinsics.declareBuiltin(builtin);
+  }
+
+  public static void declare(ITypeDescription desc) {
+    intrinsics.defineType(desc);
+  }
+
   /**
    * Retrieve a built-in operator associated with a given name.
    *
@@ -274,10 +281,6 @@ public class Intrinsics extends Dict {
     return intrinsics.getTypeDescription(name) != null;
   }
 
-  public static ITypeDescription intrinsicType(String name) {
-    return intrinsics.getTypeDescription(name);
-  }
-
   public static Intrinsics intrinsics() {
     return intrinsics;
   }
@@ -291,4 +294,6 @@ public class Intrinsics extends Dict {
 
     return standards;
   }
+
+
 }

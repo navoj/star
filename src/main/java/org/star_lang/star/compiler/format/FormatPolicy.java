@@ -76,22 +76,29 @@ public class FormatPolicy
 
     for (Entry<String, IAttribute> entry : attributes.entrySet()) {
       String att = entry.getKey();
-      if (att.equals(StandardNames.FMT_INDENT))
-        indent = ((NumericAttribute) entry.getValue()).attribute(indentPolicy);
-      else if (att.equals(StandardNames.FMT_LINES))
-        blankLine = ((NumericAttribute) entry.getValue()).attribute(blankLinePolicy);
-      else if (att.equals(StandardNames.FMT_COMMENT_COLUMN))
-        lineComment = ((NumericAttribute) entry.getValue()).attribute(lineCommentColumnPolicy);
-      else if (att.equals(StandardNames.FMT_COMMENT_WRAP))
-        wrap = ((BooleanAttribute) entry.getValue()).attribute(commentWrap);
-      else if (att.equals(StandardNames.FMT_WRAP_COLUMN))
-        columnWrap = ((NumericAttribute) entry.getValue()).attribute(commentWrapColumn);
-      else if (att.equals(StandardNames.FMT_COMMENT_COLUMN))
-        lineComment = ((NumericAttribute) entry.getValue()).attribute(lineCommentColumnPolicy);
-      else if (att.equals(StandardNames.FMT_BREAK_BEFORE))
-        before = ((BooleanAttribute) entry.getValue()).attribute(before);
-      else if (att.equals(StandardNames.FMT_BREAK_AFTER))
-        after = ((BooleanAttribute) entry.getValue()).attribute(after);
+      switch (att) {
+        case StandardNames.FMT_INDENT:
+          indent = ((NumericAttribute) entry.getValue()).attribute(indentPolicy);
+          break;
+        case StandardNames.FMT_LINES:
+          blankLine = ((NumericAttribute) entry.getValue()).attribute(blankLinePolicy);
+          break;
+        case StandardNames.FMT_COMMENT_COLUMN:
+          lineComment = ((NumericAttribute) entry.getValue()).attribute(lineCommentColumnPolicy);
+          break;
+        case StandardNames.FMT_COMMENT_WRAP:
+          wrap = ((BooleanAttribute) entry.getValue()).attribute(commentWrap);
+          break;
+        case StandardNames.FMT_WRAP_COLUMN:
+          columnWrap = ((NumericAttribute) entry.getValue()).attribute(commentWrapColumn);
+          break;
+        case StandardNames.FMT_BREAK_BEFORE:
+          before = ((BooleanAttribute) entry.getValue()).attribute(before);
+          break;
+        case StandardNames.FMT_BREAK_AFTER:
+          after = ((BooleanAttribute) entry.getValue()).attribute(after);
+          break;
+      }
     }
     return new FormatPolicy(loc, indent, blankLine, lineComment, wrap, columnWrap, before, after, breakAfterToken);
   }

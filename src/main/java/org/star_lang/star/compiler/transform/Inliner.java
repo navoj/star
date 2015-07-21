@@ -34,7 +34,6 @@ public class Inliner extends DefaultTransformer<InlineContext>
   @Override
   public IContentExpression transformFunctionLiteral(FunctionLiteral f, InlineContext context)
   {
-    // TODO Auto-generated method stub
     return super.transformFunctionLiteral(f, context);
   }
 
@@ -52,7 +51,6 @@ public class Inliner extends DefaultTransformer<InlineContext>
   @Override
   public IContentExpression transformPatternAbstraction(PatternAbstraction pattern, InlineContext context)
   {
-    // TODO Auto-generated method stub
     return super.transformPatternAbstraction(pattern, context);
   }
 

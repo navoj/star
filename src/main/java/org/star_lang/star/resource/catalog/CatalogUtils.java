@@ -147,17 +147,4 @@ public class CatalogUtils
 
     return new NullCatalog();
   }
-
-  public static Catalog catalogInDirectory(ResourceURI uri, Catalog fallback, CodeRepository repository)
-      throws CatalogException
-  {
-    if (uri.getScheme().equals(Resources.FILE)) {
-      String path = uri.getPath();
-      if (path.indexOf('/') > 0)
-        return catalogInDirectory(uri, new File(path.substring(0, path.lastIndexOf('/'))), fallback);
-      else
-        return new NullCatalog();
-    } else
-      return new NullCatalog();
-  }
 }

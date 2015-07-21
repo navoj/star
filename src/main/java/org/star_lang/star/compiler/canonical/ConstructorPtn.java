@@ -116,7 +116,7 @@ public class ConstructorPtn extends ContentPattern
 
   private static List<IContentPattern> makeArgs(IContentPattern args[])
   {
-    List<IContentPattern> list = new ArrayList<IContentPattern>();
+    List<IContentPattern> list = new ArrayList<>();
     for (IContentPattern arg : args)
       list.add(arg);
     return list;

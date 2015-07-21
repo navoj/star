@@ -417,7 +417,7 @@ public abstract class Result implements IConstructor, PrettyPrintable
     ConstructorSpecifier noneSpec = new ConstructorSpecifier(nullLoc, null, Denied.label, Denied.conIx, nilConType,
         Denied.class, Result.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(someSpec);
     specs.add(failSpec);
     specs.add(noneSpec);

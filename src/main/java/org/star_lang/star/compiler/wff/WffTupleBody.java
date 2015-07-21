@@ -38,7 +38,7 @@ public class WffTupleBody implements WffBuildOp
   @Override
   public IAbstract build(IAbstract[] env, Location loc, WffEngine engine)
   {
-    List<IAbstract> oArgs = new ArrayList<IAbstract>();
+    List<IAbstract> oArgs = new ArrayList<>();
 
     for (int ix = 0; ix < els.length; ix++)
       oArgs.add(els[ix].build(env, loc, engine));

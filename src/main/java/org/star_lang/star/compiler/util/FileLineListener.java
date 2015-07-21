@@ -36,5 +36,5 @@ public interface FileLineListener
    * a parameter. This method should be implemented to process each line
    * of an ascii file in any way desired by the implementing class.
    */
-  public void onLine(String line);
+  void onLine(String line);
 }

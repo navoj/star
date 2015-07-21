@@ -74,11 +74,9 @@ public class TemplateString
           sb.append(vars.get(strVar));
         else
           throw new IllegalStateException(strVar + " not in variable map");
-        continue;
       } else if (ch != '\\') {
         sb.appendCodePoint(ch);
         ix = template.offsetByCodePoints(ix, 1);
-        continue;
       } else {
         ix = template.offsetByCodePoints(ix, 1);
         ch = template.codePointAt(ix);
@@ -168,11 +166,9 @@ public class TemplateString
         }
         vars.add(strVar);
         fragments.add(new VarFragment(strVar));
-        continue;
       } else if (ch != '\\') {
         sb.appendCodePoint(ch);
         ix = template.offsetByCodePoints(ix, 1);
-        continue;
       } else {
         ix = template.offsetByCodePoints(ix, 1);
         ch = template.codePointAt(ix);

@@ -252,7 +252,7 @@ public abstract class URIAuthority implements PrettyPrintable, IConstructor
   {
     private NoAuthority()
     {
-    };
+    }
 
     @Override
     public void prettyPrint(PrettyPrintDisplay disp)

@@ -70,7 +70,7 @@ public class CafeDictionary implements ITypeContext
   private final String path;
   private final CafeDictionary parent; // Used for resolving free variables
 
-  private static final Map<String, VarInfo> root = new HashMap<String, VarInfo>();
+  private static final Map<String, VarInfo> root = new HashMap<>();
 
   static {
     for (ICafeBuiltin builtin : Intrinsics.allBuiltins()) {
@@ -98,12 +98,12 @@ public class CafeDictionary implements ITypeContext
     }
   }
 
-  public CafeDictionary(String path, ClassNode owner, CodeRepository repository)
+  public CafeDictionary(String path, ClassNode owner)
   {
     this.entries = new LayeredHash<>(root);
     this.types = new LayeredHash<>();
-    this.references = new HashMap<String, Inliner>();
-    this.imports = new TreeSet<ResourceURI>();
+    this.references = new HashMap<>();
+    this.imports = new TreeSet<>();
     this.owner = owner;
     this.path = path;
     localAvail = new LiveMap();
@@ -148,7 +148,7 @@ public class CafeDictionary implements ITypeContext
     // rootConstructors(subEntries, types.values());
 
     // Get the constructor definitions
-    return new CafeDictionary(path, owner, subEntries, forkedTypes, new HashMap<String, Inliner>(), imports,
+    return new CafeDictionary(path, owner, subEntries, forkedTypes, new HashMap<>(), imports,
         new LiveMap(), this);
   }
 
@@ -280,7 +280,7 @@ public class CafeDictionary implements ITypeContext
 
   public Collection<VarInfo> getFreeVars()
   {
-    List<VarInfo> free = new ArrayList<VarInfo>();
+    List<VarInfo> free = new ArrayList<>();
     for (Entry<String, VarInfo> entry : entries.entrySet()) {
       VarInfo var = entry.getValue();
       if (var.getWhere() == VarSource.freeVar)
@@ -401,7 +401,7 @@ public class CafeDictionary implements ITypeContext
 
   public TypeDescription declareType(Location loc, IType type, String javaName)
   {
-    CafeTypeDescription desc = new CafeTypeDescription(loc, type, javaName, new ArrayList<IValueSpecifier>());
+    CafeTypeDescription desc = new CafeTypeDescription(loc, type, javaName, new ArrayList<>());
     defineType(desc);
     return desc;
   }

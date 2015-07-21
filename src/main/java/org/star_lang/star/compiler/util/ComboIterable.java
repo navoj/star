@@ -15,7 +15,7 @@ public class ComboIterable<T> implements Iterable<T>
   @Override
   public Iterator<T> iterator()
   {
-    return new ComboIterator<>(left.iterator(), right.iterator());
+    return new ComboIterator<T>(left.iterator(), right.iterator());
   }
 
 }

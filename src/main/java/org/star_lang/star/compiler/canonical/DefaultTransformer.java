@@ -53,7 +53,7 @@ public class DefaultTransformer<T> implements
   @Override
   public IContentExpression transformRecord(RecordTerm record, T context)
   {
-    SortedMap<String, IContentExpression> args = new TreeMap<String, IContentExpression>();
+    SortedMap<String, IContentExpression> args = new TreeMap<>();
     IContentExpression fun = record.getFun().transform(this, context);
     boolean clean = fun == record.getFun();
     for (Entry<String, IContentExpression> entry : record.getArguments().entrySet()) {

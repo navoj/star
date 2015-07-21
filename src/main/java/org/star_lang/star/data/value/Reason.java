@@ -162,9 +162,8 @@ public abstract class Reason implements IConstructor, PrettyPrintable
     ValueDisplay.display(disp, this);
   }
 
-  public static void declare(ITypeContext cxt)
+  public static void declare()
   {
-
     Location nullLoc = Location.nullLoc;
 
     IType conType = TypeUtils.constructorType(type);
@@ -173,12 +172,12 @@ public abstract class Reason implements IConstructor, PrettyPrintable
     ConstructorSpecifier busySpec = new ConstructorSpecifier(nullLoc, null, NoPermission.label, NoPermission.conIx,
         conType, NoPermission.class, Reason.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(permSpec);
     specs.add(busySpec);
 
     ITypeDescription desc = new CafeTypeDescription(nullLoc, type, Reason.class.getName(), specs);
 
-    cxt.defineType(desc);
+    org.star_lang.star.operators.Intrinsics.declare(desc);
   }
 }

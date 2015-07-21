@@ -200,7 +200,7 @@ public class StringUtils
 
   public static String[] split(String source, int ch)
   {
-    List<String> segments = new ArrayList<String>();
+    List<String> segments = new ArrayList<>();
 
     int mark = 0;
     int next;

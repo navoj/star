@@ -31,11 +31,11 @@ public class URIOps
   public static final String getUri = "__getUri";
   public static final String resolveUri = "__resolveUri";
 
-  public static void declare(Intrinsics cxt)
+  public static void declare()
   {
-    cxt.declareBuiltin(new Builtin(string2uri, String2URI.type(), String2URI.class));
-    cxt.declareBuiltin(new Builtin(uri2string, URI2String.type(), URI2String.class));
-    cxt.declareBuiltin(new Builtin(getUri, GetURI.type(), GetURI.class));
-    cxt.declareBuiltin(new Builtin(resolveUri, URIResolve.type(), URIResolve.class));
+    Intrinsics.declare(new Builtin(string2uri, String2URI.type(), String2URI.class));
+    Intrinsics.declare(new Builtin(uri2string, URI2String.type(), URI2String.class));
+    Intrinsics.declare(new Builtin(getUri, GetURI.type(), GetURI.class));
+    Intrinsics.declare(new Builtin(resolveUri, URIResolve.type(), URIResolve.class));
   }
 }

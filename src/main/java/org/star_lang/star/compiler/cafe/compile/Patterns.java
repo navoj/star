@@ -195,7 +195,7 @@ public class Patterns
               ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, invokeName, funSig));
             else {
               hwm.bump(1);
-              String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig(), errors);
+              String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig());
 
               ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName, var
                   .getJavaSig()));
@@ -340,7 +340,7 @@ public class Patterns
               ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, invokeName, funSig));
             else {
               hwm.bump(1);
-              String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig(), errors);
+              String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig());
 
               ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName, var
                   .getJavaSig()));
@@ -510,7 +510,7 @@ public class Patterns
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
 
-    Expressions.checkType(termSpec, SrcSpec.rawIntSrc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(termSpec, SrcSpec.rawIntSrc, mtd, dict, hwm);
 
     int mark = hwm.getDepth();
     InsnList ins = mtd.instructions;
@@ -533,7 +533,7 @@ public class Patterns
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
 
-    Expressions.checkType(termSpec, SrcSpec.rawLngSrc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(termSpec, SrcSpec.rawLngSrc, mtd, dict, hwm);
 
     int mark = hwm.getDepth();
     InsnList ins = mtd.instructions;
@@ -556,7 +556,7 @@ public class Patterns
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
 
-    Expressions.checkType(termSpec, SrcSpec.rawDblSrc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(termSpec, SrcSpec.rawDblSrc, mtd, dict, hwm);
 
     int mark = hwm.bump(2);
     InsnList ins = mtd.instructions;
@@ -586,7 +586,7 @@ public class Patterns
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
 
-    Expressions.checkType(termSpec, SrcSpec.rawDecimalSrc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(termSpec, SrcSpec.rawDecimalSrc, mtd, dict, hwm);
 
     int mark = hwm.getDepth();
     InsnList ins = mtd.instructions;
@@ -612,7 +612,7 @@ public class Patterns
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
 
-    Expressions.checkType(termSpec, SrcSpec.rawCharSrc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(termSpec, SrcSpec.rawCharSrc, mtd, dict, hwm);
 
     int mark = hwm.getDepth();
     InsnList ins = mtd.instructions;
@@ -635,7 +635,7 @@ public class Patterns
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
 
-    Expressions.checkType(termSpec, SrcSpec.rawStringSrc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(termSpec, SrcSpec.rawStringSrc, mtd, dict, hwm);
 
     int mark = hwm.bump(1);
     InsnList ins = mtd.instructions;
@@ -661,7 +661,7 @@ public class Patterns
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
 
-    Expressions.checkType(termSpec, SrcSpec.rawStringSrc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(termSpec, SrcSpec.rawStringSrc, mtd, dict, hwm);
 
     InsnList ins = mtd.instructions;
 
@@ -760,7 +760,7 @@ public class Patterns
 
     if (var != null) // Already declared?
     {
-      Expressions.checkType(termSpec, var, mtd, dict, hwm, loc, errors, bldCat);
+      Expressions.checkType(termSpec, var, mtd, dict, hwm);
 
       switch (var.getKind()) {
       case builtin:
@@ -1169,6 +1169,11 @@ public class Patterns
       if (!CafeSyntax.isAnonymous(ptn)) {
         if (Abstract.isName(ptn))
           vars.add(Abstract.getId(ptn));
+        else if(CafeSyntax.isTypedTerm(ptn)){
+          IAbstract var = CafeSyntax.typedTerm(ptn);
+          if(Abstract.isName(var))
+            vars.add(Abstract.getId(var));
+        }
       }
     } else if (CafeSyntax.isTypedTerm(ptn)) {
       IAbstract term = CafeSyntax.typedTerm(ptn);

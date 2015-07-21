@@ -80,7 +80,7 @@ public abstract class BoolCompare
     @CafeEnter
     public static BoolWrap enter(boolean ix1, boolean ix2)
     {
-      return Factory.newBool(ix1 ? ix2 : true); // ix1<=ix2
+      return Factory.newBool(!ix1 || ix2); // ix1<=ix2
     }
 
     @Override
@@ -101,7 +101,7 @@ public abstract class BoolCompare
     @CafeEnter
     public static BoolWrap enter(boolean ix1, boolean ix2)
     {
-      return Factory.newBool(ix1 ? false : ix2); // ix1<ix2
+      return Factory.newBool(!ix1 && ix2); // ix1<ix2
     }
 
     @Override
@@ -122,7 +122,7 @@ public abstract class BoolCompare
     @CafeEnter
     public static BoolWrap enter(boolean ix1, boolean ix2)
     {
-      return Factory.newBool(ix1 ? ix2 : false);// ix1>ix2
+      return Factory.newBool(ix1 && ix2);// ix1>ix2
     }
 
     @Override
@@ -143,7 +143,7 @@ public abstract class BoolCompare
     @CafeEnter
     public BoolWrap enter(boolean ix1, boolean ix2)
     {
-      return Factory.newBool(ix1 ? true : ix2); // ix1>=ix2
+      return Factory.newBool(ix1 || ix2); // ix1>=ix2
     }
 
     @Override

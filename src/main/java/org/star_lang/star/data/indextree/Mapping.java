@@ -45,7 +45,7 @@ public interface Mapping<K, V> extends PrettyPrintable, Iterable<Entry<K, V>>
    * 
    * @return the number of kay/value pairs represented
    */
-  public int size();
+  int size();
 
   /**
    * Find the value associated with a key.

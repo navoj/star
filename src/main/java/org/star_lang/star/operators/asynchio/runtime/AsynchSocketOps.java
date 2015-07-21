@@ -155,7 +155,7 @@ public class AsynchSocketOps
       } catch (EvaluationException e) {
       }
     }
-  };
+  }
 
   public static class AsynchTcpRead implements IFunction
   {

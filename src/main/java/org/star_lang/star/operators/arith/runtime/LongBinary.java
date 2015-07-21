@@ -210,12 +210,13 @@ public abstract class LongBinary
     }
   }
 
+  @SuppressWarnings("RedundantCast")
   public static class LongLeft implements IFunction
   {
     @CafeEnter
     public static long enter(long s1, long s2)
     {
-      return (long) s1 << s2;
+      return s1 << s2;
     }
 
     @Override
@@ -232,12 +233,13 @@ public abstract class LongBinary
     }
   }
 
+  @SuppressWarnings("RedundantCast")
   public static class LongRight implements IFunction
   {
     @CafeEnter
     public static long enter(long s1, long s2)
     {
-      return (long) s1 >> s2;
+      return s1 >> s2;
     }
 
     @Override

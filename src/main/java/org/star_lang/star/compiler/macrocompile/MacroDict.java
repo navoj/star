@@ -29,7 +29,7 @@ public class MacroDict extends Dict<MacroDescriptor>
 
   protected MacroDict(IAbstract replaceVar, MacroDict outer)
   {
-    super(outer, new HashMap<String, MacroDescriptor>());
+    super(outer, new HashMap<>());
     this.replaceVar = replaceVar;
   }
 

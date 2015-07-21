@@ -23,8 +23,8 @@ import org.objectweb.asm.tree.MethodNode;
 
 public interface InlinePredicate
 {
-  public void preamble(MethodNode mtd, HWM stackHWM);
+  void preamble(MethodNode mtd, HWM stackHWM);
 
-  public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode lbl);
+  void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode lbl);
 
 }

@@ -73,7 +73,6 @@ public class RegexpUtils
         continue;
       default:
         blder.appendCodePoint(ch);
-        continue;
       }
     }
   }

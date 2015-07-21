@@ -19,7 +19,6 @@ public class Simplify extends DefaultTransformer<SimplifyCxt>
   @Override
   public IContentExpression transformLetTerm(LetTerm let, SimplifyCxt context)
   {
-    // TODO Auto-generated method stub
     return super.transformLetTerm(let, context);
   }
 
@@ -41,7 +40,6 @@ public class Simplify extends DefaultTransformer<SimplifyCxt>
   @Override
   public IContentAction transformLetAction(LetAction let, SimplifyCxt context)
   {
-    // TODO Auto-generated method stub
     return super.transformLetAction(let, context);
   }
 

@@ -25,7 +25,7 @@ public class ListUtils
 
   public static <T> List<T> mergeLists(List<T> l1, List<T> l2)
   {
-    List<T> result = new ArrayList<T>(l1);
+    List<T> result = new ArrayList<>(l1);
     for (T el : l2)
       if (!result.contains(el))
         result.add(el);

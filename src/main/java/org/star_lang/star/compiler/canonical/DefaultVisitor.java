@@ -30,7 +30,7 @@ import org.star_lang.star.compiler.util.Pair;
  */
 public class DefaultVisitor implements CanonicalVisitor
 {
-  final private Stack<String> exclusions = new Stack<String>();
+  final private Stack<String> exclusions = new Stack<>();
   final private boolean exclude;
   final Excluder excluder;
 
@@ -458,9 +458,9 @@ public class DefaultVisitor implements CanonicalVisitor
     exclusions.push(name);
   }
 
-  public boolean isExcluded(String name)
+  public boolean isNotExcluded(String name)
   {
-    return exclusions.contains(name);
+    return !exclusions.contains(name);
   }
 
   @Override

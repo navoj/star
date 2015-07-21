@@ -27,5 +27,5 @@ public interface Scope
    * @param name
    * @return null if not defined here.
    */
-  public VarInfo inScope(String name);
+  VarInfo inScope(String name);
 }

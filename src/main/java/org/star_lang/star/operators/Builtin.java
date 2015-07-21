@@ -63,8 +63,8 @@ public class Builtin implements ICafeBuiltin
     this.isStatic = (method.getModifiers() & Modifier.STATIC) == Modifier.STATIC;
     this.implClass = implClass;
     this.javaClass = Type.getInternalName(implClass);
-    this.javaInvokeName = invokeName(implClass, method);
-    this.javaInvokeSig = invokeSig(implClass, method);
+    this.javaInvokeName = invokeName(method);
+    this.javaInvokeSig = invokeSig(method);
   }
 
   @Override
@@ -82,7 +82,7 @@ public class Builtin implements ICafeBuiltin
     throw new IllegalStateException("no enter method supplied for " + name);
   }
 
-  private String invokeSig(Class<?> implClass, Method method)
+  private String invokeSig(Method method)
   {
     return Type.getMethodDescriptor(method);
   }
@@ -96,7 +96,7 @@ public class Builtin implements ICafeBuiltin
     throw new IllegalStateException("no enter method supplied for " + name);
   }
 
-  private String invokeName(Class<?> implClass, Method method)
+  private String invokeName(Method method)
   {
     return method.getName();
   }

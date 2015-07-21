@@ -34,7 +34,7 @@ public class Singleton<E> implements List<E>, PrettyPrintable
 
   public static <S> List<S> create(S data)
   {
-    return new Singleton<S>(data);
+    return new Singleton<>(data);
   }
 
   @Override
@@ -127,7 +127,7 @@ public class Singleton<E> implements List<E>, PrettyPrintable
   @Override
   public Iterator<E> iterator()
   {
-    return new SingleIterator<E>(data);
+    return new SingleIterator<>(data);
   }
 
   @Override

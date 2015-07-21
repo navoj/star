@@ -215,7 +215,7 @@ public abstract class IntBinary
     @CafeEnter
     public static int enter(int s1, int s2)
     {
-      return (int) s1 << s2;
+      return s1 << s2;
     }
 
     @Override
@@ -237,7 +237,7 @@ public abstract class IntBinary
     @CafeEnter
     public static int enter(int s1, int s2)
     {
-      return (int) s1 >> s2;
+      return s1 >> s2;
     }
 
     @Override

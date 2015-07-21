@@ -74,7 +74,7 @@ import org.star_lang.star.operators.Intrinsics;
  */
 public class Actions
 {
-  private static final Map<String, ICompileAction> handlers = new HashMap<String, ICompileAction>();
+  private static final Map<String, ICompileAction> handlers = new HashMap<>();
   public static final String ASSERT_ENABLED = "$assertionsDisabled";
 
   static {
@@ -158,8 +158,8 @@ public class Actions
             ((Inliner) builtin).preamble(mtd, hwm);
           else if (!var.isStatic()) {
             hwm.bump(1);
-            String javaName = Expressions.escapeReference(var.getName(), dict, var.getJavaType(), var.getJavaSig(),
-                errors);
+            String javaName = Expressions.escapeReference(var.getName(), dict, var.getJavaType(), var.getJavaSig()
+            );
 
             ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName, var
                 .getJavaSig()));
@@ -388,13 +388,9 @@ public class Actions
       assert sel instanceof Name;
       VarInfo var = Theta.varReference(((Name) sel).getId(), dict, outer, sel.getLoc(), errors);
 
-      ICaseCompile handler = new ICaseCompile() {
-        @Override
-        public ISpec compile(IAbstract term, CafeDictionary dict, IContinuation cont)
-        {
-          compileAction(term, errors, exit, dict, outer, endLabel, inFunction, cont, ccxt);
-          return SrcSpec.prcSrc;
-        }
+      ICaseCompile handler = (term1, dict1, cont1) -> {
+        compileAction(term1, errors, exit, dict1, outer, endLabel, inFunction, cont1, ccxt);
+        return SrcSpec.prcSrc;
       };
       CaseCompile.compileSwitch(term.getLoc(), var, CafeSyntax.switchCases(term), deflt, dict, outer, errors, handler,
           cont, ccxt);

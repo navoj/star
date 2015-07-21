@@ -283,10 +283,7 @@ public class QueryPlanner
       return isTransformable(((Disjunction) query).getLhs()) || isTransformable(((Disjunction) query).getRhs());
     else if (query instanceof Otherwise)
       return isTransformable(((Otherwise) query).getLhs()) || isTransformable(((Otherwise) query).getRhs());
-    else if (query instanceof Implies)
-      return true;
-    else
-      return false;
+    else return query instanceof Implies;
   }
 
   public static IContentExpression transformForLoop(Location loc, List<Variable> definedVars, ICondition cond,

@@ -29,7 +29,7 @@ public interface FmtPtnOp extends PrettyPrintable
   enum formatCode
   {
     applies, notApply
-  };
+  }
 
   int getSpecificity();
 

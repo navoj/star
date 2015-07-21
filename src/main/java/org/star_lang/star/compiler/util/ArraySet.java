@@ -30,7 +30,7 @@ public class ArraySet<E> implements Set<E>, PrettyPrintable
 
   public ArraySet()
   {
-    this(new ArrayList<E>());
+    this(new ArrayList<>());
   }
 
   public ArraySet(List<E> els)

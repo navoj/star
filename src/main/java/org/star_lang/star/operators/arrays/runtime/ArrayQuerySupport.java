@@ -83,8 +83,8 @@ public class ArrayQuerySupport
     @CafeEnter
     public static Array enter(Array data, IFunction equalizer) throws EvaluationException
     {
-      HashSet<Integer> seenHashes = new HashSet<Integer>();
-      ArrayList<IValue> reslt = new ArrayList<IValue>(data.size());
+      HashSet<Integer> seenHashes = new HashSet<>();
+      ArrayList<IValue> reslt = new ArrayList<>(data.size());
 
       // only assume that two things that hash to different things are different
       for (IValue el : data) {

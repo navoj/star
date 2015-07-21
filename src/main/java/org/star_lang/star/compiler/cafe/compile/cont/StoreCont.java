@@ -54,7 +54,7 @@ public class StoreCont implements IContinuation
     CodeCatalog bldCat = ccxt.getBldCat();
     
     InsnList ins = mtd.instructions;
-    Expressions.checkType(src, var, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(src, var, mtd, dict, hwm);
 
     switch (var.getWhere()) {
     case freeVar:

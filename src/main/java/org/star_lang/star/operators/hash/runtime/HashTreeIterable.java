@@ -42,7 +42,7 @@ public class HashTreeIterable
     @CafeEnter
     public static IValue enter(IMap hash, IFunction iter, IValue state) throws EvaluationException
     {
-      for (Iterator<Entry<IValue, IValue>> it = hash.iterator(); it.hasNext() && !ArrayOps.isAllDone(state);) {
+      for (Iterator<Entry<IValue, IValue>> it = hash.iterator(); it.hasNext() && ArrayOps.moreToDo(state);) {
         Entry<IValue, IValue> entry = it.next();
         state = iter.enter(entry.getValue(), state);
       }
@@ -84,7 +84,7 @@ public class HashTreeIterable
     @CafeEnter
     public static IValue enter(IMap hash, IFunction iter, IValue state) throws EvaluationException
     {
-      for (Iterator<Entry<IValue, IValue>> it = hash.iterator(); it.hasNext() && !ArrayOps.isAllDone(state);) {
+      for (Iterator<Entry<IValue, IValue>> it = hash.iterator(); it.hasNext() && ArrayOps.moreToDo(state);) {
         Entry<IValue, IValue> entry = it.next();
         state = iter.enter(entry.getKey(), entry.getValue(), state);
       }

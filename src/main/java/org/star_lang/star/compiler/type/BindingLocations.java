@@ -25,7 +25,7 @@ import org.star_lang.star.data.type.TypeVar;
  */
 public class BindingLocations extends AbstractTypeVisitor<Set<Location>>
 {
-  private Set<Location> bindingLocations = new TreeSet<Location>();
+  private Set<Location> bindingLocations = new TreeSet<>();
 
   public static Set<Location> bindingLocations(IType type)
   {

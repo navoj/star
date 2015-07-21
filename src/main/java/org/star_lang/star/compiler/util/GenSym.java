@@ -27,7 +27,7 @@ public class GenSym
   @SuppressWarnings("unused")
   private static final long varJvmId = Math.abs((long) new UID().hashCode());
 
-  private static Map<String, Long> counters = new HashMap<String, Long>();
+  private static Map<String, Long> counters = new HashMap<>();
 
   public static String genSym(String prefix)
   {

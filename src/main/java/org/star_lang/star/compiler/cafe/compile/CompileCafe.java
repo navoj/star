@@ -108,7 +108,7 @@ public class CompileCafe
       program.superName = Utils.javaInternalClassName(Object.class);
       program.sourceFile = loc.getSrc();
 
-      CafeDictionary dict = new CafeDictionary(path, program, repository);
+      CafeDictionary dict = new CafeDictionary(path, program);
 
       HWM initHwm = new HWM();
 
@@ -323,7 +323,7 @@ public class CompileCafe
         if (manifest != null) {
           dict.addEntries(manifest.getDefs());
 
-          importPkgTypes(new HashSet<ResourceURI>(), uri, loc, repository, dict, errors);
+          importPkgTypes(new HashSet<>(), uri, loc, repository, dict, errors);
           dict.addImport(uri);
         } else
           errors.reportError("expecting manifest for " + pkgRef, loc);

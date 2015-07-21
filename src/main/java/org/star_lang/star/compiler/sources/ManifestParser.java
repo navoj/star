@@ -50,32 +50,29 @@ import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.Resources;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+import javax.annotation.Resource;
+
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
-public class ManifestParser implements CodeParser
-{
+public class ManifestParser implements CodeParser {
   public static final String MANIFEST = "manifest";
   public static final String EXTENSION = "manifest";
 
   /**
    * parse a manifest source file which looks like:
-   * 
+   * <p>
    * <pre>
    * name is manifest{
    *   type foo is ....
@@ -87,8 +84,7 @@ public class ManifestParser implements CodeParser
    * </pre>
    */
   @Override
-  public CodeTree parse(ResourceURI uri, ErrorReport errors)
-  {
+  public CodeTree parse(ResourceURI uri, ErrorReport errors) {
     try (Reader rdr = Resources.getReader(uri)) {
       return parse(uri, rdr, errors);
     } catch (ResourceException | IOException e) {
@@ -98,8 +94,7 @@ public class ManifestParser implements CodeParser
   }
 
   @Override
-  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException
-  {
+  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException {
     try (InputStreamReader rdr = new InputStreamReader(input)) {
       return parse(uri, rdr, errors);
     } catch (IOException e) {
@@ -107,18 +102,16 @@ public class ManifestParser implements CodeParser
     }
   }
 
-  private CodeTree parse(ResourceURI uri, Reader rdr, ErrorReport errors) throws ResourceException
-  {
+  private CodeTree parse(ResourceURI uri, Reader rdr, ErrorReport errors) throws ResourceException {
     OpGrammar parser = new OpGrammar(Operators.operatorRoot(), errors);
     int mark = errors.errorCount();
 
-    IAbstract term = null;
-    term = parser.parse(uri, rdr, null);
+    IAbstract term = parser.parse(uri, rdr, null);
 
     // Check for name is manifest...
     if (term != null && CompilerUtils.isIsForm(term)
-        && CompilerUtils.isPackageIdentifier(CompilerUtils.isFormPattern(term))
-        && CompilerUtils.isBraceTerm(CompilerUtils.isFormValue(term), MANIFEST)) {
+            && CompilerUtils.isPackageIdentifier(CompilerUtils.isFormPattern(term))
+            && CompilerUtils.isBraceTerm(CompilerUtils.isFormValue(term), MANIFEST)) {
       String manifestName = CompilerUtils.getPackageIdentifier(CompilerUtils.isFormPattern(term));
       List<ITypeDescription> types = new ArrayList<>();
       List<ITypeAlias> aliases = new ArrayList<>();
@@ -126,8 +119,10 @@ public class ManifestParser implements CodeParser
       Map<String, Set<ContractImplementation>> implementations = new HashMap<>();
       Map<String, Pair<IAbstract, IType>> defaults = new HashMap<>();
       Map<String, IAbstract> integrities = new HashMap<>();
+      List<ResourceURI> imports = new ArrayList<>();
       IType pkgType = null;
       String pkgName = null;
+      String pkgHash = null;
       ResourceURI manifestURI = null;
       Dictionary cxt = Dict.baseDict();
 
@@ -137,7 +132,7 @@ public class ManifestParser implements CodeParser
           aliases.add(alias);
         } else if (CompilerUtils.isTypeDefn(stmt)) {
           ITypeDescription desc = TypeParser.parseTypeDefinition(stmt, defaults, integrities, cxt.fork(), cxt, errors,
-              true);
+                  true);
           types.add(desc);
           cxt.defineType(desc);
         } else if (CompilerUtils.isContractStmt(stmt)) {
@@ -172,7 +167,7 @@ public class ManifestParser implements CodeParser
             if (errors.noNewErrors(errMark)) {
               IType implType = Refresher.generalize(TypeUtils.overloadedType(required, conType), tVars);
               Variable implVar = new OverloadedVariable(stmt.getLoc(), implType, Freshen.generalizeType(conType),
-                  implVarName);
+                      implVarName);
               String conName = conType.typeLabel();
               ContractImplementation implementation = new ContractImplementation(conName, implVar, isDefault);
               Set<ContractImplementation> impls = implementations.get(conName);
@@ -204,12 +199,27 @@ public class ManifestParser implements CodeParser
             }
           } else
             errors.reportError("illegal uri spec " + manifestValue, stmt.getLoc());
+        } else if (CompilerUtils.isIsForm(stmt) && Abstract.isIdentifier(CompilerUtils.isFormPattern(stmt), Manifest.PKGHASH)) {
+          IAbstract manifestValue = CompilerUtils.isFormValue(stmt);
+          if (manifestValue instanceof StringLiteral) {
+            pkgHash = Abstract.getString(manifestValue);
+          } else
+            errors.reportError("illegal package hash spec " + manifestValue, stmt.getLoc());
+        } else if (CompilerUtils.isEquals(stmt) && CompilerUtils.isIdentifier(CompilerUtils.equalityLhs(stmt), Manifest.IMPORTS) &&
+                CompilerUtils.isSquareSequenceTerm(CompilerUtils.equalityRhs(stmt))) {
+          IAbstract importAst = CompilerUtils.squareContent(CompilerUtils.equalityRhs(stmt));
+          for (IAbstract imp : CompilerUtils.unWrap(importAst, StandardNames.COMMA)) {
+            if (Abstract.isString(imp)) {
+              String res = Abstract.getString(imp);
+              imports.add(ResourceURI.parseURI(res));
+            }
+          }
         } else
           errors.reportError("unknown statement type: " + stmt + " in manifest", stmt.getLoc());
       }
 
       if (errors.noNewErrors(mark))
-        return new Manifest(manifestURI, manifestName, types, aliases, contracts, pkgType, pkgName);
+        return new Manifest(manifestURI, manifestName, pkgHash, types, aliases, contracts, imports, pkgType, pkgName);
     } else
       errors.reportError("not a valid manifest", Location.location(uri));
     return null;
@@ -217,8 +227,7 @@ public class ManifestParser implements CodeParser
   }
 
   @Override
-  public String getExtension()
-  {
+  public String getExtension() {
     return EXTENSION;
   }
 }

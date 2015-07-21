@@ -38,9 +38,9 @@ public class WffEngine
   public static final boolean traceValidation = System.getProperty("TRACE_VALIDATION", "false")
       .equalsIgnoreCase("true");
 
-  Map<String, Set<IAbstract>> assertions = new HashMap<String, Set<IAbstract>>();
+  Map<String, Set<IAbstract>> assertions = new HashMap<>();
   private final ErrorReport errors;
-  private final Stack<WffProgram> wffProgramStack = new Stack<WffProgram>();
+  private final Stack<WffProgram> wffProgramStack = new Stack<>();
 
   public WffEngine(ErrorReport errors, WffProgram wffProgram)
   {
@@ -95,7 +95,7 @@ public class WffEngine
         {
           if (!overridden)
           {
-            rules = new Bag<WffRule>(rules);
+            rules = new Bag<>(rules);
             overridden = true;
           }
           rules.addAll(lst.getRules());
@@ -123,7 +123,7 @@ public class WffEngine
     Set<IAbstract> line = assertions.get(label);
     if (line == null)
     {
-      line = new HashSet<IAbstract>();
+      line = new HashSet<>();
       assertions.put(label, line);
     }
     line.add(term);

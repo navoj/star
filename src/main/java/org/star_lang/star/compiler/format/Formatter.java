@@ -116,7 +116,7 @@ public class Formatter
   private String format(String original)
   {
     FormatPolicy policies = new FormatPolicy(0, original.length());
-    Stack<FormatPolicy> policyStack = new Stack<FormatPolicy>();
+    Stack<FormatPolicy> policyStack = new Stack<>();
     int ix = 0;
     int oLength = original.length();
 

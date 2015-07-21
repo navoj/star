@@ -21,26 +21,23 @@ import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
 
 @SuppressWarnings("serial")
-public class Array implements IArray, PrettyPrintable
-{
+public class Array implements IArray, PrettyPrintable {
   public static final String label = "list";
 
   private final ArrayBase base;
@@ -49,8 +46,7 @@ public class Array implements IArray, PrettyPrintable
 
   private int hash;
 
-  public Array(ArrayBase base, int first, int last)
-  {
+  public Array(ArrayBase base, int first, int last) {
     this.base = base;
     this.first = first;
     this.last = last;
@@ -60,8 +56,7 @@ public class Array implements IArray, PrettyPrintable
     assert last <= base.lastUsed();
   }
 
-  public Array(Collection<? extends IValue> values)
-  {
+  public Array(Collection<? extends IValue> values) {
     this.base = new ArrayBase(values, 0);
     this.first = base.firstUsed();
     this.last = base.lastUsed();
@@ -70,35 +65,29 @@ public class Array implements IArray, PrettyPrintable
   public static Array nilArray = new Array(new ArrayBase(0), 0, 0);
 
   @Override
-  public boolean isEmpty()
-  {
+  public boolean isEmpty() {
     return last == first;
   }
 
   @Override
-  public int size()
-  {
+  public int size() {
     return last - first;
   }
 
-  public ArrayBase getBase()
-  {
+  public ArrayBase getBase() {
     return base;
   }
 
-  public int getFirst()
-  {
+  public int getFirst() {
     return first;
   }
 
-  public int getLast()
-  {
+  public int getLast() {
     return last;
   }
 
   @Override
-  public IValue getCell(int index)
-  {
+  public IValue getCell(int index) {
     int ix = index + first;
     if (index < 0 || ix > last)
       throw new IndexOutOfBoundsException("array index " + index + " not in range 0.." + size());
@@ -106,8 +95,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array tail()
-  {
+  public Array tail() {
     if (isEmpty())
       throw new ArrayIndexOutOfBoundsException();
     else
@@ -115,8 +103,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IList substituteCell(int index, IValue value)
-  {
+  public IList substituteCell(int index, IValue value) {
     int ix = index + first;
 
     if (index >= 0 && ix < last) {
@@ -128,8 +115,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IArray spliceList(IArray sub, int index, int to)
-  {
+  public IArray spliceList(IArray sub, int index, int to) {
     if (index < 0)
       throw new IndexOutOfBoundsException("splice: index: " + index + " should be greater than or equal to zero");
     else if (to < index)
@@ -161,8 +147,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IArray concatList(IArray sub)
-  {
+  public IArray concatList(IArray sub) {
     synchronized (base) {
       int subSize = sub.size();
       if (last == base.lastUsed() && last + subSize < base.limit()) {
@@ -187,8 +172,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array slice(int from, int to)
-  {
+  public Array slice(int from, int to) {
     assert from >= 0 && to >= from;
     to = Math.min(to, size());
     if (from == 0 && to == size())
@@ -198,16 +182,14 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array slice(int from)
-  {
+  public Array slice(int from) {
     assert from >= 0;
     from = Math.min(from + first, last);
     return new Array(base, from, last);
   }
 
   @Override
-  public int hashCode()
-  {
+  public int hashCode() {
     if (hash == 0) {
       hash = label.hashCode();
       for (IValue el : this) {
@@ -218,8 +200,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public boolean equals(Object obj)
-  {
+  public boolean equals(Object obj) {
     if (obj instanceof Array) {
       Array other = (Array) obj;
       if (other.size() == size()) {
@@ -234,8 +215,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public boolean equals(IList other, IFunction test) throws EvaluationException
-  {
+  public boolean equals(IList other, IFunction test) throws EvaluationException {
     int arity = size();
 
     if (other instanceof IArray && other.size() == arity) {
@@ -250,8 +230,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array deleteUsingPattern(IPattern filter) throws EvaluationException
-  {
+  public Array deleteUsingPattern(IPattern filter) throws EvaluationException {
     int count = 0;
     IValue[] data = base.data();
     boolean[] flags = new boolean[data.length];
@@ -277,8 +256,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array updateUsingPattern(IPattern filter, IFunction transform) throws EvaluationException
-  {
+  public Array updateUsingPattern(IPattern filter, IFunction transform) throws EvaluationException {
     int count = 0;
     IValue[] data = base.data();
     IValue[] nData = null;
@@ -306,23 +284,19 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IArray mapOver(IFunction transform) throws EvaluationException
-  {
+  public IArray mapOver(IFunction transform) throws EvaluationException {
     ArrayBase newBase = new ArrayBase(size());
 
-    for (Iterator<IValue> it = iterator(); it.hasNext();)
-      newBase.append(transform.enter(it.next()));
+    for (IValue iValue : this) newBase.append(transform.enter(iValue));
 
     return new Array(newBase, newBase.firstUsed(), newBase.lastUsed());
   }
 
   @Override
-  public IArray filter(IFunction test) throws EvaluationException
-  {
+  public IArray filter(IFunction test) throws EvaluationException {
     ArrayBase newBase = new ArrayBase(size());
 
-    for (Iterator<IValue> it = iterator(); it.hasNext();) {
-      IValue el = it.next();
+    for (IValue el : this) {
       if (Factory.boolValue(test.enter(el)))
         newBase.append(el);
     }
@@ -331,16 +305,14 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IValue leftFold(IFunction transform, IValue state) throws EvaluationException
-  {
+  public IValue leftFold(IFunction transform, IValue state) throws EvaluationException {
     for (IValue el : this)
       state = transform.enter(state, el);
     return state;
   }
 
   @Override
-  public IValue leftFold1(IFunction transform) throws EvaluationException
-  {
+  public IValue leftFold1(IFunction transform) throws EvaluationException {
     Iterator<IValue> it = iterator();
     if (it.hasNext()) {
       IValue st = it.next();
@@ -354,8 +326,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IValue rightFold(IFunction transform, IValue state) throws EvaluationException
-  {
+  public IValue rightFold(IFunction transform, IValue state) throws EvaluationException {
     for (int ix = size() - 1; ix >= 0; ix--)
       state = transform.enter(getCell(ix), state);
 
@@ -363,8 +334,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IValue rightFold1(IFunction transform) throws EvaluationException
-  {
+  public IValue rightFold1(IFunction transform) throws EvaluationException {
     if (!isEmpty()) {
       int ix = size() - 1;
 
@@ -377,60 +347,51 @@ public class Array implements IArray, PrettyPrintable
       throw new EvaluationException("array is empty");
   }
 
-  private static int overhang(int size)
-  {
+  private static int overhang(int size) {
     return (size >> 3) + 10;
   }
 
-  private static int overhang(int first, int last)
-  {
+  private static int overhang(int first, int last) {
     return overhang(last - first);
   }
 
   @Override
-  public IType getType()
-  {
+  public IType getType() {
     if (last > first)
       return TypeUtils.arrayType(getCell(0).getType());
     else
       return TypeUtils.arrayType(new TypeVar());
   }
 
-  public static IType conType()
-  {
+  public static IType conType() {
     TypeVar tv = new TypeVar();
     return new UniversalType(tv, TypeUtils.tupleConstructorType(tv, TypeUtils.arrayType(tv)));
   }
 
   @Override
-  public IValue copy() throws EvaluationException
-  {
+  public IValue copy() throws EvaluationException {
     IValue[] data = base.data();
     int overhang = overhang(size());
     IValue[] newData = new IValue[size() + 2 * overhang];
-    int off = overhang;
     int size = size();
     for (int ix = 0; ix < size; ix++)
-      newData[ix + off] = data[ix + first].copy();
+      newData[ix + overhang] = data[ix + first].copy();
     return new Array(new ArrayBase(newData, overhang, size + overhang), overhang, size + overhang);
   }
 
   @Override
-  public Array shallowCopy()
-  {
+  public Array shallowCopy() {
     int overhang = overhang(size());
     return new Array(base.cloneBase(first, last, overhang), overhang, size() + overhang);
   }
 
   @Override
-  public void accept(IValueVisitor visitor)
-  {
+  public void accept(IValueVisitor visitor) {
     visitor.visitList(this);
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     int mark = disp.markIndent(2);
     disp.append("list of [");
     String sep = "";
@@ -448,14 +409,12 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 
   @Override
-  public Array addCell(IValue el) throws EvaluationException
-  {
+  public Array addCell(IValue el) throws EvaluationException {
     synchronized (base) {
       if (last == base.lastUsed() && base.lastUsed() < base.limit()) {
         base.append(el);
@@ -469,8 +428,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array consCell(IValue el) throws EvaluationException
-  {
+  public Array consCell(IValue el) throws EvaluationException {
     synchronized (base) {
       if (first == base.firstUsed() && base.firstUsed() > 0) {
         base.prepend(el);
@@ -484,8 +442,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array addCells(Collection<IValue> values) throws EvaluationException
-  {
+  public Array addCells(Collection<IValue> values) throws EvaluationException {
     synchronized (base) {
       int vSize = values.size();
       if (last == base.lastUsed() && base.lastUsed() + vSize < base.limit()) {
@@ -500,8 +457,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IList concat(IList sub) throws EvaluationException
-  {
+  public IList concat(IList sub) throws EvaluationException {
     synchronized (base) {
       int vSize = sub.size();
       if (last == base.lastUsed() && base.lastUsed() + vSize < base.limit()) {
@@ -518,8 +474,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public Array removeCell(int ix)
-  {
+  public Array removeCell(int ix) {
     int offset = ix + first;
     if (offset == first)
       return new Array(base, first + 1, last);
@@ -532,8 +487,7 @@ public class Array implements IArray, PrettyPrintable
   }
 
   @Override
-  public IArray reverse()
-  {
+  public IArray reverse() {
     int overhang = overhang(size());
     ArrayBase newBase = new ArrayBase(size() + overhang);
 
@@ -544,36 +498,31 @@ public class Array implements IArray, PrettyPrintable
     return new Array(newBase, newBase.firstUsed(), newBase.lastUsed());
   }
 
-  public static void declare(ITypeContext cxt)
-  {
+  public static void declare() {
     TypeVar tv = new TypeVar();
-    cxt.defineType(new CafeTypeDescription(new UniversalType(tv, TypeUtils.arrayType(tv)), Array.class
-        .getCanonicalName()));
+    org.star_lang.star.operators.Intrinsics.declare(new CafeTypeDescription(new UniversalType(tv, TypeUtils.arrayType(tv)), Array.class
+            .getCanonicalName()));
   }
 
-  public static Array newArray(Collection<IValue> data)
-  {
+  public static Array newArray(Collection<IValue> data) {
     ArrayBase base = new ArrayBase(data, data.size() / 20);
     return new Array(base, base.firstUsed(), base.lastUsed());
   }
 
-  public static Array newArray(Iterator<IValue> it, int approx)
-  {
+  public static Array newArray(Iterator<IValue> it, int approx) {
     ArrayBase base = new ArrayBase(overhang(approx));
     while (it.hasNext())
       base.append(it.next());
     return new Array(base, base.firstUsed(), base.lastUsed());
   }
 
-  public static Array newArray(IValue[] data)
-  {
+  public static Array newArray(IValue[] data) {
     ArrayBase base = new ArrayBase(data, 0, data.length);
     return new Array(base, 0, data.length);
   }
 
   @Override
-  public Iterator<IValue> iterator()
-  {
-    return new ArrayIterator<IValue>(base.data(), first, last);
+  public Iterator<IValue> iterator() {
+    return new ArrayIterator<>(base.data(), first, last);
   }
 }

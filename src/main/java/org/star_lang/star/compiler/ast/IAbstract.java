@@ -51,7 +51,7 @@ public interface IAbstract extends IConstructor
 
   astType astType();
 
-  public enum astType {
+  enum astType {
     Bool, Char, Int, Long, Flt, Dec, Str, Name, Apply
-  };
+  }
 }

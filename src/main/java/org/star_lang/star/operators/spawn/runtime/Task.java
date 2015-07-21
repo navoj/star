@@ -50,7 +50,7 @@ public class Task implements PrettyPrintable, Callable<IValue>
   
   private final static ScheduledExecutorService scheduledRunner = Executors.newSingleThreadScheduledExecutor(new DaemonThreads());
 
-  private final static ThreadLocal<IValue> currentFiber = new ThreadLocal<IValue>();
+  private final static ThreadLocal<IValue> currentFiber = new ThreadLocal<>();
   
   public static IValue getCurrentFiber(IFunction createNew) throws EvaluationException
   {

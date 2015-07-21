@@ -28,7 +28,7 @@ import org.star_lang.star.compiler.util.Wrapper;
 @SuppressWarnings("serial")
 public class LiveMap implements PrettyPrintable
 {
-  private final List<Zone> live = new ArrayList<Zone>();
+  private final List<Zone> live = new ArrayList<>();
   private int depth = 0;
   private final Wrapper<Integer> maxDepth;
 

@@ -277,7 +277,7 @@ public abstract class Location implements PrettyPrintable, IConstructor {
     @Override
     public boolean sameLine(Location other) {
       if (other instanceof SomeWhere)
-        return ((SomeWhere) other).getLineCnt() == getLineCnt();
+        return other.getLineCnt() == getLineCnt();
       else
         return false;
     }
@@ -545,7 +545,7 @@ public abstract class Location implements PrettyPrintable, IConstructor {
     ConstructorSpecifier nullSpec = new ConstructorSpecifier(nullLoc, null, nowhere, 1,
             TypeUtils.constructorType(type), NoWhere.class, Location.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(locSpec);
     specs.add(nullSpec);
 

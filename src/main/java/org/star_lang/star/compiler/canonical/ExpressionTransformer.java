@@ -172,7 +172,7 @@ public abstract class ExpressionTransformer
     public IContentExpression transformExp(IContentExpression exp)
     {
       RecordTerm record = (RecordTerm) exp;
-      SortedMap<String, IContentExpression> args = new TreeMap<String, IContentExpression>();
+      SortedMap<String, IContentExpression> args = new TreeMap<>();
       IContentExpression fun = transform(record.getFun());
       boolean clean = fun == record.getFun();
       for (Entry<String, IContentExpression> entry : record.getArguments().entrySet()) {
@@ -236,7 +236,7 @@ public abstract class ExpressionTransformer
     public IContentExpression transformExp(IContentExpression exp)
     {
       CaseExpression caseExp = (CaseExpression) exp;
-      List<Pair<IContentPattern, IContentExpression>> newCases = new ArrayList<Pair<IContentPattern, IContentExpression>>();
+      List<Pair<IContentPattern, IContentExpression>> newCases = new ArrayList<>();
 
       for (Entry<IContentPattern, IContentExpression> entry : caseExp.getCases()) {
         newCases.add(Pair.pair(transform(entry.getKey()), transform(entry.getValue())));
@@ -358,7 +358,7 @@ public abstract class ExpressionTransformer
     public IContentExpression transformExp(IContentExpression exp)
     {
       LetTerm let = (LetTerm) exp;
-      List<IStatement> newEnv = new ArrayList<IStatement>();
+      List<IStatement> newEnv = new ArrayList<>();
       for (IStatement entry : let.getEnvironment())
         newEnv.add(transform(entry));
 
@@ -504,7 +504,7 @@ public abstract class ExpressionTransformer
     public IContentExpression transformExp(IContentExpression exp)
     {
       ConstructorTerm tpl = (ConstructorTerm) exp;
-      List<IContentExpression> els = new ArrayList<IContentExpression>();
+      List<IContentExpression> els = new ArrayList<>();
       List<IContentExpression> tplEls = tpl.getElements();
       boolean dirty = false;
       for (IContentExpression el : tplEls) {
@@ -907,7 +907,7 @@ public abstract class ExpressionTransformer
     public IContentAction transformAction(IContentAction act)
     {
       CaseAction cA = (CaseAction) act;
-      List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<Pair<IContentPattern, IContentAction>>();
+      List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
       for (Pair<IContentPattern, IContentAction> entry : cA.getCases()) {
         cases.add(Pair.pair(transform(entry.getKey()), transform(entry.getValue())));
       }
@@ -982,7 +982,7 @@ public abstract class ExpressionTransformer
     public IContentAction transformAction(IContentAction act)
     {
       LetAction let = (LetAction) act;
-      List<IStatement> newEnv = new ArrayList<IStatement>();
+      List<IStatement> newEnv = new ArrayList<>();
       for (IStatement entry : let.getEnvironment())
         newEnv.add(transform(entry));
 
@@ -1068,7 +1068,7 @@ public abstract class ExpressionTransformer
     public IContentAction transformAction(IContentAction act)
     {
       Sequence seq = (Sequence) act;
-      List<IContentAction> lst = new ArrayList<IContentAction>();
+      List<IContentAction> lst = new ArrayList<>();
       for (IContentAction acts : seq.getActions())
         lst.add(transform(acts));
       return new Sequence(act.getLoc(), act.getType(), lst);
@@ -1089,7 +1089,7 @@ public abstract class ExpressionTransformer
     {
       SyncAction sync = (SyncAction) act;
       IContentExpression sel = transform(sync.getSel());
-      Map<ICondition, IContentAction> conditions = new HashMap<ICondition, IContentAction>();
+      Map<ICondition, IContentAction> conditions = new HashMap<>();
       for (Entry<ICondition, IContentAction> entry : sync.getBody().entrySet()) {
         conditions.put(transform(entry.getKey()), transform(entry.getValue()));
       }
@@ -1158,7 +1158,7 @@ public abstract class ExpressionTransformer
     public IContentPattern transformPtn(IContentPattern ptn)
     {
       RecordPtn rec = (RecordPtn) ptn;
-      Map<String, IContentPattern> nEls = new TreeMap<String, IContentPattern>();
+      Map<String, IContentPattern> nEls = new TreeMap<>();
       for (Entry<String, IContentPattern> entry : rec.getElements().entrySet()) {
         nEls.put(entry.getKey(), transform(entry.getValue()));
       }
@@ -1275,7 +1275,7 @@ public abstract class ExpressionTransformer
     public IContentPattern transformPtn(IContentPattern ptn)
     {
       ConstructorPtn con = (ConstructorPtn) ptn;
-      List<IContentPattern> nEls = new ArrayList<IContentPattern>();
+      List<IContentPattern> nEls = new ArrayList<>();
       for (IContentPattern el : con.getElements())
         nEls.add(transform(el));
       return new ConstructorPtn(ptn.getLoc(), con.getLabel(), ptn.getType(), nEls);
@@ -1503,11 +1503,11 @@ public abstract class ExpressionTransformer
     Class<? extends IStatement> transformClass();
   }
 
-  private final Map<Class<? extends IContentExpression>, TransformExpression> expTransformers = new HashMap<Class<? extends IContentExpression>, TransformExpression>();
-  private final Map<Class<? extends IContentPattern>, TransformPattern> ptnTransformers = new HashMap<Class<? extends IContentPattern>, TransformPattern>();
-  private final Map<Class<? extends IContentAction>, TransformAction> actTransformers = new HashMap<Class<? extends IContentAction>, TransformAction>();
-  private final Map<Class<? extends ICondition>, TransformCondition> condTransformers = new HashMap<Class<? extends ICondition>, TransformCondition>();
-  private final Map<Class<? extends IStatement>, TransformStatement> stmtTransformers = new HashMap<Class<? extends IStatement>, TransformStatement>();
+  private final Map<Class<? extends IContentExpression>, TransformExpression> expTransformers = new HashMap<>();
+  private final Map<Class<? extends IContentPattern>, TransformPattern> ptnTransformers = new HashMap<>();
+  private final Map<Class<? extends IContentAction>, TransformAction> actTransformers = new HashMap<>();
+  private final Map<Class<? extends ICondition>, TransformCondition> condTransformers = new HashMap<>();
+  private final Map<Class<? extends IStatement>, TransformStatement> stmtTransformers = new HashMap<>();
 
   protected void install(TransformExpression tr)
   {

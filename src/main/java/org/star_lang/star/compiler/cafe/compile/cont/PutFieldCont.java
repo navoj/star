@@ -55,7 +55,7 @@ public class PutFieldCont implements IContinuation
     CodeCatalog bldCat = ccxt.getBldCat();
 
     InsnList ins = mtd.instructions;
-    Expressions.checkType(src, fieldSpec, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(src, fieldSpec, mtd, dict, hwm);
     ins.add(new FieldInsnNode(Opcodes.PUTFIELD, owner, fieldName, fieldSpec.getJavaSig()));
     return SrcSpec.prcSrc;
   }

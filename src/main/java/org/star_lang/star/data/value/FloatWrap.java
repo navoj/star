@@ -103,7 +103,7 @@ public abstract class FloatWrap implements PrettyPrintable, IConstructor
     ConstructorSpecifier nonSpec = new ConstructorSpecifier(Location.nullLoc, null, StandardTypes.NON_FLOAT,
         NonFloat.CONIX, TypeUtils.constructorType(intType), NonFloat.class, FloatWrap.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(strSpec);
     specs.add(nonSpec);
     ITypeDescription type = new CafeTypeDescription(Location.nullLoc, intType, Utils

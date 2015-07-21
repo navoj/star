@@ -23,7 +23,7 @@ import java.util.Stack;
 @SuppressWarnings("serial")
 public class UndoManager implements Serializable
 {
-  private Stack<UpdateEntry> resetStack = new Stack<UpdateEntry>();
+  private Stack<UpdateEntry> resetStack = new Stack<>();
 
   public void pushUndo(UpdateEntry entry)
   {

@@ -80,7 +80,7 @@ public class FreeVariables extends DefaultVisitor
   public void visitOverloadedVariable(OverloadedVariable var)
   {
     if (cxt.isDefinedVar(var.getName())) {
-      if (!freeVars.contains(var) && !excluder.isExcluded(var.getName())) {
+      if (!freeVars.contains(var) && excluder.isNotExcluded(var.getName())) {
         DictInfo info = cxt.getVar(var.getName());
         if (!(info instanceof BuiltinInfo))
           freeVars.add(var);
@@ -106,7 +106,7 @@ public class FreeVariables extends DefaultVisitor
   public void visitVariable(Variable var)
   {
     if (cxt.isDefinedVar(var.getName())) {
-      if (!freeVars.contains(var) && !excluder.isExcluded(var.getName())) {
+      if (!freeVars.contains(var) && excluder.isNotExcluded(var.getName())) {
         DictInfo info = cxt.getVar(var.getName());
         if (!(info instanceof BuiltinInfo))
           freeVars.add(var);
@@ -216,7 +216,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static Variable[] findFreeVars(Canonical term, final Dictionary cxt)
   {
-    final List<Variable> freeVars = new ArrayList<Variable>();
+    final List<Variable> freeVars = new ArrayList<>();
 
     FreeVariables visitor = new FreeVariables(freeVars, cxt);
 
@@ -227,7 +227,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static Variable[] freeFreeVars(Variable[] exclude, Canonical term, Dictionary cxt)
   {
-    final List<Variable> freeVars = new ArrayList<Variable>();
+    final List<Variable> freeVars = new ArrayList<>();
 
     FreeVariables visitor = new FreeVariables(freeVars, cxt);
 
@@ -241,7 +241,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static Variable[] freeFreeVars(IContentPattern[] exclude, Canonical term, Dictionary cxt)
   {
-    final List<Variable> freeVars = new ArrayList<Variable>();
+    final List<Variable> freeVars = new ArrayList<>();
 
     FreeVariables visitor = new FreeVariables(freeVars, cxt);
 
@@ -255,7 +255,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static List<Variable> freeVars(Canonical term, Dictionary cxt)
   {
-    final List<Variable> freeVars = new ArrayList<Variable>();
+    final List<Variable> freeVars = new ArrayList<>();
 
     FreeVariables visitor = new FreeVariables(freeVars, cxt);
 
@@ -266,7 +266,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static List<Variable> findAllVars(Canonical term, Dictionary cxt)
   {
-    List<Variable> freeVars = new ArrayList<Variable>();
+    List<Variable> freeVars = new ArrayList<>();
     FreeVariables visitor = new FreeVariables(freeVars, null) {
 
       @Override
@@ -285,7 +285,7 @@ public class FreeVariables extends DefaultVisitor
       public void visitVariable(Variable var)
       {
         if (!cxt.isDefinedVar(var.getName()))
-          if (!freeVars.contains(var) && !excluder.isExcluded(var.getName()))
+          if (!freeVars.contains(var) && excluder.isNotExcluded(var.getName()))
             freeVars.add(var);
       }
     };
@@ -297,7 +297,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static List<Variable> freeTermVars(ICondition term, final Dictionary cxt)
   {
-    final List<Variable> freeVars = new ArrayList<Variable>();
+    final List<Variable> freeVars = new ArrayList<>();
 
     FreeVariables visitor = new FreeVariables(freeVars, cxt);
 
@@ -308,7 +308,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static boolean varPresent(final IContentExpression tgt, IContentPattern terms[])
   {
-    final Wrapper<Boolean> found = new Wrapper<Boolean>(false);
+    final Wrapper<Boolean> found = new Wrapper<>(false);
 
     CanonicalVisitor finder = new DefaultVisitor(true) {
 
@@ -340,7 +340,7 @@ public class FreeVariables extends DefaultVisitor
 
   public static boolean isFreeIn(final Variable tgt, IContentExpression exp)
   {
-    final Wrapper<Boolean> found = new Wrapper<Boolean>(false);
+    final Wrapper<Boolean> found = new Wrapper<>(false);
 
     CanonicalVisitor finder = new DefaultVisitor(true) {
       @Override

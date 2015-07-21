@@ -51,7 +51,7 @@ import org.star_lang.star.compiler.util.TopologySort.IDefinition;
 public class FlowAnalysis
 {
 
-  static IContentPattern extractPtn(IContentPattern ptn, Wrapper<ICondition> extra)
+  private static IContentPattern extractPtn(IContentPattern ptn, Wrapper<ICondition> extra)
   {
     while (ptn instanceof WherePattern) {
       WherePattern where = (WherePattern) ptn;
@@ -61,8 +61,8 @@ public class FlowAnalysis
     return ptn;
   }
 
-  public static void mergeDefined(List<Variable> leftDefined, List<Variable> rightDefined, List<Variable> defined,
-      List<Variable> required)
+  private static void mergeDefined(List<Variable> leftDefined, List<Variable> rightDefined, List<Variable> defined,
+                                   List<Variable> required)
   {
     for (Variable left : leftDefined) {
       if (rightDefined.contains(left)) {
@@ -74,16 +74,16 @@ public class FlowAnalysis
     }
   }
 
-  static void analyseExp(IContentExpression exp, final List<Variable> predDefined, final List<Variable> predRequired,
-      final List<Variable> definedVars, final List<Variable> candidates)
+  private static void analyseExp(IContentExpression exp, final List<Variable> predDefined, final List<Variable> predRequired,
+                                 final List<Variable> definedVars, final List<Variable> candidates)
   {
     final CanonicalVisitor analyser = new ExpressionAnalyser(predRequired, candidates);
 
     exp.accept(analyser);
   }
 
-  static void analysePtn(IContentPattern ptn, final List<Variable> predDefined, final List<Variable> predRequired,
-      final List<Variable> definedVars, final List<Variable> candidates)
+  private static void analysePtn(IContentPattern ptn, final List<Variable> predDefined, final List<Variable> predRequired,
+                                 final List<Variable> definedVars, final List<Variable> candidates)
   {
     final CanonicalVisitor analyser = new DefaultVisitor(true) {
       @Override
@@ -171,8 +171,8 @@ public class FlowAnalysis
       analyseCondition(conj.getRhs(), definedVars, defined, required, candidates);
     } else if (qTerm instanceof Disjunction) {
       Disjunction disj = (Disjunction) qTerm;
-      List<Variable> leftDefined = new ArrayList<Variable>();
-      List<Variable> rightDefined = new ArrayList<Variable>();
+      List<Variable> leftDefined = new ArrayList<>();
+      List<Variable> rightDefined = new ArrayList<>();
 
       analyseCondition(disj.getLhs(), definedVars, leftDefined, required, candidates);
       analyseCondition(disj.getRhs(), definedVars, rightDefined, required, candidates);
@@ -180,13 +180,13 @@ public class FlowAnalysis
       mergeDefined(leftDefined, rightDefined, defined, required);
     } else if (qTerm instanceof Negation) {
       Negation neg = (Negation) qTerm;
-      List<Variable> rightDefined = new ArrayList<Variable>();
+      List<Variable> rightDefined = new ArrayList<>();
 
       analyseCondition(neg.getNegated(), definedVars, rightDefined, required, candidates);
     } else if (qTerm instanceof Otherwise) {
       Otherwise other = (Otherwise) qTerm;
-      List<Variable> leftDefined = new ArrayList<Variable>();
-      List<Variable> rightDefined = new ArrayList<Variable>();
+      List<Variable> leftDefined = new ArrayList<>();
+      List<Variable> rightDefined = new ArrayList<>();
 
       analyseCondition(other.getLhs(), definedVars, leftDefined, required, candidates);
       analyseCondition(other.getRhs(), definedVars, rightDefined, required, candidates);
@@ -195,8 +195,8 @@ public class FlowAnalysis
     } else if (qTerm instanceof ConditionCondition) {
       ConditionCondition cond = (ConditionCondition) qTerm;
       analyseCondition(cond.getTest(), definedVars, defined, required, candidates);
-      List<Variable> leftDefined = new ArrayList<Variable>();
-      List<Variable> rightDefined = new ArrayList<Variable>();
+      List<Variable> leftDefined = new ArrayList<>();
+      List<Variable> rightDefined = new ArrayList<>();
 
       analyseCondition(cond.getLhs(), definedVars, leftDefined, required, candidates);
       analyseCondition(cond.getRhs(), definedVars, rightDefined, required, candidates);
@@ -210,7 +210,7 @@ public class FlowAnalysis
       ;
     else if (qTerm instanceof Implies) {
       Implies implies = (Implies) qTerm;
-      List<Variable> rightDefined = new ArrayList<Variable>();
+      List<Variable> rightDefined = new ArrayList<>();
 
       analyseCondition(implies.getGenerate(), definedVars, rightDefined, required, candidates);
       analyseCondition(implies.getTest(), definedVars, rightDefined, required, candidates);
@@ -218,10 +218,10 @@ public class FlowAnalysis
       assert false : "cannot deal with condition";
   }
 
-  static FlowInfo analyseQTerm(ICondition qTerm, List<Variable> definedVars, List<Variable> candidates)
+  private static FlowInfo analyseQTerm(ICondition qTerm, List<Variable> definedVars, List<Variable> candidates)
   {
-    List<Variable> defined = new ArrayList<Variable>();
-    List<Variable> required = new ArrayList<Variable>();
+    List<Variable> defined = new ArrayList<>();
+    List<Variable> required = new ArrayList<>();
 
     analyseCondition(qTerm, definedVars, defined, required, candidates);
     return new FlowInfo(qTerm, required, defined);
@@ -234,7 +234,7 @@ public class FlowAnalysis
    * @param conjuncts
    * @param defined
    */
-  static void mergeEqualities(List<ICondition> conjuncts, List<Variable> defined)
+  private static void mergeEqualities(List<ICondition> conjuncts, List<Variable> defined)
   {
     boolean done = false;
 
@@ -248,7 +248,7 @@ public class FlowAnalysis
         if (cond instanceof Search) {
           Search pred = (Search) cond;
 
-          List<Variable> newlyDefined = new ArrayList<Variable>(defined);
+          List<Variable> newlyDefined = new ArrayList<>(defined);
 
           IContentPattern ptn = extractPtn(pred.getPtn(), extra);
           VarAnalysis.findDefinedVars(ptn, newlyDefined);
@@ -280,7 +280,7 @@ public class FlowAnalysis
           }
         } else if (cond instanceof ListSearch) {
           ListSearch pred = (ListSearch) cond;
-          List<Variable> newlyDefined = new ArrayList<Variable>(defined);
+          List<Variable> newlyDefined = new ArrayList<>(defined);
 
           IContentPattern ptn = extractPtn(pred.getPtn(), extra);
           VarAnalysis.findDefinedVars(ptn, newlyDefined);
@@ -290,11 +290,11 @@ public class FlowAnalysis
             if (CompilerUtils.isEquality(test)) {
               if (!VarAnalysis.allDefined(CompilerUtils.equalityLhs(test), newlyDefined)) {
                 jx++;
-                continue searchLoop;
+                continue;
               }
               if (!VarAnalysis.allDefined(CompilerUtils.equalityRhs(test), newlyDefined)) {
                 jx++;
-                continue searchLoop;
+                continue;
               }
 
               conjuncts.remove(jx);
@@ -317,7 +317,7 @@ public class FlowAnalysis
     }
   }
 
-  static void deConj(ICondition qury, List<ICondition> conjuncts)
+  private static void deConj(ICondition qury, List<ICondition> conjuncts)
   {
     if (qury instanceof Conjunction) {
       Conjunction conj = (Conjunction) qury;
@@ -327,21 +327,21 @@ public class FlowAnalysis
       conjuncts.add(qury);
   }
 
-  static List<FlowInfo> parseConjuncts(ICondition query, List<Variable> definedVars, List<Variable> candidates)
+  private static List<FlowInfo> parseConjuncts(ICondition query, List<Variable> definedVars, List<Variable> candidates)
   {
-    List<ICondition> conjuncts = new ArrayList<ICondition>();
+    List<ICondition> conjuncts = new ArrayList<>();
     deConj(query, conjuncts);
 
     mergeEqualities(conjuncts, definedVars);
 
-    List<FlowInfo> flow = new ArrayList<FlowInfo>();
+    List<FlowInfo> flow = new ArrayList<>();
     for (ICondition qTerm : conjuncts)
       flow.add(analyseQTerm(qTerm, definedVars, candidates));
 
     return flow;
   }
 
-  static List<FlowInfo> sortConjuncts(List<FlowInfo> conjuncts)
+  private static List<FlowInfo> sortConjuncts(List<FlowInfo> conjuncts)
   {
     if (conjuncts.isEmpty() || conjuncts.size() == 1)
       return conjuncts;

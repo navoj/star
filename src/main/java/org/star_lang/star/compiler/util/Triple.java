@@ -49,7 +49,7 @@ public class Triple<S, M, T> implements PrettyPrintable
 
   public static <S, M, T> Triple<S, M, T> create(S lft, M mdl, T rgt)
   {
-    return new Triple<S, M, T>(lft, mdl, rgt);
+    return new Triple<>(lft, mdl, rgt);
   }
 
   @Override

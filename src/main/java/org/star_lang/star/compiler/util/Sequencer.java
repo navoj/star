@@ -34,7 +34,7 @@ public interface Sequencer<T>
   boolean hasPrev();
 
   @SuppressWarnings("serial")
-  public static class SequenceException extends Error
+  class SequenceException extends Error
   {
     public SequenceException(String msg)
     {

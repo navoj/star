@@ -638,7 +638,7 @@ public abstract class ResourceURI implements PrettyPrintable, IConstructor, Comp
     ConstructorSpecifier nullSpec = new ConstructorSpecifier(Location.nullLoc, null, noUri, 1, TypeUtils
         .constructorType(uriType), NoUri.class, ResourceURI.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(uriSpec);
     specs.add(nullSpec);
 
@@ -652,7 +652,7 @@ public abstract class ResourceURI implements PrettyPrintable, IConstructor, Comp
     ConstructorSpecifier noAuthSpec = new ConstructorSpecifier(Location.nullLoc, null, URIAuthority.noAuthority, 1,
         TypeUtils.constructorType(authorityType), NoAuthority.class, URIAuthority.class);
 
-    List<IValueSpecifier> authSpecs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> authSpecs = new ArrayList<>();
     authSpecs.add(authSpec);
     authSpecs.add(noAuthSpec);
 

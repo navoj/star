@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
@@ -52,7 +53,7 @@ import org.star_lang.star.data.type.IType;
 
 public class ActionTransformer extends ExpressionTransformer
 {
-  private ActionTransformer(IType returnType, Dictionary dict, ErrorReport errors)
+  private ActionTransformer(Dictionary dict)
   {
     super(dict);
 
@@ -77,7 +78,7 @@ public class ActionTransformer extends ExpressionTransformer
   public static IContentAction transformValis(IContentAction action, IType returnType, Dictionary dict,
       ErrorReport errors)
   {
-    ActionTransformer transformer = new ActionTransformer(returnType, dict, errors);
+    ActionTransformer transformer = new ActionTransformer(dict);
     return transformer.transform(action);
   }
 
@@ -119,7 +120,7 @@ public class ActionTransformer extends ExpressionTransformer
     public IContentAction transformAction(IContentAction act)
     {
       CaseAction cA = (CaseAction) act;
-      List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<Pair<IContentPattern, IContentAction>>();
+      List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
       for (Pair<IContentPattern, IContentAction> entry : cA.getCases()) {
         cases.add(Pair.pair(entry.getKey(), transform(entry.getValue())));
       }
@@ -269,9 +270,7 @@ public class ActionTransformer extends ExpressionTransformer
     public IContentAction transformAction(IContentAction act)
     {
       Sequence seq = (Sequence) act;
-      List<IContentAction> lst = new ArrayList<IContentAction>();
-      for (IContentAction acts : seq.getActions())
-        lst.add(transform(acts));
+      List<IContentAction> lst = seq.getActions().stream().map(ActionTransformer.this::transform).collect(Collectors.toList());
       return new Sequence(act.getLoc(), act.getType(), lst);
     }
 
@@ -290,7 +289,7 @@ public class ActionTransformer extends ExpressionTransformer
     {
       SyncAction sync = (SyncAction) act;
       IContentExpression sel = sync.getSel();
-      Map<ICondition, IContentAction> conditions = new HashMap<ICondition, IContentAction>();
+      Map<ICondition, IContentAction> conditions = new HashMap<>();
       for (Entry<ICondition, IContentAction> entry : sync.getBody().entrySet()) {
         conditions.put(entry.getKey(), transform(entry.getValue()));
       }

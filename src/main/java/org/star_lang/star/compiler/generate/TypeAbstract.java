@@ -57,7 +57,7 @@ public class TypeAbstract<T> implements TypeTransformer<IAbstract, IAbstract, T>
 
   public static <T> IAbstract typeToAbstract(Location loc, IType type, ErrorReport errors, T cxt)
   {
-    TypeAbstract<T> generator = new TypeAbstract<T>(loc);
+    TypeAbstract<T> generator = new TypeAbstract<>(loc);
     return generator.convertType(type, cxt);
   }
 
@@ -82,7 +82,7 @@ public class TypeAbstract<T> implements TypeTransformer<IAbstract, IAbstract, T>
       return CafeSyntax.apply(loc, Names.ARROW, arg, res);
     } else {
       IAbstract tyCon = t.getTypeCon().transform(this, cxt);
-      List<IAbstract> typeArgs = new ArrayList<IAbstract>();
+      List<IAbstract> typeArgs = new ArrayList<>();
       for (IType tA : t.getTypeArgs())
         typeArgs.add(tA.transform(this, cxt));
 
@@ -93,7 +93,7 @@ public class TypeAbstract<T> implements TypeTransformer<IAbstract, IAbstract, T>
   @Override
   public IAbstract transformTupleType(TupleType t, T cxt)
   {
-    List<IAbstract> typeArgs = new ArrayList<IAbstract>();
+    List<IAbstract> typeArgs = new ArrayList<>();
     for (IType tA : t.getElTypes())
       typeArgs.add(tA.transform(this, cxt));
 

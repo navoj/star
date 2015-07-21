@@ -41,8 +41,8 @@ public abstract class CharSet implements PrettyPrintable, CharSetVisitable
     @Override
     boolean isCharInSet(int ch)
     {
-      for (int ix = 0; ix < chars.length; ix++)
-        if (chars[ix] == ch)
+      for (int aChar : chars)
+        if (aChar == ch)
           return true;
       return false;
     }

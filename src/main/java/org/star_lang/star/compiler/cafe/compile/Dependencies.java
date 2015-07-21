@@ -67,7 +67,7 @@ public class Dependencies
   {
     Set<String> pick = new HashSet<>();
     for (IAbstract def : definitions) {
-      defined(repository, loc, bldCat, errors, pick, def);
+      defined(pick, def);
     }
     return pick;
   }
@@ -77,13 +77,12 @@ public class Dependencies
   {
     Set<String> pick = new HashSet<>();
 
-    defined(repository, loc, bldCat, errors, pick, def);
+    defined(pick, def);
 
     return pick;
   }
 
-  private static void defined(CodeRepository repository, Location loc, CodeCatalog bldCat, ErrorReport errors,
-      Set<String> pick, IAbstract def)
+  private static void defined(Set<String> pick, IAbstract def)
   {
     if (CafeSyntax.isTypeDef(def)) {
       pick.add(CafeSyntax.typeDefName(def));

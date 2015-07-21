@@ -38,7 +38,7 @@ import org.star_lang.star.compiler.util.AccessMode;
  */
 public class Conditions
 {
-  private final static Map<String, ICompileCondition> handlers = new HashMap<String, ICompileCondition>();
+  private final static Map<String, ICompileCondition> handlers = new HashMap<>();
 
   static {
     handlers.put(Names.CONSTRUCT, new CompileTruthValue());
@@ -81,7 +81,6 @@ public class Conditions
           mtd.instructions.add(new JumpInsnNode(Opcodes.GOTO, elLabel));
           break;
         case jmpOnOk:
-          ;
         }
       else if (label.equals(Names.TRUE))
         switch (sense) {
@@ -89,7 +88,6 @@ public class Conditions
           mtd.instructions.add(new JumpInsnNode(Opcodes.GOTO, elLabel));
           break;
         case jmpOnFail:
-          ;
         }
       else
         errors.reportError("invalid conditonal: " + cond, cond.getLoc());

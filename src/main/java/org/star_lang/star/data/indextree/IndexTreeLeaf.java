@@ -87,7 +87,7 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
         newList.add(thisP);
       }
       newList.addAll(otherLeaf.leafs);
-      return new IndexTreeLeaf<K, V>(mask, newList);
+      return new IndexTreeLeaf<>(mask, newList);
     } else if (otherLeaf.isEmpty())
       return this;
     else if (isEmpty())
@@ -142,7 +142,7 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
         throw new IllegalStateException();
       }
 
-      return new IndexTreeNode<K, V>((short) cml, cm, L1, L2, R1, R2);
+      return new IndexTreeNode<>((short) cml, cm, L1, L2, R1, R2);
     }
   }
 

@@ -316,7 +316,7 @@ public class Subsume
           else
             return type;
         } else if (spec instanceof TypeExists) {
-          IType existent = ((TypeExists) spec).getType();
+          IType existent = spec.getType();
           if (!existent.equals(type))
             return checkAlias(existent);
         }

@@ -39,120 +39,104 @@ import org.star_lang.star.operators.string.runtime.ValueDisplay;
 
 /**
  * A RefCell holds the value of a re-assignable variable
- * 
+ * <p>
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
 
 @SuppressWarnings("serial")
-public abstract class RefCell implements IConstructor, PrettyPrintable
-{
+public abstract class RefCell implements IConstructor, PrettyPrintable {
   public static final String typeLabel = StandardNames.REF;
   public static final String VALUEFIELD = "value";
 
   private static final int itemOffset = 0;
 
-  public static class Cell extends RefCell
-  {
+  public static class Cell extends RefCell {
     public static final int conIx = 0;
     public static final String label = "_cell";
 
     public IValue value;
 
-    public Cell(IValue value)
-    {
+    public Cell(IValue value) {
       this.value = value;
     }
 
     @Override
-    public int conIx()
-    {
+    public int conIx() {
       return conIx;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
       return label;
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
       return 1;
     }
 
     @Override
-    public IValue getCell(int index)
-    {
+    public IValue getCell(int index) {
       switch (index) {
-      case itemOffset:
-        return value;
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          return value;
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
-    public IValue get___0()
-    {
+    public IValue get___0() {
       return value;
     }
 
     @Override
-    public IValue[] getCells()
-    {
-      return new IValue[] { value };
+    public IValue[] getCells() {
+      return new IValue[]{value};
     }
 
-    public void setItem(IValue value)
-    {
+    public void setItem(IValue value) {
       this.value = value;
     }
 
     @Override
-    public void setCell(int index, IValue value) throws EvaluationException
-    {
+    public void setCell(int index, IValue value) throws EvaluationException {
       switch (index) {
-      case itemOffset:
-        this.value = value;
-        return;
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          this.value = value;
+          return;
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
     @Override
-    public IConstructor copy() throws EvaluationException
-    {
+    public IConstructor copy() throws EvaluationException {
       return new Cell(value.copy());
     }
 
     @Override
-    public IConstructor shallowCopy() throws EvaluationException
-    {
+    public IConstructor shallowCopy() throws EvaluationException {
       return new Cell(value);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       return new TypeExp(typeLabel, value.getType());
     }
 
-    public static IType conType()
-    {
+    public static IType conType() {
       TypeVar tv = new TypeVar();
       return new UniversalType(tv, TypeUtils.tupleConstructorType(tv, new TypeExp(typeLabel, tv)));
     }
@@ -160,528 +144,446 @@ public abstract class RefCell implements IConstructor, PrettyPrintable
 
   /**
    * Cells for raw boolean values
-   * 
    */
-  public static class BoolCell extends RefCell
-  {
+  public static class BoolCell extends RefCell {
     public static final int conIx = 1;
     public static final String label = "_bool_cell";
 
     public boolean value;
 
-    public BoolCell(boolean value)
-    {
+    public BoolCell(boolean value) {
       this.value = value;
     }
 
     @Override
-    public int conIx()
-    {
+    public int conIx() {
       return conIx;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
       return label;
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
       return 1;
     }
 
     @Override
-    public IValue getCell(int index)
-    {
+    public IValue getCell(int index) {
       switch (index) {
-      case itemOffset:
-        return Factory.newBool(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          return Factory.newBool(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
-    public boolean get___0()
-    {
+    public boolean get___0() {
       return value;
     }
 
     @Override
-    public IValue[] getCells()
-    {
-      return new IValue[] { Factory.newBool(value) };
+    public IValue[] getCells() {
+      return new IValue[]{Factory.newBool(value)};
     }
 
-    public void setItem(boolean value)
-    {
+    public void setItem(boolean value) {
       this.value = value;
     }
 
     @Override
-    public void setCell(int index, IValue value) throws EvaluationException
-    {
+    public void setCell(int index, IValue value) throws EvaluationException {
       switch (index) {
-      case itemOffset:
-        this.value = Factory.boolValue(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          this.value = Factory.boolValue(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
     @Override
-    public IConstructor copy() throws EvaluationException
-    {
+    public IConstructor copy() throws EvaluationException {
       return new BoolCell(value);
     }
 
     @Override
-    public IConstructor shallowCopy() throws EvaluationException
-    {
+    public IConstructor shallowCopy() throws EvaluationException {
       return new BoolCell(value);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       return type();
     }
 
-    public static IType type()
-    {
+    public static IType type() {
       return new TypeExp(typeLabel, StandardTypes.rawBoolType);
     }
 
-    public static IType conType()
-    {
+    public static IType conType() {
       return TypeUtils.tupleConstructorType(StandardTypes.rawBoolType,
-          new TypeExp(typeLabel, StandardTypes.rawBoolType));
+              new TypeExp(typeLabel, StandardTypes.rawBoolType));
     }
   }
 
   /**
    * Cells for raw char values
-   * 
    */
-  public static class CharCell extends RefCell
-  {
+  public static class CharCell extends RefCell {
     public static final int conIx = 2;
     public static final String label = "_char_cell";
 
     public int value;
 
-    public CharCell(int value)
-    {
+    public CharCell(int value) {
       this.value = value;
     }
 
     @Override
-    public int conIx()
-    {
+    public int conIx() {
       return conIx;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
       return label;
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
       return 1;
     }
 
     @Override
-    public IValue getCell(int index)
-    {
+    public IValue getCell(int index) {
       switch (index) {
-      case itemOffset:
-        return Factory.newChar(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          return Factory.newChar(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
-    public int get___0()
-    {
+    public int get___0() {
       return value;
     }
 
     @Override
-    public IValue[] getCells()
-    {
-      return new IValue[] { Factory.newChar(value) };
+    public IValue[] getCells() {
+      return new IValue[]{Factory.newChar(value)};
     }
 
-    public void setItem(int value)
-    {
+    public void setItem(int value) {
       this.value = value;
     }
 
     @Override
-    public void setCell(int index, IValue value) throws EvaluationException
-    {
+    public void setCell(int index, IValue value) throws EvaluationException {
       switch (index) {
-      case itemOffset:
-        this.value = Factory.charValue(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          this.value = Factory.charValue(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
     @Override
-    public IConstructor copy() throws EvaluationException
-    {
+    public IConstructor copy() throws EvaluationException {
       return new CharCell(value);
     }
 
     @Override
-    public IConstructor shallowCopy() throws EvaluationException
-    {
+    public IConstructor shallowCopy() throws EvaluationException {
       return new CharCell(value);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       return type();
     }
 
-    public static IType type()
-    {
+    public static IType type() {
       return new TypeExp(typeLabel, StandardTypes.rawCharType);
     }
 
-    public static IType conType()
-    {
+    public static IType conType() {
       return TypeUtils.tupleConstructorType(StandardTypes.rawCharType,
-          new TypeExp(typeLabel, StandardTypes.rawCharType));
+              new TypeExp(typeLabel, StandardTypes.rawCharType));
     }
   }
 
   /**
    * Cells for raw integer values
    */
-  public static class IntegerCell extends RefCell
-  {
+  public static class IntegerCell extends RefCell {
     public static final int conIx = 3;
     public static final String label = "_integer_cell";
 
     public int value;
 
-    public IntegerCell(int value)
-    {
+    public IntegerCell(int value) {
       this.value = value;
     }
 
     @Override
-    public int conIx()
-    {
+    public int conIx() {
       return conIx;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
       return label;
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
       return 1;
     }
 
     @Override
-    public IValue getCell(int index)
-    {
+    public IValue getCell(int index) {
       switch (index) {
-      case itemOffset:
-        return Factory.newInt(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          return Factory.newInt(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
     @Override
-    public IValue[] getCells()
-    {
-      return new IValue[] { Factory.newInt(value) };
+    public IValue[] getCells() {
+      return new IValue[]{Factory.newInt(value)};
     }
 
-    public int get___0()
-    {
+    public int get___0() {
       return value;
     }
 
-    public void setItem(int value)
-    {
+    public void setItem(int value) {
       this.value = value;
     }
 
     @Override
-    public void setCell(int index, IValue value) throws EvaluationException
-    {
+    public void setCell(int index, IValue value) throws EvaluationException {
       switch (index) {
-      case itemOffset:
-        this.value = Factory.intValue(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          this.value = Factory.intValue(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
     @Override
-    public IConstructor copy() throws EvaluationException
-    {
+    public IConstructor copy() throws EvaluationException {
       return new IntegerCell(value);
     }
 
     @Override
-    public IConstructor shallowCopy() throws EvaluationException
-    {
+    public IConstructor shallowCopy() throws EvaluationException {
       return new IntegerCell(value);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       return type();
     }
 
-    public static IType type()
-    {
+    public static IType type() {
       return new TypeExp(typeLabel, StandardTypes.rawIntegerType);
     }
 
-    public static IType conType()
-    {
+    public static IType conType() {
       return TypeUtils.tupleConstructorType(StandardTypes.rawIntegerType, new TypeExp(typeLabel,
-          StandardTypes.rawIntegerType));
+              StandardTypes.rawIntegerType));
     }
   }
 
   /**
    * Cells for raw long values
-   * 
    */
-  public static class LongCell extends RefCell
-  {
+  public static class LongCell extends RefCell {
     public static final int conIx = 4;
     public static final String label = "_long_cell";
 
     public long value;
 
-    public LongCell(long value)
-    {
+    public LongCell(long value) {
       this.value = value;
     }
 
     @Override
-    public int conIx()
-    {
+    public int conIx() {
       return conIx;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
       return label;
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
       return 1;
     }
 
     @Override
-    public IValue getCell(int index)
-    {
+    public IValue getCell(int index) {
       switch (index) {
-      case itemOffset:
-        return Factory.newLng(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          return Factory.newLng(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
-    public long get___0()
-    {
+    public long get___0() {
       return value;
     }
 
     @Override
-    public IValue[] getCells()
-    {
-      return new IValue[] { Factory.newLng(value) };
+    public IValue[] getCells() {
+      return new IValue[]{Factory.newLng(value)};
     }
 
-    public void setItem(long value)
-    {
+    public void setItem(long value) {
       this.value = value;
     }
 
     @Override
-    public void setCell(int index, IValue value) throws EvaluationException
-    {
+    public void setCell(int index, IValue value) throws EvaluationException {
       switch (index) {
-      case itemOffset:
-        this.value = Factory.intValue(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          this.value = Factory.intValue(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
     @Override
-    public IConstructor copy() throws EvaluationException
-    {
+    public IConstructor copy() throws EvaluationException {
       return new LongCell(value);
     }
 
     @Override
-    public IConstructor shallowCopy() throws EvaluationException
-    {
+    public IConstructor shallowCopy() throws EvaluationException {
       return new LongCell(value);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       return type();
     }
 
-    public static IType type()
-    {
+    public static IType type() {
       return new TypeExp(typeLabel, StandardTypes.rawLongType);
     }
 
-    public static IType conType()
-    {
+    public static IType conType() {
       return TypeUtils.tupleConstructorType(StandardTypes.rawLongType,
-          new TypeExp(typeLabel, StandardTypes.rawLongType));
+              new TypeExp(typeLabel, StandardTypes.rawLongType));
     }
   }
 
   /**
    * Cells for raw float values
-   * 
    */
-  public static class FloatCell extends RefCell
-  {
+  public static class FloatCell extends RefCell {
     public static final int conIx = 5;
     public static final String label = "_float_cell";
 
     public double value;
 
-    public FloatCell(double value)
-    {
+    public FloatCell(double value) {
       this.value = value;
     }
 
     @Override
-    public int conIx()
-    {
+    public int conIx() {
       return conIx;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
       return label;
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
       return 1;
     }
 
     @Override
-    public IValue getCell(int index)
-    {
+    public IValue getCell(int index) {
       switch (index) {
-      case itemOffset:
-        return Factory.newFlt(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          return Factory.newFlt(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
-    public double get___0()
-    {
+    public double get___0() {
       return value;
     }
 
     @Override
-    public IValue[] getCells()
-    {
-      return new IValue[] { Factory.newFlt(value) };
+    public IValue[] getCells() {
+      return new IValue[]{Factory.newFlt(value)};
     }
 
-    public void setItem(double value)
-    {
+    public void setItem(double value) {
       this.value = value;
     }
 
     @Override
-    public void setCell(int index, IValue value) throws EvaluationException
-    {
+    public void setCell(int index, IValue value) throws EvaluationException {
       switch (index) {
-      case itemOffset:
-        this.value = Factory.fltValue(value);
-      default:
-        throw new IllegalAccessError("index out of range");
+        case itemOffset:
+          this.value = Factory.fltValue(value);
+        default:
+          throw new IllegalAccessError("index out of range");
       }
     }
 
     @Override
-    public IConstructor copy() throws EvaluationException
-    {
+    public IConstructor copy() throws EvaluationException {
       return new FloatCell(value);
     }
 
     @Override
-    public IConstructor shallowCopy() throws EvaluationException
-    {
+    public IConstructor shallowCopy() throws EvaluationException {
       return new FloatCell(value);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       return type();
     }
 
-    public static IType type()
-    {
+    public static IType type() {
       return new TypeExp(typeLabel, StandardTypes.rawFloatType);
     }
 
-    public static IType conType()
-    {
+    public static IType conType() {
       return TypeUtils.tupleConstructorType(StandardTypes.rawFloatType, new TypeExp(typeLabel,
-          StandardTypes.rawFloatType));
+              StandardTypes.rawFloatType));
     }
   }
 
   @Override
-  public void accept(IValueVisitor visitor)
-  {
+  public void accept(IValueVisitor visitor) {
     visitor.visitConstructor(this);
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     ValueDisplay.display(disp, this);
   }
 
@@ -690,19 +592,16 @@ public abstract class RefCell implements IConstructor, PrettyPrintable
    * NOT dereference the cell.
    */
   @Override
-  public int hashCode()
-  {
+  public int hashCode() {
     return super.hashCode();
   }
 
   @Override
-  public boolean equals(Object obj)
-  {
+  public boolean equals(Object obj) {
     return super.equals(obj);
   }
 
-  public static String cellLabel(IType type)
-  {
+  public static String cellLabel(IType type) {
     assert TypeUtils.isReferenceType(type);
     IType refType = TypeUtils.referencedType(type);
     if (TypeUtils.isRawBoolType(refType))
@@ -717,8 +616,7 @@ public abstract class RefCell implements IConstructor, PrettyPrintable
       return Cell.label;
   }
 
-  public static IType conType(IType type)
-  {
+  public static IType conType(IType type) {
     assert TypeUtils.isReferenceType(type);
     IType refType = TypeUtils.referencedType(type);
     if (TypeUtils.isRawBoolType(refType))
@@ -733,47 +631,45 @@ public abstract class RefCell implements IConstructor, PrettyPrintable
       return Cell.conType();
   }
 
-  public static RefCell cell(IValue el)
-  {
+  public static RefCell cell(IValue el) {
     return new Cell(el);
   }
 
-  public static void declare(Intrinsics cxt)
-  {
+  public static void declare() {
     Location nullLoc = Location.nullLoc;
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
 
     specs
-        .add(new ConstructorSpecifier(nullLoc, null, Cell.label, Cell.conIx, Cell.conType(), Cell.class, RefCell.class));
+            .add(new ConstructorSpecifier(nullLoc, null, Cell.label, Cell.conIx, Cell.conType(), Cell.class, RefCell.class));
     specs.add(new ConstructorSpecifier(nullLoc, null, BoolCell.label, BoolCell.conIx, BoolCell.conType(),
-        BoolCell.class, RefCell.class));
+            BoolCell.class, RefCell.class));
     specs.add(new ConstructorSpecifier(nullLoc, null, CharCell.label, CharCell.conIx, CharCell.conType(),
-        CharCell.class, RefCell.class));
+            CharCell.class, RefCell.class));
     specs.add(new ConstructorSpecifier(nullLoc, null, IntegerCell.label, IntegerCell.conIx, IntegerCell.conType(),
-        IntegerCell.class, RefCell.class));
+            IntegerCell.class, RefCell.class));
     specs.add(new ConstructorSpecifier(nullLoc, null, LongCell.label, LongCell.conIx, LongCell.conType(),
-        LongCell.class, RefCell.class));
+            LongCell.class, RefCell.class));
     specs.add(new ConstructorSpecifier(nullLoc, null, FloatCell.label, FloatCell.conIx, FloatCell.conType(),
-        FloatCell.class, RefCell.class));
+            FloatCell.class, RefCell.class));
 
     TypeVar tv = new TypeVar();
     ITypeDescription desc = new CafeTypeDescription(nullLoc, new UniversalType(tv, new TypeExp(typeLabel, tv)),
-        RefCell.class.getName(), specs);
+            RefCell.class.getName(), specs);
 
-    cxt.defineType(desc);
+    Intrinsics.declare(desc);
 
-    cxt.declareBuiltin(new GetRawBoolReference());
-    cxt.declareBuiltin(new GetRawCharReference());
-    cxt.declareBuiltin(new GetRawIntegerReference());
-    cxt.declareBuiltin(new GetRawLongReference());
-    cxt.declareBuiltin(new GetRawFloatReference());
-    cxt.declareBuiltin(new GetReference());
-    cxt.declareBuiltin(new RawBoolAssignment());
-    cxt.declareBuiltin(new RawCharAssignment());
-    cxt.declareBuiltin(new RawIntegerAssignment());
-    cxt.declareBuiltin(new RawLongAssignment());
-    cxt.declareBuiltin(new RawFloatAssignment());
-    cxt.declareBuiltin(new Assignment());
+    Intrinsics.declare(new GetRawBoolReference());
+    Intrinsics.declare(new GetRawCharReference());
+    Intrinsics.declare(new GetRawIntegerReference());
+    Intrinsics.declare(new GetRawLongReference());
+    Intrinsics.declare(new GetRawFloatReference());
+    Intrinsics.declare(new GetReference());
+    Intrinsics.declare(new RawBoolAssignment());
+    Intrinsics.declare(new RawCharAssignment());
+    Intrinsics.declare(new RawIntegerAssignment());
+    Intrinsics.declare(new RawLongAssignment());
+    Intrinsics.declare(new RawFloatAssignment());
+    Intrinsics.declare(new Assignment());
   }
 }

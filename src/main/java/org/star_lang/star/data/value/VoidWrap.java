@@ -63,7 +63,7 @@ public abstract class VoidWrap implements IConstructor, PrettyPrintable
     IType conType = TypeUtils.constructorType(voidType);
     ConstructorSpecifier voidSpec = new ConstructorSpecifier(Location.nullLoc, null, Void.name, 0, conType, Void.class,
         VoidWrap.class);
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(voidSpec);
     cxt.defineType(new CafeTypeDescription(Location.nullLoc, voidType, Utils.javaInternalClassName(VoidWrap.class),
         specs));

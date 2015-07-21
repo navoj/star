@@ -36,7 +36,7 @@ public class TypeInterfaceType extends AbstractType implements TypeInterface
 
   public TypeInterfaceType(SortedMap<String, IType> fields)
   {
-    this(new TreeMap<String, IType>(), fields);
+    this(new TreeMap<>(), fields);
   }
 
   public TypeInterfaceType(SortedMap<String, IType> types, SortedMap<String, IType> fields)
@@ -48,7 +48,7 @@ public class TypeInterfaceType extends AbstractType implements TypeInterface
 
   public TypeInterfaceType()
   {
-    this(new TreeMap<String, IType>());
+    this(new TreeMap<>());
   }
 
   @Override

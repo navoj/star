@@ -108,7 +108,7 @@ public class TypeAliaser implements TypeTransformer<IType, ITypeConstraint, Void
       } else
         return eType;
     } else if (type.kind() == Kind.type && typeSpec instanceof ITypeDescription) {
-      ITypeDescription desc = (TypeDescription) typeSpec;
+      ITypeDescription desc = typeSpec;
 
       try {
         Subsume.subsume(type, Freshen.freshenForUse(desc.getType()), loc, dict, true);

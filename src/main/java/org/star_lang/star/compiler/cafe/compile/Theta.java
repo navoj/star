@@ -614,7 +614,7 @@ public class Theta
 
         free.loadValue(mtd, hwm, dict);
 
-        Expressions.checkType(info, free, mtd, funDict, stackHWM, loc, errors, bldCat);
+        Expressions.checkType(info, free, mtd, funDict, stackHWM);
 
         // We are updating the owner of the variable...
         mtd.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, funDict.getOwnerName(), free.getJavaSafeName(), free
@@ -1075,7 +1075,7 @@ public class Theta
         ins.add(new TypeInsnNode(Opcodes.CHECKCAST, funDict.getOwnerName()));
         free.loadValue(mtd, hwm, thetaDict);
 
-        Expressions.checkType(info, free, mtd, funDict, hwm, loc, errors, bldCat);
+        Expressions.checkType(info, free, mtd, funDict, hwm);
 
         // We are updating the owner of the variable...
         ins.add(new FieldInsnNode(Opcodes.PUTFIELD, funDict.getOwnerName(), free.getJavaSafeName(), free.getJavaSig()));

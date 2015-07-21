@@ -58,7 +58,7 @@ public class Operators implements PrettyPrintable
 
   public Operators()
   {
-    this(new HashMap<String, Collection<Operator>>(), new HashMap<String, BracketPair>(), new HashSet<String>());
+    this(new HashMap<>(), new HashMap<>(), new HashSet<>());
   }
 
   private Operators(Map<String, Collection<Operator>> operators, Map<String, BracketPair> brackets,
@@ -738,7 +738,7 @@ public class Operators implements PrettyPrintable
       defineToken(token);
 
     for (Entry<String, BracketPair> entry : others.bracketPairs.entrySet()) {
-      BracketPair pair = (BracketPair) entry.getValue();
+      BracketPair pair = entry.getValue();
       try {
         defineBracketPair(pair.innerPriority, pair.leftBracket, pair.rightBracket, pair.operator);
       } catch (OperatorException e) {

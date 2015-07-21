@@ -47,7 +47,7 @@ public class RegexpParse
     NFA first = generateNFA(loc, regexp, errors, vars, cxt);
 
     if (regexp.hasNext() && conjNext(regexp.peek())) {
-      List<NFA> nfas = new ArrayList<NFA>();
+      List<NFA> nfas = new ArrayList<>();
       nfas.add(first);
       while (regexp.hasNext() && conjNext(regexp.peek())) {
         NFA el = generateNFA(loc, regexp, errors, vars, cxt);
@@ -173,8 +173,7 @@ public class RegexpParse
     while (regexp.hasNext() && Tokenizer.isIdentifierChar(regexp.peek()))
       vStr.appendCodePoint(regexp.next());
 
-    String var = vStr.toString();
-    return var;
+    return vStr.toString();
   }
 
   private static NFA grabName(Location loc, Sequencer<Integer> regexp, NFA left, Set<Variable> vars)
@@ -190,7 +189,7 @@ public class RegexpParse
 
   private static NFA charClass(Location loc, Sequencer<Integer> reg, ErrorReport errors)
   {
-    Set<Integer> set = new TreeSet<Integer>();
+    Set<Integer> set = new TreeSet<>();
     boolean negated = false;
     if (reg.hasNext() && reg.peek() == '^') {
       negated = true;

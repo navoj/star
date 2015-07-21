@@ -63,10 +63,7 @@ public class StdTransducer implements Transducer
   public boolean exists(ResourceURI uri) throws ResourceException
   {
     String path = uri.getPath();
-    if (StarRules.class.getResource(path) != null)
-      return true;
-    else
-      return false;
+    return StarRules.class.getResource(path) != null;
   }
 
   @Override

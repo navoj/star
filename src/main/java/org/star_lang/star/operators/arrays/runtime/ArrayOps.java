@@ -201,7 +201,7 @@ public class ArrayOps
     @CafeEnter
     public static IValue enter(IArray array, IFunction iter, IValue state) throws EvaluationException
     {
-      for (Iterator<IValue> it = array.iterator(); it.hasNext() && !isAllDone(state);)
+      for (Iterator<IValue> it = array.iterator(); it.hasNext() && moreToDo(state);)
         state = iter.enter(it.next(), state);
 
       return state;
@@ -242,7 +242,7 @@ public class ArrayOps
     {
       int ix = 0;
 
-      for (Iterator<IValue> it = array.iterator(); it.hasNext() && !isAllDone(state);)
+      for (Iterator<IValue> it = array.iterator(); it.hasNext() && moreToDo(state);)
         state = iter.enter(Factory.newInt(ix++), it.next(), state);
 
       return state;
@@ -275,13 +275,13 @@ public class ArrayOps
     }
   }
 
-  public static boolean isAllDone(IValue state)
+  public static boolean moreToDo(IValue state)
   {
     if (state instanceof IConstructor) {
       String label = ((IConstructor) state).getLabel();
-      return label.equals(StandardNames.NOMORE) || label.equals(StandardNames.ABORT_ITER);
+      return !label.equals(StandardNames.NOMORE) && !label.equals(StandardNames.ABORT_ITER);
     } else
-      return false;
+      return true;
   }
 
   public static class ArrayMap implements IFunction

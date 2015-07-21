@@ -754,10 +754,10 @@ public class CompilerUtils {
             || Abstract.isBinary(term, StandardNames.DESCENDINGBY)) && Abstract.isBinary(Abstract.binaryLhs(term),
             StandardNames.WHERE))
       return Abstract.argPath(term, 0, 0, 0);
-    else if (Abstract.isBinary(term, StandardNames.WHERE))
+    else {
+      assert Abstract.isBinary(term, StandardNames.WHERE);
       return Abstract.binaryLhs(term);
-    else
-      return null;
+    }
   }
 
   public static IAbstract queryCondition(IAbstract term) {

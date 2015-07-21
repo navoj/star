@@ -35,7 +35,7 @@ import org.star_lang.star.resource.Transducer;
  * @author fgm
  * 
  */
-public class ZipTranducer implements Transducer
+public class ZipTransducer implements Transducer
 {
   public static final String SCHEME = "zip";
 
@@ -65,8 +65,6 @@ public class ZipTranducer implements Transducer
           return new ByteArrayInputStream(contents);
         } else
           throw new ResourceException("cannot access zip entry " + uri);
-      } catch (ZipException e) {
-        throw new ResourceException("cannot access zip file " + uri.getPath(), e);
       } catch (IOException e) {
         throw new ResourceException("cannot access zip file " + uri.getPath(), e);
       }
@@ -94,8 +92,6 @@ public class ZipTranducer implements Transducer
     else {
       try (ZipFile zip = new ZipFile(zFile)) {
         return zip.getEntry(uri.getFragment()) != null;
-      } catch (ZipException e) {
-        throw new ResourceException("cannot access zip file " + uri.getPath(), e);
       } catch (IOException e) {
         throw new ResourceException("cannot access zip file " + uri.getPath(), e);
       }

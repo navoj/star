@@ -25,7 +25,7 @@ public class OperatorListener implements TokenListener
 {
   private enum State {
     idle, gotHash, gotDecl, gotOpenParen
-  };
+  }
 
   private State listenerState = State.idle;
   private final TokenChar charMap;

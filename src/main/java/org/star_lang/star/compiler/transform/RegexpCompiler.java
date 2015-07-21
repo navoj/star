@@ -59,33 +59,29 @@ import org.star_lang.star.operators.arith.runtime.IntCompare.IntGE;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntLE;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
- * @author fgm
  *
+ * @author fgm
  */
-public class RegexpCompiler
-{
+public class RegexpCompiler {
   private static final IType voidActionType = TypeUtils.actionType(StandardTypes.unitType);
 
   public static <T extends Canonical> T altAnalyseRegexps(Location loc, ConsList<IContentExpression> vars,
-      List<MatchTriple<T>> triples, T deflt, Dictionary cxt, Dictionary outer, Generate<T> gen,
-      List<Variable> definedVars, int depth, ErrorReport errors)
-  {
+                                                          List<MatchTriple<T>> triples, T deflt, Dictionary cxt, Dictionary outer, Generate<T> gen,
+                                                          List<Variable> definedVars, int depth, ErrorReport errors) {
     // IContentExpression var = vars.head();
     ConsList<IContentExpression> tail = vars.tail();
-    Map<IContentPattern, List<MatchTriple<T>>> caseMap = new HashMap<IContentPattern, List<MatchTriple<T>>>();
+    Map<IContentPattern, List<MatchTriple<T>>> caseMap = new HashMap<>();
 
     for (MatchTriple<T> tr : triples) {
       IContentPattern arg = tr.args.head();
@@ -95,34 +91,33 @@ public class RegexpCompiler
       List<MatchTriple<T>> eqnList = caseMap.get(regexp);
 
       if (eqnList == null) {
-        eqnList = new ArrayList<MatchTriple<T>>();
+        eqnList = new ArrayList<>();
         caseMap.put(regexp, eqnList);
       }
       eqnList.add(tr);
     }
 
     // Apply the match compiler to remaining arguments, and build a new table
-    List<Pair<RegExpPattern, T>> cases = new ArrayList<Pair<RegExpPattern, T>>();
+    List<Pair<RegExpPattern, T>> cases = new ArrayList<>();
     for (Entry<IContentPattern, List<MatchTriple<T>>> entry : caseMap.entrySet()) {
-      List<MatchTriple<T>> list = new ArrayList<MatchTriple<T>>();
+      List<MatchTriple<T>> list = new ArrayList<>();
 
       for (MatchTriple<T> tr1 : entry.getValue()) {
         ConsList<IContentPattern> nArgs = tr1.args.tail();
 
-        list.add(new MatchTriple<T>(nArgs, tr1.cond, tr1.body));
+        list.add(new MatchTriple<>(nArgs, tr1.cond, tr1.body));
       }
-      List<MatchTriple<T>> subTriples = list;
 
-      T nBody = MatchCompiler.compileMatch(loc, tail, subTriples, deflt, cxt, outer, gen, definedVars, depth - 1,
-          errors);
+      T nBody = MatchCompiler.compileMatch(loc, tail, list, deflt, cxt, outer, gen, definedVars, depth - 1,
+              errors);
 
       cases.add(Pair.pair((RegExpPattern) entry.getKey(), nBody));
     }
 
-    SortedMap<Integer, T> bodies = new TreeMap<Integer, T>();
-    Map<Integer, NFA> states = new HashMap<Integer, NFA>();
-    Map<Integer, List<Integer>> next = new HashMap<Integer, List<Integer>>();
-    Map<Integer, List<Integer>> first = new HashMap<Integer, List<Integer>>();
+    SortedMap<Integer, T> bodies = new TreeMap<>();
+    Map<Integer, NFA> states = new HashMap<>();
+    Map<Integer, List<Integer>> next = new HashMap<>();
+    Map<Integer, List<Integer>> first = new HashMap<>();
 
     int stateNo = 0;
     for (Pair<RegExpPattern, T> entry : cases) {
@@ -138,15 +133,14 @@ public class RegexpCompiler
     System.out.println(showStates(states, first));
     System.out.println(showStates(states, next));
 
-    Map<Integer, List<Integer>> follows = new HashMap<Integer, List<Integer>>();
+    Map<Integer, List<Integer>> follows = new HashMap<>();
     follow(states, first, next, follows);
     System.out.println(showStates(states, follows));
 
     return null;
   }
 
-  private static String showStates(Map<Integer, NFA> states, Map<Integer, List<Integer>> next)
-  {
+  private static String showStates(Map<Integer, NFA> states, Map<Integer, List<Integer>> next) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
 
     for (Entry<Integer, NFA> stEntry : states.entrySet()) {
@@ -174,116 +168,110 @@ public class RegexpCompiler
     return disp.toString();
   }
 
-  private static void markFirstState(NFA state, Map<Integer, List<Integer>> first)
-  {
+  private static void markFirstState(NFA state, Map<Integer, List<Integer>> first) {
     List<Integer> leading = getSubset(state.getStateNo(), first);
     markFirstState(state, first, leading);
   }
 
-  private static void markFirstState(NFA state, Map<Integer, List<Integer>> first, List<Integer> leading)
-  {
+  private static void markFirstState(NFA state, Map<Integer, List<Integer>> first, List<Integer> leading) {
     switch (state.nfaKind()) {
-    case charSetNFA:
-      setFirstState(state, leading);
-      break;
-    case disjunctNFA: {
-      Disjunct disj = (Disjunct) state;
-      markFirstState(disj.getLeft(), first, leading);
-      markFirstState(disj.getRight(), first, leading);
+      case charSetNFA:
+        setFirstState(state, leading);
+        break;
+      case disjunctNFA: {
+        Disjunct disj = (Disjunct) state;
+        markFirstState(disj.getLeft(), first, leading);
+        markFirstState(disj.getRight(), first, leading);
 
-      markFirstState(disj, first);
-      break;
-    }
-    case bindNFA:
-    case boundNFA:
-    case emptyNFA:
-      setFirstState(state, leading);
-      break;
-    case seqNFA: {
-      Sequence seq = (Sequence) state;
-      NFA els[] = seq.getEls();
+        markFirstState(disj, first);
+        break;
+      }
+      case bindNFA:
+      case boundNFA:
+      case emptyNFA:
+        setFirstState(state, leading);
+        break;
+      case seqNFA: {
+        Sequence seq = (Sequence) state;
+        NFA els[] = seq.getEls();
 
-      markFirstState(els[0], first, leading);
+        markFirstState(els[0], first, leading);
 
-      for (NFA el : els)
-        markFirstState(el, first);
-      break;
-    }
-    case starNFA: {
-      StarNFA star = (StarNFA) state;
-      markFirstState(star.getRepeat(), first, leading);
-      markFirstState(star.getRepeat(), first);
-      break;
-    }
-    case varNFA:
-    case endVarNFA:
-      setFirstState(state, leading);
-      break;
+        for (NFA el : els)
+          markFirstState(el, first);
+        break;
+      }
+      case starNFA: {
+        StarNFA star = (StarNFA) state;
+        markFirstState(star.getRepeat(), first, leading);
+        markFirstState(star.getRepeat(), first);
+        break;
+      }
+      case varNFA:
+      case endVarNFA:
+        setFirstState(state, leading);
+        break;
     }
   }
 
-  private static List<Integer> getSubset(int stateNo, Map<Integer, List<Integer>> states)
-  {
+  private static List<Integer> getSubset(int stateNo, Map<Integer, List<Integer>> states) {
     List<Integer> sub = states.get(stateNo);
     if (sub == null) {
-      sub = new ArrayList<Integer>();
+      sub = new ArrayList<>();
       states.put(stateNo, sub);
     }
     return sub;
   }
 
-  private static void setFirstState(NFA state, List<Integer> first)
-  {
+  private static void setFirstState(NFA state, List<Integer> first) {
     int stateNo = state.getStateNo();
     if (!first.contains(stateNo))
       first.add(stateNo);
   }
 
   // Record teh immediate follow on states, and return the first number of this state
-  private static int markNextState(NFA state, int nextNo, Map<Integer, List<Integer>> next)
-  {
+  private static int markNextState(NFA state, int nextNo, Map<Integer, List<Integer>> next) {
     switch (state.nfaKind()) {
-    case disjunctNFA: {
-      Disjunct disj = (Disjunct) state;
-      setNextState(state, markNextState(disj.getLeft(), nextNo, next), next);
-      setNextState(state, markNextState(disj.getRight(), nextNo, next), next);
-      return state.getStateNo();
-    }
-    case charSetNFA:
-    case bindNFA:
-    case boundNFA:
-    case emptyNFA:
-    case varNFA:
-    default:
-      setNextState(state, nextNo, next);
-      return state.getStateNo();
-    case seqNFA: {
-      Sequence seq = (Sequence) state;
-      setNextState(state, nextNo, next);
-
-      NFA els[] = seq.getEls();
-      for (int ix = els.length - 1; ix >= 0; ix--) {
-        markNextState(els[ix], nextNo, next);
-        nextNo = els[ix].getStateNo();
+      case disjunctNFA: {
+        Disjunct disj = (Disjunct) state;
+        setNextState(state, markNextState(disj.getLeft(), nextNo, next), next);
+        setNextState(state, markNextState(disj.getRight(), nextNo, next), next);
+        return state.getStateNo();
       }
-      return nextNo;
-    }
-    case starNFA: {
-      StarNFA star = (StarNFA) state;
-      setNextState(state, nextNo, next);
+      case charSetNFA:
+      case bindNFA:
+      case boundNFA:
+      case emptyNFA:
+      case varNFA:
+      default:
+        setNextState(state, nextNo, next);
+        return state.getStateNo();
+      case seqNFA: {
+        Sequence seq = (Sequence) state;
+        setNextState(state, nextNo, next);
 
-      nextNo = markNextState(star.getRepeat(), state.getStateNo(), next);
-      setNextState(state, nextNo, next);
-      return state.getStateNo();
-    }
+        NFA els[] = seq.getEls();
+        for (int ix = els.length - 1; ix >= 0; ix--) {
+          markNextState(els[ix], nextNo, next);
+          nextNo = els[ix].getStateNo();
+        }
+        return nextNo;
+      }
+      case starNFA: {
+        StarNFA star = (StarNFA) state;
+        setNextState(state, nextNo, next);
+
+        nextNo = markNextState(star.getRepeat(), state.getStateNo(), next);
+        setNextState(state, nextNo, next);
+        return state.getStateNo();
+      }
     }
   }
 
-  private static void setNextState(NFA state, Integer nextNo, Map<Integer, List<Integer>> next)
-  {
+  private static void setNextState(NFA state, Integer nextNo, Map<Integer, List<Integer>> next) {
     List<Integer> coming = next.get(state.getStateNo());
     if (coming == null) {
-      coming = new ArrayList<Integer>();
+      coming = new ArrayList<>();
       next.put(state.getStateNo(), coming);
     }
     if (!coming.contains(nextNo))
@@ -291,8 +279,7 @@ public class RegexpCompiler
   }
 
   private static void follow(Map<Integer, NFA> states, Map<Integer, List<Integer>> first,
-      Map<Integer, List<Integer>> next, Map<Integer, List<Integer>> follows)
-  {
+                             Map<Integer, List<Integer>> next, Map<Integer, List<Integer>> follows) {
     boolean modified = true;
     while (modified) {
       modified = false;
@@ -300,7 +287,7 @@ public class RegexpCompiler
         Integer sNo = entry.getKey();
         List<Integer> follow = follows.get(sNo);
         if (follow == null) {
-          follow = new ArrayList<Integer>();
+          follow = new ArrayList<>();
           follows.put(sNo, follow);
           mergeList(follow, entry.getValue(), modified);
           NFA nfa = states.get(sNo);
@@ -321,8 +308,7 @@ public class RegexpCompiler
     }
   }
 
-  private static boolean mergeList(List<Integer> list, Collection<Integer> add, boolean modified)
-  {
+  private static boolean mergeList(List<Integer> list, Collection<Integer> add, boolean modified) {
     if (add != null) {
       for (Integer ix : add)
         if (!list.contains(ix)) {
@@ -335,106 +321,101 @@ public class RegexpCompiler
 
   @SuppressWarnings("unused")
   private static IContentAction genNFAPreCode(NFA nfa, Map<Integer, NFA> states,
-      Map<Variable, VarDeclaration> varBinding, Variable collVar, Variable stateVar, Dictionary cxt, ErrorReport errors)
-  {
+                                              Map<Variable, VarDeclaration> varBinding, Variable collVar, Variable stateVar, Dictionary cxt, ErrorReport errors) {
     Location loc = nfa.getLoc();
     IType integerType = StandardTypes.integerType;
     IType stringType = StandardTypes.stringType;
 
     switch (nfa.nfaKind()) {
-    case bindNFA: {
-      BindNFA bind = (BindNFA) nfa;
-      VarDeclaration binding = varBinding.get(bind.getVar());
-      if (binding == null) {
-        Variable v = new Variable(loc, integerType, GenSym.genSym(bind.getVar().getName()));
-        binding = VarDeclaration.varDecl(loc, v, nonInteger(loc));
-        varBinding.put(bind.getVar(), binding);
+      case bindNFA: {
+        BindNFA bind = (BindNFA) nfa;
+        VarDeclaration binding = varBinding.get(bind.getVar());
+        if (binding == null) {
+          Variable v = new Variable(loc, integerType, GenSym.genSym(bind.getVar().getName()));
+          binding = VarDeclaration.varDecl(loc, v, nonInteger(loc));
+          varBinding.put(bind.getVar(), binding);
+        }
+        return new Assignment(loc, (Variable) binding.getPattern(), stateVar);
       }
-      return new Assignment(loc, (Variable) binding.getPattern(), stateVar);
-    }
-    case boundNFA: {
-      BoundNFA bound = (BoundNFA) nfa;
-      VarDeclaration binding = varBinding.get(bound.getVar());
+      case boundNFA: {
+        BoundNFA bound = (BoundNFA) nfa;
+        VarDeclaration binding = varBinding.get(bound.getVar());
 
-      assert binding != null;
-      Variable v = (Variable) binding.getPattern();
-      IContentExpression sliceFun = TypeChecker.typeOfName(loc, StandardNames.SLICE, TypeUtils.functionType(stringType,
-          integerType, integerType, stringType), cxt, errors);
-      IContentExpression slice = Application.apply(loc, stringType, sliceFun, collVar, v, stateVar);
-      return new Assignment(loc, bound.getVar(), slice);
-    }
-    case charSetNFA:
-    case disjunctNFA:
-    case seqNFA:
-    case starNFA:
-    case emptyNFA:
-    case varNFA:
-    case endVarNFA:
-    default:
-      return new NullAction(loc, voidActionType);
+        assert binding != null;
+        Variable v = (Variable) binding.getPattern();
+        IContentExpression sliceFun = TypeChecker.typeOfName(loc, StandardNames.SLICE, TypeUtils.functionType(stringType,
+                integerType, integerType, stringType), cxt, errors);
+        IContentExpression slice = Application.apply(loc, stringType, sliceFun, collVar, v, stateVar);
+        return new Assignment(loc, bound.getVar(), slice);
+      }
+      case charSetNFA:
+      case disjunctNFA:
+      case seqNFA:
+      case starNFA:
+      case emptyNFA:
+      case varNFA:
+      case endVarNFA:
+      default:
+        return new NullAction(loc, voidActionType);
     }
   }
 
   @SuppressWarnings("unused")
   private static IContentAction genNFAPostCode(NFA nfa, Map<Integer, NFA> states, Map<Integer, List<Integer>> follows,
-      Map<Variable, VarDeclaration> varBinding, Variable collVar, Variable chVar, IContentExpression stateVar,
-      Dictionary cxt, ErrorReport errors)
-  {
+                                               Map<Variable, VarDeclaration> varBinding, Variable collVar, Variable chVar, IContentExpression stateVar,
+                                               Dictionary cxt, ErrorReport errors) {
     Location loc = nfa.getLoc();
     IType integerType = StandardTypes.integerType;
     IType stringType = StandardTypes.stringType;
 
     switch (nfa.nfaKind()) {
-    case bindNFA: {
-      BindNFA bind = (BindNFA) nfa;
-      VarDeclaration binding = varBinding.get(bind.getVar());
-      if (binding == null) {
-        Variable v = new Variable(loc, TypeUtils.referencedType(integerType), GenSym.genSym(bind.getVar().getName()));
-        binding = VarDeclaration.varDecl(loc, v, nonInteger(loc));
-        varBinding.put(v, binding);
+      case bindNFA: {
+        BindNFA bind = (BindNFA) nfa;
+        VarDeclaration binding = varBinding.get(bind.getVar());
+        if (binding == null) {
+          Variable v = new Variable(loc, TypeUtils.referencedType(integerType), GenSym.genSym(bind.getVar().getName()));
+          binding = VarDeclaration.varDecl(loc, v, nonInteger(loc));
+          varBinding.put(v, binding);
+        }
+        return new Assignment(loc, (Variable) binding.getPattern(), stateVar);
       }
-      return new Assignment(loc, (Variable) binding.getPattern(), stateVar);
-    }
-    case boundNFA: {
-      BoundNFA bound = (BoundNFA) nfa;
-      VarDeclaration binding = varBinding.get(bound.getVar());
+      case boundNFA: {
+        BoundNFA bound = (BoundNFA) nfa;
+        VarDeclaration binding = varBinding.get(bound.getVar());
 
-      assert binding != null;
-      Variable v = (Variable) binding.getPattern();
-      IContentExpression sliceFun = TypeChecker.typeOfName(loc, StandardNames.SLICE, TypeUtils.functionType(stringType,
-          integerType, integerType, stringType), cxt, errors);
-      IContentExpression slice = Application.apply(loc, stringType, sliceFun, collVar, v, stateVar);
-      return new Assignment(loc, bound.getVar(), slice);
-    }
-    case charSetNFA: {
-      CharClassNFA chars = (CharClassNFA) nfa;
-      ICondition cond = genCharCondition(chars.getChars(), loc, chVar);
-    }
-    case disjunctNFA:
-    case seqNFA:
-    case starNFA:
-    case emptyNFA:
-    case varNFA:
-    case endVarNFA:
-    default:
-      return new NullAction(loc, voidActionType);
+        assert binding != null;
+        Variable v = (Variable) binding.getPattern();
+        IContentExpression sliceFun = TypeChecker.typeOfName(loc, StandardNames.SLICE, TypeUtils.functionType(stringType,
+                integerType, integerType, stringType), cxt, errors);
+        IContentExpression slice = Application.apply(loc, stringType, sliceFun, collVar, v, stateVar);
+        return new Assignment(loc, bound.getVar(), slice);
+      }
+      case charSetNFA: {
+        CharClassNFA chars = (CharClassNFA) nfa;
+        ICondition cond = genCharCondition(chars.getChars(), loc, chVar);
+      }
+      case disjunctNFA:
+      case seqNFA:
+      case starNFA:
+      case emptyNFA:
+      case varNFA:
+      case endVarNFA:
+      default:
+        return new NullAction(loc, voidActionType);
     }
   }
 
-  private static ICondition genCharCondition(CharSet spec, final Location loc, final Variable elVar)
-  {
-    final Stack<ICondition> stack = new Stack<ICondition>();
+  private static ICondition genCharCondition(CharSet spec, final Location loc, final Variable elVar) {
+    final Stack<ICondition> stack = new Stack<>();
     CharSetVisitor visitor = new CharSetVisitor() {
 
       @Override
-      public void visitAnyChar(AnyChar any)
-      {
+      public void visitAnyChar(AnyChar any) {
         stack.push(CompilerUtils.truth);
       }
 
       @Override
-      public void visitCharClass(CharClass set)
-      {
+      public void visitCharClass(CharClass set) {
         int chars[] = set.getChars();
         Arrays.sort(chars);
         int ix = 0;
@@ -446,13 +427,13 @@ public class RegexpCompiler
             second = chars[jx];
           if (first < second) {
             IsTrue lhs = new IsTrue(loc, Application.apply(loc, StandardTypes.booleanType, new Variable(loc, IntGE
-                .type(), IntGE.name), elVar, integer(loc, first)));
+                    .type(), IntGE.name), elVar, integer(loc, first)));
             ICondition rhs = new IsTrue(loc, Application.apply(loc, StandardTypes.booleanType, new Variable(loc, IntLE
-                .type(), IntLE.name), elVar, integer(loc, second)));
+                    .type(), IntLE.name), elVar, integer(loc, second)));
             stack.push(new Conjunction(loc, lhs, rhs));
           } else
             stack.push(new IsTrue(loc, Application.apply(loc, StandardTypes.booleanType, new Variable(loc,
-                IntEQ.type(), IntEQ.name), elVar, integer(loc, first))));
+                    IntEQ.type(), IntEQ.name), elVar, integer(loc, first))));
           count++;
           ix++;
         }
@@ -465,8 +446,7 @@ public class RegexpCompiler
       }
 
       @Override
-      public void visitUnion(CharUnion union)
-      {
+      public void visitUnion(CharUnion union) {
         union.accept(this);
         union.accept(this);
         ICondition right = stack.pop();
@@ -480,13 +460,11 @@ public class RegexpCompiler
     return stack.pop();
   }
 
-  private static IContentExpression nonInteger(Location loc)
-  {
+  private static IContentExpression nonInteger(Location loc) {
     return new ConstructorTerm(loc, IntWrap.nonIntegerEnum.getLabel(), StandardTypes.integerType);
   }
 
-  private static IContentExpression integer(Location loc, int ix)
-  {
+  private static IContentExpression integer(Location loc, int ix) {
     return new Scalar(loc, StandardTypes.rawIntegerType, ix);
   }
 }

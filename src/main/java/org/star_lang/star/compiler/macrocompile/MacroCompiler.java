@@ -424,7 +424,7 @@ public class MacroCompiler
       }
     };
 
-    return compileRules(loc, macroStmts, errors, dict, new HashSet<String>(), new HashSet<String>(), walker,
+    return compileRules(loc, macroStmts, errors, dict, new HashSet<>(), new HashSet<>(), walker,
         pkgMacroHandler, true);
   }
 

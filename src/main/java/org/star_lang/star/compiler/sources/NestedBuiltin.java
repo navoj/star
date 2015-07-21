@@ -62,8 +62,7 @@ public final class NestedBuiltin implements ICafeBuiltin
   @Override
   public String getJavaSig()
   {
-    String sig = Utils.javaTypeSig(klass);
-    return sig;
+    return Utils.javaTypeSig(klass);
   }
 
   @Override

@@ -68,7 +68,7 @@ public class DeclareLocal implements IContinuation
       v.setInited(true);
     }
 
-    Expressions.checkType(src, desc, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(src, desc, mtd, dict, hwm);
     int offset = v.getOffset();
 
     switch (v.getKind()) {

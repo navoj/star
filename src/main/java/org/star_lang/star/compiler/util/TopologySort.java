@@ -121,7 +121,7 @@ public class TopologySort<T>
 
     if (point == low) {
       // We have a group
-      List<IDefinition<T>> group = new ArrayList<IDefinition<T>>();
+      List<IDefinition<T>> group = new ArrayList<>();
       while (!stack.isEmpty()) {
         DefEntry entry = stack.peek();
         if (entry.stackOffset >= point) {

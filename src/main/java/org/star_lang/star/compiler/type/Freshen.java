@@ -280,7 +280,7 @@ public class Freshen implements TypeTransformer<IType, ITypeConstraint, IndexSet
   }
 
   private static class HandleVars implements VarHandler<Map<String, Quantifier>> {
-    protected final Map<String, Quantifier> foundTypes = new HistoricalMap<>();
+    final Map<String, Quantifier> foundTypes = new HistoricalMap<>();
 
     @Override
     public boolean checkVar(TypeVar var) {

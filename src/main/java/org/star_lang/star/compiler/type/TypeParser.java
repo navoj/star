@@ -747,7 +747,7 @@ public class TypeParser
       boolean isFallback)
   {
     Dictionary dict = cxt.fork();
-    TypeNameHandler varHandler = new RegularTypeName(dict, new HashMap<String, TypeVar>(), AccessMode.readOnly,
+    TypeNameHandler varHandler = new RegularTypeName(dict, new HashMap<>(), AccessMode.readOnly,
         suppress, errors);
     return parseContractImplType(tp, dict, varHandler, isFallback, errors);
   }

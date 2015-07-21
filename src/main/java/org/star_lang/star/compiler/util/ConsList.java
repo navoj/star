@@ -43,7 +43,7 @@ public class ConsList<T> implements PrettyPrintable, Iterable<T>
 
   public ConsList<T> cons(T el)
   {
-    return new ConsList<T>(el, this);
+    return new ConsList<>(el, this);
   }
 
   public T head()
@@ -123,7 +123,7 @@ public class ConsList<T> implements PrettyPrintable, Iterable<T>
 
   public static <T> ConsList<T> cons(T head, ConsList<T> tail)
   {
-    return new ConsList<T>(head, tail);
+    return new ConsList<>(head, tail);
   }
 
   public boolean isNil()

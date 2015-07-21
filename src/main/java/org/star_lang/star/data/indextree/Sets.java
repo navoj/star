@@ -32,7 +32,7 @@ public interface Sets<T> extends Iterable<T>, PrettyPrintable {
    *
    * @return the number of elements
    */
-  public int size();
+  int size();
 
   /**
    * test to see if an element is present

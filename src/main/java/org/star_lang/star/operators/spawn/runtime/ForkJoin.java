@@ -227,7 +227,7 @@ public class ForkJoin
     TypeVar tv = new TypeVar();
     IType fjtType = TypeUtils.typeExp(ForkJoinTaskWrap.name, tv);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
 
     cxt.defineType(new CafeTypeDescription(Location.nullLoc, new UniversalType(tv, fjtType), Utils
         .javaInternalClassName(ForkJoinTaskWrap.class), specs));

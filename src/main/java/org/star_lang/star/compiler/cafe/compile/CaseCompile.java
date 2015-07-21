@@ -259,7 +259,7 @@ public class CaseCompile
     ins.add(elLabel);
     ISpec elType = handler.compile(falseCase, dict, cont);
 
-    Expressions.checkType(trType, elType, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(trType, elType, mtd, dict, hwm);
     return trType;
   }
 
@@ -267,7 +267,7 @@ public class CaseCompile
   private static ISpec scalarCases(Location loc, VarInfo var, IList rules, IAbstract deflt, CafeDictionary dict,
       ErrorReport errors, ICaseCompile handler, IContinuation cont, CodeContext ccxt)
   {
-    Map<Integer, Pair<LabelNode, List<Pair<Literal, IAbstract>>>> cases = new TreeMap<Integer, Pair<LabelNode, List<Pair<Literal, IAbstract>>>>();
+    Map<Integer, Pair<LabelNode, List<Pair<Literal, IAbstract>>>> cases = new TreeMap<>();
 
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -285,7 +285,7 @@ public class CaseCompile
       int hash = lit.getLit().hashCode();
 
       if (!cases.containsKey(hash)) {
-        List<Pair<Literal, IAbstract>> entries = new ArrayList<Pair<Literal, IAbstract>>();
+        List<Pair<Literal, IAbstract>> entries = new ArrayList<>();
         cases.put(hash, Pair.pair(new LabelNode(), entries));
         entries.add(Pair.pair(lit, Abstract.binaryRhs(rl)));
       } else {
@@ -381,7 +381,6 @@ public class CaseCompile
           ins.add(new LdcInsnNode(((LongLiteral) cse.left()).getLit()));
           ins.add(new InsnNode(Opcodes.LCMP));
           ins.add(new JumpInsnNode(Opcodes.IFNE, test));
-          ;
           handler.compile(cse.right(), dict, reconcile);
           break;
         }

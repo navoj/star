@@ -403,7 +403,7 @@ public class StringOps {
       String str = Factory.stringValue(data);
 
       int ix = 0;
-      while (ix < str.length() && !ArrayOps.isAllDone(state)) {
+      while (ix < str.length() && ArrayOps.moreToDo(state)) {
         state = iter.enter(Factory.newChar(str.codePointAt(ix)), state);
         ix = str.offsetByCodePoints(ix, 1);
       }
@@ -475,7 +475,7 @@ public class StringOps {
     public static IValue enter(String str, IFunction iter, IValue state) throws EvaluationException {
       int ix = 0;
       int cx = 0;
-      while (ix < str.length() && !ArrayOps.isAllDone(state)) {
+      while (ix < str.length() && ArrayOps.moreToDo(state)) {
         state = iter.enter(Factory.newInt(cx++), Factory.newChar(str.codePointAt(ix)), state);
         ix = str.offsetByCodePoints(ix, 1);
       }

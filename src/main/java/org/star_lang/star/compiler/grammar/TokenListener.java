@@ -20,5 +20,5 @@ package org.star_lang.star.compiler.grammar;
 
 public interface TokenListener
 {
-  public void newToken(Token token);
+  void newToken(Token token);
 }

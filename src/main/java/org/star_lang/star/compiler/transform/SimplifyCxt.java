@@ -14,7 +14,7 @@ public class SimplifyCxt
 
   public SimplifyCxt()
   {
-    this(new HashMap<Resolved, Pair<Variable, Integer>>());
+    this(new HashMap<>());
   }
 
   public SimplifyCxt(Map<Resolved, Pair<Variable, Integer>> resolved)

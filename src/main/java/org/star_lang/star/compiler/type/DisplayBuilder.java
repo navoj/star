@@ -108,7 +108,7 @@ public class DisplayBuilder
     checkTypeAnnotations(theta, dict, printers, theta);
 
     if (!printers.isEmpty())
-      return new ComboIterable<IAbstract>(theta, printers.values());
+      return new ComboIterable<>(theta, printers.values());
     else
       return theta;
   }

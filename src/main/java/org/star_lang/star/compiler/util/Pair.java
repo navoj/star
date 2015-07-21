@@ -43,7 +43,7 @@ public class Pair<S, T> implements PrettyPrintable, Entry<S, T>
 
   public static <S, T> Pair<S, T> pair(S lft, T rgt)
   {
-    return new Pair<S, T>(lft, rgt);
+    return new Pair<>(lft, rgt);
   }
 
   @Override

@@ -58,7 +58,7 @@ public abstract class StringWrap implements IValue, PrettyPrintable
     ConstructorSpecifier nonSpec = new ConstructorSpecifier(Location.nullLoc, null, NonStringWrapper.name, 1,
         NonStringWrapper.conType(), NonStringWrapper.class, StringWrap.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(strSpec);
     specs.add(nonSpec);
     ITypeDescription type = new CafeTypeDescription(Location.nullLoc, stringType, Utils

@@ -1008,7 +1008,7 @@ public class TypeUtils {
           var = (TypeVar) type;
           String varName = var.getVarName();
 
-          if (!isExcluded(varName)) {
+          if (isNotExcluded(varName)) {
             if (isResolved.get()) {
               for (ITypeConstraint con : var)
                 if (con instanceof ContractConstraint) {

@@ -59,7 +59,7 @@ public class FmtCompile
     if (Abstract.isUnary(rule, StandardNames.META_HASH))
       return compileRule(Abstract.getArg(rule, 0), ruleSet, errors);
     if (Abstract.isBinary(rule, StandardNames.FMT_RULE)) {
-      Map<String, Integer> dict = new HashMap<String, Integer>();
+      Map<String, Integer> dict = new HashMap<>();
 
       final IAbstract ptnArg = Abstract.getArg(rule, 0);
 
@@ -166,7 +166,7 @@ public class FmtCompile
   {
     Location loc = bdy.getLoc();
     if (CompilerUtils.isAttributeSpec(bdy)) {
-      Map<String, IAttribute> attributes = new HashMap<String, IAttribute>();
+      Map<String, IAttribute> attributes = new HashMap<>();
       for (IAbstract el : CompilerUtils.unWrap(CompilerUtils.attributes(bdy), StandardNames.TERM))
         parseFmtAttribute(el, attributes, specificity, errors);
 

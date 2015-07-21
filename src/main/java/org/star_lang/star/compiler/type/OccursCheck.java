@@ -38,7 +38,7 @@ public class OccursCheck extends AbstractTypeVisitor<Void>
 {
   private final TypeVar var;
   private boolean found = false;
-  private Set<String> visited = new HashSet<String>();
+  private Set<String> visited = new HashSet<>();
   private final boolean occursCheck;
 
   private OccursCheck(TypeVar var, boolean occursCheck)
@@ -79,7 +79,7 @@ public class OccursCheck extends AbstractTypeVisitor<Void>
       var = (TypeVar) type;
       String varName = var.getVarName();
 
-      if (!isExcluded(varName)) {
+      if (isNotExcluded(varName)) {
         if (!visited.contains(varName)) {
           visited.add(varName);
           if (var.equals(this.var))

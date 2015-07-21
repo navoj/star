@@ -43,7 +43,7 @@ import org.star_lang.star.operators.string.runtime.ValueDisplay;
 @SuppressWarnings("serial")
 public class Record implements IRecord
 {
-  public static final Record _face_0_Enum = new Record(new HashMap<String, Integer>(), new IValue[] {});
+  public static final Record _face_0_Enum = new Record(new HashMap<>(), new IValue[] {});
 
   private final IValue[] els;
   private final Map<String, Integer> index;
@@ -194,7 +194,7 @@ public class Record implements IRecord
     ConstructorSpecifier tplSpec = new ConstructorSpecifier(Location.nullLoc, null, "__face", 0, conType, Record.class,
         Record.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(tplSpec);
 
     ITypeDescription locDesc = new CafeTypeDescription(Location.nullLoc, new UniversalType(tv, tplType), Record.class

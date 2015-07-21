@@ -46,7 +46,7 @@ public class SpawnOps
     @CafeEnter
     public static SpawnIdent enter(IFunction function)
     {
-      FutureTask<IValue> task = new FutureTask<IValue>(new Task(function));
+      FutureTask<IValue> task = new FutureTask<>(new Task(function));
       Task.scheduleFuture(task);
 
       return new ThreadId(TypeUtils.getFunResultType(function.getType()), task);
@@ -78,7 +78,7 @@ public class SpawnOps
     @CafeEnter
     public static SpawnIdent enter(IFunction function)
     {
-      FutureTask<IValue> task = new FutureTask<IValue>(new Task(function));
+      FutureTask<IValue> task = new FutureTask<>(new Task(function));
       Task.scheduleFuture(task);
 
       return new ThreadId(StandardTypes.voidType, task);
@@ -155,7 +155,7 @@ public class SpawnOps
     @CafeEnter
     public static SpawnIdent enter(IFunction function, long delayInMS)
     {
-      FutureTask<IValue> task = new FutureTask<IValue>(new Task(function));
+      FutureTask<IValue> task = new FutureTask<>(new Task(function));
       Task.scheduleFutureDelayed(task, delayInMS);
 
       return new ThreadId(StandardTypes.voidType, task);

@@ -36,7 +36,7 @@ import org.star_lang.star.data.type.StandardTypes;
  */
 public class WffCompile
 {
-  private Map<String, Integer> dict = new HashMap<String, Integer>();
+  private Map<String, Integer> dict = new HashMap<>();
   private int varCount = 0;
 
   public WffCompile()
@@ -359,7 +359,7 @@ public class WffCompile
       else
         return new WffLiteral(term);
     } else if (Abstract.isBinary(term, StandardNames.STRING_CATENATE)) {
-      List<WffBuildOp> elements = new ArrayList<WffBuildOp>();
+      List<WffBuildOp> elements = new ArrayList<>();
 
       while (Abstract.isBinary(term, StandardNames.STRING_CATENATE)) {
         elements.add(compileBuilder(Abstract.getArg(term, 0), errors));

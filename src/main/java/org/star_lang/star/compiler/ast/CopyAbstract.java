@@ -27,7 +27,7 @@ import org.star_lang.star.data.type.Location;
  */
 public class CopyAbstract implements IAbstractVisitor
 {
-  private final Stack<IAbstract> stack = new Stack<IAbstract>();
+  private final Stack<IAbstract> stack = new Stack<>();
 
   public IAbstract copy(IAbstract term)
   {
@@ -44,7 +44,7 @@ public class CopyAbstract implements IAbstractVisitor
   public void visitApply(Apply app)
   {
     IAbstract nOp = copy(app.getOperator());
-    List<IAbstract> nArgs = new ArrayList<IAbstract>();
+    List<IAbstract> nArgs = new ArrayList<>();
     for (IValue arg : app.getArgs()) {
       nArgs.add(copy((IAbstract) arg));
     }

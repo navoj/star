@@ -36,22 +36,22 @@ import org.star_lang.star.operators.asynchio.runtime.SocketChnl;
  */
 public class AsynchIo
 {
-  public static void declare(Intrinsics intrinsics)
+  public static void declare()
   {
-    SocketChnl.declare(intrinsics);
-    FileChnl.declare(intrinsics);
-    ServerChnl.declare(intrinsics);
+    SocketChnl.declare();
+    FileChnl.declare();
+    ServerChnl.declare();
 
-    intrinsics.declareBuiltin(new Builtin(AsynchTcpConnect.name, AsynchTcpConnect.type(), AsynchTcpConnect.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchTcpListen.name, AsynchTcpListen.type(), AsynchTcpListen.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchTcpAccept.name, AsynchTcpAccept.type(), AsynchTcpAccept.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchTcpRead.name, AsynchTcpRead.type(), AsynchTcpRead.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchTcpWrite.name, AsynchTcpWrite.type(), AsynchTcpWrite.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchTcpClose.name, AsynchTcpClose.type(), AsynchTcpClose.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchServerClose.name, AsynchServerClose.type(), AsynchServerClose.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchFileOpen.name, AsynchFileOpen.type(), AsynchFileOpen.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchFileRead.name, AsynchFileRead.type(), AsynchFileRead.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchFileWrite.name, AsynchFileWrite.type(), AsynchFileWrite.class));
-    intrinsics.declareBuiltin(new Builtin(AsynchFileClose.name, AsynchFileClose.type(), AsynchFileClose.class));
+    Intrinsics.declare(new Builtin(AsynchTcpConnect.name, AsynchTcpConnect.type(), AsynchTcpConnect.class));
+    Intrinsics.declare(new Builtin(AsynchTcpListen.name, AsynchTcpListen.type(), AsynchTcpListen.class));
+    Intrinsics.declare(new Builtin(AsynchTcpAccept.name, AsynchTcpAccept.type(), AsynchTcpAccept.class));
+    Intrinsics.declare(new Builtin(AsynchTcpRead.name, AsynchTcpRead.type(), AsynchTcpRead.class));
+    Intrinsics.declare(new Builtin(AsynchTcpWrite.name, AsynchTcpWrite.type(), AsynchTcpWrite.class));
+    Intrinsics.declare(new Builtin(AsynchTcpClose.name, AsynchTcpClose.type(), AsynchTcpClose.class));
+    Intrinsics.declare(new Builtin(AsynchServerClose.name, AsynchServerClose.type(), AsynchServerClose.class));
+    Intrinsics.declare(new Builtin(AsynchFileOpen.name, AsynchFileOpen.type(), AsynchFileOpen.class));
+    Intrinsics.declare(new Builtin(AsynchFileRead.name, AsynchFileRead.type(), AsynchFileRead.class));
+    Intrinsics.declare(new Builtin(AsynchFileWrite.name, AsynchFileWrite.type(), AsynchFileWrite.class));
+    Intrinsics.declare(new Builtin(AsynchFileClose.name, AsynchFileClose.type(), AsynchFileClose.class));
   }
 }

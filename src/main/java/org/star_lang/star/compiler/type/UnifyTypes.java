@@ -45,7 +45,7 @@ public class UnifyTypes
 {
   private final Dictionary cxt;
   private final Location loc;
-  private final Map<TypeVar, Integer> resets = new HashMap<TypeVar, Integer>();
+  private final Map<TypeVar, Integer> resets = new HashMap<>();
   private final boolean allow;
 
   private static final boolean UNIVERSAL = true;
@@ -134,8 +134,8 @@ public class UnifyTypes
       if (tp2 instanceof UniversalType) {
         UniversalType u2 = (UniversalType) tp2;
 
-        HistoricalMap<String, TypeVar> b1 = new HistoricalMap<String, TypeVar>();
-        HistoricalMap<String, TypeVar> b2 = new HistoricalMap<String, TypeVar>();
+        HistoricalMap<String, TypeVar> b1 = new HistoricalMap<>();
+        HistoricalMap<String, TypeVar> b2 = new HistoricalMap<>();
         IType un1 = Refresher.refresh(tp1, b1);
         IType un2 = Refresher.refresh(tp2, b2);
 
@@ -188,7 +188,7 @@ public class UnifyTypes
           U2 = e.getBoundType();
         }
       } else if (UNIVERSAL) {
-        Map<String, TypeVar> lhsBound = new HashMap<String, TypeVar>();
+        Map<String, TypeVar> lhsBound = new HashMap<>();
         IType rTp1 = Refresher.refresh(tp1, AccessMode.readOnly, lhsBound);
 
         unify(rTp1, tp2);
@@ -196,7 +196,7 @@ public class UnifyTypes
         throw new TypeConstraintException(FixedList.create(tp1, " does not unify with ", tp2));
     } else if (tp2 instanceof UniversalType) {
       if (UNIVERSAL) {
-        Map<String, TypeVar> rhsBound = new HashMap<String, TypeVar>();
+        Map<String, TypeVar> rhsBound = new HashMap<>();
         IType rTp2 = Refresher.refresh(tp2, AccessMode.readOnly, rhsBound);
 
         unify(tp1, rTp2);
@@ -277,8 +277,8 @@ public class UnifyTypes
       QuantifiedType u1 = (QuantifiedType) tp1;
       QuantifiedType u2 = (QuantifiedType) tp2;
 
-      HistoricalMap<String, TypeVar> b1 = new HistoricalMap<String, TypeVar>();
-      HistoricalMap<String, TypeVar> b2 = new HistoricalMap<String, TypeVar>();
+      HistoricalMap<String, TypeVar> b1 = new HistoricalMap<>();
+      HistoricalMap<String, TypeVar> b2 = new HistoricalMap<>();
       IType un1 = Refresher.refresh(tp1, b1);
       IType un2 = Refresher.refresh(tp2, b2);
 
@@ -354,7 +354,7 @@ public class UnifyTypes
   @SuppressWarnings("unused")
   private Map<String, IType> rename(Map<String, IType> fields, Map<IType, IType> map)
   {
-    Map<String, IType> newMap = new HashMap<String, IType>();
+    Map<String, IType> newMap = new HashMap<>();
     for (Entry<String, IType> entry : fields.entrySet())
       newMap.put(entry.getKey(), TypeSubstitute.rename(entry.getValue(), map));
     return newMap;

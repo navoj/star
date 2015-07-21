@@ -58,6 +58,7 @@ public class Bag<E> extends AbstractCollection<E> implements PrettyPrintable
       this.item = item;
       this.right = right;
       this.parent = parent;
+      this.color = color;
     }
   }
 
@@ -88,8 +89,8 @@ public class Bag<E> extends AbstractCollection<E> implements PrettyPrintable
 
     if (tree.parent == null)
       tree.color = RedBlack.black;
-    else if (tree.parent.color == RedBlack.black)
-      return;
+    else if (tree.parent.color == RedBlack.black) {
+    }
     else {
       Node<E> u = uncle(tree);
       Node<E> g = grandParent(tree);
@@ -240,14 +241,14 @@ public class Bag<E> extends AbstractCollection<E> implements PrettyPrintable
     if (tree == null)
       return tree;
     else
-      return new Node<E>(parent, replicate(tree, tree.left), tree.item,
-          replicate(tree, tree.right), tree.color);
+      return new Node<>(parent, replicate(tree, tree.left), tree.item,
+              replicate(tree, tree.right), tree.color);
   }
 
   private Node<E> add(Node<E> parent, Node<E> tree, E e)
   {
     if (tree == null)
-      return new Node<E>(parent, null, e, null, RedBlack.red);
+      return new Node<>(parent, null, e, null, RedBlack.red);
     else {
       int comp = compare.compare(tree.item, e);
       if (comp > 0)
@@ -396,7 +397,7 @@ public class Bag<E> extends AbstractCollection<E> implements PrettyPrintable
 
   private class BagIterator implements Iterator<E>
   {
-    private final Stack<Node<E>> stack = new Stack<Node<E>>();
+    private final Stack<Node<E>> stack = new Stack<>();
     private Node<E> next = null;
 
     BagIterator(Node<E> tree)

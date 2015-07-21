@@ -195,7 +195,7 @@ public class Computations
       ComputationContext selCxt = context.fork();
       IContentExpression sel = exp.getSelector().transform(this, selCxt);
 
-      List<Pair<IContentPattern, IContentExpression>> cases = new ArrayList<Pair<IContentPattern, IContentExpression>>();
+      List<Pair<IContentPattern, IContentExpression>> cases = new ArrayList<>();
       for (Pair<IContentPattern, IContentAction> entry : exp.getCases()) {
         ComputationContext cseCxt = context.fork(context.getExp());
         IContentPattern txPtn = entry.left().transformPattern(this, cseCxt);
@@ -596,7 +596,7 @@ public class Computations
   @Override
   public IContentExpression transformRecord(RecordTerm record, ComputationContext context)
   {
-    SortedMap<String, IContentExpression> args = new TreeMap<String, IContentExpression>();
+    SortedMap<String, IContentExpression> args = new TreeMap<>();
     IContentExpression fun = record.getFun().transform(this, context);
     boolean clean = fun == record.getFun();
     for (Entry<String, IContentExpression> entry : record.getArguments().entrySet()) {
@@ -627,7 +627,7 @@ public class Computations
     IContentExpression sel = exp.getSelector().transform(this, context);
     boolean clean = sel == exp.getSelector();
     IContentExpression def = exp.getDeflt().transform(this, context);
-    List<Pair<IContentPattern, IContentExpression>> cases = new ArrayList<Pair<IContentPattern, IContentExpression>>();
+    List<Pair<IContentPattern, IContentExpression>> cases = new ArrayList<>();
     for (Pair<IContentPattern, IContentExpression> pr : exp.getCases()) {
       IContentPattern ptn = pr.left().transformPattern(this, context);
       clean &= ptn == pr.left();
@@ -770,7 +770,7 @@ public class Computations
   @Override
   public IContentExpression transformConstructor(ConstructorTerm con, ComputationContext context)
   {
-    List<IContentExpression> els = new ArrayList<IContentExpression>();
+    List<IContentExpression> els = new ArrayList<>();
     boolean clean = true;
     for (IContentExpression el : con.getElements()) {
       IContentExpression txEl = el.transform(this, context);
@@ -932,7 +932,7 @@ public class Computations
   @Override
   public IContentPattern transformRecordPtn(RecordPtn record, ComputationContext context)
   {
-    Map<String, IContentPattern> els = new TreeMap<String, IContentPattern>();
+    Map<String, IContentPattern> els = new TreeMap<>();
     IContentExpression rec = record.getFun().transform(this, context);
     boolean clean = rec == record.getFun();
     for (Entry<String, IContentPattern> entry : record.getElements().entrySet()) {
@@ -1003,7 +1003,7 @@ public class Computations
   @Override
   public IContentPattern transformConstructorPtn(ConstructorPtn tuple, ComputationContext context)
   {
-    List<IContentPattern> els = new ArrayList<IContentPattern>();
+    List<IContentPattern> els = new ArrayList<>();
     boolean clean = true;
     for (IContentPattern el : tuple.getElements()) {
       IContentPattern txEl = el.transformPattern(this, context);

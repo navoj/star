@@ -55,7 +55,7 @@ public class ReturnCont implements IContinuation
     
     InsnList ins = mtd.instructions;
 
-    Expressions.checkType(src, spec, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(src, spec, mtd, dict, hwm);
 
     switch (Types.varType(tipe)) {
     case rawBool:

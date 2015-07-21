@@ -176,7 +176,7 @@ public abstract class NTuple
     ConstructorSpecifier tplSpec = new ConstructorSpecifier(Location.nullLoc, null, label, 0, conType, NTpl.class,
         NTuple.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(tplSpec);
 
     ITypeDescription locDesc = new CafeTypeDescription(Location.nullLoc, new UniversalType(tv, tplType), NTuple.class

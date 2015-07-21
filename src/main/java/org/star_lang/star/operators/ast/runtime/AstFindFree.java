@@ -40,7 +40,7 @@ public class AstFindFree implements IFunction
   @CafeEnter
   public static IAbstract enter(IAbstract exp, IAbstract non, IAbstract cons, IAbstract nil)
   {
-    Set<Name> excludes = search(new HashSet<Name>(), non);
+    Set<Name> excludes = search(new HashSet<>(), non);
     Set<Name> free = search(excludes, exp);
     Location loc = exp.getLoc();
 

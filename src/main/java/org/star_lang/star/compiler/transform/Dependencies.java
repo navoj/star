@@ -112,7 +112,7 @@ public class Dependencies
   {
     int low = stack.size();
     int point = low;
-    Stack<String> exclusion = new Stack<String>();
+    Stack<String> exclusion = new Stack<>();
 
     definitions.remove(def);
     stack.push(new StackEntry(low, def));
@@ -129,7 +129,7 @@ public class Dependencies
     }
 
     if (low == point) { // We have a new group
-      List<Definition> group = new ArrayList<Definition>();
+      List<Definition> group = new ArrayList<>();
 
       while (!stack.isEmpty()) {
         StackEntry entry = stack.peek();
@@ -437,7 +437,7 @@ public class Dependencies
           if (conDef == null) {
             List<String> defines = findContractDefinitions(content);
 
-            Map<DefinitionKind, String[]> kindMap = new HashMap<DefinitionKind, String[]>();
+            Map<DefinitionKind, String[]> kindMap = new HashMap<>();
             kindMap.put(DefinitionKind.contract, new String[] { contractId });
             kindMap.put(DefinitionKind.variable, defines.toArray(new String[defines.size()]));
             conDef = new Definition(loc, term, kindMap, visibility);
@@ -457,7 +457,7 @@ public class Dependencies
           errors.reportError("type annotations apply to identifiers", term.getLoc());
 
         if (visibility == Visibility.priVate)
-          markPrivate(loc, Abstract.getId(lhs), DefinitionKind.variable);
+          markPrivate(Abstract.getId(lhs), DefinitionKind.variable);
       } else if (CompilerUtils.isVarDeclaration(term))
         extractDefines(CompilerUtils.varPtnVar(CompilerUtils.varDeclarationPattern(term)), term, visibility);
       else if (CompilerUtils.isIsStatement(term))
@@ -482,11 +482,11 @@ public class Dependencies
 
         Definition tpDef = findDefn(tpName, DefinitionKind.type);
         if (tpDef == null) {
-          final ArrayList<String> definedNames = new ArrayList<String>();
+          final ArrayList<String> definedNames = new ArrayList<>();
 
           pickupDefinedConstructors(spec, definedNames);
 
-          Map<DefinitionKind, String[]> kindMap = new HashMap<DefinitionKind, String[]>();
+          Map<DefinitionKind, String[]> kindMap = new HashMap<>();
           kindMap.put(DefinitionKind.type, new String[] { tpName });
           kindMap.put(DefinitionKind.constructor, definedNames.toArray(new String[definedNames.size()]));
           tpDef = new Definition(loc, term, kindMap, visibility);
@@ -509,7 +509,7 @@ public class Dependencies
     }
   }
 
-  private void markPrivate(Location loc, String name, DefinitionKind kind)
+  private void markPrivate(String name, DefinitionKind kind)
   {
     Definition defs = findLocalDefn(name, kind);
 
@@ -585,7 +585,7 @@ public class Dependencies
   private void extractDefines(IAbstract lhs, IAbstract term, Visibility visibility)
   {
     Location loc = lhs.getLoc();
-    List<String> defined = findDefinedNames(lhs, new ArrayList<String>());
+    List<String> defined = findDefinedNames(lhs, new ArrayList<>());
     if (!defined.isEmpty()) {
       visibility = visibility(defined, visibility, DefinitionKind.variable);
       Definition def = new Definition(loc, term, defined.toArray(new String[defined.size()]), DefinitionKind.variable,
@@ -616,7 +616,7 @@ public class Dependencies
 
   private List<String> findContractDefinitions(IAbstract arg)
   {
-    List<String> definedByContract = new ArrayList<String>();
+    List<String> definedByContract = new ArrayList<>();
 
     for (IAbstract el : CompilerUtils.unWrap(arg)) {
       if (CompilerUtils.isTypeAnnotation(el)) {

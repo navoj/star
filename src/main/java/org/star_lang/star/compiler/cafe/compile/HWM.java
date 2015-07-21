@@ -30,7 +30,7 @@ public class HWM implements PrettyPrintable
 
   public HWM()
   {
-    this.hwm = new Wrapper<Integer>(0);
+    this.hwm = new Wrapper<>(0);
   }
 
   private HWM(Wrapper<Integer> hwm)

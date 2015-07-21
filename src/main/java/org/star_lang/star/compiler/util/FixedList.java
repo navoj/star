@@ -36,7 +36,7 @@ public class FixedList<E> implements List<E>, PrettyPrintable
   @SafeVarargs
   public static <S> List<S> create(S... data)
   {
-    return new FixedList<S>(data);
+    return new FixedList<>(data);
   }
 
   @Override
@@ -136,7 +136,7 @@ public class FixedList<E> implements List<E>, PrettyPrintable
   @Override
   public Iterator<E> iterator()
   {
-    return new ArrayIterator<E>(data);
+    return new ArrayIterator<>(data);
   }
 
   @Override

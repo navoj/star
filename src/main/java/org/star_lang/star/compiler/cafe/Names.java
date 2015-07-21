@@ -27,8 +27,8 @@ import org.star_lang.star.operators.general.runtime.Assert;
  */
 public class Names
 {
-  public static final Set<String> keywords = new TreeSet<String>();
-  public static final Set<String> graphic = new TreeSet<String>();
+  public static final Set<String> keywords = new TreeSet<>();
+  public static final Set<String> graphic = new TreeSet<>();
 
   public static final String FROM = keyword("from");
   public static final String IMPORT = keyword("import");

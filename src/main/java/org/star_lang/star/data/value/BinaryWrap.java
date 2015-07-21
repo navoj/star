@@ -60,7 +60,7 @@ public abstract class BinaryWrap implements IValue, PrettyPrintable
     ConstructorSpecifier nonSpec = new ConstructorSpecifier(Location.nullLoc, null, StandardTypes.NON_BINARY, 1,
         TypeUtils.constructorType(binaryType), NonBinaryWrapper.class, BinaryWrap.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(strSpec);
     specs.add(nonSpec);
     ITypeDescription type = new CafeTypeDescription(Location.nullLoc, binaryType, Utils

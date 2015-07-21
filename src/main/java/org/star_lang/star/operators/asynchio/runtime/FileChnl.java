@@ -86,8 +86,8 @@ public class FileChnl implements IScalar<FileChnl>, PrettyPrintable
     return this;
   }
 
-  public static void declare(Intrinsics intrinsics)
+  public static void declare()
   {
-    intrinsics.defineType(new CafeTypeDescription(type, FileChnl.class.getCanonicalName()));
+    Intrinsics.declare(new CafeTypeDescription(type, FileChnl.class.getCanonicalName()));
   }
 }

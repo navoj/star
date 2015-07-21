@@ -67,7 +67,7 @@ public abstract class NFA implements PrettyPrintable
 
   public enum NFAKind {
     emptyNFA, charSetNFA, disjunctNFA, starNFA, seqNFA, bindNFA, boundNFA, varNFA, endVarNFA
-  };
+  }
 
   public interface NFAVisitor
   {
@@ -434,7 +434,7 @@ public abstract class NFA implements PrettyPrintable
     @Override
     public Iterator<NFA> iterator()
     {
-      return new ArrayIterator<NFA>(els);
+      return new ArrayIterator<>(els);
     }
 
     @Override

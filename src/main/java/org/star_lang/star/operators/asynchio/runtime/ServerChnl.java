@@ -71,8 +71,8 @@ public class ServerChnl implements IScalar<ServerChnl>, PrettyPrintable
     return listenChannel;
   }
 
-  public static void declare(Intrinsics intrinsics)
+  public static void declare()
   {
-    intrinsics.defineType(new TypeDescription(type));
+    Intrinsics.declare(new TypeDescription(type));
   }
 }

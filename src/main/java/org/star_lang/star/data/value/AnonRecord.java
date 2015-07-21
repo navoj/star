@@ -133,8 +133,7 @@ public class AnonRecord implements IRecord, PrettyPrintable
     for (int ix = 0; ix < size; ix++)
       copyEls[ix] = els[ix].copy();
 
-    AnonRecord copy = new AnonRecord(label, fields, copyEls);
-    return copy;
+    return new AnonRecord(label, fields, copyEls);
   }
 
   @Override
@@ -144,8 +143,7 @@ public class AnonRecord implements IRecord, PrettyPrintable
     for (int ix = 0; ix < size; ix++)
       copyEls[ix] = els[ix];
 
-    AnonRecord copy = new AnonRecord(label, fields, copyEls);
-    return copy;
+    return new AnonRecord(label, fields, copyEls);
   }
 
   @Override

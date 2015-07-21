@@ -29,7 +29,7 @@ import org.star_lang.star.data.type.TypeVar;
  */
 public class ConstraintFinder extends AbstractTypeVisitor<Void>
 {
-  private List<ITypeConstraint> constraints = new ArrayList<ITypeConstraint>();
+  private List<ITypeConstraint> constraints = new ArrayList<>();
   private Set<TypeVar> vars = new HashSet<>();
 
   public static List<ITypeConstraint> findConstraints(IType type)
@@ -60,7 +60,7 @@ public class ConstraintFinder extends AbstractTypeVisitor<Void>
     IType t = v.deRef();
     if (t instanceof TypeVar) {
       v = (TypeVar) t;
-      if (!vars.contains(v) && !isExcluded(v.getVarName())) {
+      if (!vars.contains(v) && isNotExcluded(v.getVarName())) {
         vars.add(v);
         for (ITypeConstraint con : v) {
           if (!(constraints.contains(con))) {

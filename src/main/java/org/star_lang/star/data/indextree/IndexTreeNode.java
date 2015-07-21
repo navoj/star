@@ -112,44 +112,44 @@ public class IndexTreeNode<K, V> extends IndexTree<K, V>
       case 0:
         switch (nth4Way(mask, cml)) {
         case 1:
-          return new IndexTreeNode<K, V>((short) cml, cm, other, this, empty, empty);
+          return new IndexTreeNode<>((short) cml, cm, other, this, empty, empty);
         case 2:
-          return new IndexTreeNode<K, V>((short) cml, cm, other, empty, this, empty);
+          return new IndexTreeNode<>((short) cml, cm, other, empty, this, empty);
         case 3:
-          return new IndexTreeNode<K, V>((short) cml, cm, other, empty, empty, this);
+          return new IndexTreeNode<>((short) cml, cm, other, empty, empty, this);
         default:
           throw new IllegalStateException();
         }
       case 1:
         switch (nth4Way(mask, cml)) {
         case 0:
-          return new IndexTreeNode<K, V>((short) cml, cm, this, other, empty, empty);
+          return new IndexTreeNode<>((short) cml, cm, this, other, empty, empty);
         case 2:
-          return new IndexTreeNode<K, V>((short) cml, cm, empty, other, this, empty);
+          return new IndexTreeNode<>((short) cml, cm, empty, other, this, empty);
         case 3:
-          return new IndexTreeNode<K, V>((short) cml, cm, empty, other, empty, this);
+          return new IndexTreeNode<>((short) cml, cm, empty, other, empty, this);
         default:
           throw new IllegalStateException();
         }
       case 2:
         switch (nth4Way(mask, cml)) {
         case 0:
-          return new IndexTreeNode<K, V>((short) cml, cm, this, empty, other, empty);
+          return new IndexTreeNode<>((short) cml, cm, this, empty, other, empty);
         case 1:
-          return new IndexTreeNode<K, V>((short) cml, cm, empty, this, other, empty);
+          return new IndexTreeNode<>((short) cml, cm, empty, this, other, empty);
         case 3:
-          return new IndexTreeNode<K, V>((short) cml, cm, empty, empty, other, this);
+          return new IndexTreeNode<>((short) cml, cm, empty, empty, other, this);
         default:
           throw new IllegalStateException();
         }
       case 3:
         switch (nth4Way(mask, cml)) {
         case 0:
-          return new IndexTreeNode<K, V>((short) cml, cm, this, empty, empty, other);
+          return new IndexTreeNode<>((short) cml, cm, this, empty, empty, other);
         case 1:
-          return new IndexTreeNode<K, V>((short) cml, cm, empty, this, empty, other);
+          return new IndexTreeNode<>((short) cml, cm, empty, this, empty, other);
         case 2:
-          return new IndexTreeNode<K, V>((short) cml, cm, empty, empty, this, other);
+          return new IndexTreeNode<>((short) cml, cm, empty, empty, this, other);
         default:
           throw new IllegalStateException();
         }
@@ -159,13 +159,13 @@ public class IndexTreeNode<K, V> extends IndexTree<K, V>
     } else if (other instanceof IndexTreeLeaf) {
       switch (nth4Way(otherMask, cml)) {
       case 0:
-        return new IndexTreeNode<K, V>((short) cml, cm, l1.mergeTree(other), l2, r1, r2);
+        return new IndexTreeNode<>((short) cml, cm, l1.mergeTree(other), l2, r1, r2);
       case 1:
-        return new IndexTreeNode<K, V>((short) cml, cm, l1, l2.mergeTree(other), r1, r2);
+        return new IndexTreeNode<>((short) cml, cm, l1, l2.mergeTree(other), r1, r2);
       case 2:
-        return new IndexTreeNode<K, V>((short) cml, cm, l1, l2, r1.mergeTree(other), r2);
+        return new IndexTreeNode<>((short) cml, cm, l1, l2, r1.mergeTree(other), r2);
       case 3:
-        return new IndexTreeNode<K, V>((short) cml, cm, l1, l2, r1, r2.mergeTree(other));
+        return new IndexTreeNode<>((short) cml, cm, l1, l2, r1, r2.mergeTree(other));
       default:
         throw new IllegalStateException();
       }
@@ -173,8 +173,8 @@ public class IndexTreeNode<K, V> extends IndexTree<K, V>
       assert other instanceof IndexTreeNode;
       IndexTreeNode<K, V> otherNode = (IndexTreeNode<K, V>) other;
 
-      return new IndexTreeNode<K, V>((short) cml, cm, l1.mergeTree(otherNode.l1), l2.mergeTree(otherNode.l2), r1
-          .mergeTree(otherNode.r1), r2.mergeTree(otherNode.r2));
+      return new IndexTreeNode<>((short) cml, cm, l1.mergeTree(otherNode.l1), l2.mergeTree(otherNode.l2), r1
+              .mergeTree(otherNode.r1), r2.mergeTree(otherNode.r2));
     }
   }
 

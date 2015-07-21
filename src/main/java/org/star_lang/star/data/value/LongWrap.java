@@ -99,7 +99,7 @@ public abstract class LongWrap implements PrettyPrintable, IConstructor
     ConstructorSpecifier nonSpec = new ConstructorSpecifier(Location.nullLoc, null, StandardTypes.NON_LONG,
         NonLong.CONIX, NonLong.conType(), NonLong.class, LongWrap.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(strSpec);
     specs.add(nonSpec);
     ITypeDescription type = new CafeTypeDescription(Location.nullLoc, longType, Utils

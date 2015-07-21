@@ -64,8 +64,7 @@ public class ByteBuilder
   private int totalSize()
   {
     int cx = 0;
-    for (int ix = 0; ix < segments.size(); ix++)
-      cx += segments.get(ix).size();
+    for (Segment segment : segments) cx += segment.size();
     return cx + pos;
   }
 
@@ -75,8 +74,7 @@ public class ByteBuilder
       byte[] out = new byte[totalSize()];
 
       int oPx = 0;
-      for (int ix = 0; ix < segments.size(); ix++) {
-        Segment segment = segments.get(ix);
+      for (Segment segment : segments) {
         int size = segment.size();
         System.arraycopy(segment.data, 0, out, oPx, size);
         oPx += size;

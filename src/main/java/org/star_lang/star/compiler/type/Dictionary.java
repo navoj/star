@@ -135,7 +135,7 @@ public interface Dictionary extends ITypeContext
    * @param var
    * @return
    */
-  public boolean isTypeVarInScope(TypeVar var);
+  boolean isTypeVarInScope(TypeVar var);
 
   /**
    * Dictionaries may be nested to reflect their nested scoping. An outer dictionary represents the

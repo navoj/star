@@ -123,7 +123,7 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
         paren(infix.getPriority(), ")#");
       } else
         displayApp(app);
-    } else if (Abstract.isUnary(app) && ((Apply) app).getOperator() instanceof Name) {
+    } else if (Abstract.isUnary(app) && app.getOperator() instanceof Name) {
       String op = Abstract.roundTermName(app);
 
       Operator prefix = operators.isPrefixOperator(op, priority);

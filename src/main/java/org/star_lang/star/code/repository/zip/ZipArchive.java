@@ -29,34 +29,31 @@ import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.Resources;
 import org.star_lang.star.resource.URIUtils;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 @SuppressWarnings("serial")
 public class ZipArchive implements CodeCatalog
 {
   public static final String EXTENSION = ".sar";
 
   private final String path;
-  private final Map<String, CodeTree> entries = new HashMap<String, CodeTree>();
-  private final Map<String, ResourceURI> uriTransMap = new HashMap<String, ResourceURI>();
+  private final Map<String, CodeTree> entries = new HashMap<>();
+  private final Map<String, ResourceURI> uriTransMap = new HashMap<>();
 
   static {
-    Resources.recordTransducer(ZipTranducer.SCHEME, new ZipTranducer());
+    Resources.recordTransducer(ZipTransducer.SCHEME, new ZipTransducer());
   }
 
   private ZipArchive(String path)
@@ -85,7 +82,7 @@ public class ZipArchive implements CodeCatalog
   @Override
   public void prettyPrint(PrettyPrintDisplay disp)
   {
-    disp.append(ZipTranducer.SCHEME);
+    disp.append(ZipTransducer.SCHEME);
     disp.append(":");
     disp.appendQuoted(path);
   }
@@ -191,9 +188,9 @@ public class ZipArchive implements CodeCatalog
   }
 
   @Override
-  public boolean isReadOnly()
+  public boolean isReadWrite()
   {
-    return true;
+    return false;
   }
 
   @Override
@@ -247,7 +244,7 @@ public class ZipArchive implements CodeCatalog
 
     byte[] content = readIntoBuffer(zip);
 
-    ResourceURI zipUri = URIUtils.create(ZipTranducer.SCHEME, URIAuthority.noAuthorityEnum, path, null, zEntry
+    ResourceURI zipUri = URIUtils.create(ZipTransducer.SCHEME, URIAuthority.noAuthorityEnum, path, null, zEntry
         .getName());
     CodeTree code = CodeDirectory.parse(zipUri, new ByteArrayInputStream(content), extension);
 

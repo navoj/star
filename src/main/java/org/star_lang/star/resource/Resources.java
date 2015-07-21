@@ -36,7 +36,7 @@ public class Resources
   public static final String HTTP = "http";
   public static final String STAR = "star";
 
-  private static final Map<String, Transducer> transducers = new HashMap<String, Transducer>();
+  private static final Map<String, Transducer> transducers = new HashMap<>();
 
   static {
     transducers.put(FILE, new FileTransducer());

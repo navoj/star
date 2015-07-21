@@ -66,60 +66,60 @@ import org.star_lang.star.operators.arrays.runtime.ArrayUpdate.UpdateIntoArray;
 
 public class ArrayOps
 {
-  public static void declare(Intrinsics cxt)
+  public static void declare()
   {
-    cxt.declareBuiltin(new Builtin(ArrayEmpty.name, ArrayEmpty.type(), ArrayEmpty.class));
-    cxt.declareBuiltin(new Builtin(ArrayArray.name, ArrayArray.type(), ArrayArray.class));
+    Intrinsics.declare(new Builtin(ArrayEmpty.name, ArrayEmpty.type(), ArrayEmpty.class));
+    Intrinsics.declare(new Builtin(ArrayArray.name, ArrayArray.type(), ArrayArray.class));
 
-    cxt.declareBuiltin(new Builtin(ArraySize.name, ArraySize.type(), ArraySize.class));
-    cxt.declareBuiltin(new Builtin(ArrayEqual.name, ArrayEqual.type(), ArrayEqual.class));
-    cxt.declareBuiltin(new Builtin(ArrayHasSize.name, ArrayHasSize.type(), ArrayHasSize.class));
+    Intrinsics.declare(new Builtin(ArraySize.name, ArraySize.type(), ArraySize.class));
+    Intrinsics.declare(new Builtin(ArrayEqual.name, ArrayEqual.type(), ArrayEqual.class));
+    Intrinsics.declare(new Builtin(ArrayHasSize.name, ArrayHasSize.type(), ArrayHasSize.class));
 
-    cxt.declareBuiltin(new Builtin(ArrayNil.name, ArrayNil.type(), ArrayNil.class));
-    cxt.declareBuiltin(new Builtin(ArrayCons.name, ArrayCons.type(), ArrayCons.class));
-    cxt.declareBuiltin(new Builtin(ArrayAppend.name, ArrayAppend.type(), ArrayAppend.class));
-    cxt.declareBuiltin(new Builtin(ArrayEmptyMatch.name, ArrayEmptyMatch.type(), ArrayEmptyMatch.class));
-    cxt.declareBuiltin(new Builtin(ArrayHeadMatch.name, ArrayHeadMatch.type(), ArrayHeadMatch.class));
-    cxt.declareBuiltin(new Builtin(ArrayTailMatch.name, ArrayTailMatch.type(), ArrayTailMatch.class));
+    Intrinsics.declare(new Builtin(ArrayNil.name, ArrayNil.type(), ArrayNil.class));
+    Intrinsics.declare(new Builtin(ArrayCons.name, ArrayCons.type(), ArrayCons.class));
+    Intrinsics.declare(new Builtin(ArrayAppend.name, ArrayAppend.type(), ArrayAppend.class));
+    Intrinsics.declare(new Builtin(ArrayEmptyMatch.name, ArrayEmptyMatch.type(), ArrayEmptyMatch.class));
+    Intrinsics.declare(new Builtin(ArrayHeadMatch.name, ArrayHeadMatch.type(), ArrayHeadMatch.class));
+    Intrinsics.declare(new Builtin(ArrayTailMatch.name, ArrayTailMatch.type(), ArrayTailMatch.class));
 
-    cxt.declareBuiltin(new Builtin(ArrayEl.name, ArrayEl.type(), ArrayEl.class));
-    cxt.declareBuiltin(new Builtin(ArrayElement.name, ArrayElement.type(), ArrayElement.class));
-    cxt.declareBuiltin(new Builtin(ArrayIndexElement.name, ArrayIndexElement.type(), ArrayIndexElement.class));
-    cxt.declareBuiltin(new Builtin(ArrayConcatenate.name, ArrayConcatenate.type(), ArrayConcatenate.class));
-    cxt.declareBuiltin(new Builtin(ArraySlice.name, ArraySlice.type(), ArraySlice.class));
-    cxt.declareBuiltin(new Builtin(ArraySplice.name, ArraySplice.type(), ArraySplice.class));
-    cxt.declareBuiltin(new Builtin(ArraySetElement.name, ArraySetElement.type(), ArraySetElement.class));
-    cxt.declareBuiltin(new Builtin(ArrayDeleteElement.name, ArrayDeleteElement.type(), ArrayDeleteElement.class));
+    Intrinsics.declare(new Builtin(ArrayEl.name, ArrayEl.type(), ArrayEl.class));
+    Intrinsics.declare(new Builtin(ArrayElement.name, ArrayElement.type(), ArrayElement.class));
+    Intrinsics.declare(new Builtin(ArrayIndexElement.name, ArrayIndexElement.type(), ArrayIndexElement.class));
+    Intrinsics.declare(new Builtin(ArrayConcatenate.name, ArrayConcatenate.type(), ArrayConcatenate.class));
+    Intrinsics.declare(new Builtin(ArraySlice.name, ArraySlice.type(), ArraySlice.class));
+    Intrinsics.declare(new Builtin(ArraySplice.name, ArraySplice.type(), ArraySplice.class));
+    Intrinsics.declare(new Builtin(ArraySetElement.name, ArraySetElement.type(), ArraySetElement.class));
+    Intrinsics.declare(new Builtin(ArrayDeleteElement.name, ArrayDeleteElement.type(), ArrayDeleteElement.class));
 
-    cxt.declareBuiltin(new Builtin(UnaryArray.name, UnaryArray.type(), UnaryArray.class));
-    cxt.declareBuiltin(new Builtin(BinaryArray.name, BinaryArray.type(), BinaryArray.class));
-    cxt.declareBuiltin(new Builtin(TernaryArray.name, TernaryArray.type(), TernaryArray.class));
+    Intrinsics.declare(new Builtin(UnaryArray.name, UnaryArray.type(), UnaryArray.class));
+    Intrinsics.declare(new Builtin(BinaryArray.name, BinaryArray.type(), BinaryArray.class));
+    Intrinsics.declare(new Builtin(TernaryArray.name, TernaryArray.type(), TernaryArray.class));
 
-    cxt.declareBuiltin(new Builtin(ArraySetOps.ArraySearch.name, ArraySetOps.ArraySearch.type(), ArraySetOps.ArraySearch.class));
-    cxt.declareBuiltin(new Builtin(ArrayDelete.name, ArrayDelete.type(), ArrayDelete.class));
-    cxt.declareBuiltin(new Builtin(UpdateIntoArray.name, UpdateIntoArray.type(), UpdateIntoArray.class));
+    Intrinsics.declare(new Builtin(ArraySetOps.ArraySearch.name, ArraySetOps.ArraySearch.type(), ArraySetOps.ArraySearch.class));
+    Intrinsics.declare(new Builtin(ArrayDelete.name, ArrayDelete.type(), ArrayDelete.class));
+    Intrinsics.declare(new Builtin(UpdateIntoArray.name, UpdateIntoArray.type(), UpdateIntoArray.class));
 
-    cxt.declareBuiltin(new Builtin(ArrayIterate.name, ArrayIterate.type(), ArrayIterate.class));
-    cxt.declareBuiltin(new Builtin(ArrayIxIterate.name, ArrayIxIterate.type(), ArrayIxIterate.class));
-    cxt.declareBuiltin(new Builtin(ArraySort.name, ArraySort.type(), ArraySort.class));
-    cxt.declareBuiltin(new Builtin(ArrayMap.name, ArrayMap.type(), ArrayMap.class));
-    cxt.declareBuiltin(new Builtin(ArrayFilter.name, ArrayFilter.type(), ArrayFilter.class));
-    cxt.declareBuiltin(new Builtin(ArrayLeftFold.name, ArrayLeftFold.type(), ArrayLeftFold.class));
-    cxt.declareBuiltin(new Builtin(ArrayRightFold.name, ArrayRightFold.type(), ArrayRightFold.class));
-    cxt.declareBuiltin(new Builtin(ArrayLeftFold1.name, ArrayLeftFold1.type(), ArrayLeftFold1.class));
-    cxt.declareBuiltin(new Builtin(ArrayRightFold1.name, ArrayRightFold1.type(), ArrayRightFold1.class));
+    Intrinsics.declare(new Builtin(ArrayIterate.name, ArrayIterate.type(), ArrayIterate.class));
+    Intrinsics.declare(new Builtin(ArrayIxIterate.name, ArrayIxIterate.type(), ArrayIxIterate.class));
+    Intrinsics.declare(new Builtin(ArraySort.name, ArraySort.type(), ArraySort.class));
+    Intrinsics.declare(new Builtin(ArrayMap.name, ArrayMap.type(), ArrayMap.class));
+    Intrinsics.declare(new Builtin(ArrayFilter.name, ArrayFilter.type(), ArrayFilter.class));
+    Intrinsics.declare(new Builtin(ArrayLeftFold.name, ArrayLeftFold.type(), ArrayLeftFold.class));
+    Intrinsics.declare(new Builtin(ArrayRightFold.name, ArrayRightFold.type(), ArrayRightFold.class));
+    Intrinsics.declare(new Builtin(ArrayLeftFold1.name, ArrayLeftFold1.type(), ArrayLeftFold1.class));
+    Intrinsics.declare(new Builtin(ArrayRightFold1.name, ArrayRightFold1.type(), ArrayRightFold1.class));
 
-    cxt.declareBuiltin(new Builtin(ArrayReverse.name, ArrayReverse.type(), ArrayReverse.class));
+    Intrinsics.declare(new Builtin(ArrayReverse.name, ArrayReverse.type(), ArrayReverse.class));
 
-    cxt.declareBuiltin(new Builtin(ArrayIntegerIota.name, ArrayIntegerIota.type(), ArrayIntegerIota.class));
-    cxt.declareBuiltin(new Builtin(ArrayLongIota.name, ArrayLongIota.type(), ArrayLongIota.class));
-    cxt.declareBuiltin(new Builtin(ArrayFloatIota.name, ArrayFloatIota.type(), ArrayFloatIota.class));
+    Intrinsics.declare(new Builtin(ArrayIntegerIota.name, ArrayIntegerIota.type(), ArrayIntegerIota.class));
+    Intrinsics.declare(new Builtin(ArrayLongIota.name, ArrayLongIota.type(), ArrayLongIota.class));
+    Intrinsics.declare(new Builtin(ArrayFloatIota.name, ArrayFloatIota.type(), ArrayFloatIota.class));
 
-    cxt.declareBuiltin(new Builtin(ArrayProject0.name, ArrayProject0.type(), ArrayProject0.class));
-    cxt.declareBuiltin(new Builtin(ArrayUnique.name, ArrayUnique.type(), ArrayUnique.class));
+    Intrinsics.declare(new Builtin(ArrayProject0.name, ArrayProject0.type(), ArrayProject0.class));
+    Intrinsics.declare(new Builtin(ArrayUnique.name, ArrayUnique.type(), ArrayUnique.class));
 
-    cxt.declareBuiltin(new Builtin(ArrayUnion.name, ArrayUnion.type(), ArrayUnion.class));
-    cxt.declareBuiltin(new Builtin(ArrayIntersect.name, ArrayIntersect.type(), ArrayIntersect.class));
-    cxt.declareBuiltin(new Builtin(ArrayComplement.name, ArrayComplement.type(), ArrayComplement.class));
+    Intrinsics.declare(new Builtin(ArrayUnion.name, ArrayUnion.type(), ArrayUnion.class));
+    Intrinsics.declare(new Builtin(ArrayIntersect.name, ArrayIntersect.type(), ArrayIntersect.class));
+    Intrinsics.declare(new Builtin(ArrayComplement.name, ArrayComplement.type(), ArrayComplement.class));
   }
 }

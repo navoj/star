@@ -60,21 +60,21 @@ public abstract class ASyntax implements IAbstract
   {
     this.loc = loc;
     assert loc != null;
-    this.attributes = new HashMap<String, IAttribute>();
+    this.attributes = new HashMap<>();
     if (attributes != null)
       this.attributes.putAll(attributes);
 
-    this.categories = new ArrayList<String>();
+    this.categories = new ArrayList<>();
   }
 
   protected ASyntax(Location loc, List<String> categories, Map<String, IAttribute> attributes)
   {
     this.loc = loc;
     assert loc != null;
-    this.attributes = new HashMap<String, IAttribute>();
+    this.attributes = new HashMap<>();
     if (attributes != null)
       this.attributes.putAll(attributes);
-    this.categories = new ArrayList<String>();
+    this.categories = new ArrayList<>();
     if (categories != null)
       this.categories.addAll(categories);
   }
@@ -116,7 +116,7 @@ public abstract class ASyntax implements IAbstract
   public IAttribute setAttribute(String att, IAttribute attribute)
   {
     if (attributes == null)
-      attributes = new HashMap<String, IAttribute>();
+      attributes = new HashMap<>();
 
     IAttribute old = attributes.get(att);
     attributes.put(att, attribute);
@@ -139,7 +139,7 @@ public abstract class ASyntax implements IAbstract
   public void setCategory(String category)
   {
     if (categories == null)
-      categories = new ArrayList<String>();
+      categories = new ArrayList<>();
     categories.add(category);
   }
 

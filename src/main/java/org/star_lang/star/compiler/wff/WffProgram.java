@@ -34,7 +34,7 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
 @SuppressWarnings("serial")
 public class WffProgram implements PrettyPrintable
 {
-  private Map<String, WffRuleSet> rules = new HashMap<String, WffRuleSet>();
+  private Map<String, WffRuleSet> rules = new HashMap<>();
 
   public void defineValidationRule(IAbstract aRule, ErrorReport errors)
   {
@@ -115,7 +115,7 @@ public class WffProgram implements PrettyPrintable
 
   public class WffRuleSet implements Serializable
   {
-    private final Bag<WffRule> rules = new Bag<WffRule>(new RuleCompare());
+    private final Bag<WffRule> rules = new Bag<>(new RuleCompare());
 
     private final String category;
 

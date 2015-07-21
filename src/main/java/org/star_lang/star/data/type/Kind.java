@@ -26,7 +26,7 @@ public class Kind implements PrettyPrintable
 {
   public enum Mode {
     unknown, type, typefunction
-  };
+  }
 
   private final Mode mode;
 

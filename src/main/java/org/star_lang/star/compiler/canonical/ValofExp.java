@@ -68,7 +68,7 @@ public class ValofExp extends BaseExpression implements Iterable<IContentAction>
     if (action instanceof Sequence)
       return ((Sequence) action).iterator();
     else
-      return new SingleIterator<IContentAction>(action);
+      return new SingleIterator<>(action);
   }
 
   @Override

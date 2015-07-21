@@ -136,9 +136,8 @@ public class MatchCompiler
     IContentExpression location = TypeChecker.typeOfName(loc, StandardNames.MACRO_LOCATION, StandardTypes.locationType,
         cxt, errors);
 
-    IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
+    return new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
         raised, location);
-    return ex;
   }
 
   private static class ExpressionCaseGenerator implements Generate<IContentExpression>
@@ -321,7 +320,7 @@ public class MatchCompiler
             assert body != null;
             if (QueryPlanner.isTransformable(cond)) {
               List<Variable> defined = VarAnalysis.findDefinedVars(cond, new DictionaryChecker(cxt,
-                  new ArrayList<Variable>()));
+                      new ArrayList<>()));
 
               body = QueryPlanner.transformConditionNxt(loc, defined, cond, eq.body, body, cxt, outer, errors);
             } else
@@ -1044,8 +1043,6 @@ public class MatchCompiler
   private enum PartitionMode {
     initial, inVars, inConstructors, inPatterns, inScalars, inRegexps, unknown
   }
-
-  ;
 
   private static <T extends Canonical> List<List<MatchTriple<T>>> partition(List<MatchTriple<T>> list)
   {

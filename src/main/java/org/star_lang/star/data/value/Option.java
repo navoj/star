@@ -280,7 +280,7 @@ public abstract class Option implements IConstructor, PrettyPrintable
     ConstructorSpecifier noneSpec = new ConstructorSpecifier(nullLoc, null, None.label, None.conIx, nilConType,
         None.class, Option.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(someSpec);
     specs.add(noneSpec);
 

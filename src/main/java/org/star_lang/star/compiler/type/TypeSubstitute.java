@@ -51,7 +51,7 @@ public class TypeSubstitute implements TypeTransformer<IType, ITypeConstraint, V
   public TypeSubstitute(Map<IType, IType> substitutions)
   {
     this.substitution = substitutions;
-    this.exclusions = new Stack<IType>();
+    this.exclusions = new Stack<>();
   }
 
   public static IType substitute(Map<IType, IType> map, IType tp)
@@ -197,7 +197,7 @@ public class TypeSubstitute implements TypeTransformer<IType, ITypeConstraint, V
         substitution.put(boundVar, old);
       else
         substitution.remove(boundVar);
-      return new UniversalType((TypeVar) bVar, bound);
+      return new UniversalType(bVar, bound);
     } else {
       exclusions.push(boundVar);
       IType bound = boundType.transform(this, cxt);
@@ -206,7 +206,7 @@ public class TypeSubstitute implements TypeTransformer<IType, ITypeConstraint, V
       if (bound == boundType)
         return t;
       else
-        return new UniversalType((TypeVar) boundVar, bound);
+        return new UniversalType(boundVar, bound);
     }
   }
 

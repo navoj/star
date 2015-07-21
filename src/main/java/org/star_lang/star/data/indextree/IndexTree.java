@@ -131,7 +131,7 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>
 
   public static <K, V> IndexTree<K, V> emptyTree()
   {
-    return new IndexTreeLeaf<K, V>(-1, new ArrayList<Pair<K, V>>());
+    return new IndexTreeLeaf<>(-1, new ArrayList<>());
   }
 
   @Override

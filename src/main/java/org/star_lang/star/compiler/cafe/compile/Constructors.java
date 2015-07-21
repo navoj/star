@@ -167,7 +167,7 @@ public class Constructors
     }
 
     genGettersAndSetters(definedType.typeLabel(), typeNode, fields, dict, errors);
-    genEnums(enums, typeNode, typeInit, initHWM, loc, errors);
+    genEnums(enums, typeNode, typeInit, initHWM);
 
     MethodNode abstractConIx = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, CONIX, "()I", null,
         new String[] {});
@@ -187,8 +187,7 @@ public class Constructors
     return newDesc;
   }
 
-  private static void genEnums(Map<String, VarInfo> enums, ClassNode typeNode, MethodNode typeInit, HWM hwm,
-      Location loc, ErrorReport errors)
+  private static void genEnums(Map<String, VarInfo> enums, ClassNode typeNode, MethodNode typeInit, HWM hwm)
   {
     if (!enums.isEmpty()) {
       InsnList ins = typeInit.instructions;
@@ -1464,7 +1463,7 @@ public class Constructors
             ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
             ins.add(new VarInsnNode(Opcodes.ALOAD, VOffset));
 
-            Expressions.checkType(SrcSpec.generalSrc, argSpecs.get(ix), mtd, dict, hwm, loc, errors, bldCat);
+            Expressions.checkType(SrcSpec.generalSrc, argSpecs.get(ix), mtd, dict, hwm);
 
             ins.add(new FieldInsnNode(Opcodes.PUTFIELD, typeNode.name, Utils.javaIdentifierOf(entry.getKey()), argSpecs
                 .get(ix).getJavaSig()));
@@ -2453,7 +2452,7 @@ public class Constructors
     hwm.reset(mark);
     ISpec resltSpec = argSpecs[argSpecs.length - 1];
     hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
-    Expressions.checkType(var, resltSpec, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(var, resltSpec, mtd, dict, hwm);
     return cont.cont(resltSpec, dict, loc, errors, ccxt);
   }
 
@@ -2496,7 +2495,7 @@ public class Constructors
 
         ISpec actual = Expressions.compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
         Utils.jumpTarget(mtd.instructions, nxLbl);
-        Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+        Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm);
         ins.add(new InsnNode(Opcodes.AASTORE));
         hwm.reset(mark2);
       }
@@ -2595,7 +2594,7 @@ public class Constructors
     hwm.reset(mark);
     ISpec resltSpec = argSpecs[argSpecs.length - 1];
     hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
-    Expressions.checkType(var, resltSpec, mtd, dict, hwm, loc, errors, bldCat);
+    Expressions.checkType(var, resltSpec, mtd, dict, hwm);
     return cont.cont(resltSpec, dict, loc, errors, ccxt);
   }
 }

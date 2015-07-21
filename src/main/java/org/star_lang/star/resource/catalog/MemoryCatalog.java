@@ -33,8 +33,8 @@ import org.star_lang.star.resource.ResourceException;
 @SuppressWarnings("serial")
 public class MemoryCatalog implements Catalog, CatalogListenable
 {
-  private final Map<String, ResourceURI> contents = new HashMap<String, ResourceURI>();
-  private final List<CatalogListener> listeners = new ArrayList<CatalogListener>();
+  private final Map<String, ResourceURI> contents = new HashMap<>();
+  private final List<CatalogListener> listeners = new ArrayList<>();
   private final String name;
   private final String version;
   private final ResourceURI base;

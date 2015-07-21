@@ -316,7 +316,7 @@ public class TypeGen implements ITypeVisitor<Void>
 
   public interface PathToType
   {
-    public IAbstract pathToType(TypeVar tv, Location loc);
+    IAbstract pathToType(TypeVar tv, Location loc);
   }
 
   public static MethodNode genType(Location loc, IType type, ClassNode klass, CafeDictionary dict, ErrorReport errors,

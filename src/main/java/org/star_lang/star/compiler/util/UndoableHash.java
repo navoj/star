@@ -28,7 +28,7 @@ public class UndoableHash<K, V> extends HashMap<K, V> implements UndoableMap<K, 
     void undo();
   }
 
-  private final Stack<Undo> state = new Stack<Undo>();
+  private final Stack<Undo> state = new Stack<>();
 
   @Override
   public int undoState()

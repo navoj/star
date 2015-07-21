@@ -36,7 +36,7 @@ import org.star_lang.star.compiler.util.UndoableMap;
 public class Substitution extends ExpressionTransformer
 {
   private final UndoableMap<String, IContentExpression> substitutions;
-  private final Stack<String> exclusions = new Stack<String>();
+  private final Stack<String> exclusions = new Stack<>();
 
   public Substitution(Dictionary cxt, UndoableMap<String, IContentExpression> substitute)
   {
@@ -50,7 +50,7 @@ public class Substitution extends ExpressionTransformer
 
   public Substitution(Dictionary cxt)
   {
-    this(cxt, new UndoableHash<String, IContentExpression>());
+    this(cxt, new UndoableHash<>());
   }
 
   public int substitutionState()
@@ -132,7 +132,7 @@ public class Substitution extends ExpressionTransformer
       }
     }
 
-    List<IStatement> newEnv = new ArrayList<IStatement>();
+    List<IStatement> newEnv = new ArrayList<>();
     for (IStatement entry : stmts)
       newEnv.add(transform(entry));
     exclusions.setSize(mark);

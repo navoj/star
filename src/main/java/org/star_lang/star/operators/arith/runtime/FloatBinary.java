@@ -58,8 +58,7 @@ public abstract class FloatBinary
     @CafeEnter
     public static double enter(double s1, double s2)
     {
-      double d = s1 - s2;
-      return d;
+      return s1 - s2;
     }
 
     @Override

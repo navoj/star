@@ -34,7 +34,7 @@ public class LetTerm extends BaseExpression
   {
     super(loc, bound.getType());
     this.bound = bound;
-    this.environment = new ArrayList<IStatement>();
+    this.environment = new ArrayList<>();
     for (IStatement stmt : environment)
       this.environment.add(stmt);
   }

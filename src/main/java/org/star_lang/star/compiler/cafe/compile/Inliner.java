@@ -24,7 +24,7 @@ import org.star_lang.star.data.type.Location;
 
 public interface Inliner
 {
-  public void preamble(MethodNode mtd, HWM stackHWM);
+  void preamble(MethodNode mtd, HWM stackHWM);
 
-  public void inline(ClassNode klass, MethodNode mtd, HWM hwm, Location loc);
+  void inline(ClassNode klass, MethodNode mtd, HWM hwm, Location loc);
 }

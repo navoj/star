@@ -145,7 +145,6 @@ public class PtnQuoter implements IAbstractVisitor
       IAbstract rhs = Abstract.binaryRhs(app);
       if (!Abstract.isUnary(rhs, StandardNames.QUESTION)) {
         errors.reportError(StringUtils.msg("expecting a ? after ", StandardNames.MACRO_APPLY), rhs.getLoc());
-        return;
       } else {
         IContentPattern args = checker.typeOfPtn(Abstract.unaryArg(rhs), TypeUtils.arrayType(astType), cond, cxt,
             outer, varHandler);

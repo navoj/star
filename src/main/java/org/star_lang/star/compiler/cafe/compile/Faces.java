@@ -76,7 +76,7 @@ public class Faces
       String[] fieldNames = new String[args.size()];
 
       // Sort out the indices of individual fields
-      Map<String, Integer> index = new HashMap<String, Integer>();
+      Map<String, Integer> index = new HashMap<>();
 
       for (int ix = 0; ix < args.size(); ix++) {
         IAbstract arg = (IAbstract) args.getCell(ix);
@@ -112,7 +112,7 @@ public class Faces
       methods.add(genClInit(faceNode, fieldNames));
 
       // Special methods to access named fields
-      genGetters(faceNode, fields, index, errors, dict);
+      genGetters(faceNode, fields, index);
 
       CompileCafe.genByteCode(javaName, loc, faceNode, synCat, errors);
     }
@@ -163,7 +163,7 @@ public class Faces
 
       ISpec actual = Expressions.compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
       Utils.jumpTarget(mtd.instructions, nxLbl);
-      Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm, arg.getLoc(), errors, bldCat);
+      Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm);
 
       ins.add(new InsnNode(Opcodes.AASTORE));
       hwm.reset(mark2);
@@ -252,15 +252,14 @@ public class Faces
     return mtd;
   }
 
-  private static void genGetters(ClassNode faceNode, Map<String, VarInfo> fields, Map<String, Integer> index,
-      ErrorReport errors, CafeDictionary dict)
+  private static void genGetters(ClassNode faceNode, Map<String, VarInfo> fields, Map<String, Integer> index)
   {
     for (Entry<String, Integer> entry : index.entrySet())
-      genGetter(faceNode, entry.getKey(), entry.getValue(), fields.get(entry.getKey()));
+      genGetter(faceNode, entry.getValue(), fields.get(entry.getKey()));
 
   }
 
-  private static void genGetter(ClassNode faceNode, String fieldName, int ix, VarInfo var)
+  private static void genGetter(ClassNode faceNode, int ix, VarInfo var)
   {
     String javaSig = var.getJavaSig();
     String javaName = var.getJavaSafeName();

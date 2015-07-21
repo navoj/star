@@ -43,7 +43,7 @@ public class CafeTypeDescription extends TypeDescription implements ICafeTypeDes
 {
   final private String javaName;
   final private String javaSig;
-  final private Map<String, AttSpec> atts = new HashMap<String, AttSpec>();
+  final private Map<String, AttSpec> atts = new HashMap<>();
 
   public CafeTypeDescription(Location loc, IType type)
   {
@@ -207,7 +207,7 @@ public class CafeTypeDescription extends TypeDescription implements ICafeTypeDes
 
   public CafeTypeDescription cleanCopy()
   {
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     for (IValueSpecifier spec : getValueSpecifiers()) {
       if (spec instanceof ICafeConstructorSpecifier)
         specs.add((IValueSpecifier) ((ICafeConstructorSpecifier) spec).cleanCopy());

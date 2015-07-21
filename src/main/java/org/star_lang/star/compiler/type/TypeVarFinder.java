@@ -51,9 +51,9 @@ public class TypeVarFinder implements ITypeVisitor<Void>
 
   public static HistoricalMap<String, TypeVar> findTypeVars(IType type, VarGenerator gen)
   {
-    HistoricalMap<String, TypeVar> found = new HistoricalMap<String, TypeVar>();
+    HistoricalMap<String, TypeVar> found = new HistoricalMap<>();
 
-    TypeVarFinder finder = new TypeVarFinder(found, new Stack<String>(), gen);
+    TypeVarFinder finder = new TypeVarFinder(found, new Stack<>(), gen);
     type.accept(finder, null);
     return found;
   }

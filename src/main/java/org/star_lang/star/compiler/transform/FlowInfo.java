@@ -30,8 +30,8 @@ import org.star_lang.star.compiler.util.TopologySort.IDefinition;
 public class FlowInfo implements PrettyPrintable, IDefinition<Variable>
 {
   ICondition term;
-  List<Variable> requiredVars;
-  List<Variable> definedVars; // these may overlap
+  private List<Variable> requiredVars;
+  private List<Variable> definedVars; // these may overlap
 
   FlowInfo(ICondition term, List<Variable> requiredVars, List<Variable> definedVars)
   {

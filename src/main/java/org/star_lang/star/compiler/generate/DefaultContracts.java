@@ -29,7 +29,7 @@ import org.star_lang.star.operators.general.runtime.GeneralEq;
  */
 public class DefaultContracts
 {
-  static private Map<String, ExpressionGenerator> contractDefaults = new HashMap<String, ExpressionGenerator>();
+  static private Map<String, ExpressionGenerator> contractDefaults = new HashMap<>();
 
   static {
     // contract defaults

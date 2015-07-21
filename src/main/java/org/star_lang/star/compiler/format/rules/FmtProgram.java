@@ -35,7 +35,7 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
 public class FmtProgram implements PrettyPrintable
 {
   private final FmtProgram parent;
-  private Map<String, FmtRuleSet> rules = new HashMap<String, FmtRuleSet>();
+  private Map<String, FmtRuleSet> rules = new HashMap<>();
 
   public FmtProgram()
   {
@@ -117,7 +117,7 @@ public class FmtProgram implements PrettyPrintable
           rules = lst.rules;
         else {
           if (!overridden) {
-            rules = new ArrayList<FmtRule>(rules);
+            rules = new ArrayList<>(rules);
             overridden = true;
           }
           rules.addAll(lst.rules);
@@ -153,7 +153,7 @@ public class FmtProgram implements PrettyPrintable
 
   private class FmtRuleSet implements Serializable
   {
-    private final List<FmtRule> rules = new ArrayList<FmtRule>();
+    private final List<FmtRule> rules = new ArrayList<>();
     private final String category;
 
     FmtRuleSet(String category)

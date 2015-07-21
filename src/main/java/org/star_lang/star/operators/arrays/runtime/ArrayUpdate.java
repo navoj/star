@@ -138,7 +138,7 @@ public class ArrayUpdate
     @CafeEnter
     public static Array enter(Array src, IFunction comparator) throws EvaluationException
     {
-      List<IValue> tmp = new ArrayList<IValue>(src.size());
+      List<IValue> tmp = new ArrayList<>(src.size());
       for (IValue el : src)
         tmp.add(el);
 

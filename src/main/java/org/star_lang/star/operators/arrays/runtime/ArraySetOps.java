@@ -36,7 +36,7 @@ public class ArraySetOps {
 
     @CafeEnter
     public static Array enter(Array left, Array right, IFunction equals) throws EvaluationException {
-      List<IValue> tmp = new ArrayList<IValue>(left.size());
+      List<IValue> tmp = new ArrayList<>(left.size());
       for (IValue el : left)
         tmp.add(el);
 
@@ -74,7 +74,7 @@ public class ArraySetOps {
 
     @CafeEnter
     public static Array enter(Array left, Array right, IFunction equals) throws EvaluationException {
-      List<IValue> tmp = new ArrayList<IValue>(Math.min(left.size(), right.size()));
+      List<IValue> tmp = new ArrayList<>(Math.min(left.size(), right.size()));
 
       outer:
       for (IValue lEl : left) {
@@ -112,7 +112,7 @@ public class ArraySetOps {
 
     @CafeEnter
     public static Array enter(Array left, Array right, IFunction equals) throws EvaluationException {
-      List<IValue> tmp = new ArrayList<IValue>(left.size());
+      List<IValue> tmp = new ArrayList<>(left.size());
 
       outer:
       for (IValue lEl : left) {

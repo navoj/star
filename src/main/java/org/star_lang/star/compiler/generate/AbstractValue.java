@@ -38,8 +38,8 @@ public class AbstractValue implements IValueVisitor
 
   public static IAbstract abstractValue(Location loc, IValue term, ErrorReport errors)
   {
-    Stack<IAbstract> stack = new Stack<IAbstract>();
-    AbstractValue visitor = new AbstractValue(loc, stack, errors);
+    Stack<IAbstract> stack = new Stack<>();
+    AbstractValue visitor = new AbstractValue(loc, stack);
     term.accept(visitor);
     assert stack.size() == 1;
     return stack.pop();
@@ -69,7 +69,7 @@ public class AbstractValue implements IValueVisitor
       throw new UnsupportedOperationException("not implemented");
   }
 
-  private AbstractValue(Location loc, Stack<IAbstract> stack, ErrorReport errors)
+  private AbstractValue(Location loc, Stack<IAbstract> stack)
   {
     this.stack = stack;
     this.loc = loc;
@@ -109,7 +109,7 @@ public class AbstractValue implements IValueVisitor
   @Override
   public void visitConstructor(IConstructor con)
   {
-    List<IAbstract> args = new ArrayList<IAbstract>();
+    List<IAbstract> args = new ArrayList<>();
     for (int ix = 0; ix < con.size(); ix++) {
       con.getCell(ix).accept(this);
       args.add(stack.pop());

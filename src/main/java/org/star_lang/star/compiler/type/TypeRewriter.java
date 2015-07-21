@@ -33,7 +33,7 @@ public class TypeRewriter extends AbstractTypeTransformer<Void>
 
   protected TypeRewriter(ITypeAlias rule, Dictionary dict)
   {
-    super(new Stack<String>());
+    super(new Stack<>());
     this.rule = rule;
     this.dict = dict;
   }

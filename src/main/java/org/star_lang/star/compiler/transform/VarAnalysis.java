@@ -96,8 +96,8 @@ public class VarAnalysis
     } else if (qTerm instanceof Disjunction) {
       Disjunction disj = (Disjunction) qTerm;
 
-      List<Variable> leftFound = new ArrayList<Variable>();
-      List<Variable> rightFound = new ArrayList<Variable>();
+      List<Variable> leftFound = new ArrayList<>();
+      List<Variable> rightFound = new ArrayList<>();
 
       findDefinedVars(disj.getLhs(), leftFound, checker);
       findDefinedVars(disj.getRhs(), rightFound, checker);
@@ -106,8 +106,8 @@ public class VarAnalysis
     } else if (qTerm instanceof Negation) {
     } else if (qTerm instanceof Otherwise) {
       Otherwise other = (Otherwise) qTerm;
-      List<Variable> leftFound = new ArrayList<Variable>();
-      List<Variable> rightFound = new ArrayList<Variable>();
+      List<Variable> leftFound = new ArrayList<>();
+      List<Variable> rightFound = new ArrayList<>();
 
       findDefinedVars(other.getLhs(), leftFound, checker);
       findDefinedVars(other.getRhs(), rightFound, checker);
@@ -116,8 +116,8 @@ public class VarAnalysis
     } else if (qTerm instanceof ConditionCondition) {
       ConditionCondition cond = (ConditionCondition) qTerm;
 
-      List<Variable> leftFound = new ArrayList<Variable>();
-      List<Variable> rightFound = new ArrayList<Variable>();
+      List<Variable> leftFound = new ArrayList<>();
+      List<Variable> rightFound = new ArrayList<>();
 
       findDefinedVars(cond.getTest(), leftFound, checker);
       findDefinedVars(cond.getLhs(), leftFound, checker);
@@ -148,7 +148,7 @@ public class VarAnalysis
 
   public static List<Variable> findDefinedVars(ICondition cond, VarChecker checker)
   {
-    List<Variable> vars = new ArrayList<Variable>();
+    List<Variable> vars = new ArrayList<>();
     findDefinedVars(cond, vars, checker);
     return vars;
   }
@@ -156,11 +156,11 @@ public class VarAnalysis
   static boolean allDefined(IContentExpression exp, List<Variable> definedVars)
   {
     if (exp instanceof Variable) {
-      if (definedVars.contains((Variable) exp))
+      if (definedVars.contains(exp))
         return true;
       else {
         for (Variable fr : definedVars)
-          if (fr.equals((Variable) exp))
+          if (fr.equals(exp))
             return true;
         return false;
       }
@@ -201,7 +201,7 @@ public class VarAnalysis
     }
   }
 
-  public static interface VarChecker
+  public interface VarChecker
   {
     boolean isThisOk(Variable var);
   }

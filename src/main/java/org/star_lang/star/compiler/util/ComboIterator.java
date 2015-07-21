@@ -35,7 +35,7 @@ public class ComboIterator<T> implements Iterator<T>
 
   public ComboIterator(Collection<? extends Iterable<T>> list)
   {
-    iterators = new ArrayList<Iterator<T>>();
+    iterators = new ArrayList<>();
     for (Iterable<T> el : list)
       iterators.add(el.iterator());
 

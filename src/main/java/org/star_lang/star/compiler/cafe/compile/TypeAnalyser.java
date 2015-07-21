@@ -67,7 +67,7 @@ public class TypeAnalyser
 
   public static IType parseType(IAbstract tp, ITypeContext cxt, ErrorReport errors)
   {
-    final LayeredMap<String, TypeVar> typeVars = new LayeredHash<String, TypeVar>();
+    final LayeredMap<String, TypeVar> typeVars = new LayeredHash<>();
     return parseType(tp, typeVars, cxt, errors);
   }
 
@@ -124,7 +124,7 @@ public class TypeAnalyser
               else if (contract.getArity() != con.getArgs().size())
                 errors.reportError("expecting " + contract.getArity() + " arguments to type constract", con.getLoc());
 
-              List<IType> argTypes = new ArrayList<IType>();
+              List<IType> argTypes = new ArrayList<>();
               for (IValue arg : ((Apply) tp).getArgs())
                 argTypes.add(parseType((IAbstract) arg, typeVars, cxt, errors));
               try {
@@ -153,13 +153,13 @@ public class TypeAnalyser
         errors.reportError("expecting a type variable", Abstract.getArg(tp, 0).getLoc());
       return tVar;
     } else if (Abstract.isApply(tp, StandardNames.DETERMINES)) {
-      List<IType> argTypes = new ArrayList<IType>();
+      List<IType> argTypes = new ArrayList<>();
       for (IValue arg : Abstract.getArgs(tp))
         argTypes.add(parseType((IAbstract) arg, typeVars, cxt, errors));
       return TypeUtils.typeExp(StandardNames.DETERMINES, argTypes);
     } else if (CafeSyntax.isUniversalType(tp)) {
       LayeredMap<String, TypeVar> subVars = typeVars.fork();
-      List<TypeVar> qVars = new ArrayList<TypeVar>();
+      List<TypeVar> qVars = new ArrayList<>();
 
       while (CafeSyntax.isUniversalType(tp)) {
         IType tV = parseType(CafeSyntax.universalBoundVar(tp), typeVars, cxt, errors);
@@ -174,7 +174,7 @@ public class TypeAnalyser
       return UniversalType.universal(qVars, boundType);
     } else if (CafeSyntax.isExistentialType(tp)) {
       LayeredMap<String, TypeVar> subVars = typeVars.fork();
-      List<TypeVar> qVars = new ArrayList<TypeVar>();
+      List<TypeVar> qVars = new ArrayList<>();
 
       while (CafeSyntax.isExistentialType(tp)) {
         IType tV = parseType(CafeSyntax.existentialTypeVar(tp), typeVars, cxt, errors);
@@ -202,7 +202,7 @@ public class TypeAnalyser
     } else if (Abstract.isTupleTerm(tp)) {
       Apply tExp = (Apply) tp;
 
-      List<IType> argTypes = new ArrayList<IType>();
+      List<IType> argTypes = new ArrayList<>();
       for (IValue arg : tExp.getArgs())
         argTypes.add(parseType((IAbstract) arg, typeVars, cxt, errors));
 
@@ -212,7 +212,7 @@ public class TypeAnalyser
 
       IType typeCon = parseType(tExp.getOperator(), typeVars, cxt, errors);
 
-      List<IType> argTypes = new ArrayList<IType>();
+      List<IType> argTypes = new ArrayList<>();
       for (IValue arg : tExp.getArgs())
         argTypes.add(parseType((IAbstract) arg, typeVars, cxt, errors));
 
@@ -244,12 +244,13 @@ public class TypeAnalyser
 
   // An algebraic type looks like:
   // type <type> is <cases>
+  @SuppressWarnings("UnnecessaryLocalVariable")
   public static CafeTypeDescription parseAlgebraicDefn(IAbstract tp, ITypeContext cxt, ErrorReport errors)
   {
     assert CafeSyntax.isTypeDef(tp);
 
-    LayeredMap<String, TypeVar> typeVars = new LayeredHash<String, TypeVar>();
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    LayeredMap<String, TypeVar> typeVars = new LayeredHash<>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     IType type = parseDefinedType(CafeSyntax.typeDefType(tp), typeVars, cxt, errors);
 
     for (IValue spec : CafeSyntax.typeDefSpecs(tp))
@@ -257,8 +258,7 @@ public class TypeAnalyser
     ITypeDescription oldDesc = cxt.getTypeDescription(type.typeLabel());
     String javaName = oldDesc instanceof CafeTypeDescription ? ((CafeTypeDescription) oldDesc).getJavaName() : "";
 
-    CafeTypeDescription desc = new CafeTypeDescription(tp.getLoc(), type, javaName, specs);
-    return desc;
+    return new CafeTypeDescription(tp.getLoc(), type, javaName, specs);
   }
 
   public static IType parseDefinedType(IAbstract tp, LayeredMap<String, TypeVar> typeVars, ITypeContext cxt,
@@ -275,7 +275,7 @@ public class TypeAnalyser
     } else if (CafeSyntax.isTypeExp(tp)) {
       String tpName = CafeSyntax.typeExpLabel(tp);
 
-      List<IType> argTypes = new ArrayList<IType>();
+      List<IType> argTypes = new ArrayList<>();
       for (IValue arg : CafeSyntax.typeExpArgs(tp))
         argTypes.add(parseType((IAbstract) arg, typeVars, cxt, errors));
 
@@ -288,7 +288,7 @@ public class TypeAnalyser
 
   public static void defineType(IAbstract tp, CafeDictionary dict, ErrorReport errors)
   {
-    LayeredMap<String, TypeVar> typeVars = new LayeredHash<String, TypeVar>();
+    LayeredMap<String, TypeVar> typeVars = new LayeredHash<>();
     IType type = parseDefinedType(tp, typeVars, dict, errors);
     String javaSrTypeName = Types.javaTypeName(dict.getPath(), type.typeLabel());
     dict.declareType(tp.getLoc(), Refresher.generalize(type, typeVars), javaSrTypeName);
@@ -308,7 +308,7 @@ public class TypeAnalyser
 
     if (CafeSyntax.isConstructorSpec(spec)) {
       String name = CafeSyntax.constructorSpecLabel(spec);
-      List<IType> argTypes = new ArrayList<IType>();
+      List<IType> argTypes = new ArrayList<>();
       IList conArgs = CafeSyntax.constructorSpecArgs(spec);
       LayeredMap<String, TypeVar> typeVars = existentials.fork();
       for (int ix = 0; ix < conArgs.size(); ix++) {
@@ -344,7 +344,7 @@ public class TypeAnalyser
           errors.reportError("expecting a named field, not: " + arg, arg.getLoc());
       }
       IType conType = TypeUtils.constructorType(ExistentialType.exist(existentials.values(), new TypeInterfaceType(
-          new TreeMap<String, IType>(existentials), members)), type);
+              new TreeMap<>(existentials), members)), type);
       conType = Freshen.generalizeType(conType);
       specs.add(new CafeRecordSpecifier(loc, name, specs.size(), index, conType));
     } else if (spec instanceof Name)

@@ -30,7 +30,7 @@ import org.star_lang.star.data.IValue;
  */
 final class AstFreeFinder extends DefaultAbstractVisitor {
   private final Set<Name> found;
-  private final Stack<Set<Name>> excludes = new Stack<Set<Name>>();
+  private final Stack<Set<Name>> excludes = new Stack<>();
 
   AstFreeFinder(Set<Name> found, Set<Name> excludes) {
     this.found = found;
@@ -127,14 +127,14 @@ final class AstFreeFinder extends DefaultAbstractVisitor {
   }
 
   private Set<Name> exclude(IAbstract term) {
-    Set<Name> exclusions = new HashSet<Name>(excludes.peek());
+    Set<Name> exclusions = new HashSet<>(excludes.peek());
     AstFreeFinder finder = new AstFreeFinder(exclusions, found);
     term.accept(finder);
     return exclusions;
   }
 
   private Set<Name> excludeDefs(Iterable<IAbstract> stmts) {
-    Set<Name> exclusions = new HashSet<Name>(excludes.peek());
+    Set<Name> exclusions = new HashSet<>(excludes.peek());
     AstFreeFinder finder = new AstFreeFinder(exclusions, found);
 
     for (IAbstract stmt : stmts) {

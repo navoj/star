@@ -52,9 +52,9 @@ import org.star_lang.star.operators.ast.runtime.MergeLocation;
 public class AstOperators
 {
 
-  public static void declare(Intrinsics cxt)
+  public static void declare()
   {
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(Name.spec());
     specs.add(BooleanLiteral.spec());
     specs.add(CharLiteral.spec());
@@ -67,20 +67,20 @@ public class AstOperators
 
     ITypeDescription locDesc = new CafeTypeDescription(Location.nullLoc, ASyntax.type, ASyntax.class.getName(), specs);
 
-    cxt.defineType(locDesc);
+    Intrinsics.declare(locDesc);
 
-    cxt.declareBuiltin(new Builtin(AstLocation.name, AstLocation.funType(), AstLocation.class));
-    cxt.declareBuiltin(new Builtin(AstMacroKey.name, AstMacroKey.funType(), AstMacroKey.class));
-    cxt.declareBuiltin(new Builtin(AstCategory.name, AstCategory.type(), AstCategory.class));
-    cxt.declareBuiltin(new Builtin(AstWithCategory.name, AstWithCategory.type(), AstWithCategory.class));
-    cxt.declareBuiltin(new Builtin(AstReplace.name, AstReplace.type(), AstReplace.class));
-    cxt.declareBuiltin(new Builtin(MacroError.name, MacroError.type(), MacroError.class));
-    cxt.declareBuiltin(new Builtin(AstFindFree.name, AstFindFree.type(), AstFindFree.class));
-    cxt.declareBuiltin(new Builtin(AstFreeVars.name, AstFreeVars.type(), AstFreeVars.class));
-    cxt.declareBuiltin(new Builtin(MacroDisplay.name, MacroDisplay.type(), MacroDisplay.class));
+    Intrinsics.declare(new Builtin(AstLocation.name, AstLocation.funType(), AstLocation.class));
+    Intrinsics.declare(new Builtin(AstMacroKey.name, AstMacroKey.funType(), AstMacroKey.class));
+    Intrinsics.declare(new Builtin(AstCategory.name, AstCategory.type(), AstCategory.class));
+    Intrinsics.declare(new Builtin(AstWithCategory.name, AstWithCategory.type(), AstWithCategory.class));
+    Intrinsics.declare(new Builtin(AstReplace.name, AstReplace.type(), AstReplace.class));
+    Intrinsics.declare(new Builtin(MacroError.name, MacroError.type(), MacroError.class));
+    Intrinsics.declare(new Builtin(AstFindFree.name, AstFindFree.type(), AstFindFree.class));
+    Intrinsics.declare(new Builtin(AstFreeVars.name, AstFreeVars.type(), AstFreeVars.class));
+    Intrinsics.declare(new Builtin(MacroDisplay.name, MacroDisplay.type(), MacroDisplay.class));
 
-    cxt.declareBuiltin(new Builtin(MergeLocation.name, MergeLocation.type(), MergeLocation.class));
-    cxt.declareBuiltin(new Builtin(AstQuoter.name, AstQuoter.type(), AstQuoter.class));
+    Intrinsics.declare(new Builtin(MergeLocation.name, MergeLocation.type(), MergeLocation.class));
+    Intrinsics.declare(new Builtin(AstQuoter.name, AstQuoter.type(), AstQuoter.class));
   }
 
 }

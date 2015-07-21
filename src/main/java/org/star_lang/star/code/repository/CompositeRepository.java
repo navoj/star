@@ -20,25 +20,20 @@ import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.catalog.CatalogException;
 
-/**
- * The CompositeRepository combines multiple repositories into one. This is usually done to combine
- * different types of repositories, such as memory based, directory based and zip-file based
- * repositories.
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+
+
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 public class CompositeRepository extends AbstractCodeRepository implements RepositoryListener
@@ -46,14 +41,14 @@ public class CompositeRepository extends AbstractCodeRepository implements Repos
   private final List<CodeRepository> subRepositories;
   private final CodeRepository tgt;
   private RepositoryNode generic;
-  private final Map<ResourceURI, RepositoryNode> cache = new HashMap<ResourceURI, RepositoryNode>();
+  private final Map<ResourceURI, RepositoryNode> cache = new HashMap<>();
 
   public CompositeRepository(String classPath, CodeRepository tgt, boolean overwrite, ClassLoader loader,
       ErrorReport errors) throws RepositoryException
   {
     super(loader, errors);
     this.tgt = tgt;
-    this.subRepositories = new ArrayList<CodeRepository>();
+    this.subRepositories = new ArrayList<>();
     setupRepositories(classPath, overwrite, loader);
   }
 
@@ -135,10 +130,9 @@ public class CompositeRepository extends AbstractCodeRepository implements Repos
     String driveSep = sep.equals("\\") ? ":" : null; // windows-specific code
 
     tgt.addListener(this);
-    for (int ix = 0; ix < elements.length; ix++) {
-      String seg = elements[ix];
+    for (String seg : elements) {
       File path = (seg.startsWith("/") || (driveSep != null && seg.contains(driveSep)) ? new File(seg) : new File(wd,
-          seg));
+              seg));
       if (path.isDirectory())
         subRepositories.add(new DirectoryRepository(path, overwrite, false, loader, errors));
       else if (path.canRead() && seg.endsWith(ZipArchive.EXTENSION))
@@ -190,9 +184,9 @@ public class CompositeRepository extends AbstractCodeRepository implements Repos
   public Iterator<RepositoryNode> iterator()
   {
     if (!subRepositories.isEmpty())
-      return new ComboIterator<RepositoryNode>(subRepositories);
+      return new ComboIterator<>(subRepositories);
     else
-      return new NullIterator<RepositoryNode>();
+      return new NullIterator<>();
   }
 
   @Override

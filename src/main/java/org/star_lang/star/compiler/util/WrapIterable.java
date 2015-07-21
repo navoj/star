@@ -1,10 +1,4 @@
-package org.star_lang.star.code.repository;
-
-import org.star_lang.star.compiler.util.PrettyPrintable;
-import org.star_lang.star.compiler.util.Writeable;
-
-
-
+package org.star_lang.star.compiler.util;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -20,19 +14,23 @@ import org.star_lang.star.compiler.util.Writeable;
  * permissions and limitations under the License.
  */
 
-public interface CodeTree extends Writeable, PrettyPrintable
-{
-  /**
-   * Every code tree has a path. This is essentially equivalent to Java's full class name.
-   * 
-   * @return
-   */
-  String getPath();
+import java.util.Iterator;
+import java.util.function.Function;
 
-  /**
-   * Standard extension for this resource
-   * 
-   * @return
-   */
-  String getExtension();
+/**
+ * Created by fgm on 7/18/15.
+ */
+public class WrapIterable<S, T> implements Iterable<T> {
+  private final Iterable<S> inner;
+  private final Function<S, T> wrap;
+
+  public WrapIterable(Function<S, T> wrap,Iterable<S> inner) {
+    this.inner = inner;
+    this.wrap = wrap;
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return new WrapIterator<>(wrap, inner.iterator());
+  }
 }

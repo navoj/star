@@ -38,7 +38,7 @@ public class HistoricalMap<K, V> implements Map<K, V>, PrettyPrintable
 
   public HistoricalMap()
   {
-    this(new ArrayList<Entry<K, V>>());
+    this(new ArrayList<>());
   }
 
   public HistoricalMap(List<Entry<K, V>> entries)
@@ -94,7 +94,7 @@ public class HistoricalMap<K, V> implements Map<K, V>, PrettyPrintable
         entry.setValue(val);
         return old;
       }
-    entries.add(new HistoricalEntry<K, V>(ky, val));
+    entries.add(new HistoricalEntry<>(ky, val));
 
     return null;
   }
@@ -167,7 +167,7 @@ public class HistoricalMap<K, V> implements Map<K, V>, PrettyPrintable
   @Override
   public Set<K> keySet()
   {
-    Set<K> keys = new HashSet<K>();
+    Set<K> keys = new HashSet<>();
 
     for (Entry<K, V> entry : entries)
       keys.add(entry.getKey());
@@ -178,7 +178,7 @@ public class HistoricalMap<K, V> implements Map<K, V>, PrettyPrintable
   @Override
   public Collection<V> values()
   {
-    Set<V> values = new HashSet<V>();
+    Set<V> values = new HashSet<>();
 
     for (Entry<K, V> entry : entries)
       values.add(entry.getValue());

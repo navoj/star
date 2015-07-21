@@ -36,22 +36,22 @@ import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumNE;
 
 public class Arithmetic
 {
-  public static void declare(Intrinsics cxt)
+  public static void declare()
   {
-    cxt.declareBuiltin(new Builtin("__decimal_plus", BigNumPlus.type(), BigNumPlus.class));
-    cxt.declareBuiltin(new Builtin("__decimal_minus", BigNumMinus.type(), BigNumMinus.class));
-    cxt.declareBuiltin(new Builtin("__decimal_times", BigNumTimes.type(), BigNumTimes.class));
-    cxt.declareBuiltin(new Builtin("__decimal_divide", BigNumDivide.type(), BigNumDivide.class));
-    cxt.declareBuiltin(new Builtin("__decimal_rem", BigNumRemainder.type(), BigNumRemainder.class));
-    cxt.declareBuiltin(new Builtin("__decimal_min", BigNumMin.type(), BigNumMin.class));
-    cxt.declareBuiltin(new Builtin("__decimal_max", BigNumMax.type(), BigNumMax.class));
-    cxt.declareBuiltin(new Builtin("__decimal_power", BigNumPwr.type(), BigNumPwr.class));
+    Intrinsics.declare(new Builtin("__decimal_plus", BigNumPlus.type(), BigNumPlus.class));
+    Intrinsics.declare(new Builtin("__decimal_minus", BigNumMinus.type(), BigNumMinus.class));
+    Intrinsics.declare(new Builtin("__decimal_times", BigNumTimes.type(), BigNumTimes.class));
+    Intrinsics.declare(new Builtin("__decimal_divide", BigNumDivide.type(), BigNumDivide.class));
+    Intrinsics.declare(new Builtin("__decimal_rem", BigNumRemainder.type(), BigNumRemainder.class));
+    Intrinsics.declare(new Builtin("__decimal_min", BigNumMin.type(), BigNumMin.class));
+    Intrinsics.declare(new Builtin("__decimal_max", BigNumMax.type(), BigNumMax.class));
+    Intrinsics.declare(new Builtin("__decimal_power", BigNumPwr.type(), BigNumPwr.class));
     
-    cxt.declareBuiltin(new Builtin(BignumEQ.name, BignumEQ.type(), BignumEQ.class));
-    cxt.declareBuiltin(new Builtin(BignumNE.name, BignumNE.type(), BignumNE.class));
-    cxt.declareBuiltin(new Builtin(BignumLE.name, BignumLE.type(), BignumLE.class));
-    cxt.declareBuiltin(new Builtin(BignumLT.name, BignumLT.type(), BignumLT.class));
-    cxt.declareBuiltin(new Builtin(BignumGE.name, BignumGE.type(), BignumGE.class));
-    cxt.declareBuiltin(new Builtin(BignumGT.name, BignumGT.type(), BignumGT.class));
+    Intrinsics.declare(new Builtin(BignumEQ.name, BignumEQ.type(), BignumEQ.class));
+    Intrinsics.declare(new Builtin(BignumNE.name, BignumNE.type(), BignumNE.class));
+    Intrinsics.declare(new Builtin(BignumLE.name, BignumLE.type(), BignumLE.class));
+    Intrinsics.declare(new Builtin(BignumLT.name, BignumLT.type(), BignumLT.class));
+    Intrinsics.declare(new Builtin(BignumGE.name, BignumGE.type(), BignumGE.class));
+    Intrinsics.declare(new Builtin(BignumGT.name, BignumGT.type(), BignumGT.class));
   }
 }

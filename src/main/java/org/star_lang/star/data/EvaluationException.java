@@ -48,7 +48,7 @@ public class EvaluationException extends Exception implements IConstructor, Pret
     ConstructorSpecifier exSpec = new ConstructorSpecifier(Location.nullLoc, null, name, 0, conType(),
         EvaluationException.class, EvaluationException.class);
 
-    List<IValueSpecifier> specs = new ArrayList<IValueSpecifier>();
+    List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(exSpec);
     ITypeDescription desc = new CafeTypeDescription(Location.nullLoc, type, Utils
         .javaInternalClassName(EvaluationException.class), specs);

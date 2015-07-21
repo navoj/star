@@ -56,10 +56,10 @@ public class FunctionLiteral extends ProgramLiteral implements IRule<IContentExp
     disp.appendId(name);
     disp.append("(");
     String sep = "";
-    for (int ix = 0; ix < args.length; ix++) {
+    for (IContentPattern arg : args) {
       disp.append(sep);
       sep = ", ";
-      args[ix].prettyPrint(disp);
+      arg.prettyPrint(disp);
     }
     disp.append(")");
     disp.appendWord(StandardNames.IS);
