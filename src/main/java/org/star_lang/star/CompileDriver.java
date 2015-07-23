@@ -1,19 +1,7 @@
 package org.star_lang.star;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.star_lang.star.code.Manifest;
-import org.star_lang.star.code.repository.CodeCatalog;
-import org.star_lang.star.code.repository.CodeMemory;
-import org.star_lang.star.code.repository.CodeRepository;
-import org.star_lang.star.code.repository.RepositoryException;
-import org.star_lang.star.code.repository.RepositoryManager;
+import org.star_lang.star.code.repository.*;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
@@ -36,8 +24,6 @@ import org.star_lang.star.compiler.sources.Pkg;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeChecker;
 import org.star_lang.star.compiler.type.Visibility;
-import org.star_lang.star.compiler.util.Pair;
-import org.star_lang.star.compiler.util.WrapIterable;
 import org.star_lang.star.compiler.wff.WffEngine;
 import org.star_lang.star.compiler.wff.WffProgram;
 import org.star_lang.star.data.EvaluationException;
@@ -53,6 +39,14 @@ import org.star_lang.star.resource.Resources;
 import org.star_lang.star.resource.URIUtils;
 import org.star_lang.star.resource.catalog.Catalog;
 import org.star_lang.star.resource.catalog.CatalogException;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /*
@@ -201,7 +195,7 @@ public class CompileDriver {
               contracts.put(contract.getName(), contract);
 
             macroCatalog.addCodeEntry(StandardNames.MANIFEST, new Manifest(macroUri, macrolabel, hash, types, aliases,
-                    contracts, new WrapIterable<>(Pair::right, macroPkg.getImports()), macroPkg.getPkgType(), macroPkg.getPkgName()));
+                    contracts,macroPkg.getImports(), macroPkg.getPkgType(), macroPkg.getPkgName()));
 
             if (errors.isErrorFree()) {
               errors.startTimer("macro repository");
@@ -291,7 +285,7 @@ public class CompileDriver {
             contracts.put(contract.getName(), contract);
 
           bldCatalog.addCodeEntry(StandardNames.MANIFEST, new Manifest(uri, pkgTerm.getName(), hash, types, aliases,
-                  contracts, new WrapIterable<>(Pair::right, pkgTerm.getImports()), pkgTerm.getPkgType(), pkgTerm.getPkgName()));
+                  contracts, pkgTerm.getImports(), pkgTerm.getPkgType(), pkgTerm.getPkgName()));
 
           if (errors.isErrorFree()) {
             try {

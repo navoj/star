@@ -1,6 +1,8 @@
 package org.star_lang.star.compiler.sources;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
@@ -31,6 +33,7 @@ public class Pkg
   private final ErrorReport errors;
   private final CodeRepository repository;
   private final Map<String, JavaInfo> javaImports;
+  private final Set<ResourceURI> imports = new HashSet<>();
 
   public Pkg(ResourceURI uri, Catalog srcCatalog, Map<String, JavaInfo> javaImports, CodeRepository repository,
       ErrorReport errors)
@@ -65,5 +68,13 @@ public class Pkg
   public ErrorReport getErrors()
   {
     return errors;
+  }
+
+  public void addImport(ResourceURI uri){
+    imports.add(uri);
+  }
+
+  public Set<ResourceURI> getImports(){
+    return imports;
   }
 }

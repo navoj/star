@@ -663,7 +663,10 @@ public class CompilerUtils {
   public static List<IAbstract> contentsOfBlock(IAbstract term) {
     assert isBlockTerm(term);
 
-    return contentsOfTheta(Abstract.unaryArg(term));
+    if (isEmptyBlock(term))
+      return new ArrayList<>();
+    else
+      return contentsOfTheta(Abstract.unaryArg(term));
   }
 
   public static List<IAbstract> contentsOfTheta(IAbstract term) {

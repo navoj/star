@@ -182,8 +182,8 @@ public class GenerateCafe implements
     List<IAbstract> pkgDefs = new ArrayList<>();
     GenerateCafe generator = new GenerateCafe(pkgDefs);
 
-    for (Pair<Location, ResourceURI> im : pkg.getImports())
-      pkgDefs.add(CafeSyntax.importSpec(im.left(), im.right()));
+    for (ResourceURI im : pkg.getImports())
+      pkgDefs.add(CafeSyntax.importSpec(pkgLoc, im));
 
     Set<String> types = new HashSet<>();
 
@@ -324,8 +324,7 @@ public class GenerateCafe implements
     Wrapper<ICondition> condition = Wrapper.create(CompilerUtils.truth);
     CContext ptnCxt = funCxt.fork(condition).fork(AccessMode.readOnly);
 
-    for (int ix = 0; ix < args.length; ix++)
-      argPtns.add(generatePtn(args[ix], ptnCxt));
+    for (IContentPattern arg : args) argPtns.add(generatePtn(arg, ptnCxt));
 
     if (!CompilerUtils.isTrivial(condition.get()))
       errors.reportError("function argument pattern is too complex", fun.getLoc());
@@ -351,8 +350,7 @@ public class GenerateCafe implements
     Wrapper<ICondition> condition = Wrapper.create(CompilerUtils.truth);
     CContext ptnCxt = funCxt.fork(condition).fork(AccessMode.readOnly);
 
-    for (int ix = 0; ix < args.length; ix++)
-      argPtns.add(generatePtn(args[ix], ptnCxt));
+    for (IContentPattern arg : args) argPtns.add(generatePtn(arg, ptnCxt));
 
     if (!CompilerUtils.isTrivial(condition.get()))
       cxt.getErrors().reportError("function argument pattern is too complex", fun.getLoc());
@@ -530,8 +528,7 @@ public class GenerateCafe implements
     IContentPattern[] groups = ptn.getGroups();
     List<IAbstract> grpPtns = new ArrayList<>();
 
-    for (int ix = 0; ix < groups.length; ix++)
-      grpPtns.add(generatePtn(groups[ix], context));
+    for (IContentPattern group : groups) grpPtns.add(generatePtn(group, context));
 
     return CafeSyntax.regexp(ptn.getLoc(), ptn.getRegexpPtn(), grpPtns);
   }

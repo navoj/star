@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.Set;
 
+import org.star_lang.star.StarCompiler;
 import org.star_lang.star.code.Manifest;
 import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.code.repository.RepositoryException;

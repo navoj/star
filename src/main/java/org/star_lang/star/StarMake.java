@@ -12,6 +12,7 @@ import org.star_lang.star.compiler.sources.PackageGrapher;
 import org.star_lang.star.compiler.sources.PkgSpec;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.catalog.Catalog;
@@ -33,21 +34,18 @@ import org.star_lang.star.resource.catalog.CatalogException;
 
 /**
  * Manage the compilation of a star file, together with any files that it depends on.
- *
+ * <p>
  * This is achieved by first of all performing an import-level dependency analysis on the source
  * file.
  */
 
-public class StarMake
-{
-  public static void compile(CodeRepository repository, ResourceURI srcURI, Catalog catalog, ErrorReport report)
-  {
+public class StarMake {
+  public static void compile(CodeRepository repository, ResourceURI srcURI, Catalog catalog, ErrorReport report) {
     compile(repository, FixedList.create(srcURI), srcURI, catalog, report);
   }
 
   public static void compile(CodeRepository repository, Collection<ResourceURI> uris, ResourceURI srcURI,
-      Catalog catalog, ErrorReport report)
-  {
+                             Catalog catalog, ErrorReport report) {
     List<List<PkgSpec>> sorted = PackageGrapher.buildImportGraph(uris, repository, catalog, report).sortDependencies();
 
     if (StarCompiler.SHOWGRAPH)
@@ -70,6 +68,8 @@ public class StarMake
             String currHash = repository.findHash(uri);
             if (currHash == null || !currHash.equals(hash) || toCompile.contains(uri)) {
               repository.removeRepositoryNode(uri);
+              if (StarCompiler.SHOWGRAPH)
+                report.reportInfo(StringUtils.msg("Compiling ", uri));
               CompileDriver.compilePackage(repository, uri, src.getSrcText(), src.getCatalog(), hash, report);
 
               addDependants(toCompile, src, sorted);
@@ -82,8 +82,7 @@ public class StarMake
     }
   }
 
-  private static void addDependants(Set<ResourceURI> toCompile, PkgSpec src, List<List<PkgSpec>> sorted)
-  {
+  private static void addDependants(Set<ResourceURI> toCompile, PkgSpec src, List<List<PkgSpec>> sorted) {
     for (ResourceURI uri : src.getDeps()) {
       if (!toCompile.contains(uri)) {
         toCompile.add(uri);
@@ -94,8 +93,7 @@ public class StarMake
     }
   }
 
-  private static PkgSpec findPkgSpec(List<List<PkgSpec>> sorted, ResourceURI uri)
-  {
+  private static PkgSpec findPkgSpec(List<List<PkgSpec>> sorted, ResourceURI uri) {
     for (List<PkgSpec> group : sorted) {
       for (PkgSpec pk : group)
         if (pk.getUri().equals(uri))
@@ -104,8 +102,7 @@ public class StarMake
     return null;
   }
 
-  private static String showGraph(Collection<ResourceURI> uris, List<List<PkgSpec>> pkgs)
-  {
+  private static String showGraph(Collection<ResourceURI> uris, List<List<PkgSpec>> pkgs) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
 
     disp.append("Pkg dependency graph for ");
@@ -126,8 +123,7 @@ public class StarMake
   /*
    * Set up a repository with the standard code
    */
-  public static void setupRepository(CodeRepository repository, ErrorReport errors)
-  {
+  public static void setupRepository(CodeRepository repository, ErrorReport errors) {
     compile(repository, StarCompiler.starRulesURI, StarRules.starCatalog(), errors);
   }
 }
