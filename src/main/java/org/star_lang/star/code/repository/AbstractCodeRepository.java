@@ -58,8 +58,16 @@ public abstract class AbstractCodeRepository implements CodeRepository
   @Override
   public void addListener(RepositoryListener listener)
   {
-    if (!listeners.contains(listener))
+    if (!listeners.contains(listener)) {
       listeners.add(listener);
+    }
+  }
+
+  protected void refreshListeners(){
+    for(RepositoryNode node : this) {
+      for (RepositoryListener listener : listeners)
+        listener.nodeUpdated(node);
+    }
   }
 
   @Override
@@ -108,8 +116,7 @@ public abstract class AbstractCodeRepository implements CodeRepository
     removeListener(loader);
     this.loader = new RepositoryClassLoader(this, outerLoader);
     addListener(this.loader);
-    for (RepositoryNode node : this)
-      this.loader.nodeUpdated(node);
+    refreshListeners();
     return loader;
   }
 

@@ -42,42 +42,35 @@ import org.star_lang.star.resource.catalog.URIBasedCatalog;
  * permissions and limitations under the License.
  */
 
-public abstract class SRTest
-{
+public abstract class SRTest {
   public static final String TEST = "test";
   public static final boolean COMPILE_ONLY = ApplicationProperties.getProperty("COMPILE_ONLY", false);
 
   protected final Class<?> rootClass;
   protected final CodeRepository repository;
 
-  public SRTest()
-  {
+  public SRTest() {
     this(StarRules.class);
   }
 
-  public SRTest(Class<?> rootClass)
-  {
+  public SRTest(Class<?> rootClass) {
     this(rootClass, StarMain.standardRepository());
   }
 
-  public SRTest(Class<?> rootClass, CodeRepository repository)
-  {
+  public SRTest(Class<?> rootClass, CodeRepository repository) {
     Resources.recordTransducer(TEST, new JarTransducer(rootClass));
     this.rootClass = rootClass;
     this.repository = repository;
   }
 
-  protected void runStar(String testResource, String... args)
-  {
+  protected void runStar(String testResource, String... args) {
     runStar(URIUtils.create(TEST, testResource), args);
   }
 
-  protected void runStar(ResourceURI uri, String... args)
-  {
+  protected void runStar(ResourceURI uri, String... args) {
     try {
       ResourceURI catalogURI = uri.resolve(Catalog.CATALOG);
-      Catalog catalog = RepositoryManager.lookForCatalog(catalogURI, new URIBasedCatalog(uri.resolve("."), "", ""),
-          repository);
+      Catalog catalog = RepositoryManager.lookForCatalog(catalogURI, new URIBasedCatalog(uri.resolve("."), "", ""));
 
       if (COMPILE_ONLY) {
         ErrorReport errors = new ErrorReport();
@@ -94,8 +87,7 @@ public abstract class SRTest
     }
   }
 
-  protected void runStar(ResourceURI uri, Catalog catalog, String... args)
-  {
+  protected void runStar(ResourceURI uri, Catalog catalog, String... args) {
     try {
       StarMain.compileAndGo(repository, uri, catalog, strings(args));
     } catch (EvaluationException e) {
@@ -105,16 +97,14 @@ public abstract class SRTest
     }
   }
 
-  protected IValue[] strings(String[] strs)
-  {
+  protected IValue[] strings(String[] strs) {
     IValue[] strings = new IValue[strs.length];
     for (int ix = 0; ix < strs.length; ix++)
       strings[ix] = Factory.newString(strs[ix]);
     return strings;
   }
 
-  protected void compile(ResourceURI uri, Catalog catalog)
-  {
+  protected void compile(ResourceURI uri, Catalog catalog) {
     try {
       StarMain.compile(repository, uri, catalog);
     } catch (LanguageException e) {
@@ -122,10 +112,9 @@ public abstract class SRTest
     }
   }
 
-  protected void run(ResourceURI uri)
-  {
+  protected void run(ResourceURI uri) {
     try {
-      ErrorReport report = StarMain.run(repository, uri, new IValue[] {});
+      ErrorReport report = StarMain.run(repository, uri, new IValue[]{});
       System.err.println(report);
     } catch (EvaluationException e) {
       fail("eval violation " + e.getMessage() + " at " + e.getLoc());
@@ -134,8 +123,7 @@ public abstract class SRTest
     }
   }
 
-  protected static File createDir()
-  {
+  protected static File createDir() {
     File systemTmpDir = new File(System.getProperty("java.io.tmpdir"));
 
     if (!systemTmpDir.isDirectory())
@@ -153,8 +141,7 @@ public abstract class SRTest
     return tmpDir;
   }
 
-  protected File createDir(String... files)
-  {
+  protected File createDir(String... files) {
     try {
       File tmpDir = createDir();
 
@@ -168,8 +155,7 @@ public abstract class SRTest
     }
   }
 
-  protected File copyFile(File tmpDir, String name) throws IOException
-  {
+  protected File copyFile(File tmpDir, String name) throws IOException {
     try (InputStream rdr = StringUtils.getResourceStream(name, rootClass)) {
       if (rdr != null) {
         File tgt = new File(tmpDir, name);
@@ -185,8 +171,7 @@ public abstract class SRTest
     }
   }
 
-  protected void removeFile(File tmpDir, String name)
-  {
+  protected void removeFile(File tmpDir, String name) {
     File tgt = new File(tmpDir, name);
     tgt.delete();
   }

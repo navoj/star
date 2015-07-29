@@ -124,7 +124,6 @@ public class PackageGrapher implements PrettyPrintable {
 
   private PkgGraph processPkg(ResourceURI uri, Catalog catalog) {
     errors.startTimer(uri.toString());
-    assert !graph.containsKey(uri);
 
     try {
       String srcText = Resources.getUriContent(uri);

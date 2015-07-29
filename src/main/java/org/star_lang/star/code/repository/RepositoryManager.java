@@ -68,21 +68,7 @@ public class RepositoryManager
     return uri.getScheme().equals(Resources.STDSCHEME);
   }
 
-  public static CodeCatalog locatePackage(CodeRepository repository, String name, Catalog catalog)
-      throws RepositoryException
-  {
-    try {
-      ResourceURI uri = catalog.resolve(name);
-      if (uri != null)
-        return locatePackage(repository, uri);
-    } catch (CatalogException e) {
-      logger.info("Cannot locate " + name + " in repository");
-    }
-
-    return null;
-  }
-
-  public static Catalog lookForCatalog(ResourceURI uri, Catalog fallback, CodeRepository repository)
+  public static Catalog lookForCatalog(ResourceURI uri, Catalog fallback)
   {
     try {
       return CatalogUtils.parseCatalog(uri, fallback);
@@ -102,18 +88,6 @@ public class RepositoryManager
       }
     } catch (RepositoryException e) {
       logger.info("Cannot locate " + uri + " in repository");
-    }
-    return null;
-  }
-
-  public static Manifest locateStarManifest(CodeRepository repository, IAbstract pkgName, Catalog catalog,
-      ErrorReport errors) throws ResourceException, CatalogException, RepositoryException
-  {
-    CodeCatalog imported = locatePackage(repository, CompileDriver.uriOfPkgRef(pkgName, catalog));
-    if (imported != null) {
-      CodeTree importMeta = imported.resolve(MANIFEST, Manifest.EXTENSION);
-      if (importMeta instanceof Manifest)
-        return (Manifest) importMeta;
     }
     return null;
   }

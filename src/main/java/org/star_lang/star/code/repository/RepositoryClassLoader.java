@@ -47,12 +47,6 @@ public class RepositoryClassLoader extends ClassLoader implements RepositoryList
   }
 
   @Override
-  public Class<?> loadClass(String name) throws ClassNotFoundException
-  {
-    return super.loadClass(name);
-  }
-
-  @Override
   protected synchronized Class<?> findClass(String name) throws ClassNotFoundException
   {
     CodeTree entry = resolve(internalClassName(name));
@@ -111,6 +105,7 @@ public class RepositoryClassLoader extends ClassLoader implements RepositoryList
       if (slashPos > 0) {
         String topPath = className.substring(0, slashPos);
         RepositoryNode node = roots.get(topPath);
+
         if (node != null) {
           CodeTree code = node.getCode();
           if (code instanceof CodeCatalog) {
@@ -135,11 +130,6 @@ public class RepositoryClassLoader extends ClassLoader implements RepositoryList
   public int getClassesLoaded()
   {
     return classesLoaded;
-  }
-
-  public void setClassesLoaded(int classesLoaded)
-  {
-    this.classesLoaded = classesLoaded;
   }
 
   // Implement repository listener
@@ -179,27 +169,5 @@ public class RepositoryClassLoader extends ClassLoader implements RepositoryList
   private static String internalClassName(String name)
   {
     return name.replace('.', '/');
-  }
-
-  protected static void showClassData(String name, byte[] code)
-  {
-    System.out.println(name + " class loaded...");
-    ClassReader rdr = new ClassReader(code);
-    PrintWriter printer = new PrintWriter(System.out);
-    TraceClassVisitor tcv = new TraceClassVisitor(printer);
-    rdr.accept(tcv, 0);
-  }
-
-  public static void showClass(Class<?> klass)
-  {
-    try {
-      ClassReader rdr = new ClassReader(klass.getCanonicalName());
-
-      PrintWriter printer = new PrintWriter(System.out);
-      TraceClassVisitor tcv = new TraceClassVisitor(printer);
-      rdr.accept(tcv, 0);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 }

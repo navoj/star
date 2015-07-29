@@ -5,216 +5,180 @@ import org.junit.Test;
 import org.star_lang.star.compiler.SRTest;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
-public class QueryTests extends SRTest
-{
-  public QueryTests()
-  {
+public class QueryTests extends SRTest {
+  public QueryTests() {
     super(QueryTests.class);
   }
 
   @Test
-  public void testIterQuery()
-  {
+  public void testIterQuery() {
     runStar("iterquery.star");
   }
 
   @Test
-  public void testRelations()
-  {
+  public void testRelations() {
     runStar("tables.star");
   }
 
   @Test
-  public void testSimpleQueries()
-  {
+  public void testSimpleQueries() {
     runStar("queries.star");
   }
 
   @Test
   @Ignore
-  public void testIndexedQueries()
-  {
+  public void testIndexedQueries() {
     runStar("complexqueries.star");
   }
 
   @Test
-  public void testReducing()
-  {
+  public void testReducing() {
     runStar("reducingQueries.star");
   }
 
   @Test
-  public void testRelationInsert()
-  {
+  public void testRelationInsert() {
     runStar("tableInserts.star");
   }
 
   @Test
-  public void testRelationDelete()
-  {
+  public void testRelationDelete() {
     runStar("tableDeletes.star");
   }
 
   @Test
-  public void testRelationUpdate()
-  {
+  public void testRelationUpdate() {
     runStar("tableReplace.star");
   }
 
   @Test
-  public void testRelationMerge()
-  {
+  public void testRelationMerge() {
     runStar("mergerelation.star");
   }
 
   @Test
-  public void testOrderedQueries()
-  {
+  public void testOrderedQueries() {
     runStar("siblings.star");
   }
 
   @Test
-  public void setDisjunctives()
-  {
+  public void setDisjunctives() {
     runStar("disjunctives.star");
   }
 
   @Test
-  public void testDescending()
-  {
+  public void testDescending() {
     runStar("descendingAny.star");
   }
 
   @Test
   @Ignore
-  public void testPerf()
-  {
+  public void testPerf() {
     runStar("perftest.star");
   }
 
   @Test
-  public void testUnique()
-  {
+  public void testUnique() {
     runStar("uniqueQuery.star");
   }
 
   @Test
-  public void testRecordQueries()
-  {
+  public void testRecordQueries() {
     runStar("recordqueries.star");
   }
 
   @Test
-  public void testOrderQueries()
-  {
+  public void testOrderQueries() {
     runStar("complexorder.star");
   }
 
   @Test
-  public void testAnyOfDeflt()
-  {
+  public void testAnyOfDeflt() {
     runStar("anydeflt.star");
   }
 
   @Test
-  public void testConsUnique()
-  {
+  public void testConsUnique() {
     runStar("consUnique.star");
   }
 
   @Test
-  public void testOthers()
-  {
+  public void testOthers() {
     runStar("others.star");
   }
 
   @Test
-  public void testForms()
-  {
+  public void testForms() {
     runStar("queryforms.star");
   }
 
   @Test
-  public void testQueryRelations()
-  {
+  public void testQueryRelations() {
     runStar("aggRelations.star");
   }
 
   @Test
-  @Ignore
-  public void testFibRelations()
-  {
-    runStar("fibRelations.star");
+  public void testFibRelations() {
+    runStar("fibSets.star");
   }
 
   @Test
-  public void testDotName()
-  {
+  public void testDotName() {
     runStar("dotacc.star");
   }
 
   @Test
-  public void testOtherwise()
-  {
+  public void testOtherwise() {
     runStar("otherwiseTest.star");
   }
 
   @Test
   @Ignore
-  public void testIndexed()
-  {
+  public void testIndexed() {
     runStar("indexedTests.star");
   }
 
   @Test
-  public void testQueryRef()
-  {
+  public void testQueryRef() {
     runStar("queryref.star");
   }
 
   @Test
-  public void testMatching()
-  {
+  public void testMatching() {
     runStar("matchingQuery.star");
   }
 
   @Test
-  public void whereQuery()
-  {
+  public void whereQuery() {
     runStar("whereQuery.star");
   }
 
   @Test
-  public void dotPtnQuery()
-  {
+  public void dotPtnQuery() {
     runStar("dotPtn.star");
   }
 
   @Test
-  public void testEmployeeSkills()
-  {
+  public void testEmployeeSkills() {
     runStar("employeeSkills.star");
   }
 
   @Test
-  public void testConsGrouping()
-  {
+  public void testConsGrouping() {
     runStar("consGroupBy.star");
   }
 }

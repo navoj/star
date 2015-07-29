@@ -57,6 +57,7 @@ public class DirectoryRepository extends AbstractCodeRepository
 
     generics = setupGenericsNode();
     cacheDir();
+    refreshListeners();
 
     if (hasStarRoot) {
       if (findNode(StarCompiler.starRulesURI) == null)
@@ -73,9 +74,9 @@ public class DirectoryRepository extends AbstractCodeRepository
   private void cacheDir()
   {
     files.clear();
-    for (String file : tgtDir.list()) {
-      findNode(file);
-    }
+//    for (String file : tgtDir.list()) {
+//      findNode(file);
+//    }
   }
 
   @Override

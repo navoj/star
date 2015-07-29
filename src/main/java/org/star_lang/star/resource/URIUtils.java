@@ -31,26 +31,24 @@ import org.star_lang.star.data.value.URIAuthority.Authority;
  * @author fgm
  * 
  */
+
 /**
  * Utilities for handling resource URIs
- * 
+ *
  * @author fgm
- * 
  */
-public class URIUtils
-{
+public class URIUtils {
   private static String fileSeparator = File.separator;
 
   /**
    * Remove clutter from a uri path to obtain the package name.
-   * 
+   * <p>
    * This is the sequence of letters that is after the last / and before the first following .
-   * 
+   *
    * @param uri
    * @return the package name extracted from the uri
    */
-  public static String getPackageName(ResourceURI uri)
-  {
+  public static String getPackageName(ResourceURI uri) {
     String path = uri.getPath();
 
     int slash = path.lastIndexOf('/');
@@ -62,8 +60,7 @@ public class URIUtils
     return path;
   }
 
-  public static String stripExtension(String path)
-  {
+  public static String stripExtension(String path) {
     for (String ext : StarCompiler.standardExtensions) {
       if (path.endsWith(ext))
         return path.substring(0, path.length() - ext.length());
@@ -71,23 +68,19 @@ public class URIUtils
     return path;
   }
 
-  public static ResourceURI create(String scheme, URIAuthority authority, String path, String query, String fragment)
-  {
+  public static ResourceURI create(String scheme, URIAuthority authority, String path, String query, String fragment) {
     return new ResourceURI.URI(scheme, authority, path, query, fragment);
   }
 
-  public static ResourceURI create(String scheme, String path)
-  {
+  public static ResourceURI create(String scheme, String path) {
     return new ResourceURI.URI(scheme, URIAuthority.noAuthorityEnum, path, null, null);
   }
 
-  public static ResourceURI createFileURI(File file)
-  {
+  public static ResourceURI createFileURI(File file) {
     return new ResourceURI.URI(Resources.FILE, URIAuthority.noAuthorityEnum, uriFilePath(file), null, null);
   }
 
-  public static String uriFilePath(File file)
-  {
+  public static String uriFilePath(File file) {
     try {
       String path = file.getCanonicalPath();
       return uriFilePath(path);
@@ -96,8 +89,7 @@ public class URIUtils
     }
   }
 
-  public static String uriFilePath(String path)
-  {
+  public static String uriFilePath(String path) {
     String uriPath = path.replace(fileSeparator, "/");
     int windozeColon = uriPath.indexOf(':');
     if (windozeColon > 0 && windozeColon < uriPath.indexOf('/'))
@@ -105,28 +97,23 @@ public class URIUtils
     return uriPath;
   }
 
-  public static ResourceURI createQuotedURI(String name, String text)
-  {
+  public static ResourceURI createQuotedURI(String name, String text) {
     return createQuotedURI(name, text, null);
   }
 
-  public static ResourceURI createQuotedURI(String name, String text, String query)
-  {
+  public static ResourceURI createQuotedURI(String name, String text, String query) {
     return new ResourceURI.URI(Resources.QSCHEME, URIAuthority.noAuthorityEnum, name, query, text);
   }
 
-  public static ResourceURI uriWithFragment(ResourceURI uri, String fragment)
-  {
+  public static ResourceURI uriWithFragment(ResourceURI uri, String fragment) {
     return new ResourceURI.URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), uri.getQuery(), fragment);
   }
 
-  public static ResourceURI uriWithQuery(ResourceURI uri, String query)
-  {
+  public static ResourceURI uriWithQuery(ResourceURI uri, String query) {
     return new ResourceURI.URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), query, uri.getFragment());
   }
 
-  public static String straightenPath(String path) throws ResourceException
-  {
+  public static String straightenPath(String path) throws ResourceException {
     StringBuilder blder = new StringBuilder();
     String[] segs = path.split("/");
     List<String> out = new ArrayList<>();
@@ -135,17 +122,17 @@ public class URIUtils
     for (String seg : segs) {
       if (!seg.isEmpty()) {
         switch (seg) {
-        case "..":
-          if (out.isEmpty())
-            throw new ResourceException("attempt to .. out of root");
-          else
-            out.remove(out.size() - 1);
-          break;
-        case ".":
-          break;
-        default:
-          out.add(seg);
-          break;
+          case "..":
+            if (out.isEmpty())
+              throw new ResourceException("attempt to .. out of root");
+            else
+              out.remove(out.size() - 1);
+            break;
+          case ".":
+            break;
+          default:
+            out.add(seg);
+            break;
         }
       }
     }
@@ -161,8 +148,7 @@ public class URIUtils
     return blder.toString();
   }
 
-  public static String rootPath(ResourceURI uri)
-  {
+  public static String rootPath(ResourceURI uri) {
     int hash = uri.hashCode();
     String pkgName = getPackageName(uri);
     if (hash < 0)
@@ -172,98 +158,101 @@ public class URIUtils
     return Utils.javaIdentifierOf(pkgName);
   }
 
-  public static ResourceURI parseUri(String src) throws ResourceException
-  {
+  public static ResourceURI parseUri(String src) throws ResourceException {
     final String scheme;
     final URIAuthority authority;
     final String path;
     final String query;
     final String fragment;
 
-    int colonPos = src.indexOf(':');
-    if (colonPos > 0) {
-      scheme = condition(src.substring(0, colonPos));
-      src = src.substring(colonPos + 1);
-      if (src.startsWith("//")) {
-        // We have an authority component
-        src = src.substring("//".length());
-        String user;
-        String host;
-        int port;
+    if (src.equals(ResourceURI.noUri))
+      return ResourceURI.noUriEnum;
+    else {
 
-        int atPos = src.indexOf('@');
-        if (atPos >= 0) {
-          user = condition(src.substring(0, atPos));
-          src = src.substring(atPos + 1);
-        } else
-          user = null;
+      int colonPos = src.indexOf(':');
+      if (colonPos > 0) {
+        scheme = condition(src.substring(0, colonPos));
+        src = src.substring(colonPos + 1);
+        if (src.startsWith("//")) {
+          // We have an authority component
+          src = src.substring("//".length());
+          String user;
+          String host;
+          int port;
 
-        int portPos = src.indexOf(':');
-        if (portPos >= 0) {
-          host = condition(src.substring(0, portPos));
-          portPos++;
-          int p = 0;
-          while (portPos < src.length() && Character.isDigit(src.codePointAt(portPos))) {
-            p = p * 10 + Character.digit(src.codePointAt(portPos), 10);
-            portPos = src.offsetByCodePoints(portPos, 1);
-          }
-          port = p;
-          src = src.substring(portPos);
-          authority = new Authority(user, host, port);
-        } else {
-          int slPos = src.indexOf('/');
-          if (slPos > 0) {
-            host = condition(src.substring(0, slPos));
-            src = src.substring(slPos);
-            port = -1;
-            authority = new Authority(user, host, port);
+          int atPos = src.indexOf('@');
+          if (atPos >= 0) {
+            user = condition(src.substring(0, atPos));
+            src = src.substring(atPos + 1);
           } else
-            authority = URIAuthority.noAuthorityEnum;
-        }
-      } else
+            user = null;
+
+          int portPos = src.indexOf(':');
+          if (portPos >= 0) {
+            host = condition(src.substring(0, portPos));
+            portPos++;
+            int p = 0;
+            while (portPos < src.length() && Character.isDigit(src.codePointAt(portPos))) {
+              p = p * 10 + Character.digit(src.codePointAt(portPos), 10);
+              portPos = src.offsetByCodePoints(portPos, 1);
+            }
+            port = p;
+            src = src.substring(portPos);
+            authority = new Authority(user, host, port);
+          } else {
+            int slPos = src.indexOf('/');
+            if (slPos > 0) {
+              host = condition(src.substring(0, slPos));
+              src = src.substring(slPos);
+              port = -1;
+              authority = new Authority(user, host, port);
+            } else
+              authority = URIAuthority.noAuthorityEnum;
+          }
+        } else
+          authority = URIAuthority.noAuthorityEnum;
+      } else {
+        scheme = null; // the scheme is not known
         authority = URIAuthority.noAuthorityEnum;
-    } else {
-      scheme = null; // the scheme is not known
-      authority = URIAuthority.noAuthorityEnum;
-    }
-
-    int queryPos = src.indexOf('?');
-    if (queryPos > 0) {
-      path = condition(src.substring(0, queryPos));
-      int fragPos = src.indexOf('#', queryPos);
-      if (fragPos > 0) {
-        fragment = condition(src.substring(fragPos + 1));
-        query = condition(src.substring(queryPos + 1, fragPos));
-      } else {
-        fragment = null;
-        query = condition(src.substring(queryPos + 1));
       }
-    } else {
-      query = null;
-      int fragPos = src.indexOf('#');
-      if (fragPos > 0) {
-        path = condition(src.substring(0, fragPos));
-        fragment = condition(src.substring(fragPos + 1));
-      } else {
-        path = condition(src);
-        fragment = null;
-      }
-    }
 
-    return new ResourceURI.URI(scheme, authority, path, query, fragment);
+      int queryPos = src.indexOf('?');
+      if (queryPos > 0) {
+        path = condition(src.substring(0, queryPos));
+        int fragPos = src.indexOf('#', queryPos);
+        if (fragPos > 0) {
+          fragment = condition(src.substring(fragPos + 1));
+          query = condition(src.substring(queryPos + 1, fragPos));
+        } else {
+          fragment = null;
+          query = condition(src.substring(queryPos + 1));
+        }
+      } else {
+        query = null;
+        int fragPos = src.indexOf('#');
+        if (fragPos > 0) {
+          path = condition(src.substring(0, fragPos));
+          fragment = condition(src.substring(fragPos + 1));
+        } else {
+          path = condition(src);
+          fragment = null;
+        }
+      }
+
+      return new ResourceURI.URI(scheme, authority, path, query, fragment);
+    }
   }
 
   /**
    * The query part of a URI looks like: scheme://Path/...?key=val;..;key=val The queryURI function
    * accesses the query looking for a particular value associated with a keyword
-   * 
+   *
    * @param uri
    * @param keyword
    * @return
    * @throws ResourceException
    */
-  public static String queryKeyword(ResourceURI uri, String keyword)
-  {
+  public static String queryKeyword(ResourceURI uri, String keyword) {
     String query = uri.getQuery();
     String[] frags = query.split(";");
     for (String pair : frags) {
@@ -274,8 +263,7 @@ public class URIUtils
     return null;
   }
 
-  public static boolean hasKeyword(ResourceURI uri, String keyword)
-  {
+  public static boolean hasKeyword(ResourceURI uri, String keyword) {
     String query = uri.getQuery();
     if (query != null) {
       String[] frags = query.split(";");
@@ -288,8 +276,7 @@ public class URIUtils
     return false;
   }
 
-  public static ResourceURI stripKeyword(ResourceURI uri, String keyword)
-  {
+  public static ResourceURI stripKeyword(ResourceURI uri, String keyword) {
     String query = uri.getQuery();
 
     if (query != null) {
@@ -313,10 +300,9 @@ public class URIUtils
     return uri;
   }
 
-  public static ResourceURI setKeyword(ResourceURI uri, String keyword, String value)
-  {
+  public static ResourceURI setKeyword(ResourceURI uri, String keyword, String value) {
     String query = uri.getQuery();
-    String[] frags = query != null ? query.split(";") : new String[] {};
+    String[] frags = query != null ? query.split(";") : new String[]{};
     StringBuilder result = new StringBuilder();
     String sep = "";
     boolean found = false;
@@ -355,8 +341,7 @@ public class URIUtils
   // 0020 0000-03FF FFFF 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
   // 0400 0000-7FFF FFFF 1111110x 10xxxxxx ... 10xxxxxx
 
-  private static String condition(String uri)
-  {
+  private static String condition(String uri) {
     // replace %xx with appropriate characters
     StringBuilder blder = new StringBuilder();
     Iterator<Integer> it = new StringIterator(uri);
@@ -379,14 +364,14 @@ public class URIUtils
           code = (code << 6) | hex(it);
           blder.appendCodePoint(code);
         } else if ((code & 0xf8) == 0xf0) {// 0001 0000-001F FFFF 11110xxx 10xxxxxx 10xxxxxx
-                                           // 10xxxxxx
+          // 10xxxxxx
           code = code & 0xf;
           code = (code << 6) | hex(it);
           code = (code << 6) | hex(it);
           code = (code << 6) | hex(it);
           blder.appendCodePoint(code);
         } else if ((code & 0xfc) == 0xf8) {// 0020 0000-03FF FFFF 111110xx 10xxxxxx 10xxxxxx
-                                           // 10xxxxxx 10xxxxxx
+          // 10xxxxxx 10xxxxxx
           code = code & 0xf;
           code = (code << 6) | hex(it);
           code = (code << 6) | hex(it);
@@ -409,8 +394,7 @@ public class URIUtils
     return blder.toString();
   }
 
-  public static String encodeURIFragment(String frag, String allow, String reserved)
-  {
+  public static String encodeURIFragment(String frag, String allow, String reserved) {
     // replace %xx with appropriate characters
     StringBuilder blder = new StringBuilder();
     Iterator<Integer> it = new StringIterator(frag);
@@ -419,8 +403,8 @@ public class URIUtils
       Integer ch = it.next();
 
       if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@'
-          || ch == '/' || ch == '.' || ch == '+' || ch == '-' || allow.indexOf(ch) >= 0)
-          && reserved.indexOf(ch) < 0)
+              || ch == '/' || ch == '.' || ch == '+' || ch == '-' || allow.indexOf(ch) >= 0)
+              && reserved.indexOf(ch) < 0)
         blder.appendCodePoint(ch);
       else {
         blder.append("%");
@@ -434,7 +418,7 @@ public class URIUtils
           enByte(0x80 | ((ch >> 6) & 0x3f), blder);
           enByte(0x80 | (ch & 0x3f), blder);
         } else if (ch >= 0x10000 && ch <= 0x1ffff) {// 0001 0000-001F FFFF 11110xxx 10xxxxxx
-                                                    // 10xxxxxx
+          // 10xxxxxx
           // 10xxxxxx
           enByte(0xf0 | ((ch >> 21) & 0x7), blder);
           enByte(0x80 | ((ch >> 18) & 0x3f), blder);
@@ -442,7 +426,7 @@ public class URIUtils
           enByte(0x80 | ((ch >> 6) & 0x3f), blder);
           enByte(0x80 | (ch & 0x3f), blder);
         } else if (ch >= 0x200000 && ch <= 0x3fffff) {// 0020 0000-03FF FFFF 111110xx 10xxxxxx
-                                                      // 10xxxxxx
+          // 10xxxxxx
           // 10xxxxxx 10xxxxxx
           enByte(0xf8 | ((ch >> 24) & 0x3), blder);
           enByte(0x80 | ((ch >> 18) & 0x3f), blder);
@@ -462,8 +446,7 @@ public class URIUtils
     return blder.toString();
   }
 
-  private static int hex(Iterator<Integer> it) throws IndexOutOfBoundsException
-  {
+  private static int hex(Iterator<Integer> it) throws IndexOutOfBoundsException {
     if (it.hasNext()) {
       Integer nx = it.next();
       if (nx == '%') {
@@ -476,8 +459,7 @@ public class URIUtils
       throw new IndexOutOfBoundsException();
   }
 
-  private static void enNibble(int xx, StringBuilder blder)
-  {
+  private static void enNibble(int xx, StringBuilder blder) {
     if (xx == 0)
       blder.append("0");
     else if (xx <= 9)
@@ -486,24 +468,20 @@ public class URIUtils
       blder.appendCodePoint('A' + xx - 10);
   }
 
-  private static void enByte(int xx, StringBuilder blder)
-  {
+  private static void enByte(int xx, StringBuilder blder) {
     enNibble((xx >> 4) & 0xf, blder);
     enNibble(xx & 0xf, blder);
   }
 
-  public static void setupUriTransducerRule(String rule) throws LanguageException
-  {
+  public static void setupUriTransducerRule(String rule) throws LanguageException {
     TransducerGenerator.generate(rule);
   }
 
-  public static void setupStarURI(String tgtDir) throws LanguageException
-  {
+  public static void setupStarURI(String tgtDir) throws LanguageException {
     setupUriTransducerRule("star:([^/]*:O)/([^/]*:D)(/([^/]*:V))?==>file://" + tgtDir + "/$D.star");
   }
 
-  public static void setupStarURI(File dir) throws LanguageException
-  {
+  public static void setupStarURI(File dir) throws LanguageException {
     setupStarURI(URIUtils.uriFilePath(dir));
   }
 }

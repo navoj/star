@@ -154,22 +154,6 @@ public class CodeDirectory implements CodeCatalog
             }
           } else {
             return Pair.pair(fileName, (CodeTree) new ClassFile(entry, fileName));
-            // try {
-            // FileInputStream str = new FileInputStream(entry);
-            // try {
-            // byte[] bt = FileUtil.readFileIntoBytes(str);
-            // return Pair.pair(fileName, (CodeTree) new CafeCode(fileName, bt));
-            // } catch (IOException e) {
-            // throw new IllegalStateException(e);
-            // } finally {
-            // try {
-            // str.close();
-            // } catch (IOException e) {
-            // }
-            // }
-            // } catch (FileNotFoundException e) {
-            // throw new IllegalStateException(e);
-            // }
           }
         }
 
