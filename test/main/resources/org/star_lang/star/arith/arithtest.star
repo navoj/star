@@ -16,7 +16,7 @@
  *
  */
 arithtest is package{
-  square has type for all t such that (t) => t where arithmetic over t and comparable over t
+  square has type for all t where arithmetic over t and comparable over t such that (t) => t
   fun square(X) is times(X,X)
   
   fun times(X,Y) where X>=Y is X*Y

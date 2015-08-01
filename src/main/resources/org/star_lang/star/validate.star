@@ -143,7 +143,8 @@ private import macrosupport;
 # ?Id . ?Tp :: typeExpression :- Id::expression :& Tp::id;
  
 # ?T :: typeExpression :- error("$T not a well formed type expression");
- 
+
+# ?L where ?C :: typeVars :- L::typeVars :& C::typeConstraint
 # #(?L,?R)# :: typeVars :- L::typeVars :& R::typeVars;
 # ?Tp :: typeVars :- Tp::typeVar;
  

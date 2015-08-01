@@ -2391,17 +2391,8 @@ public class CompilerUtils {
   public static boolean isUniversalType(IAbstract tp) {
     if (Abstract.isBinary(tp, StandardNames.ST) || Abstract.isBinary(tp, StandardNames.S_T)) {
       IAbstract lhs = Abstract.binaryLhs(tp);
-      if (Abstract.isUnary(lhs, StandardNames.FORALL) || Abstract.isUnary(lhs, StandardNames.FOR_ALL)) {
-        IAbstract vars = Abstract.unaryArg(lhs);
-
-        for (IAbstract tA : unWrap(vars, StandardNames.COMMA)) {
-          if (!(Abstract.isIdentifier(tA) || CompilerUtils.isTypeVar(tA) || isTypeFunVar(tA)))
-            return false;
-        }
-        return true;
-      }
-    } else if (Abstract.isBinary(tp, StandardNames.UNI_TILDA) && isTypeVar(Abstract.binaryLhs(tp)))
-      return true;
+      return Abstract.isUnary(lhs, StandardNames.FORALL) || Abstract.isUnary(lhs, StandardNames.FOR_ALL);
+    }
 
     return false;
   }
@@ -2438,15 +2429,7 @@ public class CompilerUtils {
   public static boolean isExistentialType(IAbstract tp) {
     if (Abstract.isBinary(tp, StandardNames.ST) || Abstract.isBinary(tp, StandardNames.S_T)) {
       IAbstract lhs = Abstract.binaryLhs(tp);
-      if (Abstract.isUnary(lhs, StandardNames.EXISTS)) {
-        IAbstract vars = Abstract.unaryArg(lhs);
-
-        for (IAbstract tA : unWrap(vars, StandardNames.COMMA)) {
-          if (!(Abstract.isIdentifier(tA) || CompilerUtils.isTypeVar(tA) || isTypeFunVar(tA)))
-            return false;
-        }
-        return true;
-      }
+      return Abstract.isUnary(lhs, StandardNames.EXISTS);
     }
 
     return false;
