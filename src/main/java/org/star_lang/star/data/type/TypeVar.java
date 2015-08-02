@@ -438,7 +438,7 @@ public class TypeVar implements IType, Iterable<ITypeConstraint>
             var.addConstraint(con.left, allow, loc, dict);
         }
       } else if (candidate instanceof TypeExp && TypeUtils.isTypeVar(((TypeExp) candidate).getTypeCon())) {
-        TypeVar var = (TypeVar) (((TypeExp) candidate).getTypeCon());
+        TypeVar var = (TypeVar) TypeUtils.deRef(((TypeExp) candidate).getTypeCon());
         if (var.constraints != null) {
           ConLoop: for (Pair<ITypeConstraint, Integer> con : constraints) {
             ITypeConstraint leftCon = con.left;

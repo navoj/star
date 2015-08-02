@@ -487,33 +487,35 @@ public class TypeParser {
   }
 
   private static Map<String, TypeVar> parseQuantifiers(IAbstract tp, ErrorReport errors, Dictionary dict, TypeNameHandler varHandler) {
+    Map<String, TypeVar> bndTypes = new HashMap<>();
+    parseQuants(tp, errors, dict, bndTypes, varHandler);
+    return bndTypes;
+  }
+
+  private static void parseQuants(IAbstract tp, ErrorReport errors, Dictionary dict, Map<String, TypeVar> vars, TypeNameHandler varHandler) {
     if (Abstract.isBinary(tp, StandardNames.WHERE)) {
-      Map<String, TypeVar> vars = parseQuantifiers(Abstract.binaryLhs(tp), errors, dict, varHandler);
-
+      parseQuants(Abstract.binaryLhs(tp), errors, dict, vars, varHandler);
       parseConstraints(Abstract.binaryRhs(tp), dict, errors, varHandler);
-      return vars;
-    } else {
-      Map<String, TypeVar> bndTypes = new HashMap<>();
-      for (IAbstract tA : CompilerUtils.unWrap(tp, StandardNames.COMMA)) {
-        if (CompilerUtils.isTypeVar(tA)) {
-          String vrName = CompilerUtils.typeVarName(tA);
-          TypeVar var = new TypeVar(vrName, vrName, AccessMode.readOnly);
-          bndTypes.put(vrName, var);
-        } else if (CompilerUtils.isTypeFunVar(tA)) {
-          String vrName = CompilerUtils.typeFunVarName(tA);
-          TypeVar var = TypeVar.var(vrName, 1, AccessMode.readOnly);
-          bndTypes.put(vrName, var);
-        } else if (Abstract.isIdentifier(tA)) {
-          String vrName = Abstract.getId(tA);
-          TypeVar var = new TypeVar(vrName, vrName, AccessMode.readOnly);
-          bndTypes.put(vrName, var);
-        } else
-          errors.reportError("invalid bound type variable: " + tA, tA.getLoc());
-      }
-      varHandler.addEntries(bndTypes);
-
-      return bndTypes;
-    }
+    } else if (Abstract.isBinary(tp, StandardNames.COMMA)) {
+      parseQuants(Abstract.binaryLhs(tp), errors, dict, vars, varHandler);
+      parseQuants(Abstract.binaryRhs(tp), errors, dict, vars, varHandler);
+    } else if (CompilerUtils.isTypeVar(tp)) {
+      String vrName = CompilerUtils.typeVarName(tp);
+      TypeVar var = new TypeVar(vrName, vrName, AccessMode.readOnly);
+      vars.put(vrName, var);
+      varHandler.defineType(vrName, var);
+    } else if (CompilerUtils.isTypeFunVar(tp)) {
+      String vrName = CompilerUtils.typeFunVarName(tp);
+      TypeVar var = TypeVar.var(vrName, 1, AccessMode.readOnly);
+      vars.put(vrName, var);
+      varHandler.defineType(vrName, var);
+    } else if (Abstract.isIdentifier(tp)) {
+      String vrName = Abstract.getId(tp);
+      TypeVar var = new TypeVar(vrName, vrName, AccessMode.readOnly);
+      vars.put(vrName, var);
+      varHandler.defineType(vrName, var);
+    } else
+      errors.reportError("invalid bound type variable: " + tp, tp.getLoc());
   }
 
   private static IType parseFunArgType(IAbstract tp, Dictionary cxt, ErrorReport errors, TypeNameHandler varHandler) {
