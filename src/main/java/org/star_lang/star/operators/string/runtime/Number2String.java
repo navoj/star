@@ -78,7 +78,7 @@ public abstract class Number2String
     public static String __char_string(int ch) throws EvaluationException
     {
       PrettyPrintDisplay disp = new PrettyPrintDisplay();
-      StringUtils.strChr(disp, ch);
+      disp.appendChar(ch);
       return disp.toString();
     }
 

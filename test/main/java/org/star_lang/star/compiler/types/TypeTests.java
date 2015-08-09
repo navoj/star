@@ -311,4 +311,9 @@ public class TypeTests extends SRTest
   {
     runStar("optionChaining.star");
   }
+
+  @Test
+  public void mutualRec(){
+    runStar("mutualFuns.star");
+  }
 }

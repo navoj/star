@@ -351,6 +351,7 @@ public class StarMain
         System.err.println(e.getMessages().toString());
       } catch (EvaluationException e) {
         System.err.println("Run-time error in " + args[0] + "\n" + e.getMessage() + " at " + e.getLoc());
+        e.printStackTrace();
       } catch (ResourceException e) {
         System.err.println(source + " cannot be parsed as a uri");
       } catch (CatalogException | RepositoryException e) {
