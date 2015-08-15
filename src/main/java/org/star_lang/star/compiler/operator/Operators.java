@@ -229,12 +229,14 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.EQUAL, EQUAL_PRIORITY);
     defineInfix(StandardNames.NOT_EQUAL, 900);
     defineInfix(StandardNames.LESS, 900);
-    defineInfix(StandardNames.LESS_EQUAL, PTN_TYPE_PRIORITY);
+    defineInfix(StandardNames.LESS_EQUAL, 900);
 
     defineInfix(StandardNames.GREATER_EQUAL, 900);
     defineInfix(StandardNames.GREATER, 900);
 
     defineInfix(StandardNames.MAP_ARROW, 900);
+    defineInfix(StandardNames.PTN_ARROW, PTN_TYPE_PRIORITY);
+
 
     definePrefixAssoc(StandardNames.EXISTS, 1005);
     definePrefixAssoc(StandardNames.FORALL, 1005);

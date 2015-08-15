@@ -28,7 +28,7 @@ stocker is package{
     on (Price,When) on tick do
       extend prices with (Price,When);
 
-    fun avePrice(Frm,To) is average(all Pr where (Pr,W) in prices and Frm<=W and W<To);
+    fun avePrice(Frm,To) is average(all Pr where (Pr,W) in prices and Frm=<W and W<To);
   } using {
     prices has type ref list of ((float,eventTime));
     var prices := list of [];

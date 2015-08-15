@@ -22,6 +22,7 @@ import org.star_lang.star.code.repository.CodeHash;
 import org.star_lang.star.code.repository.CodeTree;
 import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.compiler.util.ByteBuilder;
+import org.star_lang.star.compiler.util.FileUtil;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.data.value.URIAuthority;
@@ -242,7 +243,7 @@ public class ZipArchive implements CodeCatalog
     } else
       return; // Everything should have an extension.
 
-    byte[] content = readIntoBuffer(zip);
+    byte[] content = FileUtil.readFileIntoBytes(zip);
 
     ResourceURI zipUri = URIUtils.create(ZipTransducer.SCHEME, URIAuthority.noAuthorityEnum, path, null, zEntry
         .getName());
@@ -252,17 +253,6 @@ public class ZipArchive implements CodeCatalog
     if (extension.equals(Manifest.EXTENSION)) {
       uriTransMap.put(zipDir.path, ((Manifest) code).getUri());
     }
-  }
-
-  private static byte[] readIntoBuffer(ZipInputStream zip) throws IOException
-  {
-    ByteBuilder blder = new ByteBuilder();
-    byte[] buffer = new byte[8192];
-    int len;
-    while ((len = zip.read(buffer, 0, buffer.length)) != -1) {
-      blder.append(buffer, 0, len);
-    }
-    return blder.toBytes();
   }
 
   public static ZipArchive openArchive(InputStream str, String path) throws RepositoryException, ResourceException,
@@ -299,7 +289,7 @@ public class ZipArchive implements CodeCatalog
    * Introduce a hash into the file name so that upper/lower case file systems dont get confused and
    * we truncate the file name to avoid over-long file names.
    * 
-   * @param fragment
+   * @param name
    * @return
    */
 
@@ -312,5 +302,4 @@ public class ZipArchive implements CodeCatalog
     else
       return name.substring(0, bound) + "_" + Math.abs(hashCode);
   }
-
 }

@@ -99,7 +99,7 @@ launder is package{
   monitor(Ac) is actor{
     on (depositTx(Amnt),Td) on txs and
        (withdrawTx(Amnt),Tw) on txs and
-       Td+20<=Tw do
+       Td+20=<Tw do
      notify warning("deposit followed by withdrawal within $(Tw-Td) by $Ac") on msgs
   };
   

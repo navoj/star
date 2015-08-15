@@ -222,15 +222,15 @@ private import folding;
         grabHex(L,Hx*16+hexDigitVal(X))
 
   private 
-  fun isHexDigit(X) is ('0'<=X and X<='9') or ('a'<=X and X<='f') or ('A'<=X and X<='F')
+  fun isHexDigit(X) is ('0'=<X and X=<'9') or ('a'=<X and X=<'f') or ('A'=<X and X=<'F')
   
   private 
   fun revImplode(X) is string(__string_rev_implode(X));
      
   private 
-  fun hexDigitVal(X) where '0'<=X and X<='9' is X as integer-'0' as integer
-   |  hexDigitVal(X) where 'a'<=X and X<='f' is X as integer-'a' as integer+10
-   |  hexDigitVal(X) where 'A'<=X and X<='F' is X as integer-'A' as integer+10
+  fun hexDigitVal(X) where '0'=<X and X=<'9' is X as integer-'0' as integer
+   |  hexDigitVal(X) where 'a'=<X and X=<'f' is X as integer-'a' as integer+10
+   |  hexDigitVal(X) where 'A'=<X and X=<'F' is X as integer-'A' as integer+10
      
   fun parseNumber(Str) is let{
     fun parseInt(list of [D,..L],Nm) where isDigit(D) is parseInt(L,Nm*10l+digitVal(D))

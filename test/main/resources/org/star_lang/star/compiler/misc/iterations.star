@@ -178,7 +178,7 @@ iterations is package{
          |  sF(_,A) is A
       } in sF,NoneFound);
     logMsg(info,"X7=$X7");
-    assert size(X7)<=2;
+    assert size(X7)=<2;
     
     -- Emulate: all (X,Y) where (X,Y) in alpha and (Y,X) in beta
     def X8 is iterates(alpha,

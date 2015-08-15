@@ -30,7 +30,7 @@ actorbank is package{
     
     on withdraw(Amnt) on Tx do
       logMsg(info,"withdrawing $Amnt from #Nm's account");
-    on withdraw(Amnt) on Tx where Amnt>=0.0 and Amnt<=bal do
+    on withdraw(Amnt) on Tx where Amnt>=0.0 and Amnt=<bal do
       bal := bal-Amnt;
     on withdraw(Amnt) on Tx where Amnt<0.0 or Amnt>bal do
       logMsg(info,"Cannot withdraw amnt: $Amnt from $Nm");

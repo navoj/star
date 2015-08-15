@@ -81,28 +81,28 @@ contract largeSmall over %t is {
 
 contract comparable over %t is {
   (<) has type (%t,%t) =>boolean;
-  (<=) has type (%t,%t) =>boolean;
+  (=<) has type (%t,%t) =>boolean;
   (>) has type (%t,%t) =>boolean;
   (>=) has type (%t,%t) =>boolean;
 }
 
 implementation comparable over integer is{
   fun integer(X)<integer(Y) is __integer_lt(X,Y);
-  fun integer(X)<=integer(Y) is __integer_le(X,Y);
+  fun integer(X)=<integer(Y) is __integer_le(X,Y);
   fun integer(X)>integer(Y) is __integer_gt(X,Y);
   fun integer(X)>=integer(Y) is __integer_ge(X,Y);
  }
 
 implementation comparable over long is{
   fun long(X)<long(Y) is __long_lt(X,Y);
-  fun long(X)<=long(Y) is __long_le(X,Y);
+  fun long(X)=<long(Y) is __long_le(X,Y);
   fun long(X)>long(Y) is __long_gt(X,Y);
   fun long(X)>=long(Y) is __long_ge(X,Y);
 }
 
 implementation comparable over float is{
   fun float(X)<float(Y) is __float_lt(X,Y);
-  fun float(X)<=float(Y) is __float_le(X,Y);
+  fun float(X)=<float(Y) is __float_le(X,Y);
   fun float(X)>float(Y) is __float_gt(X,Y)
    |  _ > _ default is false;
   fun float(X)>=float(Y) is __float_ge(X,Y);
@@ -110,21 +110,21 @@ implementation comparable over float is{
 
 implementation comparable over decimal is{
   fun decimal(X)<decimal(Y) is __decimal_lt(X,Y);
-  fun decimal(X)<=decimal(Y) is __decimal_le(X,Y);
+  fun decimal(X)=<decimal(Y) is __decimal_le(X,Y);
   fun decimal(X)>decimal(Y) is __decimal_gt(X,Y);
   fun decimal(X)>=decimal(Y) is __decimal_ge(X,Y);
 }
 
 implementation comparable over char is{
   fun char(X)<char(Y) is __char_lt(X,Y);
-  fun char(X)<=char(Y) is __char_le(X,Y);
+  fun char(X)=<char(Y) is __char_le(X,Y);
   fun char(X)>char(Y) is __char_gt(X,Y);
   fun char(X)>=char(Y) is __char_ge(X,Y);
 }
 
 implementation comparable over string is{
   fun string(X)<string(Y) is __string_lt(X,Y);
-  fun string(X)<=string(Y) is __string_le(X,Y);
+  fun string(X)=<string(Y) is __string_le(X,Y);
   fun string(X)>string(Y) is __string_gt(X,Y);
   fun string(X)>=string(Y) is __string_ge(X,Y);
 }
@@ -136,7 +136,7 @@ implementation equality over () is {
 
 implementation comparable over () is {
   fun _ < _ is false;
-  fun () <= () is true;
+  fun () =< () is true;
   fun _ > _ is false;
   fun ()>=() is true;
 };
@@ -149,7 +149,7 @@ implementation equality over ((%l,%r) where equality over %l and equality over %
 
 implementation comparable over ((%l,%r) where comparable over %l and equality over %l and comparable over %r and equality over %r) is {
   (<) = pairLt;
-  (<=) = pairLe;
+  (=<) = pairLe;
   (>) = pairGt;
   (>=) = pairGe;
 } using {
@@ -158,7 +158,7 @@ implementation comparable over ((%l,%r) where comparable over %l and equality ov
    |  pairLt(_,_) default is false
   
   fun pairLe((L1,L2),(R1,R2)) where L1<R1 is true
-   |  pairLe((L1,L2),(R1,R2)) where L1=R1 is L2<=R2
+   |  pairLe((L1,L2),(R1,R2)) where L1=R1 is L2=<R2
    |  pairLe(_,_) default is false
   
   fun pairGt(X,Y) is pairLt(Y,X);
@@ -177,7 +177,7 @@ implementation comparable over ((%l,%m,%r) where comparable over %l and equality
                                               and comparable over %m and equality over %m
                                               and comparable over %r and equality over %r) is {
   (<) = tripleLt;
-  (<=) = tripleLe;
+  (=<) = tripleLe;
   (>) = tripleGt;
   (>=) = tripleGe;
 } using {
@@ -186,9 +186,9 @@ implementation comparable over ((%l,%m,%r) where comparable over %l and equality
    |  tripleLt((L1,M1,R1),(L2,M2,R2)) where L1=L2 and M1=M2 is R1<R2
    |  tripleLt(_,_) default is false
   
-  fun tripleLe((L1,M1,R1),(L2,M2,R2)) where L1<=L2 is true
-   |  tripleLe((L1,M1,R1),(L2,M2,R2)) where L1=L2 and M1<=M2 is true
-   |  tripleLe((L1,M1,R1),(L2,M2,R2)) where L1=L2 and M1=M2 is R1<=R2
+  fun tripleLe((L1,M1,R1),(L2,M2,R2)) where L1=<L2 is true
+   |  tripleLe((L1,M1,R1),(L2,M2,R2)) where L1=L2 and M1=<M2 is true
+   |  tripleLe((L1,M1,R1),(L2,M2,R2)) where L1=L2 and M1=M2 is R1=<R2
    |  tripleLe(_,_) default is false
   
   fun tripleGt(X,Y) is tripleLt(Y,X);

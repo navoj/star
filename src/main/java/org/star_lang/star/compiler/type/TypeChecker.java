@@ -887,34 +887,6 @@ public class TypeChecker {
         }
       } else
         return new VoidExp(loc);
-      // } else if (Abstract.isBinary(term, StandardNames.WHERE) &&
-      // Abstract.isUnary(Abstract.getArg(term, 0),
-      // StandardNames.ANY_OF)) {
-      // IAbstract lhs = Abstract.binaryLhs(term);
-      // IAbstract rhs = Abstract.binaryRhs(term);
-      //
-      // Dictionary queryCxt = dict.fork();
-      //
-      // Triple<ICondition, List<Variable>, List<Variable>> queryInfo = typeOfCondition(rhs,
-      // queryCxt, outer);
-      // List<Variable> free = queryInfo.middle();
-      //
-      // IType resltType = new TypeVar();
-      //
-      // try {
-      // Subsume.subsume(TypeUtils.optionType(resltType), expectedType, loc, dict);
-      // } catch (TypeConstraintException e) {
-      // errors.reportError(StringUtils.msg("expected type: ", expectedType, " not consistent with
-      // 'any of' query form"),
-      // merge(loc, e.getLocs()));
-      // }
-      //
-      // final IContentExpression bound = typeOfExp(Abstract.unaryArg(lhs), resltType, queryCxt,
-      // dict);
-      //
-      // return QueryPlanner.transformReferenceExpression(loc, free, bound, expectedType,
-      // queryInfo.left(), queryCxt,
-      // outer, errors);
     } else if (CompilerUtils.isQueryTerm(term))
       return queryExpression(term, expectedType, dict, outer);
     else if (CompilerUtils.isDefaultExp(term)) {

@@ -60,8 +60,8 @@ implementation pPrint over date is {
 implementation comparable over date is {
   fun date(X)<date(Y) is __long_lt(X,Y)
    |  _ < _ default is false
-  fun date(X)<=date(Y) is __long_le(X,Y)
-  |  _ <= _ default is false
+  fun date(X)=<date(Y) is __long_le(X,Y)
+  |  _ =< _ default is false
   fun date(X)>date(Y) is __long_gt(X,Y)
    |  _ > _ default is false
   fun date(X)>=date(Y) is __long_ge(X,Y)

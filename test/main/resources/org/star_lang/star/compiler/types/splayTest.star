@@ -21,7 +21,7 @@ splayTest is package{
   intPairOrder has type ordering of ((integer,string));
   def intPairOrder is ordering{
     fun lt((X,_),(Y,_)) is X<Y;
-    fun le((X,_),(Y,_)) is X<=Y;
+    fun le((X,_),(Y,_)) is X=<Y;
     fun eq((X,_),(Y,_)) is X=Y;
     fun ge((X,_),(Y,_)) is X>Y;
     fun gt((X,_),(Y,_)) is X>=Y;

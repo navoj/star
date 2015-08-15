@@ -118,7 +118,7 @@ private fun nodesFromListHelper(nodeConstr, els0) is valof {
     els := __array_slice(els, _FINGER_LIST_NODE_WIDTH, sz);
     sz := __array_size(els);
   }
-  /* sz <= FINGER_LIST_NODE_WIDTH */
+  /* sz =< FINGER_LIST_NODE_WIDTH */
   if __integer_eq(sz, _FINGER_LIST_NODE_WIDTH) then {
     res := __array_append(__array_append(res, nodeConstr(__array_slice(els, ZERO, _FINGER_LIST_NODE_WIDTH_MINUS_ONE))), nodeConstr(__array_slice(els, _FINGER_LIST_NODE_WIDTH_MINUS_ONE, sz)));
   } else {
@@ -552,7 +552,7 @@ fun flFullSplitDigitNode(idx, i00, flDigit) is valof {
   var i := ZERO;
   var i2 := __integer_plus(i00, nodeSize(__array_el(flDigit,i)));
   var szMinusOne := __integer_minus(__array_size(flDigit), ONE);
-  while __integer_le(i2, idx) and not(__integer_ge(i, szMinusOne)) do { -- i2 <= idx and i < szMinusOne
+  while __integer_le(i2, idx) and not(__integer_ge(i, szMinusOne)) do { -- i2 =< idx and i < szMinusOne
     i := __integer_plus(i, ONE);
     i2 := __integer_plus(i2, nodeSize(__array_el(flDigit, i)));
   };
@@ -783,7 +783,7 @@ implementation indexed_iterable over FingerList of %a determines (integer, %a) i
 
 implementation comparable over FingerList of %a where comparable over %a is {
   (<) = lt;
-  (<=) = le;
+  (=<) = le;
   (>) = gt;
   (>=) = ge;
 } using {

@@ -37,7 +37,7 @@ person is package{
   
   implementation comparable over person is {
     (<) = person_less;
-    (<=) = person_le;
+    (=<) = person_le;
     (>) = person_gt;
     (>=) = person_ge;
   } using {

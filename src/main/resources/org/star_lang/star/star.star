@@ -85,7 +85,7 @@ implementation iotaC over (cons,integer) is {
 -- macro out common use case ...
 # #(for #(identifier?C)# in iota(?S,?L,?St) do ?A)# ==> {
   var C := S;
-  while C<= L do{
+  while C=< L do{
     A;
     C := C+St;
   }

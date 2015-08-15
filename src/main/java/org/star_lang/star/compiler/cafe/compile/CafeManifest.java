@@ -77,11 +77,6 @@ public class CafeManifest implements CodeTree, CodeParser
     this(null, null, new HashMap<>(), null, null);
   }
 
-  public ResourceURI getSrcUri()
-  {
-    return src;
-  }
-
   @Override
   public String getPath()
   {

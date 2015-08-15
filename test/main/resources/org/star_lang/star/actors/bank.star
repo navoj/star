@@ -60,7 +60,7 @@ bank is package{
       logMsg(info,"Deposited $Amnt into account $(ac.id)");
     };
     
-    on withdraw(Amnt) on txs where Amnt<=ac.balance do{
+    on withdraw(Amnt) on txs where Amnt=<ac.balance do{
       ac.balance := ac.balance-Amnt;
       ac.hist := list of [ac.hist..,withdraw(Amnt)];
       logMsg(info,"Withdraw $Amnt from account $(ac.id)");

@@ -75,7 +75,7 @@ queries is package{
     def Four is 4 of (X,Y) where (X,Y) in S;
     
    	logMsg(info,"Four=$Four");
-    assert size(Four)<=4;
+    assert size(Four)=<4;
     
     logMsg(info,"parent of sam = $(any of P where {parent=P;child="sam"} in parent)");
     

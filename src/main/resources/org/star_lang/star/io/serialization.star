@@ -315,7 +315,7 @@ serialization is package {
  */
   yankByteBuffer has type (integer) => yanker of bytebuffer;
   yankByteBuffer(sz) is yankerM((s0 matching YankerState{buffer=bb0;sStreamReader=sStreamReader0}) =>
-	(sz <= bytebuffer_capacity(bb0)
+	(sz =< bytebuffer_capacity(bb0)
 	 ?  /* can use our own buffer */
 	   task {
 	     bb1 is bytebuffer_compact(bb0);

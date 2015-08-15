@@ -49,7 +49,7 @@ QueryExpression ::= (all|one|Integer of) Expression where Condition
           [group by Expression] [sort [descending] by Expression]
 Scalar ::= Expression ScalarOp Expression | UnaryOp Expression
 ScalarOp ::= + | - | * | / | Relop
-Relop ::= = | != | < | <= | > | >=
+Relop ::= = | != | < | =< | > | >=
 UnaryOp ::= - | sqrt |abs | ...
 Path ::= Name | Path . Name | Path [ Expression ] | Path -> Expression
 Ptn ::= TuplePtn | AggregatePtn | ScalarLiteral | WherePtn | MatchingPtn | (Ptn)

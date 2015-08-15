@@ -109,8 +109,9 @@ public class CafeTypeDescription extends TypeDescription implements ICafeTypeDes
     if (vSpec != null)
       throw new TypeConstraintException("attempt to redeclare constructor: " + name);
     else {
-      for (int ix = 0; ix < index.size(); ix++)
-        declareAtt(nameOfField(ix, index), fields.get(ix));
+      for(Entry<String,Integer> e:index.entrySet()){
+        declareAtt(e.getKey(),fields.get(e.getValue()));
+      }
 
       IValueSpecifier record = new CafeRecordSpecifier(getLoc(), name, conIx, javaTypeName, javaOwner, javaConSig,
           javaSafeName, index, conType);
@@ -130,15 +131,6 @@ public class CafeTypeDescription extends TypeDescription implements ICafeTypeDes
       valueSpecifiers.add(spec = new ConstructorSpecifier(getLoc(), name, conIx, null, conType, javaSafeName,
           javaTypeName, javaConSig, javaOwner));
     return spec;
-  }
-
-  private String nameOfField(int ix, Map<String, Integer> index)
-  {
-    for (Entry<String, Integer> entry : index.entrySet()) {
-      if (entry.getValue() == ix)
-        return entry.getKey();
-    }
-    return null;
   }
 
   /*

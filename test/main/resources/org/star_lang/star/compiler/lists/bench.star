@@ -29,7 +29,7 @@ bench is package {
 
   # #(for ?i in iota(?start,?stop,?step) do ?A)# ==> {
     var i := start;
-    while i<= stop do{
+    while i=< stop do{
       A;
       i := i + step;
     }
@@ -56,7 +56,7 @@ bench is package {
     timer_finish(timer);
     logMsg(info, "(last element: #ignre (should be: #(idxes[(Count-1)])))");
 
-    if Count <= 100000 then {
+    if Count =< 100000 then {
       timer := timer_start(Count, "Changing elements in native list");
       for ix in iota(0, Count-1, 1) do {
         el_list[ix] := ix + 1;

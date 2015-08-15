@@ -33,7 +33,7 @@ sorting is package{
   fun ordered(list of []) is true
    |  ordered(list of [H,..T]) is let{
         fun ordList(list of [],_) is true
-         |  ordList(list of [E,..R],C) where C<=E is ordList(R,E)
+         |  ordList(list of [E,..R],C) where C=<E is ordList(R,E)
          |  ordList(_,_) default is false
       } in ordList(T,H);   
 }

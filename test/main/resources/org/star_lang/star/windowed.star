@@ -63,7 +63,7 @@ windowed is package{
     fun(Buffer) is valof{
       startPeriod is Buffer.data[$].SampleEndtime-Period;
             
-      for Pkt in Buffer.data while Pkt.SampleEndtime <= startPeriod do
+      for Pkt in Buffer.data while Pkt.SampleEndtime =< startPeriod do
       {
         if Pkt.SampleEndtime > lastStartTime then
         {
@@ -214,7 +214,7 @@ windowed is package{
     };
 
     readOff has type () =>double;
-    readOff() where C<=1 is 0;
+    readOff() where C=<1 is 0;
     readOff() is let{
       m is (C*sumXY - sumX*sumY)/(C*sumX2 - sumX*sumX);
       b is (sumY - m*sumX)/C;

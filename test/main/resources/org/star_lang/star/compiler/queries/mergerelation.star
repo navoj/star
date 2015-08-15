@@ -29,7 +29,7 @@ mergerelation is package{
     assert size(Scores)=4;
     assert {name="X"} in Scores;
     assert {name="j";amount=1} in Scores;
-    assert {name="p";amount=M} in Scores and M<=2 and M>1;
+    assert {name="p";amount=M} in Scores and M=<2 and M>1;
     assert {name="m";amount=0} in Scores;
     assert not {name="j";amount=2} in Scores;
     

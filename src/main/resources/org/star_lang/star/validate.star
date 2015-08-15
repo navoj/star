@@ -366,7 +366,7 @@ private import macrosupport;
 # ?L > ?R :: condition :- L::expression :& R::expression;  
 # ?L < ?R :: condition :- L::expression :& R::expression;  
 # ?L >= ?R :: condition :- L::expression :& R::expression;  
-# ?L <= ?R :: condition :- L::expression :& R::expression;
+# ?L =< ?R :: condition :- L::expression :& R::expression;
 # ?Ky -> ?Vl in ?R :: condition :- Ky::pattern :& Vl::pattern :& R::expression;  
 # ?L in ?R :: condition :- L::pattern :& R::expression;  
 # ?E matches ?P :: condition :- P::pattern :& E::expression;  

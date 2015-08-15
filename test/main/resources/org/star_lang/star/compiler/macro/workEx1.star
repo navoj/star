@@ -6,7 +6,7 @@ worksheet{
   
   show fact(10);
     
-  fun fib(N) where N<=1 is 1
+  fun fib(N) where N=<1 is 1
    |  fib(N) is fib(N-1)+fib(N-2)
   
   show fib(20)

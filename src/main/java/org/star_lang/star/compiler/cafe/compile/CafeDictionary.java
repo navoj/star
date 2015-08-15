@@ -445,23 +445,6 @@ public class CafeDictionary implements ITypeContext
     }
   }
 
-  public IValueSpecifier declareConstructor(Location loc, IType type, IType conType, String javaInvokeSig,
-      String javaSafeName, String javaTypeName, String javaOwner, String name, int conIx)
-  {
-    CafeTypeDescription desc = (CafeTypeDescription) findType(type.typeLabel());
-    assert desc != null;
-    try {
-      declare(name, new VarInfo(loc, name, true, VarSource.literal, null, JavaKind.constructor, 0, AccessMode.readOnly,
-          conType, javaSafeName, null, javaTypeName, "L" + javaTypeName + ";", javaInvokeSig, Types.INIT, desc
-              .getJavaName()));
-      return desc.declareConstructor(name, conType, conIx, Utils.javaPublicName(javaTypeName), javaOwner,
-          javaInvokeSig, javaSafeName);
-    } catch (TypeConstraintException e) {
-      assert false : e.getMessage();
-      return null;
-    }
-  }
-
   @Override
   public void declareConstructor(ConstructorSpecifier cons)
   {

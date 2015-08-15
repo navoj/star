@@ -88,7 +88,7 @@ implementation sorting over cons of %t determines %t is {
 
 implementation comparable over cons of %t where comparable over %t and equality over %t is {
     fun X < Y is consLess(X,Y);
-    fun X <= Y is consLessEq(X,Y);
+    fun X =< Y is consLessEq(X,Y);
     fun X > Y is consLess(Y,X);
     fun X >= Y is consLessEq(Y,X);
   } using {
@@ -98,7 +98,7 @@ implementation comparable over cons of %t where comparable over %t and equality 
      |  consLess(_,_) default is false
     
     fun consLessEq(cons of [],_) is true
-     |  consLessEq(cons of [X,..L1],cons of [Y,..L2]) where X<=Y is consLessEq(L1,L2)
+     |  consLessEq(cons of [X,..L1],cons of [Y,..L2]) where X=<Y is consLessEq(L1,L2)
      |  consLessEq(_,_) default is false
   };
   

@@ -105,7 +105,7 @@ fun fltn(ppStr(St),Off,Indent,Max,SoFar,Nl,Cont) where size(St)+Off>Max is
       fltnSeq(Seq,Off,Indent+Ind,Max,SoFar,nlFun(ppSequence(Ind,Seq),Off,Max),(Offx,SoF) => Cont(Offx,Indent,Max,SoF));
 
 private
-fun nlFun(p,Off,Max) where width(p)+Off<=Max is (Indent,SoFar) => SoFar
+fun nlFun(p,Off,Max) where width(p)+Off=<Max is (Indent,SoFar) => SoFar
  |  nlFun(_,_,_) default is (Indent,SoFar) => cons(spaces(Indent),cons("\n",SoFar));
 
 private

@@ -66,7 +66,7 @@ public class StandardNames
   public static final String EQUAL = graphic("=");
   public static final String NOT_EQUAL = graphic("!=");
   public static final String LESS = graphic("<");
-  public static final String LESS_EQUAL = graphic("<=");
+  public static final String LESS_EQUAL = graphic("=<");
   public static final String GREATER = graphic(">");
   public static final String GREATER_EQUAL = graphic(">=");
 
@@ -114,14 +114,14 @@ public class StandardNames
   public static final String UMAIN = "_main";
 
   public static final String ACTION_TYPE = standard(AbstractType.ACTION);
-  public static final String PROC_LAMBDA = keyword("procedure");
-  public static final String FUN_ARROW = graphic(AbstractType.FUN_TYPE);
+  public static final String FUN_ARROW = graphic("=>");
   public static final String FUNCTION = keyword("function");
   public static final String MEMO = keyword("memo");
   public static final String LAMBDA = keyword("fn");
   public static final String UNI_TILDA = graphic("~");
   public static final String PATTERN = keyword("pattern");
-  public static final String PTN_TYPE = graphic(AbstractType.PTN_TYPE);
+  public static final String PTN_TYPE = graphic("<=");
+  public static final String PTN_ARROW = graphic("<=");
   public static final String OVERLOADED_TYPE = graphic(AbstractType.OVERLOADED_TYPE);
   public static final String CONSTRUCTOR_TYPE = graphic(AbstractType.CONSTRUCTOR_TYPE);
 
@@ -156,7 +156,6 @@ public class StandardNames
 
   public static final String OF = keyword("of");
   public static final String SUBSTITUTE = keyword("substitute");
-  public static final String DOWN = keyword("down");
 
   public static final String REF = keyword("ref");
   public static final String VAR = keyword("var");
