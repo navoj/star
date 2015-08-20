@@ -107,9 +107,6 @@ public class StandardNames
   public static final String IMPOSSIBLE = "_impossible";
   public static final String LEFTFOLD1 = "leftFold1";
 
-  public static final String SOME = Some.label;
-  public static final String SOMEVALUE = standard("someValue");
-
   public static final String MAIN = "main";
   public static final String UMAIN = "_main";
 
@@ -170,26 +167,6 @@ public class StandardNames
   public static final String UNQUOTE = keyword("unquote");
   public static final String LQUOTE = graphic("<|");
   public static final String RQUOTE = graphic("|>");
-
-  public static final String QTNAME = standard("_qtName");
-  public static final String QTINTEGER = standard("_qtInteger");
-  public static final String QTLONG = standard("_qtLong");
-  public static final String QTFLOAT = standard("_qtFLoat");
-  public static final String QTDECIMAL = standard("_qtDecimal");
-  public static final String QTCHAR = standard("_qtChar");
-  public static final String QTSTRING = standard("_qtString");
-  public static final String QTTUPLE = standard("_qtTuple");
-  public static final String QTAPPLY = standard("_qtApply");
-
-  public static final String QTNAME_P = standard("_qtNameP");
-  public static final String QTINTEGER_P = standard("_qtIntegerP");
-  public static final String QTLONG_P = standard("_qtLongP");
-  public static final String QTFLOAT_P = standard("_qtFLoatP");
-  public static final String QTDECIMAL_P = standard("_qtDecimalP");
-  public static final String QTCHAR_P = standard("_qtCharP");
-  public static final String QTSTRING_P = standard("_qtStringP");
-  public static final String QTTUPLE_P = standard("_qtTupleP");
-  public static final String QTAPPLY_P = standard("_qtApplyP");
 
   public static final String SPAWN = keyword("spawn");
   public static final String WAITFOR = keyword("waitfor");

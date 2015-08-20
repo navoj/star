@@ -55,12 +55,21 @@ fun _optionSelect(none,_,D) is D()
 # ?E has value ?P :: condition :- E::expression :& P::pattern;
 # present ?E :: condition :- E :: expression;
 
+contract optional over t determines v is {
+  _hasValue has type (v)<=t
+}
+
+implementation for all t such that
+  optional over option of t determines t is {
+  ptn _hasValue(X) from some(X)
+}
+
 #?R ?. ?F ==> (R has value #$R ? some(#$R.F) : none)
 #?R or else ?E ==> _optionDeflt(R, ()=>E)
 
-#?E has value ?P ==> E matches some(P);
+#?E has value ?P ==> E matches _hasValue(P);
 
-# present ?E ==> E matches some(_);
+# present ?E ==> E matches _hasValue(_);
 
 implementation for all t,e such that
   iterable over option of t determines e where iterable over t determines e is {

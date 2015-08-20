@@ -4,116 +4,102 @@ import org.junit.Test;
 import org.star_lang.star.compiler.SRTest;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
-public class StringTests extends SRTest
-{
-  public StringTests()
-  {
+public class StringTests extends SRTest {
+  public StringTests() {
     super(StringTests.class);
   }
 
   @Test
-  public void stringConcatTest()
-  {
+  public void stringConcatTest() {
     runStar("strings.star");
   }
 
   @Test
-  public void testEmpty()
-  {
+  public void testEmpty() {
     runStar("emptyInterpolate.star");
   }
 
   @Test
-  public void indexTest()
-  {
+  public void indexTest() {
     runStar("strindex.star");
   }
 
   @Test
-  public void quotedStringTest()
-  {
+  public void quotedStringTest() {
     runStar("stringParse.star");
   }
 
   @Test
-  public void stringCaseTest()
-  {
+  public void stringCaseTest() {
     runStar("stringcases.star");
   }
 
   @Test
-  public void splitStringTest()
-  {
+  public void splitStringTest() {
     runStar("stringsplit.star");
   }
 
   @Test
-  public void stringFilter()
-  {
+  public void stringFilter() {
     runStar("stringFilter.star");
   }
 
   @Test
-  public void coerceStringTest()
-  {
+  public void coerceStringTest() {
     runStar("coerce.star");
   }
 
   @Test
-  public void stringSeqTest()
-  {
+  public void stringSeqTest() {
     runStar("strsequence.star");
   }
 
   @Test
-  public void charSeqTest()
-  {
+  public void charSeqTest() {
     runStar("charsequence.star");
   }
 
   @Test
-  public void deserialTest()
-  {
+  public void deserialTest() {
     runStar("deserialmap.star");
   }
 
   @Test
-  public void testStringFind()
-  {
+  public void testStringFind() {
     runStar("stringfind.star");
   }
 
   @Test
-  public void testStringReverse()
-  {
+  public void testStringReverse() {
     runStar("stringReverse.star");
   }
 
   @Test
-  public void testStringFormatting()
-  {
+  public void testStringFormatting() {
     runStar("formats.star");
   }
 
   @Test
-  public void testStringFloatFormatting()
-  {
+  public void testStringFloatFormatting() {
     runStar("floatformats.star");
+  }
+
+  @Test
+  public void testBadStrings() {
+    runStar("badStrings.star");
   }
 }
