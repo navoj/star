@@ -1,10 +1,8 @@
 package org.star_lang.star.data;
 
 import org.star_lang.star.data.indextree.Fold;
-import org.star_lang.star.data.indextree.Sets;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

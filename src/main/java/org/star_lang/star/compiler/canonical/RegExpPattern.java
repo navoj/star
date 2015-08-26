@@ -65,7 +65,7 @@ public class RegExpPattern extends ContentPattern
   public void prettyPrint(PrettyPrintDisplay disp)
   {
     disp.append("`");
-    disp.append(pattern.toString());
+    disp.append(pattern);
     if (groups.length > 0) {
       disp.append(":");
       String sep = "";

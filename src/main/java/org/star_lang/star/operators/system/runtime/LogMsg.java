@@ -42,7 +42,7 @@ public class LogMsg implements IFunction
     Level level = Level.parse(lvl);
 
     if (logger.isLoggable(level)) {
-      logger.logp(level, cat.toString(), "", msg.toString());
+      logger.logp(level, cat, "", msg);
     }
     return NTuple.$0Enum;
   }

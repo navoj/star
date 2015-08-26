@@ -206,8 +206,7 @@ public class FixedList<E> implements List<E>, PrettyPrintable
   public Object[] toArray()
   {
     Object ndata[] = new Object[data.length];
-    for (int ix = 0; ix < data.length; ix++)
-      ndata[ix] = data[ix];
+    System.arraycopy(data, 0, ndata, 0, data.length);
     return ndata;
   }
 

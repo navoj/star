@@ -13,7 +13,6 @@ import org.star_lang.star.compiler.transform.Computations;
 import org.star_lang.star.data.type.AbstractType;
 import org.star_lang.star.data.value.BoolWrap.FalseValue;
 import org.star_lang.star.data.value.BoolWrap.TrueValue;
-import org.star_lang.star.data.value.Option.Some;
 import org.star_lang.star.operators.ast.runtime.AstMacroKey;
 
 /*

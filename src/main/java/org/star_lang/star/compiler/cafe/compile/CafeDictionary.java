@@ -12,7 +12,6 @@ import java.util.TreeSet;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
-import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.type.TypeUtils;

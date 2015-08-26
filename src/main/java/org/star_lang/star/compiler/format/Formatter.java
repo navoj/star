@@ -326,8 +326,7 @@ public class Formatter
     if (args.length > 0) {
       try {
         String nArgs[] = new String[args.length - 1];
-        for (int ix = 0; ix < nArgs.length; ix++)
-          nArgs[ix] = args[ix + 1];
+        System.arraycopy(args, 1, nArgs, 0, nArgs.length);
 
         CodeRepository repository = new CodeRepositoryImpl(Thread.currentThread().getContextClassLoader(), true, errors);
 

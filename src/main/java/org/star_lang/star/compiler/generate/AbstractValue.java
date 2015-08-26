@@ -45,7 +45,7 @@ public class AbstractValue implements IValueVisitor
     return stack.pop();
   }
 
-  public static IAbstract abstractValue(Location loc, Object val, IType type)
+  private static IAbstract abstractValue(Location loc, Object val, IType type)
   {
     if (type.equals(StandardTypes.charType))
       return Abstract.newChar(loc, (Integer) val);

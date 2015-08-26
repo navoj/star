@@ -50,8 +50,7 @@ public class BranchCont implements IContinuation
   {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
-    
+
     Expressions.checkType(src, SrcSpec.rawBoolSrc, mtd, dict, hwm);
     mtd.instructions.add(new JumpInsnNode(sense == Sense.jmpOnOk ? Opcodes.IFNE : Opcodes.IFEQ, elLabel));
 

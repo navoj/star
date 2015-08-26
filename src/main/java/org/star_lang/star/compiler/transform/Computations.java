@@ -1,11 +1,7 @@
 package org.star_lang.star.compiler.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.star_lang.star.StarCompiler;
 import org.star_lang.star.compiler.CompilerUtils;
@@ -1100,8 +1096,7 @@ public class Computations
   private static IContentExpression valofValis(Location loc, IContentExpression exp, IContentAction... actions)
   {
     List<IContentAction> acts = new ArrayList<>();
-    for (IContentAction act : actions)
-      acts.add(act);
+    Collections.addAll(acts, actions);
 
     if (exp instanceof ValofExp) {
       for (IContentAction sub : ((ValofExp) exp))

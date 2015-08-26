@@ -21,7 +21,6 @@ import org.star_lang.star.code.repository.CodeDirectory;
 import org.star_lang.star.code.repository.CodeHash;
 import org.star_lang.star.code.repository.CodeTree;
 import org.star_lang.star.code.repository.RepositoryException;
-import org.star_lang.star.compiler.util.ByteBuilder;
 import org.star_lang.star.compiler.util.FileUtil;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.data.value.ResourceURI;

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.star_lang.star.StarCompiler;
 import org.star_lang.star.StarRules;
-import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;

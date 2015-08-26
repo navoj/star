@@ -1,10 +1,8 @@
 package org.star_lang.star.data.indextree;
 
 import org.star_lang.star.compiler.util.PrettyPrintable;
-import org.star_lang.star.data.IValue;
 
 import java.util.Iterator;
-import java.util.Map;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

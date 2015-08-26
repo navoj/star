@@ -44,7 +44,7 @@ public class ConstCompletionHandler implements CompletionHandler<Void, IFunction
   {
     try {
       att.enter(Result.success(token));
-    } catch (EvaluationException e) {
+    } catch (EvaluationException ignored) {
     }
   }
 
@@ -55,7 +55,7 @@ public class ConstCompletionHandler implements CompletionHandler<Void, IFunction
       EvaluationException e = t instanceof EvaluationException ? (EvaluationException) t : new EvaluationException(
           "failed", t);
       att.enter(Result.failed(e));
-    } catch (EvaluationException e) {
+    } catch (EvaluationException ignored) {
     }
   }
 }

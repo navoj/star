@@ -39,7 +39,7 @@ public abstract class AbstractCodeRepository implements CodeRepository
   private final Map<String, JavaInfo> javaInfo = new HashMap<>();
   private final Map<ResourceURI, SortedSet<Version>> latest = new HashMap<>();
   private final ClassLoader outerLoader;
-  protected RepositoryClassLoader loader;
+  private RepositoryClassLoader loader;
   protected final ErrorReport errors;
 
   protected AbstractCodeRepository(ClassLoader outerLoader, ErrorReport errors)

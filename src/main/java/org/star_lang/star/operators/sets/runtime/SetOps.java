@@ -9,10 +9,7 @@ import org.star_lang.star.data.type.UniversalType;
 import org.star_lang.star.data.value.BoolWrap;
 import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.data.value.SetTree;
-import org.star_lang.star.data.value.Option;
 import org.star_lang.star.operators.CafeEnter;
-
-import java.util.Map.Entry;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

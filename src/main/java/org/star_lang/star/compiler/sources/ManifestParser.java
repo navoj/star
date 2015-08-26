@@ -1,18 +1,5 @@
 package org.star_lang.star.compiler.sources;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.star_lang.star.code.Manifest;
 import org.star_lang.star.code.repository.CodeParser;
 import org.star_lang.star.code.repository.CodeTree;
@@ -26,31 +13,23 @@ import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.grammar.OpGrammar;
 import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.standard.StandardNames;
-import org.star_lang.star.compiler.type.Dict;
+import org.star_lang.star.compiler.type.*;
 import org.star_lang.star.compiler.type.Dictionary;
-import org.star_lang.star.compiler.type.Freshen;
-import org.star_lang.star.compiler.type.Refresher;
-import org.star_lang.star.compiler.type.TypeNameHandler;
-import org.star_lang.star.compiler.type.TypeParser;
-import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.type.TypeParser.RegularTypeName;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.compiler.util.Pair;
-import org.star_lang.star.data.type.ContractImplementation;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeAlias;
-import org.star_lang.star.data.type.ITypeDescription;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.TypeAlias;
-import org.star_lang.star.data.type.TypeContract;
-import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.*;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.Resources;
 
-import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.*;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

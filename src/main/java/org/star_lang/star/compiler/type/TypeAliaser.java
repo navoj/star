@@ -23,7 +23,6 @@ import org.star_lang.star.data.type.TupleConstraint;
 import org.star_lang.star.data.type.TupleType;
 import org.star_lang.star.data.type.Type;
 import org.star_lang.star.data.type.TypeConstraintException;
-import org.star_lang.star.data.type.TypeDescription;
 import org.star_lang.star.data.type.TypeExists;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.data.type.TypeInterfaceType;
@@ -108,10 +107,9 @@ public class TypeAliaser implements TypeTransformer<IType, ITypeConstraint, Void
       } else
         return eType;
     } else if (type.kind() == Kind.type && typeSpec instanceof ITypeDescription) {
-      ITypeDescription desc = typeSpec;
 
       try {
-        Subsume.subsume(type, Freshen.freshenForUse(desc.getType()), loc, dict, true);
+        Subsume.subsume(type, Freshen.freshenForUse(typeSpec.getType()), loc, dict, true);
       } catch (TypeConstraintException e) {
         errors.reportError(StringUtils.msg(e.getWords()), loc);
       }

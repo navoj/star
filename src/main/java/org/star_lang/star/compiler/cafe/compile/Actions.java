@@ -852,7 +852,7 @@ public class Actions
       try {
         yieldMethod = Thread.class.getDeclaredMethod(YIELD);
         YIELD_SIG = org.objectweb.asm.Type.getMethodDescriptor(yieldMethod);
-      } catch (NoSuchMethodException | SecurityException e) {
+      } catch (NoSuchMethodException | SecurityException ignored) {
       }
     }
 

@@ -65,6 +65,7 @@ import org.star_lang.star.operators.arrays.runtime.ArraySequenceOps.UnaryArray;
 public class Quoter implements IAbstractVisitor
 {
   private final Stack<IContentExpression> stack = new Stack<>();
+  @SuppressWarnings("FieldCanBeLocal")
   private final Map<Location, Variable> locations = new HashMap<>();
   private final List<IContentAction> locDefs = new ArrayList<>();
   private final Dictionary cxt;

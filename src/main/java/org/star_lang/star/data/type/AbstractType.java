@@ -45,7 +45,7 @@ public abstract class AbstractType implements IType
   public static final String EXISTS = "exists";
 
   private final String label;
-  protected final Kind kind;
+  private final Kind kind;
 
   protected AbstractType(String label, Kind kind)
   {

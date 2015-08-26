@@ -188,7 +188,7 @@ public abstract class Abstract
       return false;
   }
 
-  public static boolean isApply(IAbstract term, int arity)
+  private static boolean isApply(IAbstract term, int arity)
   {
     return term instanceof Apply && ((Apply) term).getOperator() instanceof Name && ((Apply) term).arity() == arity;
   }

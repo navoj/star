@@ -1,35 +1,9 @@
 package org.star_lang.star.compiler.cafe.compile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.star_lang.star.code.repository.CodeCatalog;
+import org.objectweb.asm.tree.*;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
-import org.star_lang.star.compiler.ast.FloatLiteral;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.Literal;
-import org.star_lang.star.compiler.ast.LongLiteral;
-import org.star_lang.star.compiler.ast.StringLiteral;
+import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.Patterns.NamePtn;
@@ -45,6 +19,12 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.TypeDescription;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * 
@@ -231,7 +211,6 @@ public class CaseCompile
     IAbstract falseCase = deflt;
 
     MethodNode mtd = ccxt.getMtd();
-    CodeCatalog bldCat = ccxt.getBldCat();
     HWM hwm = ccxt.getMtdHwm();
 
     for (IValue r : rules) {

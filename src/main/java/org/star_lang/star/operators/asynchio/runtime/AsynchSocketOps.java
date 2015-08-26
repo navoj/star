@@ -141,7 +141,7 @@ public class AsynchSocketOps
     {
       try {
         att.enter(Result.success(new SocketChnl(channel)));
-      } catch (EvaluationException e) {
+      } catch (EvaluationException ignored) {
       }
     }
 
@@ -152,7 +152,7 @@ public class AsynchSocketOps
         EvaluationException e = t instanceof EvaluationException ? (EvaluationException) t : new EvaluationException(
             "failed", t);
         att.enter(Result.failed(e));
-      } catch (EvaluationException e) {
+      } catch (EvaluationException ignored) {
       }
     }
   }

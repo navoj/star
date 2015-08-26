@@ -114,7 +114,6 @@ import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.compiler.util.Wrapper;
 import org.star_lang.star.data.IArray;
 import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.type.ConstructorSpecifier;
 import org.star_lang.star.data.type.IAlgebraicType;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.IValueSpecifier;
