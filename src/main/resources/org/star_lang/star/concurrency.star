@@ -1,19 +1,15 @@
-/**
- * implement syntax layer over cml functions 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
+/*
+ * Copyright (c) 2015. Francis G. McCabe
  *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 import compute;
 import task;
@@ -34,6 +30,8 @@ private import actors;
 #prefix("timeout",700);
 #prefix("at",700);
 #prefix("always",700);
+
+#prefix("receive",930);
 
 #choose ?E :: expression :- E::rendezvous ## {
   # ?L or ?R :: rendezvous :- L::rendezvous :& R::rendezvous;
@@ -140,20 +138,3 @@ fun actorHead(Defs) is let{
       
   { ignore background loop() };
 } in conAct0r(notifyFun,speechFun);
-
--- support the form select { <selectionRules> }
-#select{?R} :: action :- R;*selectionAction ## {
-  when ?C on ?Evt do ?Action :: selectionAction :- C::condition :& Evt::expression :& Action::action;
-  on ?Evt do ?Action :: selectionAction :- Evt::expression :& Action :: action;
-};
-#select{?R} :: expression :- R;*selectionRule ## {
-  #when ?C on ?Evt is ?Exp :: selectionRule :- C::condition :& Evt::expression :& Exp :: expression;
-  #on ?Evt is ?Exp :: selectionRule :- Evt::expression :& Exp::expression;
-};
-
-#select{?R} ==> wait for chooseRv(list of [ruleConvert(R)]) ## {
-  #when ?C on ?Evt do ?Action ==> guardRv(task{ if C then valis wrapRv(Evt,((_) do Action)) else valis neverRv });
-  #on ?Evt do ?Action ==> wrapRv(Evt,((_) do Action));
-  #when ?C on ?Evt is ?Exp ==> guardRv(task{ if C then valis wrapRv(Evt,(_) => Exp) else valis neverRv});
-  #on ?Evt is ?Exp ==> wrapRv(Evt,(_) => Exp); 
-};

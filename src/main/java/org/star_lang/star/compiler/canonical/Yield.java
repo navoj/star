@@ -31,6 +31,7 @@ public class Yield extends Action
   {
     super(loc, StandardTypes.unitType);
     this.yielded = yielded;
+    throw  new AssertionError("not implemented");
   }
 
   public IContentAction getYielded()

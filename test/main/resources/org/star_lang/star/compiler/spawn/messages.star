@@ -1,19 +1,15 @@
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
+/*
+ * Copyright (c) 2015. Francis G. McCabe
  *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 messages is package{
   -- implement message box in terms of tasks
@@ -23,7 +19,7 @@ messages is package{
     grab has type ()=> task of %t;
   }
   
-  box() is mbox{
+  fun box() is mbox{
     private var Q := queue of [];
     
     { ignore background msgLoop(); }
@@ -31,22 +27,35 @@ messages is package{
     private def grabMsgChnl is channel();
     private def postMsgChnl is channel();
    
-    post(M) is send(postMsgChnl,M);
-    grab() is let{
-      ReplyChnl is channel();
-    } in wrapRv(sendRv(grabMsgChnl,ReplyChnl),(function(_) is recv(ReplyChnl)));
+    fun post(M) is send(postMsgChnl,M);
+    fun grab() is let{
+      def ReplyChnl is channel();
+    } in wrapRv(sendRv(grabMsgChnl,ReplyChnl),(_)=> is recv(ReplyChnl));
    
-    private msgLoop() is task{
+    private
+    fun msgLoop() is task{
       while true do{
+        wait for chooseRv([
+          wrapRv(recv(postMsgChnl),(M) => task{ Q:=queue of [Q..,M] })
+          guardRv(task {
+                    if Q matches queue of [H,..QQ] then
+                      valis wrapRv(recv(grabMsgChnl),(Reply)=>task {
+                        Q := QQ;
+                        sendRv(Reply,H)
+                      })
+                    })
+        ])
+        /*
         select{
           on receive M on postMsgChnl do {
             Q := queue of [Q..,M]
           };
-          when Q matches queue of [H,..QQ] on receive Reply on grabMsgChnl do {
+          on receive Reply on grabMsgChnl where Q matches queue of [H,..QQ] do {
             Q := QQ;
             send H to Reply
           }
         }
+        */
       }
     }
   }

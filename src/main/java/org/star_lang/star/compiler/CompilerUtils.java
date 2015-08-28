@@ -1340,15 +1340,6 @@ public class CompilerUtils {
     return Abstract.unaryArg(term);
   }
 
-  public static boolean isYield(IAbstract term) {
-    return Abstract.isUnary(term, StandardNames.YIELD);
-  }
-
-  public static IAbstract yielded(IAbstract term) {
-    assert isYield(term);
-    return Abstract.unaryArg(term);
-  }
-
   public static boolean isAssignment(IAbstract term) {
     return Abstract.isBinary(term, StandardNames.ASSIGN);
   }

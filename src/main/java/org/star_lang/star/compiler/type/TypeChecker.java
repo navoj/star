@@ -4229,13 +4229,6 @@ public class TypeChecker {
       } else
         return FixedList.create((IContentAction) new Ignore(loc, Computations.perform(loc, monadType, performed, cxt,
                 errors)));
-    } else if (CompilerUtils.isYield(action)) {
-      List<IContentAction> yield = checkAction(CompilerUtils.yielded(action), actionType, resultType, cxt, outer);
-
-      if (yield.size() == 1)
-        return FixedList.create((IContentAction) new Yield(loc, yield.get(0)));
-      else
-        return FixedList.create((IContentAction) new Yield(loc, new Sequence(loc, resultType, yield)));
     } else if (CompilerUtils.isTypeAnnotation(action)) {
       IType type = TypeParser.parseType(CompilerUtils.typeAnnotation(action), cxt, errors, readWrite);
 
