@@ -133,8 +133,6 @@ public class Operators implements PrettyPrintable
 
     definePrefix(StandardNames.REMOVE, 1200);
 
-    definePrefix(StandardNames.YIELD, 1150);
-
     defineInfix(StandardNames.FROM, 1130);
     defineInfix(StandardNames.TO, 1130);
 

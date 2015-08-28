@@ -50,6 +50,4 @@ public interface ActionVisitor
   void visitValisAction(ValisAction act);
 
   void visitVarDeclaration(VarDeclaration var);
-
-  void visitYield(Yield act);
 }

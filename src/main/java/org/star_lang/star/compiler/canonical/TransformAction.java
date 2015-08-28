@@ -50,6 +50,4 @@ public interface TransformAction<A, E, P, C, D, T>
   A transformValisAction(ValisAction act, T context);
 
   A transformVarDeclaration(VarDeclaration var, T context);
-
-  A transformYield(Yield act, T context);
 }

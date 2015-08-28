@@ -20,7 +20,10 @@ worksheet{
 
     on Msg on ear do{
       logMsg(info,"I hear #Msg");
-      notify Who() with Msg on ear;
+      if lifeTime>0 then {
+        lifeTime := lifeTime -1
+        notify Who() with Msg on ear;
+      }
     }
   }
   def ping is memo chatty(pong);

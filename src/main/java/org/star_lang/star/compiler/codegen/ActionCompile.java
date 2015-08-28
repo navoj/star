@@ -102,9 +102,4 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
   public ISpec transformVarDeclaration(VarDeclaration var, IContinuation cont) {
     return null;
   }
-
-  @Override
-  public ISpec transformYield(Yield act, IContinuation cont) {
-    return null;
-  }
 }

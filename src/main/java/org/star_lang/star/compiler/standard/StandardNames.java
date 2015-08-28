@@ -58,7 +58,6 @@ public class StandardNames
 
   public static final String ASSERT = keyword("assert");
   public static final String IGNORE = keyword("ignore");
-  public static final String YIELD = keyword("yield");
   public static final String EQUALITY = standard("equality");
   public static final String COMPARABLE = standard("comparable");
   public static final String ARITHMETIC = standard("arithmetic");

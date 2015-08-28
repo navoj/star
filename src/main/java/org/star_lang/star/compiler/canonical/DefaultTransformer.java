@@ -1,29 +1,19 @@
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
- * @author fgm
  *
+ * @author fgm
  */
 package org.star_lang.star.compiler.canonical;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.ContractEntry;
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImplementationEntry;
@@ -31,17 +21,18 @@ import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImportEntry;
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.TypeAliasEntry;
 import org.star_lang.star.compiler.util.Pair;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 public class DefaultTransformer<T> implements
-    TransformExpression<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-    TransformAction<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-    TransformPattern<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-    TransformStatement<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-    TransformCondition<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>
-{
+        TransformExpression<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+        TransformAction<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+        TransformPattern<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+        TransformStatement<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+        TransformCondition<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T> {
 
   @Override
-  public IContentExpression transformApplication(Application appl, T context)
-  {
+  public IContentExpression transformApplication(Application appl, T context) {
     IContentExpression fun = appl.getFunction().transform(this, context);
     IContentExpression args = appl.getArgs().transform(this, context);
     if (fun == appl.getFunction() && args == appl.getArgs())
@@ -51,8 +42,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformRecord(RecordTerm record, T context)
-  {
+  public IContentExpression transformRecord(RecordTerm record, T context) {
     SortedMap<String, IContentExpression> args = new TreeMap<>();
     IContentExpression fun = record.getFun().transform(this, context);
     boolean clean = fun == record.getFun();
@@ -68,8 +58,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformRecordSubstitute(RecordSubstitute update, T context)
-  {
+  public IContentExpression transformRecordSubstitute(RecordSubstitute update, T context) {
     IContentExpression rec = update.getRoute().transform(this, context);
     IContentExpression rep = update.getReplace().transform(this, context);
     if (rec == update.getRoute() && rep == update.getReplace())
@@ -79,8 +68,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformCaseExpression(CaseExpression exp, T context)
-  {
+  public IContentExpression transformCaseExpression(CaseExpression exp, T context) {
     IContentExpression sel = exp.getSelector().transform(this, context);
     boolean clean = sel == exp.getSelector();
     List<Pair<IContentPattern, IContentExpression>> cases = new ArrayList<>();
@@ -99,8 +87,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformCastExpression(CastExpression exp, T context)
-  {
+  public IContentExpression transformCastExpression(CastExpression exp, T context) {
     IContentExpression val = exp.getInner().transform(this, context);
     if (val == exp.getInner())
       return exp;
@@ -109,8 +96,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformConditionalExp(ConditionalExp act, T context)
-  {
+  public IContentExpression transformConditionalExp(ConditionalExp act, T context) {
     ICondition tst = act.getCnd().transform(this, context);
     IContentExpression thn = act.getThExp().transform(this, context);
     IContentExpression els = act.getElExp().transform(this, context);
@@ -121,8 +107,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformContentCondition(ContentCondition cond, T context)
-  {
+  public IContentExpression transformContentCondition(ContentCondition cond, T context) {
     ICondition test = cond.getCondition().transform(this, context);
     if (test == cond.getCondition())
       return cond;
@@ -131,8 +116,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformMemo(MemoExp memo, T context)
-  {
+  public IContentExpression transformMemo(MemoExp memo, T context) {
     IContentExpression exp = memo.getMemo().transform(this, context);
     IContentExpression[] memoFree = memo.getFreeVars();
     IContentExpression free[] = new IContentExpression[memoFree.length];
@@ -148,20 +132,17 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformMethodVariable(MethodVariable var, T context)
-  {
+  public IContentExpression transformMethodVariable(MethodVariable var, T context) {
     return var;
   }
 
   @Override
-  public IContentExpression transformNullExp(NullExp nil, T context)
-  {
+  public IContentExpression transformNullExp(NullExp nil, T context) {
     return nil;
   }
 
   @Override
-  public IContentExpression transformFunctionLiteral(FunctionLiteral f, T context)
-  {
+  public IContentExpression transformFunctionLiteral(FunctionLiteral f, T context) {
     IContentExpression exp = f.getBody().transform(this, context);
     IContentExpression[] fFree = f.getFreeVars();
     Variable free[] = new Variable[fFree.length];
@@ -183,8 +164,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformLetTerm(LetTerm let, T context)
-  {
+  public IContentExpression transformLetTerm(LetTerm let, T context) {
     List<IStatement> env = new ArrayList<>();
     boolean clean = true;
     for (IStatement stmt : let.getEnvironment()) {
@@ -201,8 +181,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformOverloaded(Overloaded over, T context)
-  {
+  public IContentExpression transformOverloaded(Overloaded over, T context) {
     IContentExpression inner = over.getInner().transform(this, context);
     if (inner == over.getInner())
       return over;
@@ -211,8 +190,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformOverloadedFieldAccess(OverloadedFieldAccess dot, T context)
-  {
+  public IContentExpression transformOverloadedFieldAccess(OverloadedFieldAccess dot, T context) {
     IContentExpression record = dot.getRecord().transform(this, context);
     if (record == dot.getRecord())
       return dot;
@@ -221,14 +199,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformOverloadVariable(OverloadedVariable var, T context)
-  {
+  public IContentExpression transformOverloadVariable(OverloadedVariable var, T context) {
     return var;
   }
 
   @Override
-  public IContentExpression transformPatternAbstraction(PatternAbstraction pattern, T context)
-  {
+  public IContentExpression transformPatternAbstraction(PatternAbstraction pattern, T context) {
     IContentExpression reslt = pattern.getResult().transform(this, context);
     IContentPattern ptn = pattern.getMatch().transformPattern(this, context);
     boolean clean = reslt == pattern.getResult() && ptn == pattern.getMatch();
@@ -245,8 +221,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformFieldAccess(FieldAccess dot, T context)
-  {
+  public IContentExpression transformFieldAccess(FieldAccess dot, T context) {
     IContentExpression record = dot.getRecord().transform(this, context);
     if (record == dot.getRecord())
       return dot;
@@ -255,8 +230,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformRaiseExpression(RaiseExpression exp, T context)
-  {
+  public IContentExpression transformRaiseExpression(RaiseExpression exp, T context) {
     IContentExpression raised = exp.getRaise().transform(this, context);
     if (raised == exp.getRaise())
       return exp;
@@ -265,8 +239,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformReference(Shriek reference, T context)
-  {
+  public IContentExpression transformReference(Shriek reference, T context) {
     IContentExpression ref = reference.getReference().transform(this, context);
     if (ref == reference.getReference())
       return reference;
@@ -275,8 +248,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformResolved(Resolved res, T context)
-  {
+  public IContentExpression transformResolved(Resolved res, T context) {
     IContentExpression over = res.getOver().transform(this, context);
     boolean clean = over == res.getOver();
     IContentExpression[] dicts = res.getDicts();
@@ -293,14 +265,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformScalar(Scalar scalar, T context)
-  {
+  public IContentExpression transformScalar(Scalar scalar, T context) {
     return scalar;
   }
 
   @Override
-  public IContentExpression transformConstructor(ConstructorTerm tuple, T context)
-  {
+  public IContentExpression transformConstructor(ConstructorTerm tuple, T context) {
     boolean clean = true;
     List<IContentExpression> els = new ArrayList<>();
     for (IContentExpression el : tuple.getElements()) {
@@ -315,8 +285,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformValofExp(ValofExp val, T context)
-  {
+  public IContentExpression transformValofExp(ValofExp val, T context) {
     IContentAction act = val.getAction().transform(this, context);
     if (act == val.getAction())
       return val;
@@ -325,20 +294,17 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformVariable(Variable var, T context)
-  {
+  public IContentExpression transformVariable(Variable var, T context) {
     return var;
   }
 
   @Override
-  public IContentExpression transformVoidExp(VoidExp exp, T context)
-  {
+  public IContentExpression transformVoidExp(VoidExp exp, T context) {
     return exp;
   }
 
   @Override
-  public IContentAction transformAssertAction(AssertAction act, T context)
-  {
+  public IContentAction transformAssertAction(AssertAction act, T context) {
     IContentExpression test = act.getAssertion().transform(this, context);
     if (test == act.getAssertion())
       return act;
@@ -347,8 +313,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformAssignment(Assignment act, T context)
-  {
+  public IContentAction transformAssignment(Assignment act, T context) {
     IContentExpression lv = act.getLValue().transform(this, context);
     IContentExpression rv = act.getValue().transform(this, context);
     if (lv == act.getLValue() && rv == act.getValue())
@@ -358,14 +323,13 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformCaseAction(CaseAction act, T context)
-  {
+  public IContentAction transformCaseAction(CaseAction act, T context) {
     IContentExpression sel = act.getSelector().transform(this, context);
     boolean clean = sel == act.getSelector();
     List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
     for (Pair<IContentPattern, IContentAction> cse : act.getCases()) {
       Pair<IContentPattern, IContentAction> nc = Pair.pair(cse.left().transformPattern(this, context), cse.right()
-          .transform(this, context));
+              .transform(this, context));
       clean &= nc.left() == cse.left() && nc.right() == cse.right();
       cases.add(nc);
     }
@@ -378,8 +342,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformConditionalAction(ConditionalAction act, T context)
-  {
+  public IContentAction transformConditionalAction(ConditionalAction act, T context) {
     ICondition test = act.getCond().transform(this, context);
     IContentAction th = act.getThPart().transform(this, context);
     IContentAction el = act.getElPart().transform(this, context);
@@ -390,8 +353,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformExceptionHandler(ExceptionHandler except, T context)
-  {
+  public IContentAction transformExceptionHandler(ExceptionHandler except, T context) {
     IContentAction body = except.getBody().transform(this, context);
 
     boolean clean = body == except.getBody();
@@ -406,8 +368,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformForLoop(ForLoopAction loop, T context)
-  {
+  public IContentAction transformForLoop(ForLoopAction loop, T context) {
     ICondition cond = loop.getControl().transform(this, context);
     IContentAction body = loop.getBody().transform(this, context);
     if (cond == loop.getControl() && body == loop.getBody())
@@ -417,8 +378,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformIgnored(Ignore act, T context)
-  {
+  public IContentAction transformIgnored(Ignore act, T context) {
     IContentExpression ignored = act.getIgnored().transform(this, context);
     if (ignored == act.getIgnored())
       return act;
@@ -427,8 +387,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformLetAction(LetAction let, T context)
-  {
+  public IContentAction transformLetAction(LetAction let, T context) {
     List<IStatement> defs = new ArrayList<>();
     boolean clean = true;
     for (IStatement st : let.getEnvironment()) {
@@ -445,8 +404,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformRaiseAction(RaiseAction raise, T context)
-  {
+  public IContentAction transformRaiseAction(RaiseAction raise, T context) {
     IContentExpression raised = raise.getRaised().transform(this, context);
     if (raised == raise.getRaised())
       return raise;
@@ -455,8 +413,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformWhileLoop(WhileAction act, T context)
-  {
+  public IContentAction transformWhileLoop(WhileAction act, T context) {
     ICondition cont = act.getControl().transform(this, context);
     IContentAction body = act.getBody().transform(this, context);
     if (cont == act.getControl() && body == act.getBody())
@@ -466,14 +423,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformNullAction(NullAction act, T context)
-  {
+  public IContentAction transformNullAction(NullAction act, T context) {
     return act;
   }
 
   @Override
-  public IContentAction transformProcedureCallAction(ProcedureCallAction call, T context)
-  {
+  public IContentAction transformProcedureCallAction(ProcedureCallAction call, T context) {
     IContentExpression proc = call.getProc().transform(this, context);
     boolean clean = proc == call.getProc();
     IContentExpression[] args = call.getArgs();
@@ -489,8 +444,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformSequence(Sequence sequence, T context)
-  {
+  public IContentAction transformSequence(Sequence sequence, T context) {
     boolean clean = true;
     List<IContentAction> acts = new ArrayList<>();
     for (IContentAction act : sequence.getActions()) {
@@ -505,8 +459,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformSyncAction(SyncAction sync, T context)
-  {
+  public IContentAction transformSyncAction(SyncAction sync, T context) {
     IContentExpression sel = sync.getSel().transform(this, context);
     boolean clean = sel == sync.getSel();
     Map<ICondition, IContentAction> cases = new HashMap<>();
@@ -523,8 +476,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformValisAction(ValisAction act, T context)
-  {
+  public IContentAction transformValisAction(ValisAction act, T context) {
 
     IContentExpression exp = act.getValue().transform(this, context);
     if (exp == act.getValue())
@@ -534,8 +486,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformVarDeclaration(VarDeclaration var, T context)
-  {
+  public IContentAction transformVarDeclaration(VarDeclaration var, T context) {
     IContentPattern ptn = var.getPattern().transformPattern(this, context);
     IContentExpression val = var.getValue().transform(this, context);
     if (ptn == var.getPattern() && val == var.getValue())
@@ -545,18 +496,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformYield(Yield act, T context)
-  {
-    IContentAction yield = act.getYielded().transform(this, context);
-    if (yield == act.getYielded())
-      return act;
-    else
-      return new Yield(act.getLoc(), yield);
-  }
-
-  @Override
-  public ICondition transformConditionCondition(ConditionCondition cond, T context)
-  {
+  public ICondition transformConditionCondition(ConditionCondition cond, T context) {
     ICondition test = cond.getTest().transform(this, context);
     ICondition th = cond.getLhs().transform(this, context);
     ICondition el = cond.getRhs().transform(this, context);
@@ -567,8 +507,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformConjunction(Conjunction conj, T context)
-  {
+  public ICondition transformConjunction(Conjunction conj, T context) {
     ICondition lhs = conj.getLhs().transform(this, context);
     ICondition rhs = conj.getRhs().transform(this, context);
     if (lhs == conj.getLhs() && rhs == conj.getRhs())
@@ -578,8 +517,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformDisjunction(Disjunction disj, T context)
-  {
+  public ICondition transformDisjunction(Disjunction disj, T context) {
     ICondition lhs = disj.getLhs().transform(this, context);
     ICondition rhs = disj.getRhs().transform(this, context);
     if (lhs == disj.getLhs() && rhs == disj.getRhs())
@@ -589,14 +527,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformFalseCondition(FalseCondition falseCondition, T context)
-  {
+  public ICondition transformFalseCondition(FalseCondition falseCondition, T context) {
     return falseCondition;
   }
 
   @Override
-  public ICondition transformImplies(Implies implies, T context)
-  {
+  public ICondition transformImplies(Implies implies, T context) {
     ICondition lhs = implies.getGenerate().transform(this, context);
     ICondition rhs = implies.getTest().transform(this, context);
     if (lhs == implies.getGenerate() && rhs == implies.getTest())
@@ -606,14 +542,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformIsTrue(IsTrue i, T context)
-  {
+  public ICondition transformIsTrue(IsTrue i, T context) {
     return new IsTrue(i.getLoc(), i.getExp().transform(this, context));
   }
 
   @Override
-  public ICondition transformListSearch(ListSearch search, T context)
-  {
+  public ICondition transformListSearch(ListSearch search, T context) {
     IContentPattern ptn = search.getPtn().transformPattern(this, context);
     IContentPattern ix = search.getIx().transformPattern(this, context);
     IContentExpression src = search.getSource().transform(this, context);
@@ -624,8 +558,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformMatches(Matches matches, T context)
-  {
+  public ICondition transformMatches(Matches matches, T context) {
     IContentExpression exp = matches.getExp().transform(this, context);
     IContentPattern ptn = matches.getPtn().transformPattern(this, context);
     if (exp == matches.getExp() && ptn == matches.getPtn())
@@ -635,8 +568,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformNegation(Negation negation, T context)
-  {
+  public ICondition transformNegation(Negation negation, T context) {
     ICondition neg = negation.getNegated().transform(this, context);
     if (neg == negation.getNegated())
       return negation;
@@ -645,8 +577,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformOtherwise(Otherwise oth, T context)
-  {
+  public ICondition transformOtherwise(Otherwise oth, T context) {
     ICondition lhs = oth.getLhs().transform(this, context);
     ICondition rhs = oth.getRhs().transform(this, context);
     if (lhs == oth.getLhs() && rhs == oth.getRhs())
@@ -656,8 +587,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformSearch(Search search, T context)
-  {
+  public ICondition transformSearch(Search search, T context) {
     IContentPattern ptn = search.getPtn().transformPattern(this, context);
     IContentExpression src = search.getSource().transform(this, context);
     if (ptn == search.getPtn() && src == search.getSource())
@@ -667,50 +597,42 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public ICondition transformTrueCondition(TrueCondition trueCondition, T context)
-  {
+  public ICondition transformTrueCondition(TrueCondition trueCondition, T context) {
     return trueCondition;
   }
 
   @Override
-  public IStatement transformContractDefn(ContractEntry con, T context)
-  {
+  public IStatement transformContractDefn(ContractEntry con, T context) {
     return con;
   }
 
   @Override
-  public IStatement transformContractImplementation(ImplementationEntry entry, T context)
-  {
+  public IStatement transformContractImplementation(ImplementationEntry entry, T context) {
     return entry;
   }
 
   @Override
-  public IStatement transformImportEntry(ImportEntry entry, T context)
-  {
+  public IStatement transformImportEntry(ImportEntry entry, T context) {
     return entry;
   }
 
   @Override
-  public IStatement transformJavaEntry(JavaEntry entry, T context)
-  {
+  public IStatement transformJavaEntry(JavaEntry entry, T context) {
     return entry;
   }
 
   @Override
-  public IStatement transformTypeAliasEntry(TypeAliasEntry entry, T context)
-  {
+  public IStatement transformTypeAliasEntry(TypeAliasEntry entry, T context) {
     return entry;
   }
 
   @Override
-  public IStatement transformTypeEntry(TypeDefinition entry, T context)
-  {
+  public IStatement transformTypeEntry(TypeDefinition entry, T context) {
     return entry;
   }
 
   @Override
-  public IStatement transformVarEntry(VarEntry entry, T context)
-  {
+  public IStatement transformVarEntry(VarEntry entry, T context) {
     IContentPattern ptn = entry.getVarPattern().transformPattern(this, context);
     IContentExpression val = entry.getValue().transform(this, context);
     if (ptn == entry.getVarPattern() && val == entry.getValue())
@@ -720,8 +642,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IStatement transformOpenStatement(OpenStatement open, T context)
-  {
+  public IStatement transformOpenStatement(OpenStatement open, T context) {
     IContentExpression record = open.getRecord().transform(this, context);
     if (record == open.getRecord())
       return open;
@@ -730,14 +651,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IStatement transformWitness(TypeWitness stmt, T context)
-  {
+  public IStatement transformWitness(TypeWitness stmt, T context) {
     return stmt;
   }
 
   @Override
-  public IContentPattern transformRecordPtn(RecordPtn rec, T context)
-  {
+  public IContentPattern transformRecordPtn(RecordPtn rec, T context) {
     Map<String, IContentPattern> els = new TreeMap<>();
     boolean clean = true;
     for (Entry<String, IContentPattern> entry : rec.getElements().entrySet()) {
@@ -752,8 +671,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentPattern transformCastPtn(CastPtn cast, T context)
-  {
+  public IContentPattern transformCastPtn(CastPtn cast, T context) {
     IContentPattern ptn = cast.getInner().transformPattern(this, context);
     if (ptn == cast.getInner())
       return cast;
@@ -762,8 +680,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentPattern transformMatchingPtn(MatchingPattern matches, T context)
-  {
+  public IContentPattern transformMatchingPtn(MatchingPattern matches, T context) {
     IContentPattern ptn = matches.getPtn().transformPattern(this, context);
     IContentPattern var = matches.getVar().transformPattern(this, context);
     if (ptn == matches.getPtn() && var == matches.getVar())
@@ -773,8 +690,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentPattern transformPatternApplication(PatternApplication apply, T context)
-  {
+  public IContentPattern transformPatternApplication(PatternApplication apply, T context) {
     IContentExpression ptn = apply.getAbstraction().transform(this, context);
     IContentPattern arg = apply.getArg().transformPattern(this, context);
     if (ptn == apply.getAbstraction() && arg == apply.getArg())
@@ -784,8 +700,7 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentPattern transformRegexpPtn(RegExpPattern ptn, T context)
-  {
+  public IContentPattern transformRegexpPtn(RegExpPattern ptn, T context) {
     IContentPattern[] groups = ptn.getGroups();
     IContentPattern[] nGps = new IContentPattern[groups.length];
     boolean clean = true;
@@ -800,14 +715,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentPattern transformScalarPtn(ScalarPtn scalar, T context)
-  {
+  public IContentPattern transformScalarPtn(ScalarPtn scalar, T context) {
     return scalar;
   }
 
   @Override
-  public IContentPattern transformConstructorPtn(ConstructorPtn con, T context)
-  {
+  public IContentPattern transformConstructorPtn(ConstructorPtn con, T context) {
     List<IContentPattern> els = new ArrayList<>();
     boolean clean = true;
     for (IContentPattern el : con.getElements()) {
@@ -822,14 +735,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentPattern transformVariablePtn(Variable variable, T context)
-  {
+  public IContentPattern transformVariablePtn(Variable variable, T context) {
     return variable;
   }
 
   @Override
-  public IContentPattern transformWherePattern(WherePattern where, T context)
-  {
+  public IContentPattern transformWherePattern(WherePattern where, T context) {
     IContentPattern ptn = where.getPtn().transformPattern(this, context);
     ICondition cond = where.getCond().transform(this, context);
     if (ptn == where.getPtn() && cond == where.getCond())
