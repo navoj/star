@@ -17,10 +17,10 @@
  */
 spawnexp is package{
   prc main() do {
-    def x is spawn{     
+    def x is background task{
       valis "1";        
     };
-    def ret is waitfor x; 
+    def ret is valof x;
     
     assert ret="1"
   }

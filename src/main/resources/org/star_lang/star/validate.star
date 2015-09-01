@@ -203,11 +203,13 @@ private import macrosupport;
 # #(?A ; )# :: action :- A:: action;
 # nothing :: action;
 
+/*
 # spawn ?A :: action :- A :: action;
 # waitfor ?T :: action :- T :: expression;
 # ?A // ?B :: action :- A::action :& B::action;
 
 # ?A // ?B ==> { T is spawn{A}; B; waitfor T};
+*/
 
 # ?Id has type ?Tp :: action :- Id::id :& Tp::typeExpression;
 # def ?Ptn is ?Exp :: action :- Ptn::pattern :& Exp::expression;
