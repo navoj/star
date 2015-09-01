@@ -4184,29 +4184,6 @@ public class TypeChecker {
               outer);
       IContentExpression value = typeOfExp(CompilerUtils.assignedValue(action), vType, cxt, outer);
       return FixedList.create((IContentAction) new Assignment(loc, lvalue, value));
-    } else if (CompilerUtils.isSyncAction(action)) {
-      IContentExpression sel = typeOfExp(CompilerUtils.syncActionSel(action), new TypeVar(), cxt, outer);
-
-      IAbstract body = CompilerUtils.syncActionBody(action);
-      if (CompilerUtils.isConditionalSync(action)) {
-        Map<ICondition, IContentAction> entries = new HashMap<>();
-        for (IAbstract stmt : CompilerUtils.unWrap(body)) {
-          if (CompilerUtils.isSyncCondition(stmt)) {
-            Dictionary caseCxt = cxt.fork();
-
-            Triple<ICondition, List<Variable>, List<Variable>> predInfo = typeOfCondition(CompilerUtils
-                    .syncConditionCondition(stmt), caseCxt, outer);
-            ICondition predicate = predInfo.left();
-            List<IContentAction> acts = checkAction(CompilerUtils.syncConditionAction(stmt), actionType, resultType,
-                    caseCxt, outer);
-            entries.put(predicate, pickAction(loc, resultType, acts));
-          } else
-            errors.reportError(StringUtils.msg("expecting a conditional sync action, not ", stmt), stmt.getLoc());
-        }
-        return FixedList.create((IContentAction) new SyncAction(loc, resultType, sel, entries));
-      } else
-        return FixedList.create((IContentAction) new SyncAction(loc, resultType, sel, pickAction(loc, resultType,
-                checkAction(body, actionType, resultType, cxt, outer))));
     } else if (CompilerUtils.isAbortHandler(action)) {
       Dictionary subCxt = cxt.fork();
       IContentAction body = pickAction(loc, resultType, checkAction(CompilerUtils.abortHandlerBody(action), actionType,
@@ -4580,14 +4557,6 @@ public class TypeChecker {
     else if (act instanceof WhileAction) {
       WhileAction loop = (WhileAction) act;
       return CompilerUtils.isTrivial(loop.getControl()) || hasValis(loop.getBody());
-    } else if (act instanceof SyncAction) {
-      SyncAction sync = (SyncAction) act;
-
-      for (Entry<ICondition, IContentAction> entry : sync.getBody().entrySet()) {
-        if (!hasValis(entry.getValue()))
-          return false;
-      }
-      return true;
     }
 
     return false;

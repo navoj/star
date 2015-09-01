@@ -1,15 +1,7 @@
 /**
- * 
+ *
  */
 package org.star_lang.star.compiler.canonical;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.ContractEntry;
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImplementationEntry;
@@ -19,29 +11,28 @@ import org.star_lang.star.compiler.type.Dict;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.util.Pair;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
+import java.util.*;
+import java.util.Map.Entry;
+
+
+/*
+ * Copyright (c) 2015. Francis G. McCabe
  *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-public abstract class ExpressionTransformer
-{
+
+public abstract class ExpressionTransformer {
   protected final Dictionary cxt;
 
-  public ExpressionTransformer(Dictionary cxt)
-  {
+  public ExpressionTransformer(Dictionary cxt) {
     if (cxt == null)
       this.cxt = Dict.baseDict();
     else
@@ -114,7 +105,6 @@ public abstract class ExpressionTransformer
     install(new ProcedureCallTransform());
     install(new RaiseActionTransform());
     install(new SequenceTransform());
-    install(new SyncActionTransform());
     install(new ValisTransform());
     install(new VarDeclarationTransform());
 
@@ -129,16 +119,14 @@ public abstract class ExpressionTransformer
     install(new TypeWitnessTrans());
   }
 
-  public IContentAction[] transformActions(IContentAction actions[])
-  {
+  public IContentAction[] transformActions(IContentAction actions[]) {
     IContentAction[] nActions = new IContentAction[actions.length];
     for (int ix = 0; ix < actions.length; ix++)
       nActions[ix] = transform(actions[ix]);
     return nActions;
   }
 
-  public IContentExpression[] transformExpressions(IContentExpression[] args)
-  {
+  public IContentExpression[] transformExpressions(IContentExpression[] args) {
     boolean modified = false;
     IContentExpression nArgs[] = new IContentExpression[args.length];
     for (int ix = 0; ix < args.length; ix++) {
@@ -151,26 +139,22 @@ public abstract class ExpressionTransformer
       return args;
   }
 
-  public Variable[] transformVariable(Variable[] args)
-  {
+  public Variable[] transformVariable(Variable[] args) {
     Variable nArgs[] = new Variable[args.length];
     for (int ix = 0; ix < args.length; ix++)
       nArgs[ix] = (Variable) transform((IContentExpression) args[ix]);
     return nArgs;
   }
 
-  private class RecordTrans implements TransformExpression
-  {
+  private class RecordTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return RecordTerm.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       RecordTerm record = (RecordTerm) exp;
       SortedMap<String, IContentExpression> args = new TreeMap<>();
       IContentExpression fun = transform(record.getFun());
@@ -187,54 +171,45 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class SubstituteTrans implements TransformExpression
-  {
+  private class SubstituteTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return RecordSubstitute.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       RecordSubstitute update = (RecordSubstitute) exp;
 
       return new RecordSubstitute(update.getLoc(), update.getType(), transform(update.getRoute()), transform(update
-          .getReplace()));
+              .getReplace()));
     }
   }
 
-  private class ApplicationTrans implements TransformExpression
-  {
+  private class ApplicationTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return Application.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       Application app = (Application) exp;
       return new Application(exp.getLoc(), exp.getType(), transform(app.getFunction()), transform(app.getArgs()));
     }
   }
 
-  private class CaseExpressionTrans implements TransformExpression
-  {
+  private class CaseExpressionTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return CaseExpression.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       CaseExpression caseExp = (CaseExpression) exp;
       List<Pair<IContentPattern, IContentExpression>> newCases = new ArrayList<>();
 
@@ -243,22 +218,19 @@ public abstract class ExpressionTransformer
       }
 
       return new CaseExpression(caseExp.getLoc(), caseExp.getType(), transform(caseExp.getSelector()), newCases,
-          transform(caseExp.getDeflt()));
+              transform(caseExp.getDeflt()));
     }
   }
 
-  private class ConditionalExpTrans implements TransformExpression
-  {
+  private class ConditionalExpTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return ConditionalExp.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       ConditionalExp cond = (ConditionalExp) exp;
       ICondition nCnd = transform(cond.getCnd());
       IContentExpression nTh = transform(cond.getThExp());
@@ -267,35 +239,29 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class ContentConditionTrans implements TransformExpression
-  {
+  private class ContentConditionTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return ContentCondition.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       ContentCondition cond = (ContentCondition) exp;
       return new ContentCondition(exp.getLoc(), transform(cond.getCondition()));
     }
   }
 
-  private class FunctionLiteralTrans implements TransformExpression
-  {
+  private class FunctionLiteralTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return FunctionLiteral.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       FunctionLiteral fun = (FunctionLiteral) exp;
 
       Variable[] funFree = fun.getFreeVars();
@@ -303,22 +269,19 @@ public abstract class ExpressionTransformer
       for (int ix = 0; ix < tVars.length; ix++)
         tVars[ix] = (Variable) transform((IContentExpression) funFree[ix]);
       return new FunctionLiteral(exp.getLoc(), fun.getName(), exp.getType(), transformPatterns(fun.getArgs()),
-          transform(fun.getBody()), tVars);
+              transform(fun.getBody()), tVars);
     }
   }
 
-  private class MemoTransform implements TransformExpression
-  {
+  private class MemoTransform implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return MemoExp.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       MemoExp memo = (MemoExp) exp;
       IContentExpression[] memoFree = memo.getFreeVars();
       IContentExpression freeVars[] = new IContentExpression[memoFree.length];
@@ -329,34 +292,28 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class NullTransform implements TransformExpression
-  {
+  private class NullTransform implements TransformExpression {
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       return exp;
     }
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return NullExp.class;
     }
   }
 
-  private class LetTermTrans implements TransformExpression
-  {
+  private class LetTermTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return LetTerm.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       LetTerm let = (LetTerm) exp;
       List<IStatement> newEnv = new ArrayList<>();
       for (IStatement entry : let.getEnvironment())
@@ -366,90 +323,75 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class MethodVariableTrans implements TransformExpression
-  {
+  private class MethodVariableTrans implements TransformExpression {
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return MethodVariable.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       return exp;
     }
   }
 
-  private class PatternAbstractionTrans implements TransformExpression
-  {
+  private class PatternAbstractionTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return PatternAbstraction.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       PatternAbstraction ptn = (PatternAbstraction) exp;
       Variable[] funFree = ptn.getFreeVars();
       Variable tVars[] = new Variable[funFree.length];
       for (int ix = 0; ix < tVars.length; ix++)
         tVars[ix] = (Variable) transform((IContentExpression) funFree[ix]);
       return new PatternAbstraction(exp.getLoc(), ptn.getName(), exp.getType(), transform(ptn.getMatch()),
-          transform(ptn.getResult()), tVars);
+              transform(ptn.getResult()), tVars);
     }
   }
 
-  private class RaiseExpTrans implements TransformExpression
-  {
+  private class RaiseExpTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return RaiseExpression.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       RaiseExpression raise = (RaiseExpression) exp;
 
       return new RaiseExpression(exp.getLoc(), exp.getType(), transform(raise.getRaise()));
     }
   }
 
-  private class ReferenceTrans implements TransformExpression
-  {
+  private class ReferenceTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return Shriek.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       Shriek ref = (Shriek) exp;
       return new Shriek(ref.getLoc(), transform(ref.getReference()));
     }
   }
 
-  private class ResolvedTrans implements TransformExpression
-  {
+  private class ResolvedTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return Resolved.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       Resolved res = (Resolved) exp;
       IContentExpression transOp = transform(res.getOver());
       IContentExpression[] transArgs = transformExpressions(res.getDicts());
@@ -460,49 +402,40 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class ScalarTrans implements TransformExpression
-  {
+  private class ScalarTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return Scalar.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       return exp;
     }
   }
 
-  private class ScalarPtnTrans implements TransformPattern
-  {
+  private class ScalarPtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return ScalarPtn.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       return ptn;
     }
   }
 
-  private class TupleTrans implements TransformExpression
-  {
+  private class TupleTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return ConstructorTerm.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       ConstructorTerm tpl = (ConstructorTerm) exp;
       List<IContentExpression> els = new ArrayList<>();
       List<IContentExpression> tplEls = tpl.getElements();
@@ -519,67 +452,55 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class CastExpTrans implements TransformExpression
-  {
+  private class CastExpTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return CastExpression.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       CastExpression caste = (CastExpression) exp;
 
       return new CastExpression(exp.getLoc(), exp.getType(), transform(caste.getInner()));
     }
   }
 
-  private class ValofExpTrans implements TransformExpression
-  {
+  private class ValofExpTrans implements TransformExpression {
 
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return ValofExp.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       ValofExp val = (ValofExp) exp;
       return new ValofExp(exp.getLoc(), exp.getType(), transform(val.getAction()));
     }
   }
 
-  private class VariableTrans implements TransformExpression
-  {
+  private class VariableTrans implements TransformExpression {
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return Variable.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       return exp;
     }
   }
 
-  private class OverloadedTrans implements TransformExpression
-  {
+  private class OverloadedTrans implements TransformExpression {
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return Overloaded.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       Overloaded var = (Overloaded) exp;
       IContentExpression inner = transform(var.getInner());
       if (inner != var.getInner())
@@ -589,32 +510,26 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class OverloadedVariableTrans implements TransformExpression
-  {
+  private class OverloadedVariableTrans implements TransformExpression {
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return OverloadedVariable.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       return exp;
     }
   }
 
-  private class FieldAccessTrans implements TransformExpression
-  {
+  private class FieldAccessTrans implements TransformExpression {
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return FieldAccess.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       FieldAccess dot = (FieldAccess) exp;
       IContentExpression transRecord = transform(dot.getRecord());
       if (transRecord != dot.getRecord())
@@ -624,17 +539,14 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class OverloadedFieldAccessTrans implements TransformExpression
-  {
+  private class OverloadedFieldAccessTrans implements TransformExpression {
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return OverloadedFieldAccess.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       OverloadedFieldAccess dot = (OverloadedFieldAccess) exp;
       IContentExpression transRecord = transform(dot.getRecord());
       if (transRecord != dot.getRecord())
@@ -644,23 +556,19 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class VoidExpTrans implements TransformExpression
-  {
+  private class VoidExpTrans implements TransformExpression {
     @Override
-    public Class<? extends IContentExpression> transformClass()
-    {
+    public Class<? extends IContentExpression> transformClass() {
       return VoidExp.class;
     }
 
     @Override
-    public IContentExpression transformExp(IContentExpression exp)
-    {
+    public IContentExpression transformExp(IContentExpression exp) {
       return exp;
     }
   }
 
-  public IContentExpression transform(IContentExpression exp)
-  {
+  public IContentExpression transform(IContentExpression exp) {
     if (exp == null)
       return null;
 
@@ -670,197 +578,160 @@ public abstract class ExpressionTransformer
     return transformer.transformExp(exp);
   }
 
-  private class ConditionConditionTrans implements TransformCondition
-  {
+  private class ConditionConditionTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return ConditionCondition.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       ConditionCondition cnd = (ConditionCondition) cond;
       return new ConditionCondition(cond.getLoc(), transform(cnd.getTest()), transform(cnd.getLhs()), transform(cnd
-          .getRhs()));
+              .getRhs()));
     }
   }
 
-  private class ConjunctionTrans implements TransformCondition
-  {
+  private class ConjunctionTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return Conjunction.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       Conjunction con = (Conjunction) cond;
       return new Conjunction(cond.getLoc(), transform(con.getLhs()), transform(con.getRhs()));
     }
   }
 
-  private class DisjunctionTrans implements TransformCondition
-  {
+  private class DisjunctionTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return Disjunction.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       Disjunction dis = (Disjunction) cond;
       return new Disjunction(cond.getLoc(), transform(dis.getLhs()), transform(dis.getRhs()));
     }
   }
 
-  private class FalseConditionTrans implements TransformCondition
-  {
+  private class FalseConditionTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return FalseCondition.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       return cond;
     }
   }
 
-  private class IsTrueTrans implements TransformCondition
-  {
+  private class IsTrueTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return IsTrue.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       return new IsTrue(cond.getLoc(), transform(((IsTrue) cond).getExp()));
     }
   }
 
-  private class ListSearchTrans implements TransformCondition
-  {
+  private class ListSearchTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return ListSearch.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       ListSearch pr = (ListSearch) cond;
       return new ListSearch(cond.getLoc(), transform(pr.getPtn()), transform(pr.getIx()), transform(pr.getSource()));
     }
   }
 
-  private class MatchesTrans implements TransformCondition
-  {
+  private class MatchesTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return Matches.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       Matches m = (Matches) cond;
       return new Matches(cond.getLoc(), transform(m.getExp()), transform(m.getPtn()));
     }
   }
 
-  private class NegationTrans implements TransformCondition
-  {
+  private class NegationTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return Negation.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       return new Negation(cond.getLoc(), transform(((Negation) cond).getNegated()));
     }
   }
 
-  private class OtherwiseTrans implements TransformCondition
-  {
+  private class OtherwiseTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return Otherwise.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       Otherwise oth = (Otherwise) cond;
       return new Otherwise(cond.getLoc(), transform(oth.getLhs()), transform(oth.getRhs()));
     }
   }
 
-  private class PredicationTrans implements TransformCondition
-  {
+  private class PredicationTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return Search.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       Search pr = (Search) cond;
       return new Search(cond.getLoc(), transform(pr.getPtn()), transform(pr.getSource()));
     }
   }
 
-  private class TrueConditionTrans implements TransformCondition
-  {
+  private class TrueConditionTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return TrueCondition.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       return cond;
     }
   }
 
-  private class ImpliesTrans implements TransformCondition
-  {
+  private class ImpliesTrans implements TransformCondition {
     @Override
-    public Class<? extends ICondition> transformClass()
-    {
+    public Class<? extends ICondition> transformClass() {
       return Implies.class;
     }
 
     @Override
-    public ICondition transformCond(ICondition cond)
-    {
+    public ICondition transformCond(ICondition cond) {
       Implies when = (Implies) cond;
       return new Implies(cond.getLoc(), transform(when.getTest()), transform(when.getGenerate()));
     }
   }
 
-  public final ICondition transform(ICondition cond)
-  {
+  public final ICondition transform(ICondition cond) {
     if (cond == null)
       return null;
 
@@ -870,42 +741,34 @@ public abstract class ExpressionTransformer
     return trans.transformCond(cond);
   }
 
-  private class AssertTransform implements TransformAction
-  {
+  private class AssertTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return new AssertAction(act.getLoc(), transform(((AssertAction) act).getAssertion()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return AssertAction.class;
     }
   }
 
-  private class Assignmentransform implements TransformAction
-  {
+  private class Assignmentransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       Assignment ass = (Assignment) act;
       return new Assignment(act.getLoc(), transform(ass.getLValue()), transform(ass.getValue()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return Assignment.class;
     }
   }
 
-  private class CaseActionTransform implements TransformAction
-  {
+  private class CaseActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       CaseAction cA = (CaseAction) act;
       List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
       for (Pair<IContentPattern, IContentAction> entry : cA.getCases()) {
@@ -915,52 +778,43 @@ public abstract class ExpressionTransformer
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return CaseAction.class;
     }
   }
 
-  private class ConditionalActionTransform implements TransformAction
-  {
+  private class ConditionalActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       ConditionalAction cnd = (ConditionalAction) act;
       return new ConditionalAction(act.getLoc(), transform(cnd.getCond()), transform(cnd.getThPart()), transform(cnd
-          .getElPart()));
+              .getElPart()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ConditionalAction.class;
     }
   }
 
-  private class ExceptionHandlerTransform implements TransformAction
-  {
+  private class ExceptionHandlerTransform implements TransformAction {
 
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       ExceptionHandler except = (ExceptionHandler) act;
 
       return new ExceptionHandler(act.getLoc(), transform(except.getBody()), transform(except.getHandler()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ExceptionHandler.class;
     }
   }
 
-  private class IgnoreTransform implements TransformAction
-  {
+  private class IgnoreTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       Ignore ignore = (Ignore) act;
       IContentExpression trans = transform(ignore.getIgnored());
       if (trans != ignore.getIgnored())
@@ -970,17 +824,14 @@ public abstract class ExpressionTransformer
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return Ignore.class;
     }
   }
 
-  private class LetActionTransform implements TransformAction
-  {
+  private class LetActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       LetAction let = (LetAction) act;
       List<IStatement> newEnv = new ArrayList<>();
       for (IStatement entry : let.getEnvironment())
@@ -990,83 +841,68 @@ public abstract class ExpressionTransformer
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return LetAction.class;
     }
   }
 
-  private class LoopActionTransform implements TransformAction
-  {
+  private class LoopActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       WhileAction loop = (WhileAction) act;
       return new WhileAction(act.getLoc(), transform(loop.getControl()), transform(loop.getBody()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return WhileAction.class;
     }
   }
 
-  private class NullActionTransform implements TransformAction
-  {
+  private class NullActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return act;
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return NullAction.class;
     }
   }
 
-  private class ProcedureCallTransform implements TransformAction
-  {
+  private class ProcedureCallTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       ProcedureCallAction call = (ProcedureCallAction) act;
 
       return new ProcedureCallAction(call.getLoc(), transform(call.getProc()), transformExpressions(call.getArgs()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ProcedureCallAction.class;
     }
   }
 
-  private class RaiseActionTransform implements TransformAction
-  {
+  private class RaiseActionTransform implements TransformAction {
 
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       RaiseAction raise = (RaiseAction) act;
       return new RaiseAction(raise.getLoc(), transform(raise.getRaised()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return RaiseAction.class;
     }
 
   }
 
-  private class SequenceTransform implements TransformAction
-  {
+  private class SequenceTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       Sequence seq = (Sequence) act;
       List<IContentAction> lst = new ArrayList<>();
       for (IContentAction acts : seq.getActions())
@@ -1075,88 +911,54 @@ public abstract class ExpressionTransformer
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return Sequence.class;
     }
   }
 
-  private class SyncActionTransform implements TransformAction
-  {
-
+  private class ValisTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
-      SyncAction sync = (SyncAction) act;
-      IContentExpression sel = transform(sync.getSel());
-      Map<ICondition, IContentAction> conditions = new HashMap<>();
-      for (Entry<ICondition, IContentAction> entry : sync.getBody().entrySet()) {
-        conditions.put(transform(entry.getKey()), transform(entry.getValue()));
-      }
-      return new SyncAction(sync.getLoc(), act.getType(), sel, conditions);
-    }
-
-    @Override
-    public Class<? extends IContentAction> transformClass()
-    {
-      return SyncAction.class;
-    }
-
-  }
-
-  private class ValisTransform implements TransformAction
-  {
-    @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       ValisAction valis = (ValisAction) act;
       IContentExpression txAction = transform(valis.getValue());
       return new ValisAction(act.getLoc(), txAction);
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ValisAction.class;
     }
   }
 
-  private class VarDeclarationTransform implements TransformAction
-  {
+  private class VarDeclarationTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       VarDeclaration decl = (VarDeclaration) act;
       return new VarDeclaration(act.getLoc(), decl.getPattern(), decl.isReadOnly(), transform(decl.getValue()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return VarDeclaration.class;
     }
   }
 
-  public final IContentAction transform(IContentAction act)
-  {
+  public final IContentAction transform(IContentAction act) {
     TransformAction trans = actTransformers.get(act.getClass());
 
     assert trans != null : " could not transform action " + act;
     return trans.transformAction(act);
   }
 
-  private class AggregatePtnTrans implements TransformPattern
-  {
+  private class AggregatePtnTrans implements TransformPattern {
 
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return RecordPtn.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       RecordPtn rec = (RecordPtn) ptn;
       Map<String, IContentPattern> nEls = new TreeMap<>();
       for (Entry<String, IContentPattern> entry : rec.getElements().entrySet()) {
@@ -1166,114 +968,93 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class CastPtnTrans implements TransformPattern
-  {
+  private class CastPtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return CastPtn.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       CastPtn cast = (CastPtn) ptn;
       return new CastPtn(ptn.getLoc(), ptn.getType(), transform(cast.getInner()));
     }
   }
 
-  private class LiteralPtnTrans implements TransformPattern
-  {
+  private class LiteralPtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return ScalarPtn.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       return ptn;
     }
   }
 
-  private class MatchingPtnTrans implements TransformPattern
-  {
+  private class MatchingPtnTrans implements TransformPattern {
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       MatchingPattern matching = (MatchingPattern) ptn;
       return new MatchingPattern(ptn.getLoc(), matching.getVar(), transform(matching.getPtn()));
     }
 
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return MatchingPattern.class;
     }
 
   }
 
-  private class OverloadVariablePtnTrans implements TransformPattern
-  {
+  private class OverloadVariablePtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return OverloadedVariable.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       return ptn;
     }
   }
 
-  private class PatternAbstractionApplicationTrans implements TransformPattern
-  {
+  private class PatternAbstractionApplicationTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return PatternApplication.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       PatternApplication apply = (PatternApplication) ptn;
       return new PatternApplication(apply.getLoc(), apply.getType(), transform(apply.getAbstraction()), transform(apply
-          .getArg()));
+              .getArg()));
     }
   }
 
-  private class RegExpPtnTrans implements TransformPattern
-  {
+  private class RegExpPtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return RegExpPattern.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       RegExpPattern reg = (RegExpPattern) ptn;
       return new RegExpPattern(ptn.getLoc(), reg.getRegexpPtn(), reg.getNfa(), transformPatterns(reg.getGroups()));
     }
   }
 
-  private class TuplePtnTrans implements TransformPattern
-  {
+  private class TuplePtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return ConstructorPtn.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       ConstructorPtn con = (ConstructorPtn) ptn;
       List<IContentPattern> nEls = new ArrayList<>();
       for (IContentPattern el : con.getElements())
@@ -1282,39 +1063,32 @@ public abstract class ExpressionTransformer
     }
   }
 
-  private class VariablePtnTrans implements TransformPattern
-  {
+  private class VariablePtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return Variable.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       return ptn;
     }
   }
 
-  private class WherePtnTrans implements TransformPattern
-  {
+  private class WherePtnTrans implements TransformPattern {
     @Override
-    public Class<? extends IContentPattern> transformClass()
-    {
+    public Class<? extends IContentPattern> transformClass() {
       return WherePattern.class;
     }
 
     @Override
-    public IContentPattern transformPtn(IContentPattern ptn)
-    {
+    public IContentPattern transformPtn(IContentPattern ptn) {
       WherePattern where = (WherePattern) ptn;
       return new WherePattern(ptn.getLoc(), transform(where.getPtn()), transform(where.getCond()));
     }
   }
 
-  public IContentPattern transform(IContentPattern ptn)
-  {
+  public IContentPattern transform(IContentPattern ptn) {
     if (ptn == null)
       return null;
 
@@ -1324,180 +1098,149 @@ public abstract class ExpressionTransformer
     return trans.transformPtn(ptn);
   }
 
-  public IContentPattern[] transformPatterns(IContentPattern[] args)
-  {
+  public IContentPattern[] transformPatterns(IContentPattern[] args) {
     IContentPattern nArgs[] = new IContentPattern[args.length];
     for (int ix = 0; ix < args.length; ix++)
       nArgs[ix] = transform(args[ix]);
     return nArgs;
   }
 
-  private class ContractTrans implements TransformStatement
-  {
+  private class ContractTrans implements TransformStatement {
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return ContractEntry.class;
     }
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       return stmt;
     }
   }
 
-  private class ContractImplementationTrans implements TransformStatement
-  {
+  private class ContractImplementationTrans implements TransformStatement {
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return ImplementationEntry.class;
     }
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       return stmt;
     }
   }
 
-  private class ImportTrans implements TransformStatement
-  {
+  private class ImportTrans implements TransformStatement {
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return ImportEntry.class;
     }
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       ImportEntry imp = (ImportEntry) stmt;
       return new ImportEntry(imp.getLoc(), imp.getPkgName(), imp.getPkgType(), imp.getUri(), imp.getVisibility());
     }
   }
 
-  private class JavaTrans implements TransformStatement
-  {
+  private class JavaTrans implements TransformStatement {
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return JavaEntry.class;
     }
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       return stmt;
     }
   }
 
-  private class VarEntryTrans implements TransformStatement
-  {
+  private class VarEntryTrans implements TransformStatement {
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return VarEntry.class;
     }
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       VarEntry var = (VarEntry) stmt;
 
       final IContentExpression transformedValue = transform(var.getValue());
 
       return new VarEntry(var.getDefined(), var.getLoc(), transform(var.getVarPattern()), transformedValue, var
-          .isReadOnly(), stmt.getVisibility());
+              .isReadOnly(), stmt.getVisibility());
     }
   }
 
-  private class TypeDefinitionTrans implements TransformStatement
-  {
+  private class TypeDefinitionTrans implements TransformStatement {
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return TypeDefinition.class;
     }
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       return stmt;
     }
   }
 
-  private class TypeAliasTrans implements TransformStatement
-  {
+  private class TypeAliasTrans implements TransformStatement {
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return TypeAliasEntry.class;
     }
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       return stmt;
     }
   }
 
-  private class TypeWitnessTrans implements TransformStatement
-  {
+  private class TypeWitnessTrans implements TransformStatement {
 
     @Override
-    public IStatement transformStmt(IStatement stmt)
-    {
+    public IStatement transformStmt(IStatement stmt) {
       return stmt;
     }
 
     @Override
-    public Class<? extends IStatement> transformClass()
-    {
+    public Class<? extends IStatement> transformClass() {
       return TypeWitness.class;
     }
 
   }
 
-  public IStatement transform(IStatement stmt)
-  {
+  public IStatement transform(IStatement stmt) {
     TransformStatement trans = stmtTransformers.get(stmt.getClass());
 
     assert trans != null : "cannot transform statement " + stmt;
     return trans.transformStmt(stmt);
   }
 
-  protected interface TransformExpression
-  {
+  protected interface TransformExpression {
     IContentExpression transformExp(IContentExpression exp);
 
     Class<? extends IContentExpression> transformClass();
   }
 
-  protected interface TransformPattern
-  {
+  protected interface TransformPattern {
     IContentPattern transformPtn(IContentPattern ptn);
 
     Class<? extends IContentPattern> transformClass();
   }
 
-  protected interface TransformCondition
-  {
+  protected interface TransformCondition {
     ICondition transformCond(ICondition cond);
 
     Class<? extends ICondition> transformClass();
   }
 
-  protected interface TransformAction
-  {
+  protected interface TransformAction {
     IContentAction transformAction(IContentAction act);
 
     Class<? extends IContentAction> transformClass();
   }
 
-  protected interface TransformStatement
-  {
+  protected interface TransformStatement {
     IStatement transformStmt(IStatement stmt);
 
     Class<? extends IStatement> transformClass();
@@ -1509,28 +1252,23 @@ public abstract class ExpressionTransformer
   private final Map<Class<? extends ICondition>, TransformCondition> condTransformers = new HashMap<>();
   private final Map<Class<? extends IStatement>, TransformStatement> stmtTransformers = new HashMap<>();
 
-  protected void install(TransformExpression tr)
-  {
+  protected void install(TransformExpression tr) {
     expTransformers.put(tr.transformClass(), tr);
   }
 
-  protected void install(TransformPattern tr)
-  {
+  protected void install(TransformPattern tr) {
     ptnTransformers.put(tr.transformClass(), tr);
   }
 
-  protected void install(TransformAction tr)
-  {
+  protected void install(TransformAction tr) {
     actTransformers.put(tr.transformClass(), tr);
   }
 
-  protected void install(TransformCondition tr)
-  {
+  protected void install(TransformCondition tr) {
     condTransformers.put(tr.transformClass(), tr);
   }
 
-  protected void install(TransformStatement tr)
-  {
+  protected void install(TransformStatement tr) {
     stmtTransformers.put(tr.transformClass(), tr);
   }
 }

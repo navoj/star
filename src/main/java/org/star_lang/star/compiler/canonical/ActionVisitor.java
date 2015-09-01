@@ -45,8 +45,6 @@ public interface ActionVisitor
 
   void visitSequence(Sequence sequence);
 
-  void visitSyncAction(SyncAction sync);
-
   void visitValisAction(ValisAction act);
 
   void visitVarDeclaration(VarDeclaration var);

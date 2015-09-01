@@ -1458,46 +1458,6 @@ public class CompilerUtils {
     return Abstract.unary(exp.getLoc(), StandardNames.VAR, exp);
   }
 
-  public static boolean isSyncAction(IAbstract act) {
-    return isBraceTerm(act) && Abstract.isUnary(braceLabel(act), StandardNames.SYNC);
-  }
-
-  public static IAbstract syncActionSel(IAbstract act) {
-    assert isSyncAction(act);
-    return Abstract.unaryArg(braceLabel(act));
-  }
-
-  public static IAbstract syncActionBody(IAbstract act) {
-    assert isSyncAction(act);
-    return braceArg(act);
-  }
-
-  public static boolean isConditionalSync(IAbstract act) {
-    if (isSyncAction(act)) {
-      IAbstract body = syncActionBody(act);
-      for (IAbstract el : unWrap(body, StandardNames.TERM)) {
-        if (isSyncCondition(el))
-          return true;
-      }
-      return false;
-    } else
-      return false;
-  }
-
-  public static boolean isSyncCondition(IAbstract el) {
-    return Abstract.isBinary(el, StandardNames.DO) && Abstract.isUnary(Abstract.binaryLhs(el), StandardNames.WHEN);
-  }
-
-  public static IAbstract syncConditionCondition(IAbstract stmt) {
-    assert isSyncCondition(stmt);
-    return Abstract.unaryArg(Abstract.binaryLhs(stmt));
-  }
-
-  public static IAbstract syncConditionAction(IAbstract stmt) {
-    assert isSyncCondition(stmt);
-    return Abstract.binaryRhs(stmt);
-  }
-
   public static boolean isForLoop(IAbstract act) {
     return Abstract.isBinary(act, StandardNames.DO) && Abstract.isUnary(Abstract.binaryLhs(act), StandardNames.FOR);
   }

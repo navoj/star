@@ -89,11 +89,6 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
   }
 
   @Override
-  public ISpec transformSyncAction(SyncAction sync, IContinuation cont) {
-    return null;
-  }
-
-  @Override
   public ISpec transformValisAction(ValisAction act, IContinuation cont) {
     return null;
   }

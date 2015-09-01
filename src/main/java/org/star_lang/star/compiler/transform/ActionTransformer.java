@@ -1,5 +1,12 @@
 package org.star_lang.star.compiler.transform;
 
+import org.star_lang.star.compiler.CompilerUtils;
+import org.star_lang.star.compiler.ErrorReport;
+import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.compiler.type.Dictionary;
+import org.star_lang.star.compiler.util.Pair;
+import org.star_lang.star.data.type.IType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,54 +14,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.star_lang.star.compiler.CompilerUtils;
-import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.canonical.AssertAction;
-import org.star_lang.star.compiler.canonical.Assignment;
-import org.star_lang.star.compiler.canonical.CaseAction;
-import org.star_lang.star.compiler.canonical.ConditionalAction;
-import org.star_lang.star.compiler.canonical.ConstructorTerm;
-import org.star_lang.star.compiler.canonical.ExceptionHandler;
-import org.star_lang.star.compiler.canonical.ExpressionTransformer;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentAction;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.Ignore;
-import org.star_lang.star.compiler.canonical.LetAction;
-import org.star_lang.star.compiler.canonical.NullAction;
-import org.star_lang.star.compiler.canonical.ProcedureCallAction;
-import org.star_lang.star.compiler.canonical.RaiseAction;
-import org.star_lang.star.compiler.canonical.Sequence;
-import org.star_lang.star.compiler.canonical.SyncAction;
-import org.star_lang.star.compiler.canonical.ValisAction;
-import org.star_lang.star.compiler.canonical.VarDeclaration;
-import org.star_lang.star.compiler.canonical.WhileAction;
-import org.star_lang.star.compiler.type.Dictionary;
-import org.star_lang.star.compiler.util.Pair;
-import org.star_lang.star.data.type.IType;
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
+
+/*
+ * Copyright (c) 2015. Francis G. McCabe
  *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
-public class ActionTransformer extends ExpressionTransformer
-{
-  private ActionTransformer(Dictionary dict)
-  {
+public class ActionTransformer extends ExpressionTransformer {
+  private ActionTransformer(Dictionary dict) {
     super(dict);
 
     // Actions
@@ -69,56 +45,46 @@ public class ActionTransformer extends ExpressionTransformer
     install(new NullActionTransform());
     install(new ProcedureCallTransform());
     install(new SequenceTransform());
-    install(new SyncActionTransform());
     install(new ValisTransform());
     install(new VarDeclarationTransform());
     install(new RaiseTransform());
   }
 
   public static IContentAction transformValis(IContentAction action, IType returnType, Dictionary dict,
-      ErrorReport errors)
-  {
+                                              ErrorReport errors) {
     ActionTransformer transformer = new ActionTransformer(dict);
     return transformer.transform(action);
   }
 
   // Most of these transformers do not 'go into' the actions
 
-  private class AssertTransform implements TransformAction
-  {
+  private class AssertTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return act;
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return AssertAction.class;
     }
   }
 
-  private class Assignmentransform implements TransformAction
-  {
+  private class Assignmentransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return act;
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return Assignment.class;
     }
   }
 
-  private class CaseActionTransform implements TransformAction
-  {
+  private class CaseActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       CaseAction cA = (CaseAction) act;
       List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
       for (Pair<IContentPattern, IContentAction> entry : cA.getCases()) {
@@ -128,129 +94,105 @@ public class ActionTransformer extends ExpressionTransformer
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return CaseAction.class;
     }
   }
 
-  private class ConditionalActionTransform implements TransformAction
-  {
+  private class ConditionalActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       ConditionalAction cnd = (ConditionalAction) act;
       return new ConditionalAction(act.getLoc(), cnd.getCond(), transform(cnd.getThPart()), transform(cnd.getElPart()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ConditionalAction.class;
     }
   }
 
-  private class ExceptionHandlerTransform implements TransformAction
-  {
+  private class ExceptionHandlerTransform implements TransformAction {
 
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       ExceptionHandler except = (ExceptionHandler) act;
 
       return new ExceptionHandler(act.getLoc(), transform(except.getBody()), transform(except.getHandler()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ExceptionHandler.class;
     }
   }
 
-  private class IgnoreTransform implements TransformAction
-  {
+  private class IgnoreTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return act;
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return Ignore.class;
     }
   }
 
-  private class LetActionTransform implements TransformAction
-  {
+  private class LetActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       LetAction let = (LetAction) act;
 
       return new LetAction(act.getLoc(), let.getEnvironment(), transform(let.getBoundAction()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return LetAction.class;
     }
   }
 
-  private class LoopActionTransform implements TransformAction
-  {
+  private class LoopActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       WhileAction loop = (WhileAction) act;
       return new WhileAction(act.getLoc(), transform(loop.getControl()), transform(loop.getBody()));
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return WhileAction.class;
     }
   }
 
-  private class NullActionTransform implements TransformAction
-  {
+  private class NullActionTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return act;
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return NullAction.class;
     }
   }
 
-  private class ProcedureCallTransform implements TransformAction
-  {
+  private class ProcedureCallTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return act;
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ProcedureCallAction.class;
     }
   }
 
-  private class RaiseTransform implements TransformAction
-  {
+  private class RaiseTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       RaiseAction raise = (RaiseAction) act;
       IContentExpression value = raise.getRaised();
       ConstructorTerm noMore = CompilerUtils.abortIter(act.getLoc(), act.getType(), value);
@@ -258,56 +200,28 @@ public class ActionTransformer extends ExpressionTransformer
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return RaiseAction.class;
     }
   }
 
-  private class SequenceTransform implements TransformAction
-  {
+  private class SequenceTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       Sequence seq = (Sequence) act;
       List<IContentAction> lst = seq.getActions().stream().map(ActionTransformer.this::transform).collect(Collectors.toList());
       return new Sequence(act.getLoc(), act.getType(), lst);
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return Sequence.class;
     }
   }
 
-  private class SyncActionTransform implements TransformAction
-  {
-
+  private class ValisTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
-      SyncAction sync = (SyncAction) act;
-      IContentExpression sel = sync.getSel();
-      Map<ICondition, IContentAction> conditions = new HashMap<>();
-      for (Entry<ICondition, IContentAction> entry : sync.getBody().entrySet()) {
-        conditions.put(entry.getKey(), transform(entry.getValue()));
-      }
-      return new SyncAction(sync.getLoc(), act.getType(), sel, conditions);
-    }
-
-    @Override
-    public Class<? extends IContentAction> transformClass()
-    {
-      return SyncAction.class;
-    }
-  }
-
-  private class ValisTransform implements TransformAction
-  {
-    @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       ValisAction valis = (ValisAction) act;
       IContentExpression value = valis.getValue();
       ConstructorTerm noMore = CompilerUtils.noMore(act.getLoc(), value);
@@ -315,23 +229,19 @@ public class ActionTransformer extends ExpressionTransformer
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return ValisAction.class;
     }
   }
 
-  private class VarDeclarationTransform implements TransformAction
-  {
+  private class VarDeclarationTransform implements TransformAction {
     @Override
-    public IContentAction transformAction(IContentAction act)
-    {
+    public IContentAction transformAction(IContentAction act) {
       return act;
     }
 
     @Override
-    public Class<? extends IContentAction> transformClass()
-    {
+    public Class<? extends IContentAction> transformClass() {
       return VarDeclaration.class;
     }
   }

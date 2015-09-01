@@ -22,26 +22,22 @@ import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.operators.assignment.runtime.Assignments.*;
 import org.star_lang.star.operators.assignment.runtime.GetRefValue.*;
-import org.star_lang.star.operators.spawn.runtime.NotifyWait.Notify;
-import org.star_lang.star.operators.spawn.runtime.NotifyWait.Wait;
 
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * <p>
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
+/*
+ * Copyright (c) 2015. Francis G. McCabe
  *
- * @author fgm
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 public class GenerateCafe implements
@@ -1132,55 +1128,6 @@ public class GenerateCafe implements
       actions.addAll(act.transform(this, extraCxt));
 
     return actions;
-  }
-
-  @Override
-  public List<IAbstract> transformSyncAction(SyncAction sync, CContext cxt) {
-    Location loc = sync.getLoc();
-
-    IAbstract sel = sync.getSel().transform(this, cxt);
-
-    if (!(sel instanceof Name)) {
-      // introduce a new variable, because cafe sync must have a variable
-      sel = introduceVariable(loc, cxt, sel, sync.getSel().getType());
-    }
-
-    Map<ICondition, IContentAction> syncCases = sync.getBody();
-    if (syncCases.containsKey(CompilerUtils.truth)) {
-      IAbstract body = pickOne(loc, generateSubAction(syncCases.get(CompilerUtils.truth), cxt));
-      return FixedList.create(CafeSyntax.sync(loc, sel, body));
-    } else {
-      /**
-       * We build this loop:
-       *
-       * <pre>
-       * <emph>sel</emph> sync {
-       *   LL:while true do{
-       *     if <emph>cond1</emph> then{
-       *       <emph>A1</emph>
-       *       leave LL
-       *     }
-       *     else if ...
-       *     else
-       *       __wait(<emph>sel</emph>)
-       *   }
-       *   __notify(sel);
-       * }
-       * </pre>
-       */
-      String LL = GenSym.genSym("LL");
-      IAbstract leave = CafeSyntax.leave(loc, LL);
-      IAbstract body = CafeSyntax.escape(loc, Wait.name, sel);
-      for (Entry<ICondition, IContentAction> entry : syncCases.entrySet()) {
-        IAbstract caseCond = entry.getKey().transform(this, cxt);
-        IAbstract caseBody = pickOne(loc, mergeActions(generateSubAction(entry.getValue(), cxt), leave));
-        body = CafeSyntax.conditional(loc, caseCond, caseBody, body);
-      }
-      IAbstract whileStmt = CafeSyntax.whileLoop(loc, CafeSyntax.truth(loc), body);
-      whileStmt = CafeSyntax.labeled(loc, LL, whileStmt);
-      IAbstract syncBody = CafeSyntax.block(loc, whileStmt, CafeSyntax.escape(loc, Notify.name, sel));
-      return FixedList.create(CafeSyntax.sync(loc, sel, syncBody));
-    }
   }
 
   @Override
