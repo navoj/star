@@ -445,7 +445,7 @@ public class Theta {
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, funType, javaName, closure.signature, javaInvokeSig,
         javaInvokeName, AccessMode.readOnly);
 
-    CodeContext funCxt = ocxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), funName);
+    CodeContext funCxt = ocxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), funName, endFunLabel);
 
     defineArgs(args, loc, bldCat, errors, hwm, funDict, funMtd, endFunLabel, false, funCxt);
 
@@ -530,10 +530,11 @@ public class Theta {
     closure.interfaces.add(Types.IVALUE);
 
     MethodNode funMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, javaInvokeSig, javaInvokeSig, new String[]{});
-    CodeContext lcxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER);
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
+
+    CodeContext lcxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER, endFunLabel);
 
     InsnList funIns = funMtd.instructions;
     Actions.doLineNumber(loc, funMtd);
@@ -706,7 +707,7 @@ public class Theta {
 
     InsnList ins = funMtd.instructions;
 
-    CodeContext memoCxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER);
+    CodeContext memoCxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER, endFunLabel);
 
     Actions.doLineNumber(loc, funMtd);
     ins.add(firstLabel);
@@ -836,10 +837,11 @@ public class Theta {
     funDictionaries.put(pttrnName, pttrnDict);
 
     MethodNode matchMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.MATCH, javaInvokeSig, javaInvokeSig, new String[]{});
-    CodeContext mcxt = ccxt.fork(closure, matchMtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH);
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
+
+    CodeContext mcxt = ccxt.fork(closure, matchMtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH, endFunLabel);
 
     InsnList ins = matchMtd.instructions;
     ins.add(firstLabel);
@@ -956,9 +958,10 @@ public class Theta {
     CafeDictionary pttrnDict = dict.funDict(dict.getPath(), closure);
 
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.MATCH, javaInvokeSig, javaInvokeSig, new String[]{});
-    CodeContext ccxt = ocxt.fork(closure, mtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH);
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
+
+    CodeContext ccxt = ocxt.fork(closure, mtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH, endFunLabel);
 
     InsnList ins = mtd.instructions;
     ins.add(firstLabel);

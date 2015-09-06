@@ -66,7 +66,7 @@ public class CodeContext {
     return new CodeContext(repository, klass, mtd, mtdHwm, classInit, initHwm, localMap, bldCat, valisCont, errors, endLabel, functionName);
   }
 
-  public CodeContext fork(ClassNode klass, MethodNode mtd, HWM hwm, LiveMap localMap, String funName) {
+  public CodeContext fork(ClassNode klass, MethodNode mtd, HWM hwm, LiveMap localMap, String funName, LabelNode endLabel) {
     return new CodeContext(repository, klass, mtd, hwm, new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
         Types.CLASS_INIT, Types.VOID_SIG, Types.VOID_SIG, new String[]{}), new HWM(), localMap, bldCat, valisCont, errors, endLabel, funName);
   }
