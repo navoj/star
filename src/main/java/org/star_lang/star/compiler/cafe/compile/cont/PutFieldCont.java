@@ -5,7 +5,6 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.code.repository.CodeCatalog;
-import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.Expressions;
@@ -48,7 +47,7 @@ public class PutFieldCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();

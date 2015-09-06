@@ -56,111 +56,94 @@ import org.star_lang.star.operators.string.RegexpOps;
 import org.star_lang.star.operators.string.runtime.Regexp;
 
 /**
- * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
 
-public class Patterns
-{
+public class Patterns {
   /**
    * On entry to a generated pattern code the top of the stack contains a value that is to be
    * compared against a pattern.
-   * 
+   * <p>
    * On successful completion of the pattern the matched element is removed from the stack; and the
    * succ continuation is invoked. Otherwise the fail continuation will be invoked.
-   * 
-   * @param ptn
-   *          the pattern to test the input against
-   * @param access
-   *          the read/write mode to declare new variables in the pattern
-   * @param termSpec
-   *          what type is the pattern matching against?
-   * @param dict
-   *          the current dictionary
-   * @param outer
-   *          the dictionary for the outer scope
-   * @param endLabel
-   *          a label identifying when new variables will lose their scope
-   * @param errors
-   *          error reporter
-   * @param succ
-   *          This code is run at the point the pattern succeeds
-   * @param fail
-   *          This code is run at the point the pattern has failed
+   *
+   * @param ptn      the pattern to test the input against
+   * @param access   the read/write mode to declare new variables in the pattern
+   * @param termSpec what type is the pattern matching against?
+   * @param dict     the current dictionary
+   * @param outer    the dictionary for the outer scope
+   * @param endLabel a label identifying when new variables will lose their scope
+   * @param succ     This code is run at the point the pattern succeeds
+   * @param fail     This code is run at the point the pattern has failed
    * @param ccxt
-   *          compilation context
    */
   public static void compilePttrn(IAbstract ptn, AccessMode access, ISpec termSpec, CafeDictionary dict,
-      CafeDictionary outer, LabelNode endLabel, ErrorReport errors, IContinuation succ, IContinuation fail,
-      CodeContext ccxt)
-  {
-    compilePtn(ptn, access, termSpec, dict, outer, endLabel, errors, new NamePtn(), succ, fail, ccxt);
+                                  CafeDictionary outer, LabelNode endLabel, IContinuation succ, IContinuation fail,
+                                  CodeContext ccxt) {
+    compilePtn(ptn, access, termSpec, dict, outer, endLabel, new NamePtn(), succ, fail, ccxt);
   }
 
   public static void compilePtn(IAbstract ptn, AccessMode access, ISpec termSpec, CafeDictionary dict,
-      CafeDictionary outer, LabelNode endLabel, ErrorReport errors, VarPattern varHandler, IContinuation succ,
-      IContinuation fail, CodeContext ccxt)
-  {
+                                CafeDictionary outer, LabelNode endLabel, VarPattern varHandler, IContinuation succ,
+                                IContinuation fail, CodeContext ccxt) {
     if (CafeSyntax.isNullPtn(ptn))
-      handleNullPtn(termSpec, errors, dict, fail, ptn.getLoc(), ccxt);
+      handleNullPtn(termSpec, dict, fail, ptn.getLoc(), ccxt);
     else if (ptn instanceof Name)
-      varHandler.varPttrn(termSpec, ptn.getLoc(), Abstract.getId(ptn), errors, dict, succ, fail, ccxt);
+      varHandler.varPttrn(termSpec, ptn.getLoc(), Abstract.getId(ptn), dict, succ, fail, ccxt);
     else if (ptn instanceof IntegerLiteral)
-      handleInteger(termSpec, (IntegerLiteral) ptn, errors, dict, succ, fail, ccxt);
+      handleInteger(termSpec, (IntegerLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof LongLiteral)
-      handleLong(termSpec, (LongLiteral) ptn, errors, dict, succ, fail, ccxt);
+      handleLong(termSpec, (LongLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof FloatLiteral)
-      handleFloat(termSpec, (FloatLiteral) ptn, errors, dict, succ, fail, ccxt);
+      handleFloat(termSpec, (FloatLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof BigDecimalLiteral)
-      handleBignum(termSpec, (BigDecimalLiteral) ptn, errors, dict, succ, fail, ccxt);
+      handleBignum(termSpec, (BigDecimalLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof CharLiteral)
-      handleCharLiteral(termSpec, (CharLiteral) ptn, errors, dict, succ, fail, ccxt);
+      handleCharLiteral(termSpec, (CharLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof StringLiteral)
-      handleStringLiteral(termSpec, (StringLiteral) ptn, errors, dict, succ, fail, ccxt);
+      handleStringLiteral(termSpec, (StringLiteral) ptn, dict, succ, fail, ccxt);
     else if (CafeSyntax.isTuple(ptn))
-      tuplePtn(ptn, access, dict, outer, endLabel, errors, varHandler, succ, fail, ccxt);
+      tuplePtn(ptn, access, dict, outer, endLabel, varHandler, succ, fail, ccxt);
     else if (CafeSyntax.isConstructor(ptn))
-      constructorPtn(termSpec, ptn, access, dict, outer, endLabel, errors, varHandler, succ, fail, ccxt);
+      constructorPtn(termSpec, ptn, access, dict, outer, endLabel, varHandler, succ, fail, ccxt);
     else if (CafeSyntax.isTypedTerm(ptn))
-      defineNewVar(termSpec, ptn, errors, access, dict, endLabel, succ, ccxt);
+      defineNewVar(termSpec, ptn, access, dict, endLabel, succ, ccxt);
     else if (CafeSyntax.isPtnCall(ptn))
-      patternCall(ptn, access, errors, dict, outer, varHandler, succ, fail, endLabel, ccxt);
+      patternCall(ptn, access, dict, outer, varHandler, succ, fail, endLabel, ccxt);
     else if (CafeSyntax.isRegexp(ptn))
-      handleRegexp(termSpec, ptn, errors, endLabel, access, dict, outer, varHandler, succ, fail, ccxt);
+      handleRegexp(termSpec, ptn, endLabel, access, dict, outer, varHandler, succ, fail, ccxt);
     else if (CafeSyntax.isFace(ptn))
-      handleFacePtn(ptn, access, dict, outer, endLabel, errors, varHandler, succ, fail, ccxt);
+      handleFacePtn(ptn, access, dict, outer, endLabel, varHandler, succ, fail, ccxt);
     else
-      errors.reportError("invalid pattern: " + ptn, ptn.getLoc());
+      ccxt.getErrors().reportError("invalid pattern: " + ptn, ptn.getLoc());
   }
 
-  private static void handleNullPtn(ISpec termSpec, ErrorReport errors, CafeDictionary dict, IContinuation fail,
-      Location loc, CodeContext ccxt)
-  {
-    fail.cont(termSpec, dict, loc, errors, ccxt);
+  private static void handleNullPtn(ISpec termSpec, CafeDictionary dict, IContinuation fail,
+                                    Location loc, CodeContext ccxt) {
+    fail.cont(termSpec, dict, loc, ccxt);
   }
 
-  private static void patternCall(IAbstract ptn, AccessMode access, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, VarPattern varHandler, IContinuation succ, IContinuation fail, LabelNode endLabel,
-      CodeContext ccxt)
-  {
+  private static void patternCall(IAbstract ptn, AccessMode access, CafeDictionary dict,
+                                  CafeDictionary outer, VarPattern varHandler, IContinuation succ, IContinuation fail, LabelNode endLabel,
+                                  CodeContext ccxt) {
     assert CafeSyntax.isPtnCall(ptn);
     IAbstract callPtn = CafeSyntax.callPtnPtn(ptn);
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
+    ErrorReport errors = ccxt.getErrors();
 
     if (!(callPtn instanceof Name))
       errors.reportError("require pattern name here, not " + callPtn, callPtn.getLoc());
@@ -181,67 +164,67 @@ public class Patterns
           int mark = hwm.bump(1);
 
           switch (var.getKind()) {
-          case builtin: {
-            ICafeBuiltin builtin = Intrinsics.getBuiltin(ptnName);
+            case builtin: {
+              ICafeBuiltin builtin = Intrinsics.getBuiltin(ptnName);
 
-            String funSig = var.getJavaInvokeSig();
-            String classSig = var.getJavaType();
-            String invokeName = var.getJavaInvokeName();
+              String funSig = var.getJavaInvokeSig();
+              String classSig = var.getJavaType();
+              String invokeName = var.getJavaInvokeName();
 
-            if (builtin instanceof Inliner) {
-              ((Inliner) builtin).preamble(mtd, hwm);
-              ((Inliner) builtin).inline(dict.getOwner(), mtd, hwm, loc);
-            } else if (var.isStatic())
-              ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, invokeName, funSig));
-            else {
-              hwm.bump(1);
-              String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig());
+              if (builtin instanceof Inliner) {
+                ((Inliner) builtin).preamble(mtd, hwm);
+                ((Inliner) builtin).inline(dict.getOwner(), mtd, hwm, loc);
+              } else if (var.isStatic())
+                ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, invokeName, funSig));
+              else {
+                hwm.bump(1);
+                String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig());
 
-              ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName, var
-                  .getJavaSig()));
+                ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName, var
+                    .getJavaSig()));
+                // swap the value to be matched with the matcher code
+                ins.add(new InsnNode(Opcodes.SWAP));
+
+                ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classSig, invokeName, funSig));
+              }
+
+              break;
+            }
+            case general: {
+              switch (var.getWhere()) {
+                case freeVar:
+                  ins.add(new VarInsnNode(Opcodes.ALOAD, dict.find(Names.PRIVATE_THIS).getOffset()));
+                  ins.add(new FieldInsnNode(Opcodes.GETFIELD, dict.getOwnerName(), var.getJavaSafeName(), var.getJavaSig()));
+                  break;
+                case localVar:
+                  ins.add(new VarInsnNode(Opcodes.ALOAD, var.getOffset()));
+                  break;
+                case staticField:
+                  ins.add(new FieldInsnNode(Opcodes.GETSTATIC, var.getJavaOwner(), var.getJavaSafeName(), var.getJavaSig()));
+                  break;
+                default:
+                  errors.reportError("(internal) unexpected location for " + var, loc);
+              }
+
+              ISpec funSpec = SrcSpec.generic(loc, var.getType(), dict, ccxt.getRepository(), errors);
+              String methodType = funSpec.getJavaType();
+
+              if (!methodType.equals(var.getJavaType()))
+                ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
+
               // swap the value to be matched with the matcher code
               ins.add(new InsnNode(Opcodes.SWAP));
 
-              ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classSig, invokeName, funSig));
-            }
+              if (methodType.startsWith("pattern"))
+                ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, methodType, Names.MATCH, var.getJavaInvokeSig()));
+              else
+                ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, methodType, Names.MATCH, var.getJavaInvokeSig()));
 
-            break;
-          }
-          case general: {
-            switch (var.getWhere()) {
-            case freeVar:
-              ins.add(new VarInsnNode(Opcodes.ALOAD, dict.find(Names.PRIVATE_THIS).getOffset()));
-              ins.add(new FieldInsnNode(Opcodes.GETFIELD, dict.getOwnerName(), var.getJavaSafeName(), var.getJavaSig()));
               break;
-            case localVar:
-              ins.add(new VarInsnNode(Opcodes.ALOAD, var.getOffset()));
-              break;
-            case staticField:
-              ins.add(new FieldInsnNode(Opcodes.GETSTATIC, var.getJavaOwner(), var.getJavaSafeName(), var.getJavaSig()));
-              break;
+            }
             default:
-              errors.reportError("(internal) unexpected location for " + var, loc);
-            }
-
-            ISpec funSpec = SrcSpec.generic(loc, var.getType(), dict, ccxt.getRepository(), errors);
-            String methodType = funSpec.getJavaType();
-
-            if (!methodType.equals(var.getJavaType()))
-              ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
-
-            // swap the value to be matched with the matcher code
-            ins.add(new InsnNode(Opcodes.SWAP));
-
-            if (methodType.startsWith("pattern"))
-              ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, methodType, Names.MATCH, var.getJavaInvokeSig()));
-            else
-              ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, methodType, Names.MATCH, var.getJavaInvokeSig()));
-
-            break;
-          }
-          default:
-            errors.reportError("invalid kind for : " + ptnName + ":" + var.getType(), loc);
-            return;
+              errors.reportError("invalid kind for : " + ptnName + ":" + var.getType(), loc);
+              return;
           }
 
           hwm.bump(1);
@@ -250,11 +233,11 @@ public class Patterns
           LabelNode okLbl = new LabelNode();
           ins.add(new JumpInsnNode(Opcodes.IFNONNULL, okLbl));
           ins.add(new InsnNode(Opcodes.POP));
-          fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
           Utils.jumpTarget(ins, okLbl);
 
           ISpec resSpec = SrcSpec.typeSpec(loc, TypeUtils.getPtnResultType(ptnType), dict, bldCat, errors);
-          compilePtn(CafeSyntax.ptnCallResult(ptn), access, resSpec, dict, outer, endLabel, errors, varHandler, succ,
+          compilePtn(CafeSyntax.ptnCallResult(ptn), access, resSpec, dict, outer, endLabel, varHandler, succ,
               fail, ccxt);
 
           hwm.reset(mark);
@@ -275,7 +258,7 @@ public class Patterns
           ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR_FUNCTION, Constructors.VERIFY,
               Constructors.VERIFY_INVOKE_SIG));
           ins.add(new JumpInsnNode(Opcodes.IFNE, okLbl));
-          fail.cont(var, outer, loc, errors, ccxt);
+          fail.cont(var, outer, loc, ccxt);
           Utils.jumpTarget(ins, okLbl);
 
           tuplePtnArgs(src, CafeSyntax.ptnCallResult(ptn), access, dict, outer, varHandler, endLabel, succ, fail,
@@ -290,9 +273,8 @@ public class Patterns
 
   @SuppressWarnings("unused")
   private static void newPatternCall(IAbstract ptn, AccessMode access, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, VarPattern varHandler, IContinuation succ, IContinuation fail, LabelNode endLabel,
-      CodeContext ccxt)
-  {
+                                     CafeDictionary outer, VarPattern varHandler, IContinuation succ, IContinuation fail, LabelNode endLabel,
+                                     CodeContext ccxt) {
     assert CafeSyntax.isPtnCall(ptn);
     IAbstract callPtn = CafeSyntax.callPtnPtn(ptn);
     MethodNode mtd = ccxt.getMtd();
@@ -326,85 +308,85 @@ public class Patterns
           int mark = hwm.bump(1);
 
           switch (var.getKind()) {
-          case builtin: {
-            ICafeBuiltin builtin = Intrinsics.getBuiltin(ptnName);
+            case builtin: {
+              ICafeBuiltin builtin = Intrinsics.getBuiltin(ptnName);
 
-            String funSig = var.getJavaInvokeSig();
-            String classSig = var.getJavaType();
-            String invokeName = var.getJavaInvokeName();
+              String funSig = var.getJavaInvokeSig();
+              String classSig = var.getJavaType();
+              String invokeName = var.getJavaInvokeName();
 
-            if (builtin instanceof Inliner) {
-              ((Inliner) builtin).preamble(mtd, hwm);
-              ((Inliner) builtin).inline(dict.getOwner(), mtd, hwm, loc);
-            } else if (var.isStatic())
-              ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, invokeName, funSig));
-            else {
-              hwm.bump(1);
-              String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig());
+              if (builtin instanceof Inliner) {
+                ((Inliner) builtin).preamble(mtd, hwm);
+                ((Inliner) builtin).inline(dict.getOwner(), mtd, hwm, loc);
+              } else if (var.isStatic())
+                ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, invokeName, funSig));
+              else {
+                hwm.bump(1);
+                String javaName = Expressions.escapeReference(var.getName(), dict, classSig, var.getJavaSig());
 
-              ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName, var
-                  .getJavaSig()));
+                ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName, var
+                    .getJavaSig()));
+                // swap the value to be matched with the matcher code
+                ins.add(new InsnNode(Opcodes.SWAP));
+
+                ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classSig, invokeName, funSig));
+              }
+
+              break;
+            }
+            case general: {
+              switch (var.getWhere()) {
+                case freeVar:
+                  ins.add(new VarInsnNode(Opcodes.ALOAD, dict.find(Names.PRIVATE_THIS).getOffset()));
+                  ins.add(new FieldInsnNode(Opcodes.GETFIELD, dict.getOwnerName(), var.getJavaSafeName(), var.getJavaSig()));
+                  break;
+                case localVar:
+                  ins.add(new VarInsnNode(Opcodes.ALOAD, var.getOffset()));
+                  break;
+                case staticField:
+                  ins.add(new FieldInsnNode(Opcodes.GETSTATIC, var.getJavaOwner(), var.getJavaSafeName(), var.getJavaSig()));
+                  break;
+                default:
+                  errors.reportError("(internal) unexpected location for " + var, loc);
+              }
+
+              ISpec funSpec = SrcSpec.generic(loc, var.getType(), dict, ccxt.getRepository(), errors);
+              String methodType = funSpec.getJavaType();
+
+              if (!methodType.equals(var.getJavaType()))
+                ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
+
               // swap the value to be matched with the matcher code
               ins.add(new InsnNode(Opcodes.SWAP));
 
-              ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classSig, invokeName, funSig));
-            }
+              if (methodType.startsWith("pattern"))
+                ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, methodType, Names.MATCH, var.getJavaInvokeSig()));
+              else
+                ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, methodType, Names.MATCH, var.getJavaInvokeSig()));
 
-            break;
-          }
-          case general: {
-            switch (var.getWhere()) {
-            case freeVar:
-              ins.add(new VarInsnNode(Opcodes.ALOAD, dict.find(Names.PRIVATE_THIS).getOffset()));
-              ins.add(new FieldInsnNode(Opcodes.GETFIELD, dict.getOwnerName(), var.getJavaSafeName(), var.getJavaSig()));
               break;
-            case localVar:
-              ins.add(new VarInsnNode(Opcodes.ALOAD, var.getOffset()));
-              break;
-            case staticField:
-              ins.add(new FieldInsnNode(Opcodes.GETSTATIC, var.getJavaOwner(), var.getJavaSafeName(), var.getJavaSig()));
-              break;
+            }
             default:
-              errors.reportError("(internal) unexpected location for " + var, loc);
-            }
-
-            ISpec funSpec = SrcSpec.generic(loc, var.getType(), dict, ccxt.getRepository(), errors);
-            String methodType = funSpec.getJavaType();
-
-            if (!methodType.equals(var.getJavaType()))
-              ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
-
-            // swap the value to be matched with the matcher code
-            ins.add(new InsnNode(Opcodes.SWAP));
-
-            if (methodType.startsWith("pattern"))
-              ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, methodType, Names.MATCH, var.getJavaInvokeSig()));
-            else
-              ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, methodType, Names.MATCH, var.getJavaInvokeSig()));
-
-            break;
-          }
-          default:
-            errors.reportError("invalid kind for : " + ptnName + ":" + var.getType(), loc);
-            return;
+              errors.reportError("invalid kind for : " + ptnName + ":" + var.getType(), loc);
+              return;
           }
 
           ISpec resSpec = SrcSpec.typeSpec(loc, TypeUtils.getPtnResultType(ptnType), dict, bldCat, errors);
-          compilePtn(CafeSyntax.ptnCallResult(ptn), access, resSpec, dict, outer, endLabel, errors, varHandler,
+          compilePtn(CafeSyntax.ptnCallResult(ptn), access, resSpec, dict, outer, endLabel, varHandler,
               new JumpCont(exceptExit), new JumpCont(exceptLbl), ccxt);
 
           hwm.reset(mark);
 
           ins.add(exceptExit);
 
-          succ.cont(resSpec, outer, loc, errors, ccxt);
+          succ.cont(resSpec, outer, loc, ccxt);
 
           ins.add(exceptLbl);
 
           // Start code for checking exception itself
           ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.FAILURE_EXCEPTION));
 
-          fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
 
           mtd.tryCatchBlocks.add(new TryCatchBlockNode(start, exceptLbl, exceptLbl, Types.FAILURE_EXCEPTION));
         } else if (TypeUtils.isConstructorType(ptnType)) {
@@ -422,7 +404,7 @@ public class Patterns
           ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR_FUNCTION, Constructors.VERIFY,
               Constructors.VERIFY_INVOKE_SIG));
           ins.add(new JumpInsnNode(Opcodes.IFNE, okLbl));
-          fail.cont(var, outer, loc, errors, ccxt);
+          fail.cont(var, outer, loc, ccxt);
           Utils.jumpTarget(ins, okLbl);
 
           tuplePtnArgs(src, CafeSyntax.ptnCallResult(ptn), access, dict, outer, varHandler, endLabel, succ, fail,
@@ -436,9 +418,8 @@ public class Patterns
   }
 
   private static void ptnArgs(IList args, ISpec[] argSpecs, CafeDictionary dict, CafeDictionary outer,
-      AccessMode access, LabelNode endLabel, ErrorReport errors, VarPattern varHandler, IContinuation fail,
-      IContinuation succ, CodeContext ccxt)
-  {
+                              AccessMode access, LabelNode endLabel, VarPattern varHandler, IContinuation fail,
+                              IContinuation succ, CodeContext ccxt) {
     int nonAnons = countNonAnons(args);
 
     MethodNode mtd = ccxt.getMtd();
@@ -475,11 +456,11 @@ public class Patterns
           ins.add(new InsnNode(Opcodes.AALOAD));
 
           if (--nonAnons == 0)
-            compilePtn(arg, access, argSpecs[ix], dict, outer, endLabel, errors, varHandler, succ, fail, ccxt);
+            compilePtn(arg, access, argSpecs[ix], dict, outer, endLabel, varHandler, succ, fail, ccxt);
           else {
             LabelNode next = new LabelNode();
 
-            compilePtn(arg, access, argSpecs[ix], dict, outer, endLabel, errors, varHandler, new JumpCont(next), fail,
+            compilePtn(arg, access, argSpecs[ix], dict, outer, endLabel, varHandler, new JumpCont(next), fail,
                 ccxt);
             Utils.jumpTarget(ins, next);
           }
@@ -492,8 +473,7 @@ public class Patterns
       ins.add(new InsnNode(Opcodes.POP));
   }
 
-  private static int countNonAnons(IList args)
-  {
+  private static int countNonAnons(IList args) {
     int nonAnons = 0;
     for (int ix = 0; ix < args.size(); ix++)
       if (!CafeSyntax.isAnonymous((IAbstract) args.getCell(ix)))
@@ -501,9 +481,8 @@ public class Patterns
     return nonAnons;
   }
 
-  private static void handleInteger(ISpec termSpec, IntegerLiteral lit, ErrorReport errors, CafeDictionary dict,
-      IContinuation succ, IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleInteger(ISpec termSpec, IntegerLiteral lit, CafeDictionary dict,
+                                    IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
 
     MethodNode mtd = ccxt.getMtd();
@@ -519,15 +498,14 @@ public class Patterns
 
     LabelNode okLabel = new LabelNode();
     ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     hwm.reset(mark);
   }
 
-  private static void handleLong(ISpec termSpec, LongLiteral lit, ErrorReport errors, CafeDictionary dict,
-      IContinuation succ, IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleLong(ISpec termSpec, LongLiteral lit, CafeDictionary dict,
+                                 IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -542,15 +520,14 @@ public class Patterns
     LabelNode okLabel = new LabelNode();
     ins.add(new InsnNode(Opcodes.LCMP));
     ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     hwm.reset(mark);
   }
 
-  private static void handleFloat(ISpec termSpec, FloatLiteral lit, ErrorReport errors, CafeDictionary dict,
-      IContinuation succ, IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleFloat(ISpec termSpec, FloatLiteral lit, CafeDictionary dict,
+                                  IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -572,15 +549,14 @@ public class Patterns
     LabelNode okLabel = new LabelNode();
     ins.add(new InsnNode(Opcodes.DCMPG));
     ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     hwm.reset(mark);
   }
 
-  private static void handleBignum(ISpec termSpec, BigDecimalLiteral lit, ErrorReport errors, CafeDictionary dict,
-      IContinuation succ, IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleBignum(ISpec termSpec, BigDecimalLiteral lit, CafeDictionary dict,
+                                   IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -598,15 +574,14 @@ public class Patterns
 
     LabelNode okLabel = new LabelNode();
     ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     hwm.reset(mark);
   }
 
-  private static void handleCharLiteral(ISpec termSpec, CharLiteral lit, ErrorReport errors, CafeDictionary dict,
-      IContinuation succ, IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleCharLiteral(ISpec termSpec, CharLiteral lit, CafeDictionary dict,
+                                        IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -621,15 +596,14 @@ public class Patterns
 
     LabelNode okLabel = new LabelNode();
     ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     hwm.reset(mark);
   }
 
-  private static void handleStringLiteral(ISpec termSpec, StringLiteral lit, ErrorReport errors, CafeDictionary dict,
-      IContinuation succ, IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleStringLiteral(ISpec termSpec, StringLiteral lit, CafeDictionary dict,
+                                          IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -645,16 +619,15 @@ public class Patterns
 
     LabelNode okLabel = new LabelNode();
     ins.add(new JumpInsnNode(Opcodes.IFNE, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     hwm.reset(mark);
   }
 
-  private static void handleRegexp(ISpec termSpec, IAbstract regexp, ErrorReport errors, LabelNode endLabel,
-      AccessMode access, CafeDictionary dict, CafeDictionary outer, VarPattern varHandler, IContinuation succ,
-      IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleRegexp(ISpec termSpec, IAbstract regexp, LabelNode endLabel,
+                                   AccessMode access, CafeDictionary dict, CafeDictionary outer, VarPattern varHandler, IContinuation succ,
+                                   IContinuation fail, CodeContext ccxt) {
     Location loc = regexp.getLoc();
     assert CafeSyntax.isRegexp(regexp);
     MethodNode mtd = ccxt.getMtd();
@@ -683,37 +656,33 @@ public class Patterns
     ins.add(new InsnNode(Opcodes.DUP));
     ins.add(new JumpInsnNode(Opcodes.IFNONNULL, okLabel));
     ins.add(new InsnNode(Opcodes.POP));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     ins.add(okLabel);
     IList regexpArgs = CafeSyntax.regexpArgs(regexp);
     ISpec[] argTypes = new ISpec[regexpArgs.size()];
     for (int ix = 0; ix < argTypes.length; ix++)
       argTypes[ix] = SrcSpec.rawStringSrc;
-    ptnArgs(regexpArgs, argTypes, dict, outer, access, endLabel, errors, varHandler, fail, succ, ccxt);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    ptnArgs(regexpArgs, argTypes, dict, outer, access, endLabel, varHandler, fail, succ, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
   }
 
-  private static class RegexpInliner implements Inliner
-  {
+  private static class RegexpInliner implements Inliner {
     private final String regexp;
     private final String name;
     private final String javaSig;
 
-    RegexpInliner(String name, String regexp, String javaSig)
-    {
+    RegexpInliner(String name, String regexp, String javaSig) {
       this.name = name;
       this.regexp = regexp;
       this.javaSig = javaSig;
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM stackHWM)
-    {
+    public void preamble(MethodNode mtd, HWM stackHWM) {
     }
 
     @Override
-    public void inline(ClassNode klass, MethodNode mtd, HWM hwm, Location loc)
-    {
+    public void inline(ClassNode klass, MethodNode mtd, HWM hwm, Location loc) {
       int mark = hwm.bump(3);
       InsnList ins = new InsnList();
 
@@ -735,20 +704,17 @@ public class Patterns
     }
   }
 
-  public static class NamePtn implements VarPattern
-  {
+  public static class NamePtn implements VarPattern {
     @Override
-    public void varPttrn(ISpec src, Location loc, String name, ErrorReport errors, CafeDictionary dict,
-        IContinuation succ, IContinuation fail, CodeContext ccxt)
-    {
-      handleName(src, loc, name, errors, dict, succ, fail, ccxt);
+    public void varPttrn(ISpec src, Location loc, String name, CafeDictionary dict,
+                         IContinuation succ, IContinuation fail, CodeContext ccxt) {
+      handleName(src, loc, name, dict, succ, fail, ccxt);
     }
 
   }
 
-  private static void handleName(ISpec termSpec, Location loc, String name, ErrorReport errors, CafeDictionary dict,
-      IContinuation succ, IContinuation fail, CodeContext ccxt)
-  {
+  private static void handleName(ISpec termSpec, Location loc, String name, CafeDictionary dict,
+                                 IContinuation succ, IContinuation fail, CodeContext ccxt) {
     VarInfo var = dict.find(name);
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -757,76 +723,77 @@ public class Patterns
     InsnList ins = mtd.instructions;
     LabelNode okLabel = new LabelNode();
     int mark = hwm.getDepth();
+    ErrorReport errors = ccxt.getErrors();
 
     if (var != null) // Already declared?
     {
       Expressions.checkType(termSpec, var, mtd, dict, hwm);
 
       switch (var.getKind()) {
-      case builtin:
-        errors.reportError(name + "is a builtin name, not permitted as a pattern", loc);
-        break;
-      case constructor: {
-        TypeDescription desc = (TypeDescription) dict.findType(var.getType().typeLabel());
-        if (desc == null)
-          errors.reportError("type " + var.getType() + " not declared", loc);
-        else {
-          IValueSpecifier spec = desc.getValueSpecifier(var.getName());
-          if (!(spec instanceof ConstructorSpecifier))
-            errors.reportError("unknown constructor: " + var.getName(), loc);
-          else if (((ConstructorSpecifier) spec).arity() != 0)
-            errors.reportError(name + " is a " + ((ConstructorSpecifier) spec).arity() + "constructor", loc);
+        case builtin:
+          errors.reportError(name + "is a builtin name, not permitted as a pattern", loc);
+          break;
+        case constructor: {
+          TypeDescription desc = (TypeDescription) dict.findType(var.getType().typeLabel());
+          if (desc == null)
+            errors.reportError("type " + var.getType() + " not declared", loc);
           else {
-            ConstructorSpecifier cons = (ConstructorSpecifier) spec;
-            hwm.bump(1);
-            ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.ICONSTRUCTOR));
-            ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR, Constructors.CONIX, "()I"));
-            ins.add(new IntInsnNode(Opcodes.ILOAD, cons.getConIx()));
-            ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-            fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+            IValueSpecifier spec = desc.getValueSpecifier(var.getName());
+            if (!(spec instanceof ConstructorSpecifier))
+              errors.reportError("unknown constructor: " + var.getName(), loc);
+            else if (((ConstructorSpecifier) spec).arity() != 0)
+              errors.reportError(name + " is a " + ((ConstructorSpecifier) spec).arity() + "constructor", loc);
+            else {
+              ConstructorSpecifier cons = (ConstructorSpecifier) spec;
+              hwm.bump(1);
+              ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.ICONSTRUCTOR));
+              ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR, Constructors.CONIX, "()I"));
+              ins.add(new IntInsnNode(Opcodes.ILOAD, cons.getConIx()));
+              ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
+              fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
+            }
           }
+          break;
         }
-        break;
-      }
-      case rawBool:
-        var.loadValue(mtd, hwm, dict);
-        ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-        fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
-        break;
+        case rawBool:
+          var.loadValue(mtd, hwm, dict);
+          ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
+          break;
 
-      case rawChar:
-        var.loadValue(mtd, hwm, dict);
-        ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-        fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
-        break;
-      case rawInt:
-        var.loadValue(mtd, hwm, dict);
-        ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-        fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
-        break;
-      case rawLong:
-        var.loadValue(mtd, hwm, dict);
-        ins.add(new InsnNode(Opcodes.LCMP));
-        ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
-        fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
-        break;
-      case rawFloat:
-        var.loadValue(mtd, hwm, dict);
-        ins.add(new InsnNode(Opcodes.DCMPG));
-        ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
-        fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
-        break;
-      case rawBinary:
-      case rawString:
-      case general:
-      case rawDecimal:
-        var.loadValue(mtd, hwm, dict);
-        ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "equals", Types.EQUALS_SIG));
-        ins.add(new JumpInsnNode(Opcodes.IFNE, okLabel));
-        fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
-        break;
-      case userJava:
-        assert false : "invalid kind of pattern";
+        case rawChar:
+          var.loadValue(mtd, hwm, dict);
+          ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
+          break;
+        case rawInt:
+          var.loadValue(mtd, hwm, dict);
+          ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
+          break;
+        case rawLong:
+          var.loadValue(mtd, hwm, dict);
+          ins.add(new InsnNode(Opcodes.LCMP));
+          ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
+          break;
+        case rawFloat:
+          var.loadValue(mtd, hwm, dict);
+          ins.add(new InsnNode(Opcodes.DCMPG));
+          ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
+          break;
+        case rawBinary:
+        case rawString:
+        case general:
+        case rawDecimal:
+          var.loadValue(mtd, hwm, dict);
+          ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "equals", Types.EQUALS_SIG));
+          ins.add(new JumpInsnNode(Opcodes.IFNE, okLabel));
+          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
+          break;
+        case userJava:
+          assert false : "invalid kind of pattern";
       }
     } else if (Utils.isAnonymous(name))
       ins.add(new InsnNode(Opcodes.POP));
@@ -834,19 +801,19 @@ public class Patterns
       errors.reportError(name + " not declared", loc);
 
     ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     hwm.reset(mark);
   }
 
   private static void constructorPtn(ISpec termSpec, IAbstract ptn, AccessMode access, CafeDictionary dict,
-      CafeDictionary outer, LabelNode endLabel, ErrorReport errors, VarPattern varHandler, IContinuation succ,
-      IContinuation fail, CodeContext ccxt)
-  {
+                                     CafeDictionary outer, LabelNode endLabel, VarPattern varHandler, IContinuation succ,
+                                     IContinuation fail, CodeContext ccxt) {
     assert CafeSyntax.isConstructor(ptn);
     Location loc = ptn.getLoc();
     MethodNode mtd = ccxt.getMtd();
     InsnList ins = mtd.instructions;
     HWM hwm = ccxt.getMtdHwm();
+    ErrorReport errors = ccxt.getErrors();
 
     String lbl = CafeSyntax.constructorOp(ptn);
 
@@ -854,65 +821,64 @@ public class Patterns
 
     if (var != null) {
       switch (var.getKind()) {
-      case constructor: {
-        IType type = TypeUtils.getConstructorResultType(var.getType());
-        TypeDescription desc = (TypeDescription) dict.findType(type.typeLabel());
-        if (desc != null && desc.getValueSpecifier(lbl) != null) {
-          ICafeConstructorSpecifier con = (ICafeConstructorSpecifier) desc.getValueSpecifier(lbl);
-          if (desc.getValueSpecifiers().size() > 1)
-            checkConIx(con, ptn.getLoc(), dict, errors, fail, ccxt);
-          String conJavaType = con.getJavaType();
-          VarInfo src = dict.declareLocal(GenSym.genSym("__"), termSpec, true, AccessMode.readOnly);
+        case constructor: {
+          IType type = TypeUtils.getConstructorResultType(var.getType());
+          TypeDescription desc = (TypeDescription) dict.findType(type.typeLabel());
+          if (desc != null && desc.getValueSpecifier(lbl) != null) {
+            ICafeConstructorSpecifier con = (ICafeConstructorSpecifier) desc.getValueSpecifier(lbl);
+            if (desc.getValueSpecifiers().size() > 1)
+              checkConIx(con, ptn.getLoc(), dict, fail, ccxt);
+            String conJavaType = con.getJavaType();
+            VarInfo src = dict.declareLocal(GenSym.genSym("__"), termSpec, true, AccessMode.readOnly);
+            LabelNode start = new LabelNode();
+            LabelNode end = new LabelNode();
+            ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conJavaType));
+            ins.add(start);
+            ins.add(new VarInsnNode(Opcodes.ASTORE, src.getOffset()));
+            mtd.localVariables.add(new LocalVariableNode(src.getJavaSafeName(), src.getJavaSig(), null, start, end, src
+                .getOffset()));
+            constructorPtnArgs(src, lbl, CafeSyntax.constructorArgs(ptn), desc, dict, outer, access, endLabel,
+                varHandler, fail, succ, ccxt);
+            ins.add(end);
+          } else
+            errors.reportError(StringUtils.msg(lbl, " is not a constructor of ", type), ptn.getLoc());
+          return;
+        }
+
+        case general: {
+          LabelNode okLbl = new LabelNode();
+
+          VarInfo src = dict.declareLocal(GenSym.genSym("__"), SrcSpec.constructorSrc, true, AccessMode.readOnly);
           LabelNode start = new LabelNode();
           LabelNode end = new LabelNode();
-          ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conJavaType));
           ins.add(start);
           ins.add(new VarInsnNode(Opcodes.ASTORE, src.getOffset()));
           mtd.localVariables.add(new LocalVariableNode(src.getJavaSafeName(), src.getJavaSig(), null, start, end, src
               .getOffset()));
-          constructorPtnArgs(src, lbl, CafeSyntax.constructorArgs(ptn), desc, dict, outer, access, endLabel, errors,
-              varHandler, fail, succ, ccxt);
+
+          var.loadValue(mtd, hwm, dict);
+          ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.ICONSTRUCTOR_FUNCTION));
+          src.loadValue(mtd, hwm, dict);
+          ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR_FUNCTION, Constructors.VERIFY,
+              Constructors.VERIFY_INVOKE_SIG));
+          ins.add(new JumpInsnNode(Opcodes.IFNE, okLbl));
+          fail.cont(var, outer, loc, ccxt);
+          Utils.jumpTarget(ins, okLbl);
+
+          tuplePtnArgs(src, ptn, access, dict, outer, varHandler, endLabel, succ, fail, errors, ccxt);
           ins.add(end);
-        } else
-          errors.reportError(StringUtils.msg(lbl, " is not a constructor of ", type), ptn.getLoc());
-        return;
-      }
+          return;
+        }
 
-      case general: {
-        LabelNode okLbl = new LabelNode();
-
-        VarInfo src = dict.declareLocal(GenSym.genSym("__"), SrcSpec.constructorSrc, true, AccessMode.readOnly);
-        LabelNode start = new LabelNode();
-        LabelNode end = new LabelNode();
-        ins.add(start);
-        ins.add(new VarInsnNode(Opcodes.ASTORE, src.getOffset()));
-        mtd.localVariables.add(new LocalVariableNode(src.getJavaSafeName(), src.getJavaSig(), null, start, end, src
-            .getOffset()));
-
-        var.loadValue(mtd, hwm, dict);
-        ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.ICONSTRUCTOR_FUNCTION));
-        src.loadValue(mtd, hwm, dict);
-        ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR_FUNCTION, Constructors.VERIFY,
-            Constructors.VERIFY_INVOKE_SIG));
-        ins.add(new JumpInsnNode(Opcodes.IFNE, okLbl));
-        fail.cont(var, outer, loc, errors, ccxt);
-        Utils.jumpTarget(ins, okLbl);
-
-        tuplePtnArgs(src, ptn, access, dict, outer, varHandler, endLabel, succ, fail, errors, ccxt);
-        ins.add(end);
-        return;
-      }
-
-      default:
-        errors.reportError(StringUtils.msg(var.getName(), " is not a valid pattern name"), loc);
+        default:
+          errors.reportError(StringUtils.msg(var.getName(), " is not a valid pattern name"), loc);
       }
     } else
       errors.reportError(StringUtils.msg("pattern constructor ", lbl, " not known"), loc);
   }
 
-  public static void checkConIx(ICafeConstructorSpecifier con, Location loc, CafeDictionary dict, ErrorReport errors,
-      IContinuation fail, CodeContext ccxt)
-  {
+  public static void checkConIx(ICafeConstructorSpecifier con, Location loc, CafeDictionary dict,
+                                IContinuation fail, CodeContext ccxt) {
     // Check we have the right constructor, but do not bother if there only
     // is one constructor
     int conIx = con.getConIx();
@@ -926,14 +892,13 @@ public class Patterns
     Expressions.genIntConst(ins, hwm, conIx);
     ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, nx));
     ins.add(new InsnNode(Opcodes.POP));
-    fail.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     Utils.jumpTarget(ins, nx);
   }
 
   public static void tuplePtn(IAbstract ptn, AccessMode access, CafeDictionary dict, CafeDictionary outer,
-      LabelNode endLabel, ErrorReport errors, VarPattern varHandler, IContinuation succ, IContinuation fail,
-      CodeContext ccxt)
-  {
+                              LabelNode endLabel, VarPattern varHandler, IContinuation succ, IContinuation fail,
+                              CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     InsnList ins = mtd.instructions;
@@ -947,9 +912,9 @@ public class Patterns
       ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR, Constructors.CONIX, "()I"));
       Expressions.genIntConst(ins, hwm, conIx);
       ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, nx));
-      fail.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), errors, ccxt);
+      fail.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), ccxt);
       Utils.jumpTarget(ins, nx);
-      succ.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), errors, ccxt);
+      succ.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), ccxt);
     } else {
       ins.add(new InsnNode(Opcodes.DUP));
       ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.ICONSTRUCTOR));
@@ -957,7 +922,7 @@ public class Patterns
       Expressions.genIntConst(ins, hwm, conIx);
       ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, nx));
       ins.add(new InsnNode(Opcodes.POP));
-      fail.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), errors, ccxt);
+      fail.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), ccxt);
       Utils.jumpTarget(ins, nx);
 
       VarInfo src = dict.declareLocal(GenSym.genSym("__"), SrcSpec.constructorSrc, true, AccessMode.readOnly);
@@ -978,20 +943,19 @@ public class Patterns
           ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR, "getCell", "(I)" + Types.IVALUE_SIG));
 
           LabelNode next = new LabelNode();
-          compilePtn(arg, access, SrcSpec.generalSrc, dict, outer, endLabel, errors, varHandler, new JumpCont(next),
+          compilePtn(arg, access, SrcSpec.generalSrc, dict, outer, endLabel, varHandler, new JumpCont(next),
               fail, ccxt);
           Utils.jumpTarget(ins, next);
         }
       }
-      succ.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), errors, ccxt);
+      succ.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), ccxt);
       ins.add(end);
     }
   }
 
   public static void handleFacePtn(IAbstract ptn, AccessMode access, CafeDictionary dict, CafeDictionary outer,
-      LabelNode endLabel, ErrorReport errors, VarPattern varHandler, IContinuation succ, IContinuation fail,
-      CodeContext ccxt)
-  {
+                                   LabelNode endLabel, VarPattern varHandler, IContinuation succ, IContinuation fail,
+                                   CodeContext ccxt) {
     assert CafeSyntax.isFace(ptn);
 
     MethodNode mtd = ccxt.getMtd();
@@ -1025,20 +989,19 @@ public class Patterns
               + ")" + Types.IVALUE_SIG));
 
           LabelNode next = new LabelNode();
-          compilePtn(arg, access, SrcSpec.generalSrc, dict, outer, endLabel, errors, varHandler, new JumpCont(next),
+          compilePtn(arg, access, SrcSpec.generalSrc, dict, outer, endLabel, varHandler, new JumpCont(next),
               fail, ccxt);
           Utils.jumpTarget(ins, next);
         }
       }
       ins.add(end);
     }
-    succ.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, ptn.getLoc(), ccxt);
   }
 
   public static void tuplePtnArgs(VarInfo src, IAbstract tpl, AccessMode access, CafeDictionary dict,
-      CafeDictionary outer, VarPattern varHandler, LabelNode endLabel, IContinuation succ, IContinuation fail,
-      ErrorReport errors, CodeContext ccxt)
-  {
+                                  CafeDictionary outer, VarPattern varHandler, LabelNode endLabel, IContinuation succ, IContinuation fail,
+                                  ErrorReport errors, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     InsnList ins = mtd.instructions;
@@ -1057,23 +1020,23 @@ public class Patterns
           ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR, "getCell", "(I)" + Types.IVALUE_SIG));
 
           LabelNode next = new LabelNode();
-          compilePtn(arg, access, SrcSpec.generalSrc, dict, outer, endLabel, errors, varHandler, new JumpCont(next),
+          compilePtn(arg, access, SrcSpec.generalSrc, dict, outer, endLabel, varHandler, new JumpCont(next),
               fail, ccxt);
           Utils.jumpTarget(ins, next);
         }
       }
     } else
       errors.reportError(StringUtils.msg("invalid form of constructor argument: ", tpl), loc);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
   }
 
   public static void constructorPtnArgs(VarInfo var, String lbl, IList args, ITypeDescription desc,
-      CafeDictionary dict, CafeDictionary outer, AccessMode access, LabelNode endLabel, ErrorReport errors,
-      VarPattern varHandler, IContinuation fail, IContinuation succ, CodeContext ccxt)
-  {
+                                        CafeDictionary dict, CafeDictionary outer, AccessMode access, LabelNode endLabel,
+                                        VarPattern varHandler, IContinuation fail, IContinuation succ, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
+    ErrorReport errors = ccxt.getErrors();
 
     ICafeConstructorSpecifier con = (ICafeConstructorSpecifier) ((IAlgebraicType) desc).getValueSpecifier(lbl);
     String conJavaType = con.getJavaType();
@@ -1097,23 +1060,23 @@ public class Patterns
           ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, conJavaType, Types.getterName(id), "()" + conArgJavaType));
 
           LabelNode next = new LabelNode();
-          compilePtn(arg, access, conArgSpecs[ix], dict, outer, endLabel, errors, varHandler, new JumpCont(next), fail,
+          compilePtn(arg, access, conArgSpecs[ix], dict, outer, endLabel, varHandler, new JumpCont(next), fail,
               ccxt);
           Utils.jumpTarget(ins, next);
         }
       }
     }
-    succ.cont(SrcSpec.prcSrc, dict, var.getLoc(), errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, var.getLoc(), ccxt);
   }
 
-  private static void defineNewVar(ISpec termSpec, IAbstract trm, ErrorReport errors, AccessMode access,
-      CafeDictionary dict, LabelNode endLabel, IContinuation succ, CodeContext ccxt)
-  {
+  private static void defineNewVar(ISpec termSpec, IAbstract trm, AccessMode access,
+                                   CafeDictionary dict, LabelNode endLabel, IContinuation succ, CodeContext ccxt) {
     assert CafeSyntax.isTypedTerm(trm);
 
     Location loc = trm.getLoc();
 
     MethodNode mtd = ccxt.getMtd();
+    ErrorReport errors = ccxt.getErrors();
 
     IAbstract var = CafeSyntax.typedTerm(trm);
     IType varType = TypeAnalyser.parseType(CafeSyntax.typedType(trm), dict, errors);
@@ -1135,27 +1098,26 @@ public class Patterns
       } else if (!v.isInited()) {
         v.setInited(true);
         switch (v.getWhere()) {
-        case localVar: {
-          LabelNode startLabel = new LabelNode();
+          case localVar: {
+            LabelNode startLabel = new LabelNode();
 
-          mtd.localVariables.add(new LocalVariableNode(v.getJavaSafeName(), v.getJavaSig(), null, startLabel, endLabel,
-              v.getOffset()));
-          ins.add(startLabel);
-          break;
-        }
-        default:
+            mtd.localVariables.add(new LocalVariableNode(v.getJavaSafeName(), v.getJavaSig(), null, startLabel, endLabel,
+                v.getOffset()));
+            ins.add(startLabel);
+            break;
+          }
+          default:
         }
 
       }
 
-      new StoreCont(v, dict).cont(termSpec, dict, loc, errors, ccxt);
+      new StoreCont(v, dict).cont(termSpec, dict, loc, ccxt);
     } else
       errors.reportError("expecting a variable, not: " + var, loc);
-    succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
   }
 
-  public static List<String> declaredVars(IAbstract ptn)
-  {
+  public static List<String> declaredVars(IAbstract ptn) {
     List<String> vars = new ArrayList<>();
 
     declareVars(ptn, vars);
@@ -1163,15 +1125,14 @@ public class Patterns
     return vars;
   }
 
-  private static void declareVars(IAbstract ptn, List<String> vars)
-  {
+  private static void declareVars(IAbstract ptn, List<String> vars) {
     if (CafeSyntax.termHasType(ptn)) {
       if (!CafeSyntax.isAnonymous(ptn)) {
         if (Abstract.isName(ptn))
           vars.add(Abstract.getId(ptn));
-        else if(CafeSyntax.isTypedTerm(ptn)){
+        else if (CafeSyntax.isTypedTerm(ptn)) {
           IAbstract var = CafeSyntax.typedTerm(ptn);
-          if(Abstract.isName(var))
+          if (Abstract.isName(var))
             vars.add(Abstract.getId(var));
         }
       }

@@ -7,7 +7,6 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
-import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
@@ -42,7 +41,7 @@ public class ThrowContinuation implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
     MethodNode mtd = ccxt.getMtd();
     InsnList ins = mtd.instructions;

@@ -98,7 +98,7 @@ public class CaseCompile
       int mark = hwm.bump(1);
       var.loadValue(mtd, hwm, dict);
 
-      Patterns.tuplePtn(CafeSyntax.caseRulePtn(rl), AccessMode.readOnly, caseDict, outer, endLabel, errors,
+      Patterns.tuplePtn(CafeSyntax.caseRulePtn(rl), AccessMode.readOnly, caseDict, outer, endLabel,
           new NamePtn(), new JumpCont(nxLabel), new JumpCont(defltLbl), ccxt);
 
       hwm.reset(mark);
@@ -165,7 +165,7 @@ public class CaseCompile
             LabelNode endLabel = new LabelNode();
             LabelNode nxLabel = new LabelNode();
             Patterns.constructorPtnArgs(var, lbl, CafeSyntax.constructorArgs(ptn), desc, caseDict, outer,
-                AccessMode.readOnly, endLabel, errors, new NamePtn(), defCon, new JumpCont(nxLabel), ccxt);
+                AccessMode.readOnly, endLabel, new NamePtn(), defCon, new JumpCont(nxLabel), ccxt);
             hwm.reset(mark);
             Utils.jumpTarget(ins, nxLabel);
             caseSpec = handler.compile(Abstract.getArg(rl, 1), caseDict, cont);

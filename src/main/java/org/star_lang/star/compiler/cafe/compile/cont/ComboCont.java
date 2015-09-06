@@ -1,6 +1,5 @@
 package org.star_lang.star.compiler.cafe.compile.cont;
 
-import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
@@ -35,10 +34,10 @@ public class ComboCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
-    ISpec left = cont1.cont(src, cxt, loc, errors, ccxt);
-    return cont2.cont(left, cxt, loc, errors, ccxt);
+    ISpec left = cont1.cont(src, cxt, loc, ccxt);
+    return cont2.cont(left, cxt, loc, ccxt);
   }
 
   @Override

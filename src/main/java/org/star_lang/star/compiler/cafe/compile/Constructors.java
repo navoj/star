@@ -61,24 +61,22 @@ import org.star_lang.star.data.value.NTuple.NTpl;
 
 /**
  * Handle the compilation of constructors
- * 
+ * <p>
  * This library is free software; you can redistribute it and/or modify it under the terms of the
  * GNU Lesser General Public License as published by the Free Software Foundation; either version
  * 2.1 of the License, or (at your option) any later version.
- * 
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License along with this library;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * @author fgm
- * 
  */
-public class Constructors
-{
+public class Constructors {
   public static final String SET_MEMBER_SIG = "(" + Types.JAVA_STRING_SIG + Types.IVALUE_SIG + ")V";
   public static final String SET_MEMBER = "setMember";
   public static final String VERIFY_INVOKE_SIG = "(" + Types.IVALUE_SIG + ")Z";
@@ -99,8 +97,7 @@ public class Constructors
   public static final String VERIFY = "verify";
 
   public static CafeTypeDescription compileTypeDef(IAbstract def, CafeDictionary dict, ErrorReport errors,
-      CodeContext ccxt)
-  {
+                                                   CodeContext ccxt) {
     assert CafeSyntax.isTypeDef(def);
     CodeCatalog bldCat = ccxt.getBldCat();
     Location loc = def.getLoc();
@@ -118,7 +115,7 @@ public class Constructors
     typeNode.interfaces.add(Types.IVALUE);
     typeNode.interfaces.add(ICONSTRUCTOR);
 
-    MethodNode rootCon = new MethodNode(Opcodes.ACC_PROTECTED, Types.INIT, "()V", null, new String[] {});
+    MethodNode rootCon = new MethodNode(Opcodes.ACC_PROTECTED, Types.INIT, "()V", null, new String[]{});
     typeNode.methods.add(rootCon);
 
     InsnList conIns = rootCon.instructions;
@@ -141,7 +138,7 @@ public class Constructors
     CafeTypeDescription newDesc = (CafeTypeDescription) dict.declareType(loc, definedType, javaSrTypeName);
 
     MethodNode typeInit = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, Types.CLASS_INIT, "()V", null,
-        new String[] {});
+        new String[]{});
     HWM initHWM = new HWM();
     LabelNode endInit = new LabelNode();
     CafeDictionary initDict = dict.funDict(typeNode);
@@ -170,7 +167,7 @@ public class Constructors
     genEnums(enums, typeNode, typeInit, initHWM);
 
     MethodNode abstractConIx = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, CONIX, "()I", null,
-        new String[] {});
+        new String[]{});
     typeNode.methods.add(abstractConIx);
 
     if (CodeContext.realCode(typeInit.instructions)) {
@@ -187,8 +184,7 @@ public class Constructors
     return newDesc;
   }
 
-  private static void genEnums(Map<String, VarInfo> enums, ClassNode typeNode, MethodNode typeInit, HWM hwm)
-  {
+  private static void genEnums(Map<String, VarInfo> enums, ClassNode typeNode, MethodNode typeInit, HWM hwm) {
     if (!enums.isEmpty()) {
       InsnList ins = typeInit.instructions;
 
@@ -215,8 +211,7 @@ public class Constructors
    * values to verify that they are instances of the constructor
    */
   private static ConstructorSpecifier compileConstructor(IAbstract con, IType type, CafeTypeDescription desc,
-      int conIx, String javaOwner, CafeDictionary dict, ErrorReport errors, Map<String, VarInfo> enums, CodeContext ccxt)
-  {
+                                                         int conIx, String javaOwner, CafeDictionary dict, ErrorReport errors, Map<String, VarInfo> enums, CodeContext ccxt) {
     assert CafeSyntax.isConstructorSpec(con);
     CodeCatalog bldCat = ccxt.getBldCat();
 
@@ -329,22 +324,16 @@ public class Constructors
   /**
    * Compile the special constructor function/pattern for a positional constructor. Constructor
    * functions combine both an enter method and a match method.
-   * 
-   * @param con
-   *          specification of constructor function
-   * @param dict
-   *          dictionary
-   * @param loc
-   *          location of constructor function definition
-   * @param errors
-   *          errors
-   * @param cxt
-   *          code context
+   *
+   * @param con    specification of constructor function
+   * @param dict   dictionary
+   * @param loc    location of constructor function definition
+   * @param errors errors
+   * @param cxt    code context
    */
 
   private static void compileConstructorFunction(ConstructorSpecifier con, CafeDictionary dict, CodeContext cxt,
-      Location loc, ErrorReport errors)
-  {
+                                                 Location loc, ErrorReport errors) {
     CodeCatalog bldCat = cxt.getBldCat();
     int arity = con.arity();
 
@@ -382,7 +371,7 @@ public class Constructors
     closure.interfaces.add(Types.ICONSTRUCTOR_FUNCTION);
     closure.interfaces.add(Types.IVALUE);
 
-    MethodNode enterMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, enterSig, enterSig, new String[] {});
+    MethodNode enterMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, enterSig, enterSig, new String[]{});
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
@@ -401,7 +390,7 @@ public class Constructors
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, conType, javaName, javaSig, enterSig, javaName,
         AccessMode.readOnly);
 
-    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail());
+    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail(), Names.ENTER);
 
     defineArgs(argTypes, loc, bldCat, errors, hwm, funDict, enterMtd, endFunLabel, fcxt);
 
@@ -461,8 +450,7 @@ public class Constructors
   }
 
   private static void defineArgs(IType[] argTypes, Location loc, CodeCatalog bldCat, ErrorReport errors, HWM hwm,
-      CafeDictionary funDict, MethodNode funMtd, LabelNode endFunLabel, CodeContext ccxt)
-  {
+                                 CafeDictionary funDict, MethodNode funMtd, LabelNode endFunLabel, CodeContext ccxt) {
     final Definer definer;
     CodeRepository repository = ccxt.getRepository();
 
@@ -471,8 +459,8 @@ public class Constructors
     else {
       VarInfo argArray = new VarInfo(loc, Names.ARG_ARRAY, true, VarSource.localVar, null, JavaKind.general,
           Theta.FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
-              .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, funDict
-              .getOwnerName());
+          .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, funDict
+          .getOwnerName());
       definer = new LongArgDefiner(argArray, bldCat, repository);
     }
 
@@ -483,8 +471,7 @@ public class Constructors
   }
 
   private static void compileArgs(Location loc, IType[] argTypes, ErrorReport errors, MethodNode mtd, HWM hwm,
-      CafeDictionary dict, CafeDictionary outer)
-  {
+                                  CafeDictionary dict, CafeDictionary outer) {
     int arity = argTypes.length;
 
     if (arity < Theta.MAX_ARGS) {
@@ -523,23 +510,20 @@ public class Constructors
     }
   }
 
-  private static boolean noRawTypes(List<IType> types)
-  {
+  private static boolean noRawTypes(List<IType> types) {
     for (IType type : types)
       if (TypeUtils.isRawType(type))
         return false;
     return true;
   }
 
-  public static String conargId(int ix)
-  {
+  public static String conargId(int ix) {
     return "__" + ix;
   }
 
   private static CafeRecordSpecifier compileRecord(IAbstract con, IType type, TypeDescription desc, int conIx,
-      String javaOwner, CafeDictionary dict, ErrorReport errors, Map<String, VarInfo> fields,
-      Map<String, VarInfo> enums, CodeContext ocxt)
-  {
+                                                   String javaOwner, CafeDictionary dict, ErrorReport errors, Map<String, VarInfo> fields,
+                                                   Map<String, VarInfo> enums, CodeContext ocxt) {
     assert CafeSyntax.isRecord(con);
 
     CodeCatalog bldCat = ocxt.getBldCat();
@@ -647,7 +631,7 @@ public class Constructors
     genSetMember(conNode, argSpecs, index);
 
     CafeRecordSpecifier recSpec = (CafeRecordSpecifier) dict.declareConstructor(loc, type, Freshen.generalizeType(desc
-        .getValueSpecifier(conLabel).getConType()), javaName, javaConSig, javaName, javaOwner, conOp, conIx, argSpecs,
+            .getValueSpecifier(conLabel).getConType()), javaName, javaConSig, javaName, javaOwner, conOp, conIx, argSpecs,
         index, errors);
 
     methods.add(TypeGen.genType(desc, conLabel, conNode, dict, errors, ocxt.getRepository(), bldCat));
@@ -659,24 +643,18 @@ public class Constructors
 
   /**
    * Compile the special constructor function/pattern for a record constructor.
-   * <p/>
+   * <p>
    * Constructor functions combine both an enter method and a match method.
-   * 
-   * @param con
-   *          specification of record constructor
-   * @param dict
-   *          dictionary
-   * @param loc
-   *          source location of definition
-   * @param errors
-   *          errors
-   * @param cxt
-   *          code context
+   *
+   * @param con    specification of record constructor
+   * @param dict   dictionary
+   * @param loc    source location of definition
+   * @param errors errors
+   * @param cxt    code context
    */
 
   private static void compileRecordFunction(RecordSpecifier con, CafeDictionary dict, CodeContext cxt, Location loc,
-      ErrorReport errors)
-  {
+                                            ErrorReport errors) {
     CodeCatalog bldCat = cxt.getBldCat();
     int arity = con.arity();
 
@@ -711,7 +689,7 @@ public class Constructors
     closure.interfaces.add(Types.ICONSTRUCTOR_FUNCTION);
     closure.interfaces.add(Types.IVALUE);
 
-    MethodNode enterMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, enterSig, enterSig, new String[] {});
+    MethodNode enterMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, enterSig, enterSig, new String[]{});
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endLabel = new LabelNode();
@@ -729,7 +707,7 @@ public class Constructors
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, conType, javaName, javaSig, enterSig, javaName,
         AccessMode.readOnly);
 
-    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail());
+    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail(), Names.ENTER);
 
     TypeInterfaceType conArgType = TypeUtils.getRecordConstructorArgs(refreshed);
     IType argTypes[] = TypeUtils.tupleOfInterface(conArgType);
@@ -740,8 +718,8 @@ public class Constructors
           endLabel, Theta.FIRST_OFFSET));
       VarInfo argArray = new VarInfo(loc, Names.ARG_ARRAY, true, VarSource.localVar, null, JavaKind.general,
           Theta.FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
-              .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, funDict
-              .getOwnerName());
+          .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, funDict
+          .getOwnerName());
       funDict.declare(Names.ARG_ARRAY, argArray);
 
       hwm.probe(3);
@@ -809,10 +787,9 @@ public class Constructors
     tgt.storeValue(cxt.getClassInit(), cxt.getClsHwm(), dict);
   }
 
-  static MethodNode genMembers(ClassNode conNode, List<Pair<String, String>> fieldNames)
-  {
+  static MethodNode genMembers(ClassNode conNode, List<Pair<String, String>> fieldNames) {
     MethodNode members = new MethodNode(Opcodes.ACC_PUBLIC, "getMembers", "()[Ljava/lang/String;", null,
-        new String[] {});
+        new String[]{});
     InsnList mmIns = members.instructions;
     LabelNode mmStart = new LabelNode();
     LabelNode mmEnd = new LabelNode();
@@ -842,17 +819,15 @@ public class Constructors
   }
 
   public static MethodNode genInit0(Location loc, IType type, ClassNode conNode, CafeDictionary dict,
-      String javaSrTypeName, String javaName, ErrorReport errors, CodeCatalog bldCat, CodeContext ccxt)
-  {
+                                    String javaSrTypeName, String javaName, ErrorReport errors, CodeCatalog bldCat, CodeContext ccxt) {
     return genInit(loc, conNode, type, "()V", Array.nilArray, dict, javaSrTypeName, javaName, errors, bldCat, ccxt);
   }
 
   private static MethodNode genInit(Location loc, ClassNode conNode, IType type, String javaConSig, IList args,
-      CafeDictionary dict, String javaSrTypeName, String javaName, ErrorReport errors, CodeCatalog bldCat,
-      CodeContext ccxt)
-  {
+                                    CafeDictionary dict, String javaSrTypeName, String javaName, ErrorReport errors, CodeCatalog bldCat,
+                                    CodeContext ccxt) {
     // Closure is a constructor
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Types.INIT, javaConSig, null, new String[] {});
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Types.INIT, javaConSig, null, new String[]{});
 
     InsnList ins = mtd.instructions;
     List<LocalVariableNode> localVariables = mtd.localVariables;
@@ -885,8 +860,8 @@ public class Constructors
     else {
       VarInfo argArray = new VarInfo(loc, Names.ARG_ARRAY, true, VarSource.localVar, null, JavaKind.general,
           Theta.FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
-              .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, conDict
-              .getOwnerName());
+          .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, conDict
+          .getOwnerName());
       definer = new LongArgDefiner(argArray, bldCat, ccxt.getRepository());
       localVariables.add(new LocalVariableNode(Names.ARG_ARRAY, argArray.getJavaSig(), null, firstLabel, endLabel,
           Theta.FIRST_OFFSET));
@@ -934,11 +909,10 @@ public class Constructors
   }
 
   private static MethodNode genArrayInit(Location loc, ClassNode conNode, IType type, String javaConSig, IList args,
-      CafeDictionary dict, String javaSrTypeName, String javaName, ErrorReport errors, CodeCatalog bldCat,
-      CodeContext ccxt)
-  {
+                                         CafeDictionary dict, String javaSrTypeName, String javaName, ErrorReport errors, CodeCatalog bldCat,
+                                         CodeContext ccxt) {
     // Closure is a constructor
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Types.INIT, javaConSig, null, new String[] {});
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Types.INIT, javaConSig, null, new String[]{});
 
     InsnList ins = mtd.instructions;
     List<LocalVariableNode> localVariables = mtd.localVariables;
@@ -968,8 +942,8 @@ public class Constructors
 
     VarInfo argArray = new VarInfo(loc, Names.ARG_ARRAY, true, VarSource.localVar, null, JavaKind.general,
         Theta.FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
-            .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, conDict
-            .getOwnerName());
+        .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, conDict
+        .getOwnerName());
     definer = new LongArgDefiner(argArray, bldCat, ccxt.getRepository());
     localVariables.add(new LocalVariableNode(Names.ARG_ARRAY, argArray.getJavaSig(), null, firstLabel, endLabel,
         Theta.FIRST_OFFSET));
@@ -1015,9 +989,8 @@ public class Constructors
     return mtd;
   }
 
-  private static MethodNode genConix(ClassNode conNode, int conIx)
-  {
-    MethodNode getLabel = new MethodNode(Opcodes.ACC_PUBLIC, CONIX, "()I", null, new String[] {});
+  private static MethodNode genConix(ClassNode conNode, int conIx) {
+    MethodNode getLabel = new MethodNode(Opcodes.ACC_PUBLIC, CONIX, "()I", null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
 
@@ -1036,9 +1009,8 @@ public class Constructors
     return getLabel;
   }
 
-  public static MethodNode genLabel(String conLbl, ClassNode conNode)
-  {
-    MethodNode getLabel = new MethodNode(Opcodes.ACC_PUBLIC, GET_LABEL, "()Ljava/lang/String;", null, new String[] {});
+  public static MethodNode genLabel(String conLbl, ClassNode conNode) {
+    MethodNode getLabel = new MethodNode(Opcodes.ACC_PUBLIC, GET_LABEL, "()Ljava/lang/String;", null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
 
@@ -1056,9 +1028,8 @@ public class Constructors
     return getLabel;
   }
 
-  private static MethodNode genVerify(ClassNode conNode, String lbl, int conIx)
-  {
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, VERIFY, VERIFY_INVOKE_SIG, null, new String[] {});
+  private static MethodNode genVerify(ClassNode conNode, String lbl, int conIx) {
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, VERIFY, VERIFY_INVOKE_SIG, null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
     LabelNode fail = new LabelNode();
@@ -1099,9 +1070,8 @@ public class Constructors
     return mtd;
   }
 
-  public static MethodNode genSize(int size, ClassNode conNode)
-  {
-    MethodNode getLabel = new MethodNode(Opcodes.ACC_PUBLIC, "size", "()I", null, new String[] {});
+  public static MethodNode genSize(int size, ClassNode conNode) {
+    MethodNode getLabel = new MethodNode(Opcodes.ACC_PUBLIC, "size", "()I", null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
 
@@ -1120,8 +1090,7 @@ public class Constructors
   }
 
   private static void genGettersAndSetters(String typeLabel, ClassNode typeNode, Map<String, VarInfo> fields,
-      CafeDictionary dict, ErrorReport errors)
-  {
+                                           CafeDictionary dict, ErrorReport errors) {
     TypeDescription desc = (TypeDescription) dict.findType(typeLabel);
     for (Entry<String, VarInfo> entry : fields.entrySet()) {
       VarInfo var = entry.getValue();
@@ -1130,14 +1099,13 @@ public class Constructors
     }
   }
 
-  private static void genGetter(ClassNode typeNode, VarInfo var, TypeDescription desc, ErrorReport errors)
-  {
+  private static void genGetter(ClassNode typeNode, VarInfo var, TypeDescription desc, ErrorReport errors) {
     String javaSig = var.getJavaSig();
     String id = var.getName();
     String javaName = var.getJavaSafeName();
     String getterName = Types.getterName(javaName);
 
-    MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, getterName, "()" + javaSig, null, new String[] {});
+    MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, getterName, "()" + javaSig, null, new String[]{});
     HWM hwm = new HWM();
     InsnList ins = getter.instructions;
     LabelNode firstLabel = new LabelNode();
@@ -1175,31 +1143,31 @@ public class Constructors
           ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conJavaType));
           ins.add(new FieldInsnNode(Opcodes.GETFIELD, conJavaType, javaName, javaSig));
           switch (var.getKind()) {
-          case general:
-          case constructor:
-          case rawBinary:
-          case rawString:
-          case rawDecimal:
-            genNullTest(desc.getLoc(), hwm, getter);
-            ins.add(new InsnNode(Opcodes.ARETURN));
-            break;
-          case rawBool:
-          case rawChar:
-          case rawInt:
-            ins.add(new InsnNode(Opcodes.IRETURN));
-            break;
-          case rawLong:
-            hwm.bump(1);
-            ins.add(new InsnNode(Opcodes.LRETURN));
-            break;
-          case rawFloat:
-            hwm.bump(1);
-            ins.add(new InsnNode(Opcodes.DRETURN));
-            break;
-          case builtin:
-          case userJava:
-            errors.reportError("invalid variable type: " + id, var.getLoc());
-            break;
+            case general:
+            case constructor:
+            case rawBinary:
+            case rawString:
+            case rawDecimal:
+              genNullTest(desc.getLoc(), hwm, getter);
+              ins.add(new InsnNode(Opcodes.ARETURN));
+              break;
+            case rawBool:
+            case rawChar:
+            case rawInt:
+              ins.add(new InsnNode(Opcodes.IRETURN));
+              break;
+            case rawLong:
+              hwm.bump(1);
+              ins.add(new InsnNode(Opcodes.LRETURN));
+              break;
+            case rawFloat:
+              hwm.bump(1);
+              ins.add(new InsnNode(Opcodes.DRETURN));
+              break;
+            case builtin:
+            case userJava:
+              errors.reportError("invalid variable type: " + id, var.getLoc());
+              break;
           }
         } else
           ins.add(new JumpInsnNode(Opcodes.GOTO, defltLbl));
@@ -1220,31 +1188,31 @@ public class Constructors
         ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conJavaType));
         ins.add(new FieldInsnNode(Opcodes.GETFIELD, conJavaType, Utils.javaIdentifierOf(id), javaSig));
         switch (var.getKind()) {
-        case general:
-        case constructor:
-        case rawBinary:
-        case rawString:
-        case rawDecimal:
-          genNullTest(desc.getLoc(), hwm, getter);
-          ins.add(new InsnNode(Opcodes.ARETURN));
-          break;
-        case rawBool:
-        case rawChar:
-        case rawInt:
-          ins.add(new InsnNode(Opcodes.IRETURN));
-          break;
-        case rawLong:
-          hwm.bump(2);
-          ins.add(new InsnNode(Opcodes.LRETURN));
-          break;
-        case rawFloat:
-          hwm.bump(2);
-          ins.add(new InsnNode(Opcodes.DRETURN));
-          break;
-        case builtin:
-        case userJava:
-          errors.reportError("invalid variable type: " + id, var.getLoc());
-          break;
+          case general:
+          case constructor:
+          case rawBinary:
+          case rawString:
+          case rawDecimal:
+            genNullTest(desc.getLoc(), hwm, getter);
+            ins.add(new InsnNode(Opcodes.ARETURN));
+            break;
+          case rawBool:
+          case rawChar:
+          case rawInt:
+            ins.add(new InsnNode(Opcodes.IRETURN));
+            break;
+          case rawLong:
+            hwm.bump(2);
+            ins.add(new InsnNode(Opcodes.LRETURN));
+            break;
+          case rawFloat:
+            hwm.bump(2);
+            ins.add(new InsnNode(Opcodes.DRETURN));
+            break;
+          case builtin:
+          case userJava:
+            errors.reportError("invalid variable type: " + id, var.getLoc());
+            break;
         }
       } else {
         hwm.bump(2);
@@ -1265,15 +1233,14 @@ public class Constructors
     typeNode.methods.add(getter);
   }
 
-  private static void genConSpecificGetter(ClassNode conNode, VarInfo var, ErrorReport errors, CafeDictionary dict)
-  {
+  private static void genConSpecificGetter(ClassNode conNode, VarInfo var, ErrorReport errors, CafeDictionary dict) {
     String javaSig = var.getJavaSig();
 
     String id = var.getName();
     String javaName = var.getJavaSafeName();
     String getterName = Types.getterName(javaName);
 
-    MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, getterName, "()" + javaSig, null, new String[] {});
+    MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, getterName, "()" + javaSig, null, new String[]{});
     InsnList ins = getter.instructions;
     LabelNode firstLabel = new LabelNode();
     LabelNode endLabel = new LabelNode();
@@ -1286,28 +1253,28 @@ public class Constructors
     ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
     ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, javaName, javaSig));
     switch (var.getKind()) {
-    case general:
-    case constructor:
-    case rawBinary:
-    case rawString:
-    case rawDecimal:
-      ins.add(new InsnNode(Opcodes.ARETURN));
-      break;
-    case rawBool:
-    case rawChar:
-    case rawInt:
-      ins.add(new InsnNode(Opcodes.IRETURN));
-      break;
-    case rawLong:
-      ins.add(new InsnNode(Opcodes.LRETURN));
-      break;
-    case rawFloat:
-      ins.add(new InsnNode(Opcodes.DRETURN));
-      break;
-    case builtin:
-    case userJava:
-      errors.reportError(StringUtils.msg(id, " has invalid variable type: ", var.getType()), var.getLoc());
-      break;
+      case general:
+      case constructor:
+      case rawBinary:
+      case rawString:
+      case rawDecimal:
+        ins.add(new InsnNode(Opcodes.ARETURN));
+        break;
+      case rawBool:
+      case rawChar:
+      case rawInt:
+        ins.add(new InsnNode(Opcodes.IRETURN));
+        break;
+      case rawLong:
+        ins.add(new InsnNode(Opcodes.LRETURN));
+        break;
+      case rawFloat:
+        ins.add(new InsnNode(Opcodes.DRETURN));
+        break;
+      case builtin:
+      case userJava:
+        errors.reportError(StringUtils.msg(id, " has invalid variable type: ", var.getType()), var.getLoc());
+        break;
     }
 
     ins.add(endLabel);
@@ -1321,13 +1288,12 @@ public class Constructors
       genConSpecificIValueGetter(conNode, var, dict);
   }
 
-  private static void genConSpecificIValueGetter(ClassNode conNode, VarInfo var, CafeDictionary dict)
-  {
+  private static void genConSpecificIValueGetter(ClassNode conNode, VarInfo var, CafeDictionary dict) {
     String javaSig = var.getJavaSig();
     String javaName = var.getJavaSafeName();
     String getterName = Types.getterName(javaName);
 
-    MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, getterName, "()" + Types.IVALUE_SIG, null, new String[] {});
+    MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, getterName, "()" + Types.IVALUE_SIG, null, new String[]{});
     InsnList ins = getter.instructions;
     LabelNode firstLabel = new LabelNode();
     LabelNode endLabel = new LabelNode();
@@ -1352,16 +1318,14 @@ public class Constructors
   }
 
   static void genConSpecificGetters(ClassNode conNode, Map<String, VarInfo> fields, ErrorReport errors,
-      CafeDictionary dict)
-  {
+                                    CafeDictionary dict) {
     for (Entry<String, VarInfo> entry : fields.entrySet())
       genConSpecificGetter(conNode, entry.getValue(), errors, dict);
   }
 
   static MethodNode genGetCell(ClassNode typeNode, List<ISpec> argSpecs, Map<String, Integer> index,
-      CafeDictionary dict, Location loc)
-  {
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, GET_CELL, "(I)" + Types.IVALUE_SIG, null, new String[] {});
+                               CafeDictionary dict, Location loc) {
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, GET_CELL, "(I)" + Types.IVALUE_SIG, null, new String[]{});
 
     // Build the hash table for switching on member name
     int keys[] = new int[index.size()];
@@ -1418,9 +1382,8 @@ public class Constructors
   }
 
   private static MethodNode genSetCell(ClassNode typeNode, List<ISpec> argSpecs, Map<String, Integer> index,
-      CafeDictionary dict, CodeCatalog bldCat, ErrorReport errors, Location loc)
-  {
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, SET_CELL, "(I" + Types.IVALUE_SIG + ")V", null, new String[] {});
+                                       CafeDictionary dict, CodeCatalog bldCat, ErrorReport errors, Location loc) {
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, SET_CELL, "(I" + Types.IVALUE_SIG + ")V", null, new String[]{});
 
     // Build the hash table for switching on member name
     int keys[] = new int[index.size()];
@@ -1492,9 +1455,8 @@ public class Constructors
   }
 
   static MethodNode genGetCells(ClassNode typeNode, List<ISpec> argSpecs, Map<String, VarInfo> fields,
-      Map<String, Integer> index, CafeDictionary dict)
-  {
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, GET_CELLS, GETCELLS_INVOKESIG, null, new String[] {});
+                                Map<String, Integer> index, CafeDictionary dict) {
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, GET_CELLS, GETCELLS_INVOKESIG, null, new String[]{});
     InsnList ins = mtd.instructions;
     LabelNode firstLbl = new LabelNode();
     LabelNode endLbl = new LabelNode();
@@ -1540,8 +1502,7 @@ public class Constructors
   }
 
   private static Map<Integer, Pair<List<String>, LabelNode>> buildIndexIns(Collection<String> keys, MethodNode mtd,
-      LabelNode deflt)
-  {
+                                                                           LabelNode deflt) {
     SortedMap<Integer, Pair<List<String>, LabelNode>> hashes = new TreeMap<>();
 
     for (String key : keys) {
@@ -1575,10 +1536,9 @@ public class Constructors
   }
 
   static void genGetMember(ClassNode typeNode, List<ISpec> argSpecs, Map<String, Integer> index, CafeDictionary dict,
-      Location loc)
-  {
+                           Location loc) {
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, "getMember", "(" + Types.JAVA_STRING_SIG + ")"
-        + Types.IVALUE_SIG, null, new String[] {});
+        + Types.IVALUE_SIG, null, new String[]{});
 
     LabelNode firstLbl = new LabelNode();
     LabelNode defltLbl = new LabelNode();
@@ -1641,13 +1601,11 @@ public class Constructors
     typeNode.methods.add(mtd);
   }
 
-  private static boolean isEnum(VarInfo var)
-  {
+  private static boolean isEnum(VarInfo var) {
     return TypeUtils.isConstructorType(var.getType()) && TypeUtils.arityOfConstructorType(var.getType()) == 0;
   }
 
-  private static void memberNotPreset(InsnList ins, int offset, HWM hwm)
-  {
+  private static void memberNotPreset(InsnList ins, int offset, HWM hwm) {
     hwm.probe(5);
     ins.add(new TypeInsnNode(Opcodes.NEW, ILLEGAL_ARGUMENT_EXCEPTION));
     ins.add(new InsnNode(Opcodes.DUP));
@@ -1665,9 +1623,8 @@ public class Constructors
     ins.add(new InsnNode(Opcodes.ATHROW));
   }
 
-  private static void genSetMember(ClassNode typeNode, List<ISpec> argSpecs, Map<String, Integer> index)
-  {
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, SET_MEMBER, SET_MEMBER_SIG, null, new String[] {});
+  private static void genSetMember(ClassNode typeNode, List<ISpec> argSpecs, Map<String, Integer> index) {
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, SET_MEMBER, SET_MEMBER_SIG, null, new String[]{});
 
     LabelNode firstLbl = new LabelNode();
     LabelNode defltLbl = new LabelNode();
@@ -1744,9 +1701,8 @@ public class Constructors
   }
 
   static MethodNode genEquals(ClassNode conNode, Map<String, VarInfo> fields, Map<String, Integer> index,
-      ErrorReport errors, Location loc)
-  {
-    MethodNode equals = new MethodNode(Opcodes.ACC_PUBLIC, "equals", Types.EQUALS_SIG, null, new String[] {});
+                              ErrorReport errors, Location loc) {
+    MethodNode equals = new MethodNode(Opcodes.ACC_PUBLIC, "equals", Types.EQUALS_SIG, null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
 
@@ -1771,52 +1727,52 @@ public class Constructors
       if (index.containsKey(entry.getKey())) {
         VarInfo field = entry.getValue();
         switch (field.getKind()) {
-        case rawBool:
-        case rawChar:
-        case rawInt:
-          hwm.probe(4);
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
-          ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new JumpInsnNode(Opcodes.IF_ICMPNE, failLabel));
-          break;
-        case rawLong:
-          hwm.probe(6);
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
-          ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new InsnNode(Opcodes.LCMP));
-          ins.add(new JumpInsnNode(Opcodes.IFNE, failLabel));
-          break;
-        case rawFloat:
-          hwm.probe(6);
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
-          ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new InsnNode(Opcodes.DCMPG));
-          ins.add(new JumpInsnNode(Opcodes.IFNE, failLabel));
-          break;
-        case rawBinary:
-        case rawString:
-        case rawDecimal:
-        case general:
-          hwm.probe(4);
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
-          ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "equals", Types.EQUALS_SIG));
-          ins.add(new JumpInsnNode(Opcodes.IFEQ, failLabel));
-          break;
-        default:
-          errors.reportError("illegal type of field", field.getLoc());
+          case rawBool:
+          case rawChar:
+          case rawInt:
+            hwm.probe(4);
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
+            ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new JumpInsnNode(Opcodes.IF_ICMPNE, failLabel));
+            break;
+          case rawLong:
+            hwm.probe(6);
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
+            ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new InsnNode(Opcodes.LCMP));
+            ins.add(new JumpInsnNode(Opcodes.IFNE, failLabel));
+            break;
+          case rawFloat:
+            hwm.probe(6);
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
+            ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new InsnNode(Opcodes.DCMPG));
+            ins.add(new JumpInsnNode(Opcodes.IFNE, failLabel));
+            break;
+          case rawBinary:
+          case rawString:
+          case rawDecimal:
+          case general:
+            hwm.probe(4);
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.FIRST_OFFSET));
+            ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conNode.name));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "equals", Types.EQUALS_SIG));
+            ins.add(new JumpInsnNode(Opcodes.IFEQ, failLabel));
+            break;
+          default:
+            errors.reportError("illegal type of field", field.getLoc());
         }
       }
     }
@@ -1835,9 +1791,8 @@ public class Constructors
   }
 
   static MethodNode genHashcode(ClassNode conNode, String conLabel, Map<String, VarInfo> fields,
-      Map<String, Integer> index, ErrorReport errors, Location loc)
-  {
-    MethodNode hashMtd = new MethodNode(Opcodes.ACC_PUBLIC, "hashCode", Types.HASH_SIG, null, new String[] {});
+                                Map<String, Integer> index, ErrorReport errors, Location loc) {
+    MethodNode hashMtd = new MethodNode(Opcodes.ACC_PUBLIC, "hashCode", Types.HASH_SIG, null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
 
@@ -1862,50 +1817,50 @@ public class Constructors
       if (index.containsKey(entry.getKey())) {
         VarInfo field = entry.getValue();
         switch (field.getKind()) {
-        case rawBool:
-        case rawChar:
-        case rawInt:
-          hwm.probe(2);
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new InsnNode(Opcodes.IADD));
-          break;
-        case rawLong:
-          hwm.probe(6);
-          // Copied from java.lang.Long
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new InsnNode(Opcodes.DUP2));
-          ins.add(new IntInsnNode(Opcodes.BIPUSH, 32));
-          ins.add(new InsnNode(Opcodes.LUSHR));
-          ins.add(new InsnNode(Opcodes.LXOR));
-          ins.add(new InsnNode(Opcodes.L2I));
-          ins.add(new InsnNode(Opcodes.IADD));
-          break;
-        case rawFloat:
-          hwm.probe(6);
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Types.JAVA_DOUBLE_TYPE, "doubleToLongBits", "(D)J"));
-          ins.add(new InsnNode(Opcodes.DUP2));
-          ins.add(new IntInsnNode(Opcodes.BIPUSH, 32));
-          ins.add(new InsnNode(Opcodes.LUSHR));
-          ins.add(new InsnNode(Opcodes.LXOR));
-          ins.add(new InsnNode(Opcodes.L2I));
-          ins.add(new InsnNode(Opcodes.IADD));
-          break;
-        case rawBinary:
-        case rawString:
-        case rawDecimal:
-        case general:
-          hwm.probe(4);
-          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-          ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
-          ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "hashCode", Types.HASH_SIG));
-          ins.add(new InsnNode(Opcodes.IADD));
-          break;
-        default:
-          errors.reportError("illegal type of field", field.getLoc());
+          case rawBool:
+          case rawChar:
+          case rawInt:
+            hwm.probe(2);
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new InsnNode(Opcodes.IADD));
+            break;
+          case rawLong:
+            hwm.probe(6);
+            // Copied from java.lang.Long
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new InsnNode(Opcodes.DUP2));
+            ins.add(new IntInsnNode(Opcodes.BIPUSH, 32));
+            ins.add(new InsnNode(Opcodes.LUSHR));
+            ins.add(new InsnNode(Opcodes.LXOR));
+            ins.add(new InsnNode(Opcodes.L2I));
+            ins.add(new InsnNode(Opcodes.IADD));
+            break;
+          case rawFloat:
+            hwm.probe(6);
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Types.JAVA_DOUBLE_TYPE, "doubleToLongBits", "(D)J"));
+            ins.add(new InsnNode(Opcodes.DUP2));
+            ins.add(new IntInsnNode(Opcodes.BIPUSH, 32));
+            ins.add(new InsnNode(Opcodes.LUSHR));
+            ins.add(new InsnNode(Opcodes.LXOR));
+            ins.add(new InsnNode(Opcodes.L2I));
+            ins.add(new InsnNode(Opcodes.IADD));
+            break;
+          case rawBinary:
+          case rawString:
+          case rawDecimal:
+          case general:
+            hwm.probe(4);
+            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+            ins.add(new FieldInsnNode(Opcodes.GETFIELD, conNode.name, field.getJavaSafeName(), field.getJavaSig()));
+            ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "hashCode", Types.HASH_SIG));
+            ins.add(new InsnNode(Opcodes.IADD));
+            break;
+          default:
+            errors.reportError("illegal type of field", field.getLoc());
         }
       }
     }
@@ -1919,10 +1874,9 @@ public class Constructors
   }
 
   // Does not work for circular references
-  static MethodNode genCopy(ClassNode conNode, String javaConSig, IList args, List<ISpec> argSpecs, boolean shallow)
-  {
+  static MethodNode genCopy(ClassNode conNode, String javaConSig, IList args, List<ISpec> argSpecs, boolean shallow) {
     MethodNode copy = new MethodNode(Opcodes.ACC_PUBLIC, shallow ? "shallowCopy" : "copy", "()" + conNode.signature,
-        null, new String[] { Types.EVALUATION_EXCEPTION });
+        null, new String[]{Types.EVALUATION_EXCEPTION});
 
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
@@ -1977,8 +1931,7 @@ public class Constructors
   }
 
   public static void copyArg(IAbstract arg, ISpec argSpec, ClassNode conNode, boolean shallow, InsnList ins, int ix,
-      HWM hwm)
-  {
+                             HWM hwm) {
     String javaSig = argSpec.getJavaSig();
 
     String id = CafeSyntax.isTypedTerm(arg) ? Utils.javaIdentifierOf(((Name) CafeSyntax.typedTerm(arg)).getId())
@@ -1999,10 +1952,9 @@ public class Constructors
     }
   }
 
-  static MethodNode genCopyBridge(ClassNode conNode, String retSig, boolean shallow)
-  {
+  static MethodNode genCopyBridge(ClassNode conNode, String retSig, boolean shallow) {
     MethodNode copy = new MethodNode(Opcodes.ACC_PUBLIC, shallow ? "shallowCopy" : "copy", "()" + retSig, null,
-        new String[] { Types.EVALUATION_EXCEPTION });
+        new String[]{Types.EVALUATION_EXCEPTION});
 
     InsnList ins = copy.instructions;
     ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
@@ -2015,10 +1967,9 @@ public class Constructors
     return copy;
   }
 
-  private static void genConstructorVisit(ClassNode typeNode)
-  {
+  private static void genConstructorVisit(ClassNode typeNode) {
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, "accept", "(" + Types.IVALUEVISITOR_SIG + ")V", null,
-        new String[] {});
+        new String[]{});
 
     LabelNode firstLbl = new LabelNode();
     LabelNode endLbl = new LabelNode();
@@ -2045,10 +1996,9 @@ public class Constructors
     typeNode.methods.add(mtd);
   }
 
-  public static void genRecordVisit(ClassNode typeNode)
-  {
+  public static void genRecordVisit(ClassNode typeNode) {
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, "accept", "(" + Types.IVALUEVISITOR_SIG + ")V", null,
-        new String[] {});
+        new String[]{});
 
     LabelNode firstLbl = new LabelNode();
     LabelNode endLbl = new LabelNode();
@@ -2075,9 +2025,8 @@ public class Constructors
     typeNode.methods.add(mtd);
   }
 
-  public static void genToString(ClassNode node)
-  {
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Types.TOSTRING, Types.TOSTRING_SIG, null, new String[] {});
+  public static void genToString(ClassNode node) {
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Types.TOSTRING, Types.TOSTRING_SIG, null, new String[]{});
 
     LabelNode firstLbl = new LabelNode();
     LabelNode endLbl = new LabelNode();
@@ -2100,10 +2049,9 @@ public class Constructors
     node.methods.add(mtd);
   }
 
-  public static void genFunctionVisit(ClassNode node)
-  {
+  public static void genFunctionVisit(ClassNode node) {
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, "accept", "(" + Types.IVALUEVISITOR_SIG + ")V", null,
-        new String[] {});
+        new String[]{});
 
     LabelNode firstLbl = new LabelNode();
     LabelNode endLbl = new LabelNode();
@@ -2130,10 +2078,9 @@ public class Constructors
     node.methods.add(mtd);
   }
 
-  public static void genPatternVisit(ClassNode node)
-  {
+  public static void genPatternVisit(ClassNode node) {
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, "accept", "(" + Types.IVALUEVISITOR_SIG + ")V", null,
-        new String[] {});
+        new String[]{});
 
     LabelNode firstLbl = new LabelNode();
     LabelNode endLbl = new LabelNode();
@@ -2160,15 +2107,14 @@ public class Constructors
     node.methods.add(mtd);
   }
 
-  private static void genSetter(ClassNode typeNode, VarInfo var, TypeDescription desc, ErrorReport errors)
-  {
+  private static void genSetter(ClassNode typeNode, VarInfo var, TypeDescription desc, ErrorReport errors) {
     String javaSig = var.getJavaSig();
     String field = var.getName();
     String setterSig = "(" + javaSig + ")V";
     String javaName = var.getJavaSafeName();
     String setterName = Types.setterName(javaName);
 
-    MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, setterName, setterSig, null, new String[] {});
+    MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, setterName, setterSig, null, new String[]{});
     InsnList ins = setter.instructions;
     LabelNode firstLabel = new LabelNode();
     LabelNode endLabel = new LabelNode();
@@ -2210,31 +2156,31 @@ public class Constructors
           ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conJavaType));
 
           switch (var.getKind()) {
-          case general:
-          case constructor:
-          case rawBinary:
-          case rawString:
-          case rawDecimal:
-            ins.add(new VarInsnNode(Opcodes.ALOAD, 1));
-            hwm.bump(1);
-            break;
-          case rawBool:
-          case rawChar:
-          case rawInt:
-            ins.add(new VarInsnNode(Opcodes.ILOAD, 1));
-            hwm.bump(1);
-            break;
-          case rawLong:
-            ins.add(new VarInsnNode(Opcodes.LLOAD, 1));
-            hwm.bump(2);
-            break;
-          case rawFloat:
-            ins.add(new VarInsnNode(Opcodes.DLOAD, 1));
-            hwm.bump(2);
-            break;
-          case builtin:
-          case userJava:
-            errors.reportError("invalid variable: " + field, var.getLoc());
+            case general:
+            case constructor:
+            case rawBinary:
+            case rawString:
+            case rawDecimal:
+              ins.add(new VarInsnNode(Opcodes.ALOAD, 1));
+              hwm.bump(1);
+              break;
+            case rawBool:
+            case rawChar:
+            case rawInt:
+              ins.add(new VarInsnNode(Opcodes.ILOAD, 1));
+              hwm.bump(1);
+              break;
+            case rawLong:
+              ins.add(new VarInsnNode(Opcodes.LLOAD, 1));
+              hwm.bump(2);
+              break;
+            case rawFloat:
+              ins.add(new VarInsnNode(Opcodes.DLOAD, 1));
+              hwm.bump(2);
+              break;
+            case builtin:
+            case userJava:
+              errors.reportError("invalid variable: " + field, var.getLoc());
           }
 
           ins.add(new FieldInsnNode(Opcodes.PUTFIELD, conJavaType, javaName, javaSig));
@@ -2262,32 +2208,32 @@ public class Constructors
         ins.add(new TypeInsnNode(Opcodes.CHECKCAST, conJavaType));
 
         switch (var.getKind()) {
-        case general:
-        case constructor:
-        case rawBinary:
-        case rawString:
-        case rawDecimal:
-          ins.add(new VarInsnNode(Opcodes.ALOAD, 1));
-          ins.add(new TypeInsnNode(Opcodes.CHECKCAST, var.getJavaType()));
-          hwm.bump(1);
-          break;
-        case rawBool:
-        case rawChar:
-        case rawInt:
-          ins.add(new VarInsnNode(Opcodes.ILOAD, 1));
-          hwm.bump(1);
-          break;
-        case rawLong:
-          ins.add(new VarInsnNode(Opcodes.LLOAD, 1));
-          hwm.bump(2);
-          break;
-        case rawFloat:
-          ins.add(new VarInsnNode(Opcodes.DLOAD, 1));
-          hwm.bump(2);
-          break;
-        case builtin:
-        case userJava:
-          errors.reportError("invalid variable: " + field, var.getLoc());
+          case general:
+          case constructor:
+          case rawBinary:
+          case rawString:
+          case rawDecimal:
+            ins.add(new VarInsnNode(Opcodes.ALOAD, 1));
+            ins.add(new TypeInsnNode(Opcodes.CHECKCAST, var.getJavaType()));
+            hwm.bump(1);
+            break;
+          case rawBool:
+          case rawChar:
+          case rawInt:
+            ins.add(new VarInsnNode(Opcodes.ILOAD, 1));
+            hwm.bump(1);
+            break;
+          case rawLong:
+            ins.add(new VarInsnNode(Opcodes.LLOAD, 1));
+            hwm.bump(2);
+            break;
+          case rawFloat:
+            ins.add(new VarInsnNode(Opcodes.DLOAD, 1));
+            hwm.bump(2);
+            break;
+          case builtin:
+          case userJava:
+            errors.reportError("invalid variable: " + field, var.getLoc());
         }
 
         ins.add(new FieldInsnNode(Opcodes.PUTFIELD, conJavaType, javaName, javaSig));
@@ -2314,10 +2260,9 @@ public class Constructors
       genIValueSetter(typeNode, var, setterName, setterSig);
   }
 
-  private static void genIValueSetter(ClassNode conNode, VarInfo var, String setterName, String setterSig)
-  {
+  private static void genIValueSetter(ClassNode conNode, VarInfo var, String setterName, String setterSig) {
     MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, setterName, "(" + Types.IVALUE_SIG + ")V", null,
-        new String[] {});
+        new String[]{});
     InsnList ins = setter.instructions;
     LabelNode firstLabel = new LabelNode();
     LabelNode endLabel = new LabelNode();
@@ -2349,8 +2294,7 @@ public class Constructors
     conNode.methods.add(setter);
   }
 
-  public static void genNullTest(Location loc, HWM hwm, MethodNode mtd)
-  {
+  public static void genNullTest(Location loc, HWM hwm, MethodNode mtd) {
     InsnList ins = mtd.instructions;
 
     String exceptionType = Type.getInternalName(NullPointerException.class);
@@ -2371,8 +2315,7 @@ public class Constructors
   }
 
   public static ISpec constructorCall(Location loc, VarInfo var, IAbstract args, ErrorReport errors,
-      CafeDictionary dict, CafeDictionary outer, String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+                                      CafeDictionary dict, CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
     assert var.getKind() == JavaKind.constructor;
 
     MethodNode mtd = ccxt.getMtd();
@@ -2396,19 +2339,18 @@ public class Constructors
       ins.add(new InsnNode(Opcodes.DUP));
       hwm.bump(2);
 
-      Expressions.compileArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+      Expressions.compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
 
       ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, var.getJavaType(), Types.INIT, var.getJavaInvokeSig()));
 
       hwm.reset(mark);
     }
     hwm.bump(Types.stackAmnt(Types.varType(TypeUtils.getConstructorResultType(varType))));
-    return cont.cont(argSpecs[argSpecs.length - 1], dict, loc, errors, ccxt);
+    return cont.cont(argSpecs[argSpecs.length - 1], dict, loc, ccxt);
   }
 
   public static ISpec conFunCall(Location loc, VarInfo var, IAbstract call, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+                                 CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
     IType varType = Freshen.freshenForUse(var.getType());
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -2433,7 +2375,7 @@ public class Constructors
     if (!methodType.equals(var.getJavaType()))
       ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
 
-    int arity = Expressions.compileArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+    int arity = Expressions.compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
 
     // actually invoke the constructor function
     Actions.doLineNumber(loc, mtd);
@@ -2453,12 +2395,11 @@ public class Constructors
     ISpec resltSpec = argSpecs[argSpecs.length - 1];
     hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
     Expressions.checkType(var, resltSpec, mtd, dict, hwm);
-    return cont.cont(resltSpec, dict, loc, errors, ccxt);
+    return cont.cont(resltSpec, dict, loc, ccxt);
   }
 
   public static ISpec buildTuple(Location loc, IAbstract con, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+                                 CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
@@ -2493,7 +2434,7 @@ public class Constructors
         ins.add(new InsnNode(Opcodes.DUP));
         Expressions.genIntConst(ins, hwm, ix);
 
-        ISpec actual = Expressions.compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
+        ISpec actual = Expressions.compileExp(arg, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
         Utils.jumpTarget(mtd.instructions, nxLbl);
         Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm);
         ins.add(new InsnNode(Opcodes.AASTORE));
@@ -2507,12 +2448,11 @@ public class Constructors
       hwm.reset(mark);
     }
     hwm.bump(1);
-    return cont.cont(SrcSpec.generalSrc, dict, loc, errors, ccxt);
+    return cont.cont(SrcSpec.generalSrc, dict, loc, ccxt);
   }
 
   public static ISpec recordCall(Location loc, VarInfo var, IAbstract call, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+                                 CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
     assert var.getKind() == JavaKind.constructor;
 
     MethodNode mtd = ccxt.getMtd();
@@ -2538,19 +2478,18 @@ public class Constructors
       ins.add(new InsnNode(Opcodes.DUP));
       hwm.bump(2);
 
-      Expressions.compileRecordArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+      Expressions.compileRecordArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
 
       ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, var.getJavaType(), Types.INIT, var.getJavaInvokeSig()));
 
       hwm.reset(mark);
     }
     hwm.bump(Types.stackAmnt(Types.varType(TypeUtils.getConstructorResultType(varType))));
-    return cont.cont(argSpecs[argSpecs.length - 1], dict, loc, errors, ccxt);
+    return cont.cont(argSpecs[argSpecs.length - 1], dict, loc, ccxt);
   }
 
   public static ISpec recordFunCall(Location loc, VarInfo var, IAbstract call, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+                                    CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
     IType varType = Freshen.freshenForUse(var.getType());
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -2575,7 +2514,7 @@ public class Constructors
     if (!methodType.equals(var.getJavaType()))
       ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
 
-    int arity = Expressions.compileRecordArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+    int arity = Expressions.compileRecordArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
 
     // actually invoke the constructor function
     Actions.doLineNumber(loc, mtd);
@@ -2595,6 +2534,6 @@ public class Constructors
     ISpec resltSpec = argSpecs[argSpecs.length - 1];
     hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
     Expressions.checkType(var, resltSpec, mtd, dict, hwm);
-    return cont.cont(resltSpec, dict, loc, errors, ccxt);
+    return cont.cont(resltSpec, dict, loc, ccxt);
   }
 }

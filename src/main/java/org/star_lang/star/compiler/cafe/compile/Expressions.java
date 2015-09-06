@@ -66,26 +66,21 @@ import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
-public class Expressions
-{
+public class Expressions {
   public static final boolean CHECK_NONNULL = false;
 
   private final static Map<String, ICompileExpression> handlers = new HashMap<>();
@@ -131,18 +126,18 @@ public class Expressions
     }
   }
 
-  public static ISpec compileExp(IAbstract exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer,
-      String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+  public static ISpec compileExp(IAbstract exp, CafeDictionary dict, CafeDictionary outer,
+                                 String inFunction, IContinuation cont, CodeContext ccxt) {
     Location loc = exp.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     InsnList ins = mtd.instructions;
+    final ErrorReport errors = ccxt.getErrors();
 
     if (exp instanceof Apply) {
       ICompileExpression handler = handlers.get(((Apply) exp).getOp());
       if (handler != null)
-        return handler.handleExp((Apply) exp, errors, dict, outer, inFunction, cont, exit, ccxt);
+        return handler.handleExp((Apply) exp, dict, outer, inFunction, cont, ccxt);
       else {
         errors.reportError("(internal) no expression handler for " + exp, loc);
         return SrcSpec.prcSrc;
@@ -150,80 +145,78 @@ public class Expressions
     } else if (CafeSyntax.isNullPtn(exp)) {
       ins.add(new InsnNode(Opcodes.ACONST_NULL));
       hwm.bump(1);
-      return cont.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     } else if (exp instanceof Name)
       return handleName((Name) exp, errors, dict, outer, cont, ccxt);
     else if (exp instanceof BooleanLiteral) {
       ins.add(new InsnNode(((BooleanLiteral) exp).getLit() ? Opcodes.ICONST_1 : Opcodes.ICONST_0));
       hwm.bump(1);
-      return cont.cont(SrcSpec.rawBoolSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.rawBoolSrc, dict, loc, ccxt);
     } else if (exp instanceof IntegerLiteral) {
       int l = ((IntegerLiteral) exp).getLit();
       genIntConst(ins, hwm, l);
-      return cont.cont(SrcSpec.rawIntSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.rawIntSrc, dict, loc, ccxt);
     } else if (exp instanceof LongLiteral) {
       genLongConst(ins, hwm, ((LongLiteral) exp).getLit());
 
-      return cont.cont(SrcSpec.rawLngSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.rawLngSrc, dict, loc, ccxt);
     } else if (exp instanceof FloatLiteral) {
       double d = ((FloatLiteral) exp).getLit();
 
       genFloatConst(ins, hwm, d);
-      return cont.cont(SrcSpec.rawDblSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.rawDblSrc, dict, loc, ccxt);
     } else if (exp instanceof BigDecimalLiteral) {
       BigDecimal big = ((BigDecimalLiteral) exp).getLit();
       genDecimalConst(ins, hwm, big);
-      return cont.cont(SrcSpec.rawDecimalSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.rawDecimalSrc, dict, loc, ccxt);
     } else if (exp instanceof CharLiteral) {
       int ch = ((CharLiteral) exp).getLit();
 
       genIntConst(ins, hwm, ch);
 
-      return cont.cont(SrcSpec.rawCharSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.rawCharSrc, dict, loc, ccxt);
     } else if (exp instanceof StringLiteral) {
       ins.add(new LdcInsnNode(((Literal) exp).getLit()));
 
       hwm.bump(1);
-      return cont.cont(SrcSpec.rawStringSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.rawStringSrc, dict, loc, ccxt);
     } else {
       errors.reportError("invalid form of expression: " + exp, loc);
       return SrcSpec.prcSrc;
     }
   }
 
-  public static void genIntConst(InsnList ins, HWM hwm, int ix)
-  {
+  public static void genIntConst(InsnList ins, HWM hwm, int ix) {
     switch (ix) {
-    case -1:
-      ins.add(new InsnNode(Opcodes.ICONST_M1));
-      break;
-    case 0:
-      ins.add(new InsnNode(Opcodes.ICONST_0));
-      break;
-    case 1:
-      ins.add(new InsnNode(Opcodes.ICONST_1));
-      break;
-    case 2:
-      ins.add(new InsnNode(Opcodes.ICONST_2));
-      break;
-    case 3:
-      ins.add(new InsnNode(Opcodes.ICONST_3));
-      break;
-    case 4:
-      ins.add(new InsnNode(Opcodes.ICONST_4));
-      break;
-    case 5:
-      ins.add(new InsnNode(Opcodes.ICONST_5));
-      break;
-    default:
-      ins.add(new LdcInsnNode(ix));
-      break;
+      case -1:
+        ins.add(new InsnNode(Opcodes.ICONST_M1));
+        break;
+      case 0:
+        ins.add(new InsnNode(Opcodes.ICONST_0));
+        break;
+      case 1:
+        ins.add(new InsnNode(Opcodes.ICONST_1));
+        break;
+      case 2:
+        ins.add(new InsnNode(Opcodes.ICONST_2));
+        break;
+      case 3:
+        ins.add(new InsnNode(Opcodes.ICONST_3));
+        break;
+      case 4:
+        ins.add(new InsnNode(Opcodes.ICONST_4));
+        break;
+      case 5:
+        ins.add(new InsnNode(Opcodes.ICONST_5));
+        break;
+      default:
+        ins.add(new LdcInsnNode(ix));
+        break;
     }
     hwm.bump(1);
   }
 
-  public static void genLongConst(InsnList ins, HWM hwm, long ix)
-  {
+  public static void genLongConst(InsnList ins, HWM hwm, long ix) {
     if (ix == 0)
       ins.add(new InsnNode(Opcodes.LCONST_0));
     else if (ix == 1)
@@ -234,8 +227,7 @@ public class Expressions
     hwm.bump(2);
   }
 
-  public static void genFloatConst(InsnList ins, HWM hwm, double dx)
-  {
+  public static void genFloatConst(InsnList ins, HWM hwm, double dx) {
     if (dx == 0.0)
       ins.add(new InsnNode(Opcodes.DCONST_0));
     else if (dx == 1.0)
@@ -247,8 +239,7 @@ public class Expressions
   }
 
   // We have to build a BigDecimal in small pieces
-  public static void genDecimalConst(InsnList ins, HWM hwm, BigDecimal bx)
-  {
+  public static void genDecimalConst(InsnList ins, HWM hwm, BigDecimal bx) {
     BigInteger bix = bx.unscaledValue();
     int scale = bx.scale();
     byte[] ixData = bix.toByteArray();
@@ -278,15 +269,14 @@ public class Expressions
 
   // An escape call looks like
   // fun(args...)
-  private static class CompileEscape implements ICompileExpression
-  {
+  private static class CompileEscape implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply escape, ErrorReport errors, CafeDictionary dict, CafeDictionary outer,
-        String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply escape, CafeDictionary dict, CafeDictionary outer,
+                           String inFunction, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isEscape(escape);
       String funName = CafeSyntax.escapeOp(escape);
       Location loc = escape.getLoc();
+      ErrorReport errors = ccxt.getErrors();
       VarInfo var = Theta.varReference(funName, dict, outer, loc, errors);
       MethodNode mtd = ccxt.getMtd();
       HWM hwm = ccxt.getMtdHwm();
@@ -321,11 +311,11 @@ public class Expressions
             if (var.getJavaInvokeSig().equals(IFuncImplementation.IFUNCTION_INVOKE_SIG)) {
               argSpecs = SrcSpec.generics(varType, dict, bldCat, ccxt.getRepository(), errors, loc);
 
-              Expressions.argArray(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+              Expressions.argArray(args, argSpecs, errors, dict, outer, inFunction, ccxt);
             } else {
               argSpecs = SrcSpec.typeSpecs(var.getJavaInvokeSig(), dict, bldCat, errors, loc);
 
-              compileArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+              compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
             }
             // actually invoke the function
 
@@ -351,7 +341,7 @@ public class Expressions
             ISpec resltSpec = argSpecs[argSpecs.length - 1];
             hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
 
-            return cont.cont(resltSpec, dict, loc, errors, ccxt);
+            return cont.cont(resltSpec, dict, loc, ccxt);
           }
         } else
           errors.reportError("tried to invoke non-function: " + funName + ":" + varType, loc);
@@ -364,13 +354,12 @@ public class Expressions
 
   // A function call looks like
   // fun(args...)
-  private static class CompileFunCall implements ICompileExpression
-  {
+  private static class CompileFunCall implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply app, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply app, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       Location loc = app.getLoc();
+      ErrorReport errors = ccxt.getErrors();
       if (CafeSyntax.isFunCall(app)) {
         String funName = CafeSyntax.funCallName(app);
         VarInfo var = Theta.varReference(funName, dict, outer, loc, errors);
@@ -380,16 +369,16 @@ public class Expressions
 
         if (var != null) {
           switch (var.getKind()) {
-          case builtin:
-            return invokeEscape(loc, var, app, errors, dict, outer, inFunction, cont, exit, ccxt);
-          case constructor:
-            return Constructors.constructorCall(loc, var, CafeSyntax.funCallArgs(app), errors, dict, outer, inFunction,
-                cont, exit, ccxt);
-          case general:
-            return compileFunCall(loc, var, CafeSyntax.funCallArgs(app), errors, dict, outer, inFunction, cont, exit,
-                ccxt);
-          default:
-            errors.reportError(var.getName() + " is not a function", loc);
+            case builtin:
+              return invokeEscape(loc, var, app, errors, dict, outer, inFunction, cont, ccxt);
+            case constructor:
+              return Constructors.constructorCall(loc, var, CafeSyntax.funCallArgs(app), errors, dict, outer, inFunction,
+                  cont, ccxt);
+            case general:
+              return compileFunCall(loc, var, CafeSyntax.funCallArgs(app), errors, dict, outer, inFunction, cont,
+                  ccxt);
+            default:
+              errors.reportError(var.getName() + " is not a function", loc);
           }
         } else
           errors.reportError(funName + " not declared", loc);
@@ -400,8 +389,7 @@ public class Expressions
   }
 
   public static ISpec compileFunCall(Location loc, VarInfo var, IAbstract args, ErrorReport errors,
-      CafeDictionary dict, CafeDictionary outer, String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+                                     CafeDictionary dict, CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
     IType varType = Freshen.freshenForUse(var.getType());
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -415,7 +403,7 @@ public class Expressions
     int mark = hwm.bump(1);
 
     // preamble to access the appropriate value
-    if (funName.equals(inFunction))
+    if (funName.equals(ccxt.getInFunction()))
       ins.add(new VarInsnNode(Opcodes.ALOAD, dict.find(Names.PRIVATE_THIS).getOffset()));
     else
       var.loadValue(mtd, hwm, dict);
@@ -426,7 +414,7 @@ public class Expressions
     if (!methodType.equals(var.getJavaType()))
       ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
 
-    int arity = compileArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+    int arity = compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
 
     // actually invoke the function
 
@@ -446,19 +434,19 @@ public class Expressions
     hwm.reset(mark);
     ISpec resltSpec = argSpecs[argSpecs.length - 1];
     hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
-    return cont.cont(resltSpec, dict, loc, errors, ccxt);
+    return cont.cont(resltSpec, dict, loc, ccxt);
   }
 
   // A constructor call looks like a function call
   // fun(args...)
-  private static class CompileConstructor implements ICompileExpression
-  {
+  private static class CompileConstructor implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply app, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply app, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
+      ErrorReport errors = ccxt.getErrors();
+
       if (CafeSyntax.isTuple(app))
-        return Constructors.buildTuple(app.getLoc(), app, errors, dict, outer, inFunction, cont, exit, ccxt);
+        return Constructors.buildTuple(app.getLoc(), app, errors, dict, outer, inFunction, cont, ccxt);
       else if (CafeSyntax.isConstructor(app)) {
         String funName = CafeSyntax.constructorOp(app);
         Location loc = app.getLoc();
@@ -466,12 +454,12 @@ public class Expressions
 
         if (var != null) {
           switch (var.getKind()) {
-          case constructor:
-            return Constructors.constructorCall(loc, var, app, errors, dict, outer, inFunction, cont, exit, ccxt);
-          case general:
-            return Constructors.conFunCall(loc, var, app, errors, dict, outer, inFunction, cont, exit, ccxt);
-          default:
-            errors.reportError(funName + " not a constructor", loc);
+            case constructor:
+              return Constructors.constructorCall(loc, var, app, errors, dict, outer, inFunction, cont, ccxt);
+            case general:
+              return Constructors.conFunCall(loc, var, app, errors, dict, outer, inFunction, cont, ccxt);
+            default:
+              errors.reportError(funName + " not a constructor", loc);
           }
         } else
           errors.reportError(StringUtils.msg(funName, " not defined, expecting a constructor"), app.getLoc());
@@ -483,25 +471,24 @@ public class Expressions
 
   // A constructor call looks like a function call
   // fun(args...)
-  private static class CompileRecord implements ICompileExpression
-  {
+  private static class CompileRecord implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply app, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply app, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isRecord(app);
       String funName = CafeSyntax.recordLabel(app);
+      ErrorReport errors = ccxt.getErrors();
       Location loc = app.getLoc();
       VarInfo var = Theta.varReference(funName, dict, outer, loc, errors);
 
       if (var != null) {
         switch (var.getKind()) {
-        case constructor:
-          return Constructors.recordCall(loc, var, app, errors, dict, outer, inFunction, cont, exit, ccxt);
-        case general:
-          return Constructors.recordFunCall(loc, var, app, errors, dict, outer, inFunction, cont, exit, ccxt);
-        default:
-          errors.reportError(funName + " not a record constructor", loc);
+          case constructor:
+            return Constructors.recordCall(loc, var, app, errors, dict, outer, inFunction, cont, ccxt);
+          case general:
+            return Constructors.recordFunCall(loc, var, app, errors, dict, outer, inFunction, cont, ccxt);
+          default:
+            errors.reportError(funName + " not a record constructor", loc);
         }
       } else
         errors.reportError(StringUtils.msg(funName, " not defined, expecting a record constructor"), app.getLoc());
@@ -509,22 +496,19 @@ public class Expressions
     }
   }
 
-  private static class CompileFace implements ICompileExpression
-  {
+  private static class CompileFace implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isFace(exp);
 
-      return Faces.buildRecord(exp, errors, dict, outer, inFunction, cont, exit, ccxt);
+      return Faces.buildRecord(exp, dict, outer, inFunction, cont, ccxt);
     }
 
   }
 
   public static int compileRecordArgs(IList args, ISpec[] argSpecs, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, Exit exit, CodeContext ccxt)
-  {
+                                      CafeDictionary outer, String inFunction, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
@@ -536,7 +520,7 @@ public class Expressions
         LabelNode nxLbl = new LabelNode();
         JumpCont argCont = new JumpCont(nxLbl);
 
-        recordField(argSpecs, errors, dict, outer, inFunction, exit, ccxt, mtd, hwm, bldCat, ix, arg, nxLbl, argCont);
+        recordField(argSpecs, dict, outer, inFunction, ccxt, mtd, hwm, bldCat, ix, arg, nxLbl, argCont);
       }
       return args.size();
     } else {
@@ -559,7 +543,7 @@ public class Expressions
         if (CHECK_NONNULL)
           argCont = new ComboCont(new NonNullCont(), argCont);
 
-        recordField(argSpecs, errors, dict, outer, inFunction, exit, ccxt, mtd, hwm, bldCat, ix, arg, nxLbl, argCont);
+        recordField(argSpecs, dict, outer, inFunction, ccxt, mtd, hwm, bldCat, ix, arg, nxLbl, argCont);
 
         ins.add(new InsnNode(Opcodes.AASTORE));
         hwm.reset(mark);
@@ -568,22 +552,19 @@ public class Expressions
     }
   }
 
-  private static void recordField(ISpec[] argSpecs, ErrorReport errors, CafeDictionary dict, CafeDictionary outer,
-      String inFunction, Exit exit, CodeContext ccxt, MethodNode mtd, HWM hwm, CodeCatalog bldCat, int ix,
-      IAbstract arg, LabelNode nxLbl, IContinuation cont)
-  {
+  private static void recordField(ISpec[] argSpecs, CafeDictionary dict, CafeDictionary outer,
+                                  String inFunction, CodeContext ccxt, MethodNode mtd, HWM hwm, CodeCatalog bldCat, int ix,
+                                  IAbstract arg, LabelNode nxLbl, IContinuation cont) {
     assert CafeSyntax.isField(arg);
-    ISpec actual = compileExp(CafeSyntax.fieldValue(arg), errors, dict, outer, inFunction, cont, exit, ccxt);
+    ISpec actual = compileExp(CafeSyntax.fieldValue(arg), dict, outer, inFunction, cont, ccxt);
     Utils.jumpTarget(mtd.instructions, nxLbl);
     checkType(actual, argSpecs[ix], mtd, dict, hwm);
   }
 
   public static int compileArgs(IList args, ISpec[] argSpecs, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, Exit exit, CodeContext ccxt)
-  {
+                                CafeDictionary outer, String inFunction, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     if (args.size() < Theta.MAX_ARGS) {
       for (int ix = 0; ix < args.size(); ix++) {
@@ -591,21 +572,19 @@ public class Expressions
 
         LabelNode nxLbl = new LabelNode();
 
-        ISpec actual = compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
+        ISpec actual = compileExp(arg, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
         Utils.jumpTarget(mtd.instructions, nxLbl);
         checkType(actual, argSpecs[ix], mtd, dict, hwm);
       }
       return args.size();
     } else
-      return argArray(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+      return argArray(args, argSpecs, errors, dict, outer, inFunction, ccxt);
   }
 
   public static int compileArgs(IAbstract argTpl, ISpec[] argSpecs, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, Exit exit, CodeContext ccxt)
-  {
+                                CafeDictionary outer, String inFunction, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     if (CafeSyntax.isConstructor(argTpl)) {
       IList args = CafeSyntax.constructorArgs(argTpl);
@@ -618,16 +597,16 @@ public class Expressions
           IContinuation argCont = new JumpCont(nxLbl);
           if (CHECK_NONNULL)
             argCont = new ComboCont(new NonNullCont(), argCont);
-          ISpec actual = compileExp(arg, errors, dict, outer, inFunction, argCont, exit, ccxt);
+          ISpec actual = compileExp(arg, dict, outer, inFunction, argCont, ccxt);
           Utils.jumpTarget(mtd.instructions, nxLbl);
           checkType(actual, argSpecs[ix], mtd, dict, hwm);
         }
         return argTpl.size();
       } else
-        return argArray(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+        return argArray(args, argSpecs, errors, dict, outer, inFunction, ccxt);
     } else {
       LabelNode nxLbl = new LabelNode();
-      compileExp(argTpl, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
+      compileExp(argTpl, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
       Utils.jumpTarget(mtd.instructions, nxLbl);
 
       mtd.instructions.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.ICONSTRUCTOR, Constructors.GET_CELLS,
@@ -638,13 +617,11 @@ public class Expressions
   }
 
   /**
-   * @param ccxt
-   *          TODO
+   * @param ccxt TODO
    */
   public static boolean compileArgsToFrame(List<IAbstract> args, ISpec[] argSpecs, ErrorReport errors,
                                            CodeCatalog bldCat, CafeDictionary dict, CafeDictionary outer, String inFunction,
-                                           Exit exit, VarInfo[] vars, CodeContext ccxt)
-  {
+                                           VarInfo[] vars, CodeContext ccxt) {
     if (args.size() >= Theta.MAX_ARGS || args.size() <= 3)
       return false;
 
@@ -655,7 +632,7 @@ public class Expressions
       IAbstract arg = args.get(ix);
 
       LabelNode nxLbl = new LabelNode();
-      ISpec actual = compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
+      ISpec actual = compileExp(arg, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
       String varName = "$field" + Integer.toString(ix);
       vars[ix] = dict.declareLocal(varName, argSpecs[ix], true, AccessMode.readOnly);
       Utils.jumpTarget(mtd.instructions, nxLbl);
@@ -666,13 +643,11 @@ public class Expressions
   }
 
   /**
-   * @param ccxt
-   *          TODO
+   * @param ccxt TODO
    */
   public static boolean compileArgsToFrame(IAbstract argTpl, ISpec[] argSpecs, ErrorReport errors,
                                            CodeCatalog bldCat, CafeDictionary dict, CafeDictionary outer, String inFunction,
-                                           Exit exit, VarInfo[] vars, CodeContext ccxt)
-  {
+                                           VarInfo[] vars, CodeContext ccxt) {
     if (!CafeSyntax.isTuple(argTpl) || (argTpl.size() >= Theta.MAX_ARGS || argTpl.size() <= 3))
       return false;
 
@@ -685,7 +660,7 @@ public class Expressions
 
       LabelNode nxLbl = new LabelNode();
 
-      ISpec actual = compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
+      ISpec actual = compileExp(arg, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
       String varName = "$field" + Integer.toString(ix);
       vars[ix] = dict.declareLocal(varName, argSpecs[ix], true, AccessMode.readOnly);
       Utils.jumpTarget(mtd.instructions, nxLbl);
@@ -695,12 +670,10 @@ public class Expressions
     return true;
   }
 
-  private static class CompileCopy implements ICompileExpression
-  {
+  private static class CompileCopy implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       Location loc = exp.getLoc();
       assert CafeSyntax.isCopy(exp);
 
@@ -712,7 +685,7 @@ public class Expressions
       IAbstract left = CafeSyntax.copied(exp);
 
       LabelNode nxLabel = new LabelNode();
-      ISpec lftSrc = compileExp(left, errors, dict, outer, inFunction, new JumpCont(nxLabel), exit, ccxt);
+      ISpec lftSrc = compileExp(left, dict, outer, inFunction, new JumpCont(nxLabel), ccxt);
       Utils.jumpTarget(ins, nxLabel);
 
       ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.IVALUE, SHALLOW_COPY, SHALLOW_SIG));
@@ -720,13 +693,12 @@ public class Expressions
 
       hwm.reset(mark);
       hwm.bump(1);
-      return cont.cont(lftSrc, dict, loc, errors, ccxt);
+      return cont.cont(lftSrc, dict, loc, ccxt);
     }
   }
 
   public static ISpec invokeEscape(Location loc, VarInfo var, IAbstract call, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-  {
+                                   CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
@@ -758,13 +730,13 @@ public class Expressions
         argSpecs = SrcSpec.generics(varType, dict, bldCat, ccxt.getRepository(), errors, loc);
 
         if (CafeSyntax.isTuple(args))
-          argArray(CafeSyntax.constructorArgs(args), argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+          argArray(CafeSyntax.constructorArgs(args), argSpecs, errors, dict, outer, inFunction, ccxt);
         else
-          compileArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+          compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
       } else {
         argSpecs = SrcSpec.typeSpecs(var.getJavaInvokeSig(), dict, bldCat, errors, loc);
 
-        compileArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+        compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
       }
       // actually invoke the function
 
@@ -790,126 +762,47 @@ public class Expressions
       ISpec resltSpec = argSpecs[argSpecs.length - 1];
       hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
 
-      return cont.cont(resltSpec, dict, loc, errors, ccxt);
+      return cont.cont(resltSpec, dict, loc, ccxt);
     }
     return SrcSpec.prcSrc;
   }
 
-  public static ISpec compileEscape(Location loc, VarInfo var, IAbstract call, ErrorReport errors,
-      CodeRepository repository, CodeCatalog bldCat, CafeDictionary dict, CafeDictionary outer, String inFunction,
-      IContinuation cont, Exit exit, CodeContext ccxt)
-  {
-    MethodNode mtd = ccxt.getMtd();
-    HWM hwm = ccxt.getMtdHwm();
-    InsnList ins = mtd.instructions;
-    String funName = var.getName();
-
-    IType varType = Freshen.freshenForUse(var.getType());
-    if (TypeUtils.isFunType(varType)) {
-      int mark = hwm.getDepth();
-      IList args = CafeSyntax.escapeArgs(call);
-
-      if (TypeUtils.arityOfFunctionType(varType) != args.size())
-        errors.reportError("expecting " + TypeUtils.arityOfFunctionType(varType) + " arguments", loc);
-      else {
-        // preamble to access the appropriate value
-        assert var.getKind() == JavaKind.builtin;
-
-        final ISpec[] argSpecs;
-
-        ICafeBuiltin builtin = Intrinsics.getBuiltin(funName);
-
-        if (builtin instanceof Inliner)
-          ((Inliner) builtin).preamble(mtd, hwm);
-        else if (!var.isStatic()) {
-          hwm.bump(1);
-          String javaName = escapeReference(funName, dict, var.getJavaType(), var.getJavaSig());
-
-          ins.add(new FieldInsnNode(Opcodes.GETSTATIC, escapeOwner(funName, dict), javaName, var.getJavaSig()));
-        }
-        if (var.getJavaInvokeSig().equals(IFuncImplementation.IFUNCTION_INVOKE_SIG)) {
-          argSpecs = SrcSpec.generics(varType, dict, bldCat, repository, errors, loc);
-
-          Expressions.argArray(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
-        } else {
-          argSpecs = SrcSpec.typeSpecs(var.getJavaInvokeSig(), dict, bldCat, errors, loc);
-
-          compileArgs(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
-        }
-        // actually invoke the function
-
-        if (builtin instanceof Inliner)
-          ((Inliner) builtin).inline(dict.getOwner(), mtd, hwm, loc);
-        else if (var.isStatic()) {
-          String funSig = var.getJavaInvokeSig();
-          String classSig = var.getJavaType();
-
-          ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, var.getJavaInvokeName(), funSig));
-        } else if (var.getJavaInvokeSig().equals(IFuncImplementation.IFUNCTION_INVOKE_SIG)) {
-          ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.IFUNC, Names.ENTERFUNCTION,
-              IFuncImplementation.IFUNCTION_INVOKE_SIG));
-        } else {
-          String methodName = var.getJavaInvokeName();
-          String funSig = var.getJavaInvokeSig();
-          String classSig = var.getJavaType();
-
-          ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classSig, methodName, funSig));
-        }
-        hwm.reset(mark);
-
-        ISpec resltSpec = argSpecs[argSpecs.length - 1];
-        hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
-
-        return cont.cont(resltSpec, dict, loc, errors, ccxt);
-      }
-    } else
-      errors.reportError("tried to invoke non-function: " + funName + ":" + varType, loc);
-    return SrcSpec.prcSrc;
-  }
-
-  public static String escapeReference(String name, CafeDictionary dict, String javaType, String javaSig)
-  {
+  public static String escapeReference(String name, CafeDictionary dict, String javaType, String javaSig) {
     String javaName = Utils.javaIdentifierOf(name);
     dict.addReference(javaName, new BuiltinInliner(javaName, javaType, javaSig, dict.getOwnerName()));
     return javaName;
   }
 
-  public static String escapeOwner(String name, CafeDictionary dict)
-  {
+  public static String escapeOwner(String name, CafeDictionary dict) {
     String javaName = Utils.javaIdentifierOf(name);
     BuiltinInliner inliner = (BuiltinInliner) dict.getBuiltinReferences().get(javaName);
     assert inliner != null;
     return inliner.getJavaOwner();
   }
 
-  public static class BuiltinInliner implements Inliner
-  {
+  public static class BuiltinInliner implements Inliner {
     private final String name;
     private final String javaOwner;
     private final String javaClass;
     private final String javaSig;
 
-    BuiltinInliner(String name, String javaClass, String javaSig, String javaOwner)
-    {
+    BuiltinInliner(String name, String javaClass, String javaSig, String javaOwner) {
       this.name = name;
       this.javaClass = javaClass;
       this.javaSig = javaSig;
       this.javaOwner = javaOwner;
     }
 
-    public String getJavaOwner()
-    {
+    public String getJavaOwner() {
       return javaOwner;
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM stackHWM)
-    {
+    public void preamble(MethodNode mtd, HWM stackHWM) {
     }
 
     @Override
-    public void inline(ClassNode klass, MethodNode mtd, HWM hwm, Location loc)
-    {
+    public void inline(ClassNode klass, MethodNode mtd, HWM hwm, Location loc) {
       InsnList ins = new InsnList();
       assert klass.name.equals(javaOwner);
 
@@ -929,21 +822,15 @@ public class Expressions
     }
   }
 
-  public static boolean isStatic(VarInfo var)
-  {
-    return var.getWhere() == VarSource.staticMethod;
-  }
-
-  private static class CompileDot implements ICompileExpression
-  {
+  private static class CompileDot implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isDot(exp);
 
       IAbstract record = CafeSyntax.dotRecord(exp);
+      ErrorReport errors = ccxt.getErrors();
       Location loc = exp.getLoc();
       if (!(record instanceof Name))
         errors.reportError("expecting an identifier", loc);
@@ -961,7 +848,7 @@ public class Expressions
       HWM hwm = ccxt.getMtdHwm();
       InsnList ins = mtd.instructions;
       LabelNode nxt = new LabelNode();
-      compileExp(record, errors, dict, outer, inFunction, new CheckCont(nxt, var, dict), exit, ccxt);
+      compileExp(record, dict, outer, inFunction, new CheckCont(nxt, var, dict), ccxt);
       Utils.jumpTarget(ins, nxt);
 
       final IType fieldType;
@@ -995,52 +882,23 @@ public class Expressions
       }
 
       switch (Types.varType(fieldType)) {
-      case rawLong:
-      case rawFloat:
-        hwm.bump(1);
-      default:
+        case rawLong:
+        case rawFloat:
+          hwm.bump(1);
+        default:
       }
-      return cont.cont(fieldSpec, dict, loc, errors, ccxt);
+      return cont.cont(fieldSpec, dict, loc, ccxt);
     }
   }
 
-  public static JavaKind arithType(IAbstract exp, CafeDictionary dict, CafeDictionary outer, ErrorReport errors)
-  {
-    if (exp instanceof IntegerLiteral)
-      return JavaKind.rawInt;
-    else if (exp instanceof LongLiteral)
-      return JavaKind.rawLong;
-    else if (exp instanceof FloatLiteral)
-      return JavaKind.rawFloat;
-    else if (exp instanceof CharLiteral)
-      return JavaKind.rawChar;
-    else if (exp instanceof StringLiteral)
-      return JavaKind.rawString;
-    else if (exp instanceof BigDecimalLiteral)
-      return JavaKind.rawDecimal;
-    else if (exp instanceof Name) {
-      Name name = (Name) exp;
-      Location loc = name.getLoc();
-      VarInfo var = Theta.varReference(name.getId(), dict, outer, loc, errors);
-      if (var != null)
-        return var.getKind();
-      else {
-        errors.reportError(name.getId() + " not declared", loc);
-        return JavaKind.general;
-      }
-    } else
-      return JavaKind.general;
-  }
-
-  private static class CompileCast implements ICompileExpression
-  {
+  private static class CompileCast implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, final ErrorReport errors, final CafeDictionary dict, final CafeDictionary outer,
-        String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, final CafeDictionary dict, final CafeDictionary outer,
+                           String inFunction, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isTypedTerm(exp);
       CodeCatalog bldCat = ccxt.getBldCat();
+      ErrorReport errors = ccxt.getErrors();
 
       final IType castType = TypeAnalyser.parseType(CafeSyntax.typedType(exp), dict, errors);
       // we pretty much ignore a function type when casting to it...
@@ -1052,20 +910,19 @@ public class Expressions
       IContinuation converter = new CastConverter(castType, ccxt.getMtdHwm(), castSpec);
 
       IContinuation combo = new ComboCont(converter, cont);
-      return compileExp(term, errors, dict, outer, inFunction, combo, exit, ccxt);
+      return compileExp(term, dict, outer, inFunction, combo, ccxt);
     }
   }
 
   // A case looks like switch Exp in { Ptn -> Exp; ... ; } else Exp
-  private static class CompileCase implements ICompileExpression
-  {
+  private static class CompileCase implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, final ErrorReport errors, final CafeDictionary dict, final CafeDictionary outer,
-        final String inFunction, final IContinuation cont, final Exit exit, final CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, final CafeDictionary dict, final CafeDictionary outer,
+                           final String inFunction, final IContinuation cont, final CodeContext ccxt) {
       assert CafeSyntax.isSwitch(exp);
       MethodNode mtd = ccxt.getMtd();
+      ErrorReport errors = ccxt.getErrors();
 
       InsnList ins = mtd.instructions;
       LabelNode lbl = new LabelNode();
@@ -1081,9 +938,8 @@ public class Expressions
       ICaseCompile handler = new ICaseCompile() {
 
         @Override
-        public ISpec compile(IAbstract term, CafeDictionary dict, IContinuation cont)
-        {
-          return compileExp(term, errors, dict, outer, inFunction, cont, exit, ccxt);
+        public ISpec compile(IAbstract term, CafeDictionary dict, IContinuation cont) {
+          return compileExp(term, dict, outer, inFunction, cont, ccxt);
         }
       };
       return CaseCompile.compileSwitch(exp.getLoc(), var, CafeSyntax.switchCases(exp), CafeSyntax.switchDeflt(exp),
@@ -1092,63 +948,55 @@ public class Expressions
   }
 
   // A let looks like let <defs> in <bound>
-  private static class CompileLet implements ICompileExpression
-  {
+  private static class CompileLet implements ICompileExpression {
     @Override
-    public ISpec handleExp(final Apply let, final ErrorReport errors, CafeDictionary dict, final CafeDictionary outer,
-        final String inFunction, final IContinuation cont, final Exit exit, final CodeContext ccxt)
-    {
+    public ISpec handleExp(final Apply let, CafeDictionary dict, final CafeDictionary outer,
+                           final String inFunction, final IContinuation cont, final CodeContext ccxt) {
       assert CafeSyntax.isLetExp(let);
 
       IList theta = CafeSyntax.letDefs(let);
 
       MethodNode mtd = ccxt.getMtd();
       LabelNode endLabel = new LabelNode();
-      ISpec expType = Theta.compileDefinitions(theta, dict, outer, endLabel, inFunction, new LocalDefiner(endLabel,
+      ISpec expType = Theta.compileDefinitions(theta, dict, outer, endLabel, inFunction, new LocalDefiner(
           ccxt), new IThetaBody() {
 
         @Override
-        public ISpec compile(CafeDictionary thetaDict, CodeCatalog bldCat, ErrorReport errors, CodeRepository repository)
-        {
-          return compileExp(CafeSyntax.letBound(let), errors, thetaDict, outer, inFunction, cont, exit, ccxt);
+        public ISpec compile(CafeDictionary thetaDict, CodeCatalog bldCat, ErrorReport errors, CodeRepository repository) {
+          return compileExp(CafeSyntax.letBound(let), thetaDict, outer, inFunction, cont, ccxt);
         }
 
         @Override
-        public void introduceType(CafeTypeDescription type)
-        {
+        public void introduceType(CafeTypeDescription type) {
         }
-      }, let.getLoc(), errors, ccxt);
+      }, let.getLoc(), ccxt);
       mtd.instructions.add(endLabel);
       return expType;
     }
   }
 
   // A local, in-line function definition
-  private static class CompileLambda implements ICompileExpression
-  {
+  private static class CompileLambda implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
+      ErrorReport errors = ccxt.getErrors();
       IType funType = Theta.computeLambdaType(exp, dict, errors);
 
-      return cont.cont(Theta.compileLambda(exp, funType, errors, dict, outer, ccxt), dict, exp.getLoc(), errors, ccxt);
+      return cont.cont(Theta.compileLambda(exp, funType, errors, dict, outer, ccxt), dict, exp.getLoc(), ccxt);
     }
   }
 
-  private static class CompilePattern implements ICompileExpression
-  {
+  private static class CompilePattern implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
-      return cont.cont(Theta.compilePattern(exp, errors, dict, ccxt), dict, exp.getLoc(), errors, ccxt);
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
+      return cont.cont(Theta.compilePattern(exp, dict, ccxt), dict, exp.getLoc(), ccxt);
     }
   }
 
   public static ISpec handleName(Name name, ErrorReport errors, CafeDictionary dict, CafeDictionary outer,
-                                 IContinuation cont, CodeContext ccxt)
-  {
+                                 IContinuation cont, CodeContext ccxt) {
     String id = name.getId();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -1164,24 +1012,22 @@ public class Expressions
       else
         var.loadValue(mtd, hwm, dict);
 
-      return cont.cont(var, dict, loc, errors, ccxt);
+      return cont.cont(var, dict, loc, ccxt);
     } else if (CafeSyntax.isVoid(name)) {
       ins.add(new InsnNode(Opcodes.ACONST_NULL));
       hwm.bump(1);
-      return cont.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     } else {
       errors.reportError(name + " not defined", loc);
-      return cont.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+      return cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
     }
   }
 
-  private static class CompileCondition implements ICompileExpression
-  {
+  private static class CompileCondition implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       MethodNode mtd = ccxt.getMtd();
       HWM hwm = ccxt.getMtdHwm();
       InsnList ins = mtd.instructions;
@@ -1189,26 +1035,24 @@ public class Expressions
       LabelNode lf = new LabelNode();
       LabelNode lx = new LabelNode();
 
-      Conditions.compileCond(exp, Sense.jmpOnFail, lf, errors, dict, outer, inFunction, exit, ccxt);
+      Conditions.compileCond(exp, Sense.jmpOnFail, lf, dict, outer, inFunction, ccxt);
       ins.add(new InsnNode(Opcodes.ICONST_1));
       ins.add(new JumpInsnNode(Opcodes.GOTO, lx));
       ins.add(lf);
       ins.add(new InsnNode(Opcodes.ICONST_0));
       ins.add(lx);
 
-      return cont.cont(SrcSpec.rawBoolSrc, dict, exp.getLoc(), errors, ccxt);
+      return cont.cont(SrcSpec.rawBoolSrc, dict, exp.getLoc(), ccxt);
     }
   }
 
   // A conditional looks like:
   // if <test> then <then> else <else>
-  private static class CompileConditional implements ICompileExpression
-  {
+  private static class CompileConditional implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isConditional(exp);
 
       IAbstract condition = CafeSyntax.conditionalTest(exp);
@@ -1224,47 +1068,43 @@ public class Expressions
       Actions.doLineNumber(condition.getLoc(), mtd);
 
       CafeDictionary thDict = dict.fork();
-      Conditions.compileCond(condition, Sense.jmpOnFail, elLabel, errors, thDict, outer, inFunction, exit, ccxt);
+      Conditions.compileCond(condition, Sense.jmpOnFail, elLabel, thDict, outer, inFunction, ccxt);
       Utils.jumpTarget(ins, thLabel);
-      compileExp(th, errors, thDict, outer, inFunction, reconcile, exit, ccxt);
+      compileExp(th, thDict, outer, inFunction, reconcile, ccxt);
       dict.migrateFreeVars(thDict);
       ins.add(elLabel);
       CafeDictionary elDict = dict.fork();
-      compileExp(el, errors, thDict, outer, inFunction, reconcile, exit, ccxt);
+      compileExp(el, thDict, outer, inFunction, reconcile, ccxt);
       dict.migrateFreeVars(elDict);
       return reconcile.getSpec();
     }
   }
 
   // A throw expression
-  private static class CompileThrow implements ICompileExpression
-  {
+  private static class CompileThrow implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isThrow(exp);
 
       MethodNode mtd = ccxt.getMtd();
       InsnList ins = mtd.instructions;
 
-      compileExp(CafeSyntax.thrownExp(exp), errors, dict, outer, inFunction, new NullCont(), exit, ccxt);
+      compileExp(CafeSyntax.thrownExp(exp), dict, outer, inFunction, new NullCont(), ccxt);
       ins.add(new InsnNode(Opcodes.ATHROW));
 
-      return cont.cont(SrcSpec.prcSrc, dict, exp.getLoc(), errors, ccxt);
+      return cont.cont(SrcSpec.prcSrc, dict, exp.getLoc(), ccxt);
     }
   }
 
   // A valof looks like:
   // valof <action>
-  private static class CompileValof implements ICompileExpression
-  {
+  private static class CompileValof implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer, String inFunction,
-        final IContinuation cont, Exit exit, CodeContext ccxt)
-    {
+    public ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+                           final IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isValof(exp);
       final MethodNode mtd = ccxt.getMtd();
       final InsnList ins = mtd.instructions;
@@ -1274,25 +1114,22 @@ public class Expressions
       IContinuation valisCont = new IContinuation() {
 
         @Override
-        public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
-        {
+        public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt) {
           resType.set(src);
-          src = cont.cont(src, cxt, loc, errors, ccxt);
+          src = cont.cont(src, cxt, loc, ccxt);
           if (!cont.isJump())
             mtd.instructions.add(new JumpInsnNode(Opcodes.GOTO, endLbl));
           return src;
         }
 
         @Override
-        public boolean isJump()
-        {
+        public boolean isJump() {
           return cont.isJump();
         }
       };
 
-      Exit valof = new Exit(Names.VALIS, valisCont, exit);
-      Actions.compileAction(CafeSyntax.valofAction(exp), errors, valof, dict, outer, endLbl, inFunction, new JumpCont(
-          endLbl), ccxt);
+      Actions.compileAction(CafeSyntax.valofAction(exp), dict, outer, inFunction, new JumpCont(
+          endLbl), ccxt.fork(valisCont).fork(endLbl));
       Utils.jumpTarget(ins, endLbl);
 
       if (resType.get() == null)
@@ -1305,14 +1142,12 @@ public class Expressions
   // This is messy because of the weird conflict between pushing types through
   // the JVM and an equality based type
   // system.
-  public static void checkType(ISpec actual, ISpec exp, MethodNode mtd, CafeDictionary dict, HWM hwm)
-  {
+  public static void checkType(ISpec actual, ISpec exp, MethodNode mtd, CafeDictionary dict, HWM hwm) {
     IType expectedType = exp.getType();
     IType actualType = actual.getType();
 
     if (actual.getJavaType().equals(exp.getJavaType())) {
-    }
-    else if (actualType.equals(TypeUtils.rawType(expectedType)))
+    } else if (actualType.equals(TypeUtils.rawType(expectedType)))
       AutoBoxing.boxValue(actualType, mtd.instructions, dict);
     else if (expectedType.equals(TypeUtils.rawType(actualType)))
       AutoBoxing.unboxValue(mtd, hwm, expectedType);
@@ -1337,20 +1172,17 @@ public class Expressions
 
   /**
    * Compile arg sequence using the varargs interface
-   * 
+   *
    * @param args
    * @param argSpecs
    * @param errors
    * @param dict
    * @param outer
    * @param inFunction
-   * @param exit
    * @param ccxt
-   *          TODO
    */
   public static int argArray(IList args, ISpec[] argSpecs, ErrorReport errors, CafeDictionary dict,
-      CafeDictionary outer, String inFunction, Exit exit, CodeContext ccxt)
-  {
+                             CafeDictionary outer, String inFunction, CodeContext ccxt) {
     int arity = args.size();
 
     MethodNode mtd = ccxt.getMtd();
@@ -1374,7 +1206,7 @@ public class Expressions
       if (CHECK_NONNULL)
         argCont = new ComboCont(new NonNullCont(), argCont);
 
-      ISpec actual = compileExp(arg, errors, dict, outer, inFunction, argCont, exit, ccxt);
+      ISpec actual = compileExp(arg, dict, outer, inFunction, argCont, ccxt);
       Utils.jumpTarget(mtd.instructions, nxLbl);
       checkType(actual, argSpecs[ix], mtd, dict, hwm);
       ins.add(new InsnNode(Opcodes.AASTORE));

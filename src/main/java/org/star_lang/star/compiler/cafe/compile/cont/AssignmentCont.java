@@ -64,21 +64,22 @@ public class AssignmentCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
-    Patterns.compilePtn(ptn, access, src, dict, outer, endLabel, errors, new AssignName(), succ, fail, ccxt);
+    Patterns.compilePtn(ptn, access, src, dict, outer, endLabel, new AssignName(), succ, fail, ccxt);
     return src;
   }
 
   public static class AssignName implements VarPattern
   {
     @Override
-    public void varPttrn(ISpec src, Location loc, String name, ErrorReport errors, CafeDictionary dict, IContinuation succ,
-        IContinuation fail, CodeContext ccxt)
+    public void varPttrn(ISpec src, Location loc, String name, CafeDictionary dict, IContinuation succ,
+                         IContinuation fail, CodeContext ccxt)
     {
       VarInfo var = dict.find(name);
       MethodNode mtd = ccxt.getMtd();
       HWM hwm = ccxt.getMtdHwm();
+      ErrorReport errors = ccxt.getErrors();
       InsnList ins = mtd.instructions;
       LabelNode okLabel = new LabelNode();
       int mark = hwm.getDepth();
@@ -118,7 +119,7 @@ public class AssignmentCont implements IContinuation
         errors.reportError(name + " not declared", loc);
 
       ins.add(okLabel);
-      succ.cont(SrcSpec.prcSrc, dict, loc, errors, ccxt);
+      succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
       hwm.reset(mark);
     }
   }

@@ -3,7 +3,6 @@ package org.star_lang.star.compiler.cafe.compile.cont;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
-import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
@@ -40,7 +39,7 @@ public class CallCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
     IType resType = src.getType();
     switch (Types.varType(resType)) {
@@ -53,7 +52,7 @@ public class CallCont implements IContinuation
       ins.add(new InsnNode(Opcodes.POP2));
       break;
     }
-    return cont.cont(src, cxt, loc, errors, ccxt);
+    return cont.cont(src, cxt, loc, ccxt);
   }
 
   @Override

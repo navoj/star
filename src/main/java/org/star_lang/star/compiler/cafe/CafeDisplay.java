@@ -109,17 +109,6 @@ public class CafeDisplay extends Display
       CafeSyntax.matchPtn(trm).accept(this);
     } else if (CafeSyntax.isBlock(trm)) {
       display(CafeSyntax.blockContents(trm), "{ ", ";\n", "\n}", 2);
-    } else if (CafeSyntax.isLabeled(trm)) {
-      disp.append(CafeSyntax.labeledLabel(trm));
-      disp.append("::");
-      CafeSyntax.labeledAction(trm).accept(this);
-    } else if (CafeSyntax.isSync(trm)) {
-      disp.append(Names.SYNC);
-      disp.append("(");
-      CafeSyntax.syncObject(trm).accept(this);
-      disp.append("){");
-      CafeSyntax.syncAction(trm).accept(this);
-      disp.append("}");
     } else if (CafeSyntax.isWhile(trm)) {
       int mark = disp.markIndent(2);
       disp.appendWord(Names.WHILE);

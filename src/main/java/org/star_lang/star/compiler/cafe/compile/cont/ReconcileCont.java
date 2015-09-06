@@ -41,16 +41,17 @@ public class ReconcileCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
     if (spec == null)
       spec = src;
     else if (!src.getJavaType().equals(spec.getJavaType())) {
+      ErrorReport errors = ccxt.getErrors();
       if (!src.getJavaType().equals(Types.IVALUE) && !spec.getJavaType().equals(Types.IVALUE))
         errors.reportError("returned type: " + src + " not consistent with earlier case, of type " + spec + " at "
             + loc, src.getLoc(), spec.getLoc());
     }
-    return outward.cont(src, cxt, loc, errors, ccxt);
+    return outward.cont(src, cxt, loc, ccxt);
   }
 
   @Override

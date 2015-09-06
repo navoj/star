@@ -23,6 +23,7 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
+import org.star_lang.star.compiler.cafe.compile.cont.NullCont;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.data.type.ConstructorSpecifier;
@@ -40,56 +41,46 @@ import org.star_lang.star.data.type.TypeInterfaceType;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
-public class TypeGen implements ITypeVisitor<Void>
-{
+public class TypeGen implements ITypeVisitor<Void> {
   private final CafeDictionary dict;
   private final CafeDictionary outer;
   private final HWM hwm;
   private final LiveMap locals;
   private final PathToType resolveTypeVar;
   private final Location loc;
-  private final ErrorReport errors;
   private final CodeContext ccxt;
-  private final LabelNode end;
   private final Map<String, Integer> vars = new HashMap<>();
 
   public static final String TYPE_UTILS = Utils.javaInternalClassName(TypeUtils.class);
 
-  TypeGen(LiveMap locals, CafeDictionary dict, CafeDictionary outer, ErrorReport errors, Location loc,
-      CodeContext ccxt, PathToType resolver, LabelNode end)
-  {
+  TypeGen(LiveMap locals, CafeDictionary dict, CafeDictionary outer, Location loc,
+          CodeContext ccxt, PathToType resolver) {
     this.dict = dict;
     this.outer = outer;
     this.hwm = ccxt.getMtdHwm();
     this.loc = loc;
-    this.errors = errors;
     this.ccxt = ccxt;
     this.resolveTypeVar = resolver;
     this.locals = locals;
-    this.end = end;
   }
 
   @Override
-  public void visitSimpleType(Type t, Void cxt)
-  {
+  public void visitSimpleType(Type t, Void cxt) {
     String javaTypeName = Utils.javaInternalClassName(Type.class);
 
     InsnList ins = ccxt.getIns();
@@ -102,16 +93,16 @@ public class TypeGen implements ITypeVisitor<Void>
     Kind kind = t.kind();
 
     switch (kind.mode()) {
-    case typefunction:
-      Expressions.genIntConst(ins, hwm, kind.arity());
-      ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, javaTypeName, Types.INIT, "(" + Types.JAVA_STRING_SIG + "I)V"));
-      break;
-    case type:
-    case unknown:
-      ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, javaTypeName, Types.INIT, "(" + Types.JAVA_STRING_SIG + ")V"));
-      break;
-    default:
-      break;
+      case typefunction:
+        Expressions.genIntConst(ins, hwm, kind.arity());
+        ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, javaTypeName, Types.INIT, "(" + Types.JAVA_STRING_SIG + "I)V"));
+        break;
+      case type:
+      case unknown:
+        ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, javaTypeName, Types.INIT, "(" + Types.JAVA_STRING_SIG + ")V"));
+        break;
+      default:
+        break;
 
     }
 
@@ -119,8 +110,7 @@ public class TypeGen implements ITypeVisitor<Void>
   }
 
   @Override
-  public void visitTypeExp(TypeExp t, Void cxt)
-  {
+  public void visitTypeExp(TypeExp t, Void cxt) {
     InsnList ins = ccxt.getIns();
     hwm.bump(1);
     int mark = hwm.bump(4);
@@ -147,8 +137,7 @@ public class TypeGen implements ITypeVisitor<Void>
   }
 
   @Override
-  public void visitTupleType(TupleType t, Void cxt)
-  {
+  public void visitTupleType(TupleType t, Void cxt) {
     InsnList ins = ccxt.getIns();
     hwm.bump(1);
     int mark = hwm.bump(4);
@@ -176,8 +165,7 @@ public class TypeGen implements ITypeVisitor<Void>
   }
 
   @Override
-  public void visitTypeInterface(TypeInterfaceType t, Void cxt)
-  {
+  public void visitTypeInterface(TypeInterfaceType t, Void cxt) {
     Map<String, IType> members = t.getAllFields();
     Map<String, IType> types = t.getAllTypes();
 
@@ -227,8 +215,7 @@ public class TypeGen implements ITypeVisitor<Void>
   }
 
   @Override
-  public void visitTypeVar(TypeVar v, Void cxt)
-  {
+  public void visitTypeVar(TypeVar v, Void cxt) {
     InsnList ins = ccxt.getIns();
 
     Integer offset = vars.get(v.typeLabel());
@@ -240,7 +227,7 @@ public class TypeGen implements ITypeVisitor<Void>
       if (pth != null) {
         int mark = hwm.getDepth();
         LabelNode nx = new LabelNode();
-        Expressions.compileExp(pth, errors, dict, outer, null, new JumpCont(nx), null, ccxt);
+        Expressions.compileExp(pth, dict, outer, null, new JumpCont(nx), ccxt);
         Utils.jumpTarget(ins, nx);
         ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.IVALUE, "getType", "()" + Types.ITYPE_SIG));
         hwm.reset(mark);
@@ -258,7 +245,7 @@ public class TypeGen implements ITypeVisitor<Void>
         LabelNode start = new LabelNode();
         ins.add(new InsnNode(Opcodes.DUP));
         ins.add(start);
-        ccxt.getMtd().localVariables.add(new LocalVariableNode(v.getVarName(), Types.ITYPE_SIG, null, start, end,
+        ccxt.getMtd().localVariables.add(new LocalVariableNode(v.getVarName(), Types.ITYPE_SIG, null, start, ccxt.getEndLabel(),
             offset));
         ins.add(new VarInsnNode(Opcodes.ASTORE, offset));
         hwm.reset(mark);
@@ -267,8 +254,7 @@ public class TypeGen implements ITypeVisitor<Void>
   }
 
   @Override
-  public void visitExistentialType(ExistentialType t, Void cxt)
-  {
+  public void visitExistentialType(ExistentialType t, Void cxt) {
     String javaTypeName = Utils.javaInternalClassName(ExistentialType.class);
 
     InsnList ins = ccxt.getIns();
@@ -291,8 +277,7 @@ public class TypeGen implements ITypeVisitor<Void>
   }
 
   @Override
-  public void visitUniversalType(UniversalType t, Void cxt)
-  {
+  public void visitUniversalType(UniversalType t, Void cxt) {
     String javaTypeName = Utils.javaInternalClassName(UniversalType.class);
 
     InsnList ins = ccxt.getIns();
@@ -314,15 +299,13 @@ public class TypeGen implements ITypeVisitor<Void>
     hwm.reset(mark);
   }
 
-  public interface PathToType
-  {
+  public interface PathToType {
     IAbstract pathToType(TypeVar tv, Location loc);
   }
 
   public static MethodNode genType(Location loc, IType type, ClassNode klass, CafeDictionary dict, ErrorReport errors,
-      CodeRepository repository, CodeCatalog bldCat)
-  {
-    MethodNode getType = new MethodNode(Opcodes.ACC_PUBLIC, "getType", "()" + Types.ITYPE_SIG, null, new String[] {});
+                                   CodeRepository repository, CodeCatalog bldCat) {
+    MethodNode getType = new MethodNode(Opcodes.ACC_PUBLIC, "getType", "()" + Types.ITYPE_SIG, null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
 
@@ -336,17 +319,16 @@ public class TypeGen implements ITypeVisitor<Void>
 
     locals.reserve(1);
 
-    CodeContext ccxt = new CodeContext(repository, klass, getType, hwm, null, null, funDict.getLocalAvail(), bldCat);
+    CodeContext ccxt = new CodeContext(repository, klass, getType, hwm, null, null, funDict.getLocalAvail(), bldCat, new NullCont(), errors, fLabel, "getType");
 
     PathToType resolver = new PathToType() {
 
       @Override
-      public IAbstract pathToType(TypeVar tv, Location loc)
-      {
+      public IAbstract pathToType(TypeVar tv, Location loc) {
         return null;
       }
     };
-    TypeGen typeGen = new TypeGen(locals, funDict, dict, errors, loc, ccxt, resolver, eLabel);
+    TypeGen typeGen = new TypeGen(locals, funDict, dict, loc, ccxt, resolver);
     type.accept(typeGen, null);
     InsnList ins = getType.instructions;
     ins.add(fLabel);
@@ -359,9 +341,8 @@ public class TypeGen implements ITypeVisitor<Void>
   }
 
   public static MethodNode genType(final TypeDescription desc, final String lbl, ClassNode conNode,
-      CafeDictionary dict, ErrorReport errors, CodeRepository repository, CodeCatalog bldCat)
-  {
-    MethodNode getType = new MethodNode(Opcodes.ACC_PUBLIC, "getType", "()" + Types.ITYPE_SIG, null, new String[] {});
+                                   CafeDictionary dict, ErrorReport errors, CodeRepository repository, CodeCatalog bldCat) {
+    MethodNode getType = new MethodNode(Opcodes.ACC_PUBLIC, "getType", "()" + Types.ITYPE_SIG, null, new String[]{});
     LabelNode fLabel = new LabelNode();
     LabelNode eLabel = new LabelNode();
 
@@ -373,13 +354,12 @@ public class TypeGen implements ITypeVisitor<Void>
     HWM hwm = new HWM();
     LiveMap locals = new LiveMap();
     locals.reserve(1);
-    CodeContext ccxt = new CodeContext(repository, conNode, getType, hwm, null, null, funDict.getLocalAvail(), bldCat);
+    CodeContext ccxt = new CodeContext(repository, conNode, getType, hwm, null, null, funDict.getLocalAvail(), bldCat, new NullCont(), errors, fLabel, "getType");
 
     PathToType resolver = new PathToType() {
 
       @Override
-      public IAbstract pathToType(TypeVar tv, Location loc)
-      {
+      public IAbstract pathToType(TypeVar tv, Location loc) {
         ConstructorSpecifier con = (ConstructorSpecifier) desc.getValueSpecifier(lbl);
         IType conType = TypeUtils.unwrap(con.getConType());
         IType argsType = TypeUtils.unwrap(TypeUtils.getConstructorArgType(conType));
@@ -398,7 +378,7 @@ public class TypeGen implements ITypeVisitor<Void>
         return null;
       }
     };
-    TypeGen typeGen = new TypeGen(locals, funDict, dict, errors, desc.getLoc(), ccxt, resolver, eLabel);
+    TypeGen typeGen = new TypeGen(locals, funDict, dict, desc.getLoc(), ccxt, resolver);
     TypeUtils.unwrap(desc.getType()).accept(typeGen, null);
     InsnList ins = getType.instructions;
     ins.add(fLabel);

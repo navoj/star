@@ -32,6 +32,7 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
+import org.star_lang.star.compiler.cafe.compile.cont.NullCont;
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
@@ -45,53 +46,39 @@ import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.URIUtils;
 
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- * 
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-public class CompileCafe
-{
+public class CompileCafe {
   public static final boolean CHECK_BYTECODE = ApplicationProperties.getProperty("CHECK_BYTECODE", false);
 
   /**
    * Compile Cafe content as presented in a list of abstract syntax terms.
-   * <p/>
+   * <p>
    * Typically, one of the content items will be a package function. This function encapsulates the
    * true code component.
-   * 
-   * @param src
-   *          the uri of the source that results in this content
-   * @param repository
-   *          code repository
-   * @param path
-   *          munge prefix
-   * @param pkgFunName
-   *          the name of the package function to construct the package
-   * @param loc
-   *          The master location for this package
-   * @param defs
-   *          A list of definitions of types and functions that make up the content
-   * @param bldCat
-   *          The generated code is put into a build catalog
-   * @param errors
-   *          A source catalog to access for imports needed by this program.
+   *
+   * @param src        the uri of the source that results in this content
+   * @param repository code repository
+   * @param path       munge prefix
+   * @param pkgFunName the name of the package function to construct the package
+   * @param loc        The master location for this package
+   * @param defs       A list of definitions of types and functions that make up the content
+   * @param bldCat     The generated code is put into a build catalog
+   * @param errors     A source catalog to access for imports needed by this program.
    */
   public static void compileContent(ResourceURI src, CodeRepository repository, String path, String pkgFunName,
-      Location loc, IArray defs, CodeCatalog bldCat, ErrorReport errors)
-  {
+                                    Location loc, IArray defs, CodeCatalog bldCat, ErrorReport errors) {
     try {
       String owner = extendPath(path, Names.PKG);
       CodeCatalog codeCatalog = (CodeCatalog) bldCat.fork(StandardNames.COMPILED);
@@ -113,17 +100,17 @@ public class CompileCafe
       HWM initHwm = new HWM();
 
       MethodNode initMtd = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "<clinit>", "()V", null,
-          new String[] {});
+          new String[]{});
 
       InsnList ins = initMtd.instructions;
       LabelNode endLabel = new LabelNode();
 
       CodeContext ccxt = new CodeContext(repository, program, initMtd, initHwm, initMtd, initHwm, dict.getLocalAvail(),
-          codeCatalog);
+          codeCatalog, new NullCont(), errors, endLabel, "<clinit>");
 
       // Define the definitions
-      Theta.compileDefinitions(defs, dict, dict, endLabel, "", new LocalDefiner(endLabel, ccxt), new BuildProgram(
-          owner, dict, program, initMtd, initHwm, manifest, loc), loc, errors, ccxt);
+      Theta.compileDefinitions(defs, dict, dict, endLabel, "", new LocalDefiner(ccxt), new BuildProgram(
+          owner, dict, program, initMtd, initHwm, manifest, loc), loc, ccxt);
 
       ins.add(endLabel);
 
@@ -137,8 +124,7 @@ public class CompileCafe
     }
   }
 
-  private static class BuildProgram implements Theta.IThetaBody
-  {
+  private static class BuildProgram implements Theta.IThetaBody {
     private final String owner;
     private final ClassNode program;
     private final MethodNode mtd;
@@ -148,8 +134,7 @@ public class CompileCafe
     private final Location loc;
 
     public BuildProgram(String owner, CafeDictionary dict, ClassNode program, MethodNode mtd, HWM stackHWM,
-        CafeManifest manifest, Location loc)
-    {
+                        CafeManifest manifest, Location loc) {
       this.owner = owner;
       this.dict = dict;
       this.program = program;
@@ -160,8 +145,7 @@ public class CompileCafe
     }
 
     @Override
-    public ISpec compile(CafeDictionary thetaDict, CodeCatalog bldCat, ErrorReport errors, CodeRepository repository)
-    {
+    public ISpec compile(CafeDictionary thetaDict, CodeCatalog bldCat, ErrorReport errors, CodeRepository repository) {
       InsnList ins = mtd.instructions;
 
       // set up static initializers for any built-ins
@@ -177,22 +161,22 @@ public class CompileCafe
         VarInfo var = entry.getValue();
 
         switch (var.getWhere()) {
-        case localVar: {
-          String javaTypeSig = var.getJavaSig();
-          String javaSafeName = var.getJavaSafeName();
+          case localVar: {
+            String javaTypeSig = var.getJavaSig();
+            String javaSafeName = var.getJavaSafeName();
 
-          if (!Theta.addField(program, javaSafeName, javaTypeSig, Opcodes.ACC_STATIC)) {
-            var.loadValue(mtd, hwm, thetaDict);
+            if (!Theta.addField(program, javaSafeName, javaTypeSig, Opcodes.ACC_STATIC)) {
+              var.loadValue(mtd, hwm, thetaDict);
 
-            ins.add(new FieldInsnNode(Opcodes.PUTSTATIC, owner, javaSafeName, javaTypeSig));
+              ins.add(new FieldInsnNode(Opcodes.PUTSTATIC, owner, javaSafeName, javaTypeSig));
+            }
+
+            VarInfo pkgVar = new VarInfo(var.getLoc(), var.getName(), true, VarSource.staticField, null, var.getKind(),
+                -1, AccessMode.readOnly, var.getType(), javaSafeName, null, var.getJavaType(), var.getJavaSig(), var
+                .getJavaInvokeSig(), var.getJavaInvokeName(), owner);
+            manifest.addDefinition(pkgVar);
           }
-
-          VarInfo pkgVar = new VarInfo(var.getLoc(), var.getName(), true, VarSource.staticField, null, var.getKind(),
-              -1, AccessMode.readOnly, var.getType(), javaSafeName, null, var.getJavaType(), var.getJavaSig(), var
-                  .getJavaInvokeSig(), var.getJavaInvokeName(), owner);
-          manifest.addDefinition(pkgVar);
-        }
-        default:
+          default:
         }
       }
 
@@ -210,8 +194,7 @@ public class CompileCafe
     }
 
     @Override
-    public void introduceType(CafeTypeDescription type)
-    {
+    public void introduceType(CafeTypeDescription type) {
       manifest.addType(type);
     }
   }
@@ -219,10 +202,9 @@ public class CompileCafe
   // Build the classic void main(String[] args){ main(arg[0]cast string, etc. }
   // procedure, use it to call the Cafe main with appropriate type casting code
   // generated
-  private static void buildMainClosure(ClassNode program, VarInfo mainVar, ErrorReport errors)
-  {
+  private static void buildMainClosure(ClassNode program, VarInfo mainVar, ErrorReport errors) {
     MethodNode main = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, Names.MAIN, "([Ljava/lang/String;)V",
-        null, new String[] {});
+        null, new String[]{});
 
     program.methods.add(main);
 
@@ -243,60 +225,60 @@ public class CompileCafe
     for (int ix = 0; ix < argTypes.length; ix++) {
       IType argType = argTypes[ix];
       switch (Types.varType(argType)) {
-      case rawBool: // Generate equivalent of "arg is Boolean.getBoolean(arg)"
-        main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        main.instructions.add(new LdcInsnNode(ix + 1));
-        main.instructions.add(new InsnNode(Opcodes.AALOAD));
-        main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Boolean", "getBoolean",
-            "(Ljava/lang/String;)Z"));
-        hwm.bump(1);
-        break;
-      case rawChar: // generate equivalent of
-        // "arg is Character.codePointAt(arg,0)"
-        main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        main.instructions.add(new LdcInsnNode(ix + 1));
-        main.instructions.add(new InsnNode(Opcodes.AALOAD));
-        main.instructions.add(new InsnNode(Opcodes.ICONST_0));
-        main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Character", "codePointAt",
-            "(Ljava/lang/CharSequence;I)I"));
-        hwm.bump(1);
-        break;
-      case rawInt: // Generate equivalent of "arg is Long.parseInt(arg)"
-        main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        main.instructions.add(new LdcInsnNode(ix + 1));
-        main.instructions.add(new InsnNode(Opcodes.AALOAD));
-        main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Integer", "parseInt",
-            "(Ljava/lang/String;)I"));
-        hwm.bump(1);
-        break;
-      case rawLong: // Generate equivalent of "arg is Long.parseInteger(arg)"
-        main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        main.instructions.add(new LdcInsnNode(ix + 1));
-        main.instructions.add(new InsnNode(Opcodes.AALOAD));
-        main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Long", "parseLong",
-            "(Ljava/lang/String;)J"));
-        hwm.bump(1);
-        break;
-      case rawFloat:
-        main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        main.instructions.add(new LdcInsnNode(ix + 1));
-        main.instructions.add(new InsnNode(Opcodes.AALOAD));
-        main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Double", "parseDouble",
-            "(Ljava/lang/String;)D"));
-        break;
-      case rawString:
-        main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        main.instructions.add(new LdcInsnNode(ix + 1));
-        main.instructions.add(new InsnNode(Opcodes.AALOAD));
+        case rawBool: // Generate equivalent of "arg is Boolean.getBoolean(arg)"
+          main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+          main.instructions.add(new LdcInsnNode(ix + 1));
+          main.instructions.add(new InsnNode(Opcodes.AALOAD));
+          main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Boolean", "getBoolean",
+              "(Ljava/lang/String;)Z"));
+          hwm.bump(1);
+          break;
+        case rawChar: // generate equivalent of
+          // "arg is Character.codePointAt(arg,0)"
+          main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+          main.instructions.add(new LdcInsnNode(ix + 1));
+          main.instructions.add(new InsnNode(Opcodes.AALOAD));
+          main.instructions.add(new InsnNode(Opcodes.ICONST_0));
+          main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Character", "codePointAt",
+              "(Ljava/lang/CharSequence;I)I"));
+          hwm.bump(1);
+          break;
+        case rawInt: // Generate equivalent of "arg is Long.parseInt(arg)"
+          main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+          main.instructions.add(new LdcInsnNode(ix + 1));
+          main.instructions.add(new InsnNode(Opcodes.AALOAD));
+          main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Integer", "parseInt",
+              "(Ljava/lang/String;)I"));
+          hwm.bump(1);
+          break;
+        case rawLong: // Generate equivalent of "arg is Long.parseInteger(arg)"
+          main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+          main.instructions.add(new LdcInsnNode(ix + 1));
+          main.instructions.add(new InsnNode(Opcodes.AALOAD));
+          main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Long", "parseLong",
+              "(Ljava/lang/String;)J"));
+          hwm.bump(1);
+          break;
+        case rawFloat:
+          main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+          main.instructions.add(new LdcInsnNode(ix + 1));
+          main.instructions.add(new InsnNode(Opcodes.AALOAD));
+          main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Double", "parseDouble",
+              "(Ljava/lang/String;)D"));
+          break;
+        case rawString:
+          main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+          main.instructions.add(new LdcInsnNode(ix + 1));
+          main.instructions.add(new InsnNode(Opcodes.AALOAD));
 
-        hwm.bump(1);
-        break;
-      case general:
-        errors.reportError("invalid type for a main program argument: " + argType, mainVar.getLoc());
-        break;
-      default:
-        errors.reportError("invalid type for a main program argument: " + argType, mainVar.getLoc());
-        break;
+          hwm.bump(1);
+          break;
+        case general:
+          errors.reportError("invalid type for a main program argument: " + argType, mainVar.getLoc());
+          break;
+        default:
+          errors.reportError("invalid type for a main program argument: " + argType, mainVar.getLoc());
+          break;
       }
     }
 
@@ -309,8 +291,7 @@ public class CompileCafe
     main.instructions.add(mainEndLabel);
   }
 
-  public static void pkgImport(CodeRepository repository, IAbstract def, CafeDictionary dict, ErrorReport errors)
-  {
+  public static void pkgImport(CodeRepository repository, IAbstract def, CafeDictionary dict, ErrorReport errors) {
     if (CafeSyntax.isImport(def)) {
       String pkgRef = CafeSyntax.importImport(def);
       Location loc = def.getLoc();
@@ -335,8 +316,7 @@ public class CompileCafe
   }
 
   private static void importPkgTypes(Set<ResourceURI> processed, ResourceURI uri, Location loc,
-      CodeRepository repository, CafeDictionary dict, ErrorReport errors)
-  {
+                                     CodeRepository repository, CafeDictionary dict, ErrorReport errors) {
     CafeManifest manifest = locateManifest(repository, loc, uri, errors);
 
     if (manifest != null) {
@@ -350,8 +330,7 @@ public class CompileCafe
     }
   }
 
-  public static CafeManifest locateManifest(CodeRepository repository, Location loc, ResourceURI uri, ErrorReport errors)
-  {
+  public static CafeManifest locateManifest(CodeRepository repository, Location loc, ResourceURI uri, ErrorReport errors) {
     CodeTree codeCatalog = repository.findCode(uri);
 
     if (codeCatalog instanceof CodeCatalog) {
@@ -368,8 +347,7 @@ public class CompileCafe
     return null;
   }
 
-  public static void genByteCode(String name, Location loc, ClassNode klass, CodeCatalog bldCat, ErrorReport errors)
-  {
+  public static void genByteCode(String name, Location loc, ClassNode klass, CodeCatalog bldCat, ErrorReport errors) {
     if (StarCompiler.SHOWBYTECODE) {
       PrintWriter printer = new PrintWriter(System.out);
       ClassVisitor tcv = new TraceClassVisitor(null, new NumberedTextifier(), printer);
@@ -406,13 +384,11 @@ public class CompileCafe
   }
 
   // Add an entry to the code catalog.
-  public static void addCatalogEntry(CodeCatalog cat, String name, CodeTree code) throws RepositoryException
-  {
+  public static void addCatalogEntry(CodeCatalog cat, String name, CodeTree code) throws RepositoryException {
     cat.addCodeEntry(name, code);
   }
 
-  public static String extendPath(String path, String member)
-  {
+  public static String extendPath(String path, String member) {
     return path + "/" + member;
   }
 }

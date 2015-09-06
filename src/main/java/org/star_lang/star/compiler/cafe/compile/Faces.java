@@ -51,11 +51,12 @@ public class Faces
    * values to verify that they are instances of the constructor
    */
   private static String genFaceNode(IAbstract con, TypeInterfaceType type, String javaOwner, CafeDictionary dict,
-      ErrorReport errors, CodeContext ccxt)
+                                    CodeContext ccxt)
   {
     assert CafeSyntax.isFace(con);
 
     CodeCatalog synCat = ccxt.getSynthCode();
+    ErrorReport errors = ccxt.getErrors();
 
     String faceLabel = CafeSyntax.faceLabel(con);
     String javaName = Utils.javaIdentifierOf(faceLabel);
@@ -102,7 +103,7 @@ public class Faces
               ix, AccessMode.readOnly, argType, javaFieldName, javaGetterName, javaType, javaSig, javaInvokeSig,
               javaInvokeName, javaOwner));
         } else
-          errors.reportError("expecting a field, not " + arg, arg.getLoc());
+          ccxt.getErrors().reportError("expecting a field, not " + arg, arg.getLoc());
       }
 
       List<MethodNode> methods = faceNode.methods;
@@ -119,12 +120,11 @@ public class Faces
     return javaName;
   }
 
-  public static ISpec buildRecord(IAbstract exp, ErrorReport errors, CafeDictionary dict, CafeDictionary outer,
-      String inFunction, IContinuation cont, Exit exit, CodeContext ccxt)
+  public static ISpec buildRecord(IAbstract exp, CafeDictionary dict, CafeDictionary outer,
+                                  String inFunction, IContinuation cont, CodeContext ccxt)
   {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
     Location loc = exp.getLoc();
     InsnList ins = mtd.instructions;
 
@@ -135,7 +135,7 @@ public class Faces
     assert typeAtt != null;
     IType type = TypeUtils.unwrap(typeAtt.getType());
 
-    String faceLabel = genFaceNode(exp, (TypeInterfaceType) type, dict.getOwnerName(), dict, errors, ccxt);
+    String faceLabel = genFaceNode(exp, (TypeInterfaceType) type, dict.getOwnerName(), dict, ccxt);
     Map<String, Integer> index = TypeUtils.getMemberIndex(type);
 
     int mark = hwm.bump(2);
@@ -161,7 +161,7 @@ public class Faces
 
       Expressions.genIntConst(ins, hwm, index.get(fieldName));
 
-      ISpec actual = Expressions.compileExp(arg, errors, dict, outer, inFunction, new JumpCont(nxLbl), exit, ccxt);
+      ISpec actual = Expressions.compileExp(arg, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
       Utils.jumpTarget(mtd.instructions, nxLbl);
       Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm);
 
@@ -174,7 +174,7 @@ public class Faces
     hwm.reset(mark);
 
     hwm.bump(1);
-    return cont.cont(SrcSpec.generalSrc, dict, loc, errors, ccxt);
+    return cont.cont(SrcSpec.generalSrc, dict, loc, ccxt);
   }
 
   private static MethodNode genInit(ClassNode conNode, String label, String[] fields)

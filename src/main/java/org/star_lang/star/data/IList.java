@@ -1,37 +1,35 @@
 package org.star_lang.star.data;
 
-public interface IList extends IValue, Iterable<IValue>
-{
+public interface IList extends IValue, Iterable<IValue> {
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
   /**
    * True if the array has no elements
-   * 
-   * 
-   * This library is free software; you can redistribute it and/or modify it under the terms of the
-   * GNU Lesser General Public License as published by the Free Software Foundation; either version
-   * 2.1 of the License, or (at your option) any later version.
-   * 
-   * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-   * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
-   * the GNU Lesser General Public License for more details.
-   * 
-   * You should have received a copy of the GNU Lesser General Public License along with this
-   * library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   * Boston, MA 02110-1301 USA
-   * 
-   * @return true if the list is empty
    */
   boolean isEmpty();
 
   /**
    * See how many elements are in the array
-   * 
+   *
    * @return the number of elements in the list
    */
   int size();
 
   /**
    * Return the value corresponding to a given index
-   * 
+   *
    * @param index
    * @return the value at the indicated position. The first offset is 0.
    */
@@ -40,20 +38,18 @@ public interface IList extends IValue, Iterable<IValue>
   /**
    * The substitute function returns a new list value which is equal to the original but with the
    * indicated cell replaced by a new value
-   * 
+   * <p>
    * This function is guaranteed not to affect the original array
-   * 
-   * @param index
-   *          the index of the cell to replace
-   * @param value
-   *          the replacement value for the cell
+   *
+   * @param index the index of the cell to replace
+   * @param value the replacement value for the cell
    * @return a new array.
    */
   IList substituteCell(int index, IValue value);
 
   /**
    * Add an element to the front
-   * 
+   *
    * @param el
    * @throws EvaluationException
    */
@@ -61,16 +57,15 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Drop the first element of the list
-   * 
+   *
    * @return the remainder of the list
    */
   IList tail();
 
   /**
    * Concatenate a list
-   * 
-   * @param sub
-   *          the list to merge with this relation
+   *
+   * @param sub the list to merge with this relation
    * @return
    * @throws EvaluationException
    */
@@ -78,7 +73,7 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Apply a transform to the relation to get a new one
-   * 
+   *
    * @param transform
    * @return the new indexed relation
    * @throws EvaluationException
@@ -87,10 +82,9 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Apply a left associative reducing fold to the relation
-   * 
+   *
    * @param transform
-   * @param init
-   *          the initial value of passed into the fold function as a 'zero'
+   * @param init      the initial value of passed into the fold function as a 'zero'
    * @return the final result value by evaluating the transform for each element
    * @throws EvaluationException
    */
@@ -98,7 +92,7 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Apply a left associative reducing fold to the relation
-   * 
+   *
    * @param transform
    * @return the final result value by evaluating the transform for each element
    * @throws EvaluationException
@@ -107,10 +101,9 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Apply a right associative reducing fold to the relation
-   * 
+   *
    * @param transform
-   * @param init
-   *          the initial value of passed into the fold function as a 'zero'
+   * @param init      the initial value of passed into the fold function as a 'zero'
    * @return the final result value by evaluating the transform for each element
    * @throws EvaluationException
    */
@@ -118,7 +111,7 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Apply a right associative reducing fold to the relation
-   * 
+   *
    * @param transform
    * @return the final result value by evaluating the transform for each element
    * @throws EvaluationException
@@ -127,7 +120,7 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * remove all elements from a relation that match a given pattern
-   * 
+   *
    * @param filter
    * @return the modified list
    * @throws EvaluationException
@@ -136,7 +129,7 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Replace elements that match a pattern with new elements
-   * 
+   *
    * @param filter
    * @param transform
    * @return
@@ -146,7 +139,7 @@ public interface IList extends IValue, Iterable<IValue>
 
   /**
    * Test for equality using a supplied equality function
-   * 
+   *
    * @param other
    * @param test
    * @return true if the elements are equal, according to the equality function

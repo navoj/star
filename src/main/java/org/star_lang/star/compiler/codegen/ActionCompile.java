@@ -14,14 +14,25 @@ package org.star_lang.star.compiler.codegen;
  * permissions and limitations under the License.
  */
 
+import com.sun.org.apache.bcel.internal.classfile.Code;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LineNumberNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
 import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.data.type.Location;
 
 /**
  * Created by fgm on 8/26/15.
  */
 public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
+  private final CodeContext cxt;
+
+  public ActionCompile(CodeContext cxt) {
+    this.cxt = cxt;
+  }
 
   @Override
   public ISpec transformAssertAction(AssertAction act, IContinuation cont) {
@@ -96,5 +107,13 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
   @Override
   public ISpec transformVarDeclaration(VarDeclaration var, IContinuation cont) {
     return null;
+  }
+
+  public static void doLineNumber(Location loc, MethodNode mtd) {
+    if (!loc.equals(Location.nullLoc)) {
+      LabelNode lnLbl = new LabelNode();
+      mtd.instructions.add(lnLbl);
+      mtd.instructions.add(new LineNumberNode(loc.getLineCnt(), lnLbl));
+    }
   }
 }

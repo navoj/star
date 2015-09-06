@@ -14,7 +14,6 @@ import org.star_lang.star.operators.general.runtime.Assert;
 
 import java.util.*;
 import java.util.Map.Entry;
-
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -28,6 +27,7 @@ import java.util.Map.Entry;
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 
 public class Computations
         implements

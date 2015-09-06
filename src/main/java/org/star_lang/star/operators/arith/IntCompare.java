@@ -21,39 +21,32 @@ import org.star_lang.star.operators.arith.runtime.IntCompare.IntGT;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntLE;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntLT;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntNE;
-/**
- * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- * 
- * @author fgm
- *
- */
 
-public abstract class IntCompare extends Builtin
-{
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+public abstract class IntCompare extends Builtin {
   public static final String INTEGER_NE = "__integer_ne";
   public static final String INTEGER_LT = "__integer_lt";
   public static final String INTEGER_GT = "__integer_gt";
   private static final IType type = TypeUtils.functionType(IntLE.rawIntegerType, IntLE.rawIntegerType,
       StandardTypes.booleanType);
 
-  private IntCompare(String name, Class<?> implClass)
-  {
+  private IntCompare(String name, Class<?> implClass) {
     super(name, type, implClass);
   }
 
-  public static void declare(Intrinsics cxt)
-  {
+  public static void declare(Intrinsics cxt) {
     String equality = StandardNames.EQUALITY;
     IntgrEQ eq = new IntgrEQ();
     cxt.declareBuiltin(eq);
@@ -69,21 +62,17 @@ public abstract class IntCompare extends Builtin
     cxt.declareBuiltin(new IntgrGT());
   }
 
-  public static class IntgrEQ extends IntCompare implements InlinePredicate
-  {
-    public IntgrEQ()
-    {
+  public static class IntgrEQ extends IntCompare implements InlinePredicate {
+    public IntgrEQ() {
       super(IntEQ.name, IntEQ.class);
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM hwm)
-    {
+    public void preamble(MethodNode mtd, HWM hwm) {
     }
 
     @Override
-    public void inline(MethodNode mtd, HWM hwm, Sense sense, LabelNode fail)
-    {
+    public void inline(MethodNode mtd, HWM hwm, Sense sense, LabelNode fail) {
       InsnList ins = mtd.instructions;
 
       if (sense == Sense.jmpOnOk) {
@@ -94,21 +83,17 @@ public abstract class IntCompare extends Builtin
     }
   }
 
-  public static class IntgrNE extends IntCompare implements InlinePredicate
-  {
-    public IntgrNE()
-    {
+  public static class IntgrNE extends IntCompare implements InlinePredicate {
+    public IntgrNE() {
       super(IntCompare.INTEGER_NE, IntNE.class);
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM stackHWM)
-    {
+    public void preamble(MethodNode mtd, HWM stackHWM) {
     }
 
     @Override
-    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail)
-    {
+    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail) {
       InsnList ins = mtd.instructions;
 
       if (sense == Sense.jmpOnOk) {
@@ -119,21 +104,17 @@ public abstract class IntCompare extends Builtin
     }
   }
 
-  public static class IntgrLE extends IntCompare implements InlinePredicate
-  {
-    public IntgrLE()
-    {
+  public static class IntgrLE extends IntCompare implements InlinePredicate {
+    public IntgrLE() {
       super(IntLE.name, IntLE.class);
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM stackHWM)
-    {
+    public void preamble(MethodNode mtd, HWM stackHWM) {
     }
 
     @Override
-    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail)
-    {
+    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail) {
       InsnList ins = mtd.instructions;
 
       if (sense == Sense.jmpOnOk) {
@@ -144,21 +125,17 @@ public abstract class IntCompare extends Builtin
     }
   }
 
-  public static class IntgrLT extends IntCompare implements InlinePredicate
-  {
-    public IntgrLT()
-    {
+  public static class IntgrLT extends IntCompare implements InlinePredicate {
+    public IntgrLT() {
       super(IntCompare.INTEGER_LT, IntLT.class);
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM stackHWM)
-    {
+    public void preamble(MethodNode mtd, HWM stackHWM) {
     }
 
     @Override
-    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail)
-    {
+    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail) {
       InsnList ins = mtd.instructions;
 
       if (sense == Sense.jmpOnOk) {
@@ -169,21 +146,17 @@ public abstract class IntCompare extends Builtin
     }
   }
 
-  public static class IntgrGT extends IntCompare implements InlinePredicate
-  {
-    public IntgrGT()
-    {
+  public static class IntgrGT extends IntCompare implements InlinePredicate {
+    public IntgrGT() {
       super(IntCompare.INTEGER_GT, IntGT.class);
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM stackHWM)
-    {
+    public void preamble(MethodNode mtd, HWM stackHWM) {
     }
 
     @Override
-    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail)
-    {
+    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail) {
       InsnList ins = mtd.instructions;
 
       if (sense == Sense.jmpOnOk) {
@@ -194,21 +167,17 @@ public abstract class IntCompare extends Builtin
     }
   }
 
-  public static class IntgrGE extends IntCompare implements InlinePredicate
-  {
-    public IntgrGE()
-    {
+  public static class IntgrGE extends IntCompare implements InlinePredicate {
+    public IntgrGE() {
       super(IntGE.name, IntGE.class);
     }
 
     @Override
-    public void preamble(MethodNode mtd, HWM stackHWM)
-    {
+    public void preamble(MethodNode mtd, HWM stackHWM) {
     }
 
     @Override
-    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail)
-    {
+    public void inline(MethodNode mtd, HWM stackHWM, Sense sense, LabelNode fail) {
       InsnList ins = mtd.instructions;
 
       if (sense == Sense.jmpOnOk) {

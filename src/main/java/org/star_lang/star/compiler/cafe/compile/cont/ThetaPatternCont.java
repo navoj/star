@@ -49,9 +49,9 @@ public class ThetaPatternCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
-    Patterns.compilePttrn(ptn, access, src, dict, outer, endLabel, errors, succ, fail, ccxt);
+    Patterns.compilePttrn(ptn, access, src, dict, outer, endLabel, succ, fail, ccxt);
     return src;
   }
 

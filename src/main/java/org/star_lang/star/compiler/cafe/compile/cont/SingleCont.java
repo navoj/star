@@ -2,7 +2,6 @@ package org.star_lang.star.compiler.cafe.compile.cont;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
@@ -38,7 +37,7 @@ public class SingleCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
     assert !used : "this continuation has already been used";
     used = true;

@@ -2,7 +2,6 @@ package org.star_lang.star.compiler.cafe.compile.cont;
 
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
@@ -38,7 +37,7 @@ public class PatternCont implements IContinuation
   private final IContinuation succ, fail;
 
   public PatternCont(IAbstract ptn, CafeDictionary dict, CafeDictionary outer, AccessMode access, MethodNode mtd,
-      LabelNode endLabel, ErrorReport errors, IContinuation succ, IContinuation fail)
+                     LabelNode endLabel, IContinuation succ, IContinuation fail)
   {
     this.ptn = ptn;
     this.dict = dict;
@@ -50,9 +49,9 @@ public class PatternCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
-    Patterns.compilePttrn(ptn, access, src, dict, outer, endLabel, errors, succ, fail, ccxt);
+    Patterns.compilePttrn(ptn, access, src, dict, outer, endLabel, succ, fail, ccxt);
     return src;
   }
 

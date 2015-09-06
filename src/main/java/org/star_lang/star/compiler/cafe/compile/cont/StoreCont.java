@@ -7,7 +7,6 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.star_lang.star.code.repository.CodeCatalog;
-import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
@@ -47,7 +46,7 @@ public class StoreCont implements IContinuation
   }
 
   @Override
-  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, ErrorReport errors, CodeContext ccxt)
+  public ISpec cont(ISpec src, CafeDictionary cxt, Location loc, CodeContext ccxt)
   {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -107,7 +106,7 @@ public class StoreCont implements IContinuation
       ins.add(new FieldInsnNode(Opcodes.PUTSTATIC, dict.getOwnerName(), var.getJavaSafeName(), var.getJavaSig()));
       break;
     default:
-      errors.reportError("(internal) invalid target for store of " + src, loc);
+      ccxt.getErrors().reportError("(internal) invalid target for store of " + src, loc);
     }
 
     return SrcSpec.prcSrc;

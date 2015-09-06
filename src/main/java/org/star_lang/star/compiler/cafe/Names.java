@@ -30,14 +30,11 @@ public class Names
   public static final Set<String> keywords = new TreeSet<>();
   public static final Set<String> graphic = new TreeSet<>();
 
-  public static final String FROM = keyword("from");
   public static final String IMPORT = keyword("import");
   public static final String JAVA = keyword("java");
-  public static final String CAFE = keyword("cafe");
 
   public static final String TYPE = keyword("type");
   public static final String CONSPEC = keyword("constructor");
-  public static final String VARCON = keyword("varcon");
   public static final String RECORD = keyword("record");
   public static final String LET = keyword("let");
   public static final String CASE = keyword("case");
@@ -46,12 +43,8 @@ public class Names
   public static final String IN = keyword("in");
   public static final String VALOF = keyword("valof");
   public static final String VALIS = keyword("valis");
-  public static final String LAMBDA = keyword("lambda");
   public static final String VAR = keyword("var");
   public static final String REF = keyword("ref");
-  public static final String LABELED = graphic("::");
-  public static final String LEAVE = keyword("leave");
-  public static final String GOTO = keyword("goto");
   public static final String IS = keyword("is");
   public static final String DO = keyword("do");
   public static final String LOOP = keyword("loop");
@@ -61,23 +54,17 @@ public class Names
   public static final String ELSE = keyword("else");
   public static final String MATCH = keyword("match");
 
-  public static final String TRY = keyword("try");
   public static final String CATCH = keyword("catch");
   public static final String EXCEPTION_VAR = "__exception";
   public static final String THROW = keyword("throw");
 
   public static final String REQUIRING = keyword("requiring");
-  public static final String WITH = keyword("with");
-  public static final String SYNC = keyword("sync");
-  public static final String WAIT = "_wait";
 
   public static final String NOTHING = keyword("nothing");
   public static final String VOID = keyword("void");
 
-  public static final String PRCENT = graphic("%");
   public static final String TILDA = graphic("~");
   public static final String COLON = graphic(":");
-  public static final String DCOLON = graphic("::");
   public static final String QQUERY = graphic("??");
   public static final String ASSIGN = graphic(":=");
   public static final String ASSERT = Assert.name;
@@ -92,10 +79,7 @@ public class Names
   public static final String NOT = keyword("not");
   public static final String PERIOD = graphic(".");
 
-  public static final String DOLLAR = graphic("$");
   public static final String FACE = "__face";
-
-  public static final String ANONYMOUS = "_";
 
   public static final String TRUE = keyword("true");
   public static final String FALSE = keyword("false");
@@ -108,12 +92,8 @@ public class Names
   public static final String RAW_DECIMAL_TYPE = keyword("decimal_");
   public static final String RAW_BINARY_TYPE = keyword("binary_");
   public static final String RAW_STRING_TYPE = keyword("string_");
-  public static final String STRING_TYPE = keyword("string");
   public static final String RAW_FILE_TYPE = keyword("file_");
 
-  public static final String BOOLEAN = "boolean";
-
-  public static final String THIS = keyword("this");
   public static final String PRIVATE_THIS = keyword("this$");
   public static final String ARG_ARRAY = keyword("args$");
   public static final String PTN_ARG = keyword("arg$");
@@ -129,23 +109,17 @@ public class Names
   public static final String FUNCTION = keyword("function");
   public static final String PATTERN = keyword("pattern");
   public static final String NULL_PTN = keyword("$null");
-  public static final String CONTINUE = keyword("continue");
   public static final String FCALL = keyword("funcall");
   public static final String ESCAPE = keyword("escape");
   public static final String CONSTRUCT = keyword("construct");
   public static final String REGEXP = keyword("regexp");
 
-  public static final String APPLY = keyword("apply");
-
   public static final String BUILTIN = keyword("builtin");
   public static final String TYPEVAR = graphic("%");
   public static final String EXISTS = keyword("exists");
   public static final String FORALL = keyword("forall");
-  public static final String ACTION = keyword("action");
 
   public static final String COPY = keyword("copy");
-
-  public static final String YIELD = keyword("yield");
 
   protected static String keyword(String word)
   {

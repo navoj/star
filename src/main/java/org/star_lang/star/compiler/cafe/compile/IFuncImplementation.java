@@ -173,13 +173,12 @@ public class IFuncImplementation
    *          code repository
    * @param bldCat
    * @param inFunction
-   * @param exit
    * @param ccxt
    *          TODO
    * @return
    */
   public static IType invokeIfunc(Apply app, CafeDictionary dict, CafeDictionary outer, ErrorReport errors,
-      CodeRepository repository, CodeCatalog bldCat, String inFunction, Exit exit, CodeContext ccxt)
+                                  CodeRepository repository, CodeCatalog bldCat, String inFunction, CodeContext ccxt)
   {
     String funName = app.getOp();
     VarInfo var = dict.find(funName);
@@ -237,7 +236,7 @@ public class IFuncImplementation
           }
 
           // Push in the args
-          Expressions.argArray(args, argSpecs, errors, dict, outer, inFunction, exit, ccxt);
+          Expressions.argArray(args, argSpecs, errors, dict, outer, inFunction, ccxt);
 
           // actually invoke the entity
           switch (var.getKind()) {
