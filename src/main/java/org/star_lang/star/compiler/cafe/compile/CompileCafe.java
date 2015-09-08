@@ -106,10 +106,10 @@ public class CompileCafe {
       LabelNode endLabel = new LabelNode();
 
       CodeContext ccxt = new CodeContext(repository, program, initMtd, initHwm, initMtd, initHwm, dict.getLocalAvail(),
-          codeCatalog, new NullCont(), errors, endLabel, "<clinit>");
+          codeCatalog, new NullCont(), errors, endLabel, "<clinit>", dict, dict);
 
       // Define the definitions
-      Theta.compileDefinitions(defs, dict, dict, endLabel, "", new LocalDefiner(ccxt), new BuildProgram(
+      Theta.compileDefinitions(defs, endLabel, new LocalDefiner(ccxt), new BuildProgram(
           owner, dict, program, initMtd, initHwm, manifest, loc), loc, ccxt);
 
       ins.add(endLabel);

@@ -20,6 +20,6 @@ import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
  */
 
 public interface ICompileExpression {
-  ISpec handleExp(Apply exp, CafeDictionary dict, CafeDictionary outer, String inFunction,
+  ISpec handleExp(Apply exp,
                   IContinuation cont, CodeContext ccxt);
 }

@@ -19,6 +19,5 @@ import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
  */
 
 public interface ICompileAction {
-  void handleAction(IAbstract term, CafeDictionary dict, CafeDictionary outer,
-                    String inFunction, IContinuation cont, CodeContext ccxt);
+  void handleAction(IAbstract term, IContinuation cont, CodeContext ccxt);
 }

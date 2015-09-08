@@ -236,7 +236,7 @@ public class IFuncImplementation
           }
 
           // Push in the args
-          Expressions.argArray(args, argSpecs, errors, dict, outer, inFunction, ccxt);
+          Expressions.argArray(args, argSpecs, ccxt);
 
           // actually invoke the entity
           switch (var.getKind()) {

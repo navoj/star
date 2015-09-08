@@ -120,13 +120,13 @@ public class Faces
     return javaName;
   }
 
-  public static ISpec buildRecord(IAbstract exp, CafeDictionary dict, CafeDictionary outer,
-                                  String inFunction, IContinuation cont, CodeContext ccxt)
+  public static ISpec buildRecord(IAbstract exp,IContinuation cont, CodeContext ccxt)
   {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     Location loc = exp.getLoc();
     InsnList ins = mtd.instructions;
+    CafeDictionary dict = ccxt.getDict();
 
     IList args = CafeSyntax.faceContents(exp);
 
@@ -161,7 +161,7 @@ public class Faces
 
       Expressions.genIntConst(ins, hwm, index.get(fieldName));
 
-      ISpec actual = Expressions.compileExp(arg, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
+      ISpec actual = Expressions.compileExp(arg, new JumpCont(nxLbl), ccxt);
       Utils.jumpTarget(mtd.instructions, nxLbl);
       Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm);
 

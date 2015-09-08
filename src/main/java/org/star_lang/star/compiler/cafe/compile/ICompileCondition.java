@@ -21,6 +21,6 @@ import org.star_lang.star.compiler.ast.Apply;
  */
 
 public interface ICompileCondition {
-  void handleCond(Apply cond, Sense sense, LabelNode elLabel, CafeDictionary dict,
-                  CafeDictionary outer, String inFunction, CodeContext ccxt);
+  void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+                  CodeContext ccxt);
 }

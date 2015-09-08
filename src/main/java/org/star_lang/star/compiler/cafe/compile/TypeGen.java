@@ -57,8 +57,6 @@ import org.star_lang.star.data.type.UniversalType;
  */
 
 public class TypeGen implements ITypeVisitor<Void> {
-  private final CafeDictionary dict;
-  private final CafeDictionary outer;
   private final HWM hwm;
   private final LiveMap locals;
   private final PathToType resolveTypeVar;
@@ -68,10 +66,7 @@ public class TypeGen implements ITypeVisitor<Void> {
 
   public static final String TYPE_UTILS = Utils.javaInternalClassName(TypeUtils.class);
 
-  TypeGen(LiveMap locals, CafeDictionary dict, CafeDictionary outer, Location loc,
-          CodeContext ccxt, PathToType resolver) {
-    this.dict = dict;
-    this.outer = outer;
+  TypeGen(LiveMap locals, Location loc, CodeContext ccxt, PathToType resolver) {
     this.hwm = ccxt.getMtdHwm();
     this.loc = loc;
     this.ccxt = ccxt;
@@ -227,7 +222,7 @@ public class TypeGen implements ITypeVisitor<Void> {
       if (pth != null) {
         int mark = hwm.getDepth();
         LabelNode nx = new LabelNode();
-        Expressions.compileExp(pth, dict, outer, null, new JumpCont(nx), ccxt);
+        Expressions.compileExp(pth, new JumpCont(nx), ccxt);
         Utils.jumpTarget(ins, nx);
         ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.IVALUE, "getType", "()" + Types.ITYPE_SIG));
         hwm.reset(mark);
@@ -319,16 +314,10 @@ public class TypeGen implements ITypeVisitor<Void> {
 
     locals.reserve(1);
 
-    CodeContext ccxt = new CodeContext(repository, klass, getType, hwm, null, null, funDict.getLocalAvail(), bldCat, new NullCont(), errors, fLabel, "getType");
+    CodeContext ccxt = new CodeContext(repository, klass, getType, hwm, null, null, funDict.getLocalAvail(), bldCat, new NullCont(), errors, fLabel, "getType", funDict, dict);
 
-    PathToType resolver = new PathToType() {
-
-      @Override
-      public IAbstract pathToType(TypeVar tv, Location loc) {
-        return null;
-      }
-    };
-    TypeGen typeGen = new TypeGen(locals, funDict, dict, loc, ccxt, resolver);
+    PathToType resolver = (tv, loc1) -> null;
+    TypeGen typeGen = new TypeGen(locals, loc, ccxt, resolver);
     type.accept(typeGen, null);
     InsnList ins = getType.instructions;
     ins.add(fLabel);
@@ -354,7 +343,7 @@ public class TypeGen implements ITypeVisitor<Void> {
     HWM hwm = new HWM();
     LiveMap locals = new LiveMap();
     locals.reserve(1);
-    CodeContext ccxt = new CodeContext(repository, conNode, getType, hwm, null, null, funDict.getLocalAvail(), bldCat, new NullCont(), errors, fLabel, "getType");
+    CodeContext ccxt = new CodeContext(repository, conNode, getType, hwm, null, null, funDict.getLocalAvail(), bldCat, new NullCont(), errors, fLabel, "getType", funDict, dict);
 
     PathToType resolver = new PathToType() {
 
@@ -378,7 +367,7 @@ public class TypeGen implements ITypeVisitor<Void> {
         return null;
       }
     };
-    TypeGen typeGen = new TypeGen(locals, funDict, dict, desc.getLoc(), ccxt, resolver);
+    TypeGen typeGen = new TypeGen(locals, desc.getLoc(), ccxt, resolver);
     TypeUtils.unwrap(desc.getType()).accept(typeGen, null);
     InsnList ins = getType.instructions;
     ins.add(fLabel);

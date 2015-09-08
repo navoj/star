@@ -19,21 +19,20 @@ import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
 import org.star_lang.star.compiler.cafe.compile.cont.PatternCont;
 import org.star_lang.star.compiler.util.AccessMode;
 
-/**
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- * <p>
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
+/*
+ * Copyright (c) 2015. Francis G. McCabe
  *
- * @author fgm
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 public class Conditions {
   private final static Map<String, ICompileCondition> handlers = new HashMap<>();
 
@@ -46,26 +45,25 @@ public class Conditions {
     handlers.put(Names.MATCH, new CompileMatch());
   }
 
-  public static void compileCond(IAbstract cond, Sense sense, LabelNode elLabel,
-                                 CafeDictionary dict, CafeDictionary outer, String inFunction, CodeContext ccxt) {
+  public static void compileCond(IAbstract cond, Sense sense, LabelNode elLabel, CodeContext ccxt) {
     if (cond instanceof Apply) {
       ICompileCondition handler = handlers.get(((Apply) cond).getOp());
       if (handler != null) {
-        handler.handleCond((Apply) cond, sense, elLabel, dict, outer, inFunction, ccxt);
+        handler.handleCond((Apply) cond, sense, elLabel, ccxt);
         return;
       }
     }
 
-    IContinuation cont = new BranchCont(sense, elLabel, dict);
+    IContinuation cont = new BranchCont(sense, elLabel, ccxt.getDict());
 
-    Expressions.compileExp(cond, dict, outer, inFunction, cont, ccxt);
+    Expressions.compileExp(cond, cont, ccxt);
   }
 
   private static class CompileTruthValue implements ICompileCondition {
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CafeDictionary dict,
-                           CafeDictionary outer, String inFunction, CodeContext ccxt) {
+    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+                           CodeContext ccxt) {
       String label = CafeSyntax.constructorOp(cond);
       MethodNode mtd = ccxt.getMtd();
       ErrorReport errors = ccxt.getErrors();
@@ -92,21 +90,21 @@ public class Conditions {
   private static class CompileConjunction implements ICompileCondition {
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CafeDictionary dict,
-                           CafeDictionary outer, String inFunction, CodeContext ccxt) {
+    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+                           CodeContext ccxt) {
       IAbstract lhs = cond.getArg(0);
       IAbstract rhs = cond.getArg(1);
       MethodNode mtd = ccxt.getMtd();
 
       switch (sense) {
         case jmpOnFail:
-          compileCond(lhs, sense, elLabel, dict, outer, inFunction, ccxt);
-          compileCond(rhs, sense, elLabel, dict, outer, inFunction, ccxt);
+          compileCond(lhs, sense, elLabel, ccxt);
+          compileCond(rhs, sense, elLabel, ccxt);
           break;
         case jmpOnOk: {
           LabelNode nxLabel = new LabelNode();
-          compileCond(lhs, Sense.jmpOnFail, nxLabel, dict, outer, inFunction, ccxt);
-          compileCond(rhs, sense, elLabel, dict, outer, inFunction, ccxt);
+          compileCond(lhs, Sense.jmpOnFail, nxLabel, ccxt);
+          compileCond(rhs, sense, elLabel, ccxt);
           Utils.jumpTarget(mtd.instructions, nxLabel);
         }
       }
@@ -119,8 +117,8 @@ public class Conditions {
     }
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CafeDictionary dict,
-                           CafeDictionary outer, String inFunction, CodeContext ccxt) {
+    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+                           CodeContext ccxt) {
       IAbstract lhs = cond.getArg(0);
       IAbstract rhs = cond.getArg(1);
       MethodNode mtd = ccxt.getMtd();
@@ -128,14 +126,14 @@ public class Conditions {
       switch (sense) {
         case jmpOnFail: {
           LabelNode ok = new LabelNode();
-          compileCond(lhs, sense.negate(), ok, dict, outer, inFunction, ccxt);
-          compileCond(rhs, sense, elLabel, dict, outer, inFunction, ccxt);
+          compileCond(lhs, sense.negate(), ok, ccxt);
+          compileCond(rhs, sense, elLabel, ccxt);
           mtd.instructions.add(ok);
           break;
         }
         case jmpOnOk:
-          compileCond(lhs, sense, elLabel, dict, outer, inFunction, ccxt);
-          compileCond(rhs, sense, elLabel, dict, outer, inFunction, ccxt);
+          compileCond(lhs, sense, elLabel, ccxt);
+          compileCond(rhs, sense, elLabel, ccxt);
       }
     }
   }
@@ -145,19 +143,19 @@ public class Conditions {
     }
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CafeDictionary dict,
-                           CafeDictionary outer, String inFunction, CodeContext ccxt) {
+    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+                           CodeContext ccxt) {
       IAbstract rhs = cond.getArg(0);
 
-      compileCond(rhs, sense.negate(), elLabel, dict, outer, inFunction, ccxt);
+      compileCond(rhs, sense.negate(), elLabel, ccxt);
     }
   }
 
   private static class CompileConditional implements ICompileCondition {
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CafeDictionary dict,
-                           CafeDictionary outer, String inFunction, CodeContext ccxt) {
+    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+                           CodeContext ccxt) {
       IAbstract test = CafeSyntax.conditionalTest(cond);
       IAbstract lhs = CafeSyntax.conditionalThen(cond);
       IAbstract rhs = CafeSyntax.conditionalElse(cond);
@@ -170,14 +168,14 @@ public class Conditions {
           LabelNode ok = new LabelNode();
           LabelNode other = new LabelNode();
 
-          compileCond(test, sense, other, dict, outer, inFunction, ccxt);
+          compileCond(test, sense, other, ccxt);
 
-          compileCond(lhs, sense.negate(), ok, dict, outer, inFunction, ccxt);
+          compileCond(lhs, sense.negate(), ok, ccxt);
 
           ins.add(new JumpInsnNode(Opcodes.GOTO, elLabel));
           Utils.jumpTarget(ins, other);
 
-          compileCond(rhs, sense, elLabel, dict, outer, inFunction, ccxt);
+          compileCond(rhs, sense, elLabel, ccxt);
 
           Utils.jumpTarget(ins, ok);
           break;
@@ -186,13 +184,13 @@ public class Conditions {
           LabelNode fail = new LabelNode();
           LabelNode other = new LabelNode();
 
-          compileCond(test, Sense.jmpOnFail, other, dict, outer, inFunction, ccxt);
+          compileCond(test, Sense.jmpOnFail, other, ccxt);
 
-          compileCond(lhs, sense, elLabel, dict, outer, inFunction, ccxt);
+          compileCond(lhs, sense, elLabel, ccxt);
 
           ins.add(new JumpInsnNode(Opcodes.GOTO, fail));
           Utils.jumpTarget(ins, other);
-          compileCond(rhs, sense, elLabel, dict, outer, inFunction, ccxt);
+          compileCond(rhs, sense, elLabel, ccxt);
 
           Utils.jumpTarget(ins, fail);
         }
@@ -206,16 +204,17 @@ public class Conditions {
     }
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CafeDictionary dict,
-                           CafeDictionary outer, String inFunction, CodeContext ccxt) {
+    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CodeContext ccxt) {
       assert CafeSyntax.isMatch(cond);
 
       MethodNode mtd = ccxt.getMtd();
       LabelNode exLabel = new LabelNode();
       IContinuation succ = new JumpCont(sense == Sense.jmpOnOk ? elLabel : exLabel);
       IContinuation fail = new JumpCont(sense == Sense.jmpOnOk ? exLabel : elLabel);
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
-      Expressions.compileExp(CafeSyntax.matchExp(cond), dict, outer, inFunction, new PatternCont(CafeSyntax.matchPtn(cond), dict, outer, AccessMode.readOnly, mtd, exLabel,
+      Expressions.compileExp(CafeSyntax.matchExp(cond),  new PatternCont(CafeSyntax.matchPtn(cond), dict, outer, AccessMode.readOnly, mtd, exLabel,
               succ, fail),
           ccxt);
       Utils.jumpTarget(mtd.instructions, exLabel);

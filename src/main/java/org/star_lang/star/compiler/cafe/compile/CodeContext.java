@@ -42,9 +42,12 @@ public class CodeContext {
   private final IContinuation valisCont;
   private final ErrorReport errors;
   private final LabelNode endLabel;
+  private final CafeDictionary dict;
+  private final CafeDictionary outer;
 
   public CodeContext(CodeRepository repository, ClassNode klass, MethodNode mtd, HWM mtdHwm, MethodNode classInit,
-                     HWM initHwm, LiveMap localMap, CodeCatalog bldCat, IContinuation valisCont, ErrorReport errors, LabelNode endLabel, String inFunction) {
+                     HWM initHwm, LiveMap localMap, CodeCatalog bldCat, IContinuation valisCont, ErrorReport errors,
+                     LabelNode endLabel, String inFunction, CafeDictionary dict, CafeDictionary outer) {
     super();
     this.repository = repository;
     this.klass = klass;
@@ -58,25 +61,31 @@ public class CodeContext {
     this.valisCont = valisCont;
     this.errors = errors;
     this.endLabel = endLabel;
+    this.dict = dict;
+    this.outer = outer;
     assert localMap != null;
   }
 
   public CodeContext fork(ClassNode klass, MethodNode mtd, HWM mtdHwm, MethodNode classInit, HWM initHwm,
                           LiveMap localMap, String functionName) {
-    return new CodeContext(repository, klass, mtd, mtdHwm, classInit, initHwm, localMap, bldCat, valisCont, errors, endLabel, functionName);
+    return new CodeContext(repository, klass, mtd, mtdHwm, classInit, initHwm, localMap, bldCat, valisCont, errors, endLabel, functionName, dict, outer);
   }
 
   public CodeContext fork(ClassNode klass, MethodNode mtd, HWM hwm, LiveMap localMap, String funName, LabelNode endLabel) {
     return new CodeContext(repository, klass, mtd, hwm, new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
-        Types.CLASS_INIT, Types.VOID_SIG, Types.VOID_SIG, new String[]{}), new HWM(), localMap, bldCat, valisCont, errors, endLabel, funName);
+        Types.CLASS_INIT, Types.VOID_SIG, Types.VOID_SIG, new String[]{}), new HWM(), localMap, bldCat, valisCont, errors, endLabel, funName, dict, outer);
   }
 
   public CodeContext fork(IContinuation valisCont) {
-    return new CodeContext(repository, klass, mtd, mtdHwm, classInit, clsHwm, localMap, bldCat, valisCont, errors, endLabel, inFunction);
+    return new CodeContext(repository, klass, mtd, mtdHwm, classInit, clsHwm, localMap, bldCat, valisCont, errors, endLabel, inFunction, dict, outer);
   }
 
   public CodeContext fork(LabelNode endLabel) {
-    return new CodeContext(repository, klass, mtd, mtdHwm, classInit, clsHwm, localMap, bldCat, valisCont, errors, endLabel, inFunction);
+    return new CodeContext(repository, klass, mtd, mtdHwm, classInit, clsHwm, localMap, bldCat, valisCont, errors, endLabel, inFunction, dict, outer);
+  }
+
+  public CodeContext fork(CafeDictionary dict, CafeDictionary outer) {
+    return new CodeContext(repository, klass, mtd, mtdHwm, classInit, clsHwm, localMap, bldCat, valisCont, errors, endLabel, inFunction, dict, outer);
   }
 
   public String getInFunction() {
@@ -129,6 +138,14 @@ public class CodeContext {
 
   public LabelNode getEndLabel() {
     return endLabel;
+  }
+
+  public CafeDictionary getDict() {
+    return dict;
+  }
+
+  public CafeDictionary getOuter() {
+    return outer;
   }
 
   public void installInitMtd() {

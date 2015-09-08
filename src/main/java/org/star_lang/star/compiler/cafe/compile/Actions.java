@@ -89,14 +89,15 @@ public class Actions {
   private Actions() {
   }
 
-  public static void compileAction(IAbstract term, CafeDictionary dict,
-                                   CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+  public static void compileAction(IAbstract term, IContinuation cont, CodeContext ccxt) {
     ErrorReport errors = ccxt.getErrors();
+    CafeDictionary dict = ccxt.getDict();
+
     if (term instanceof Apply) {
       Apply app = (Apply) term;
       ICompileAction handler = handlers.get(app.getOp());
       if (handler != null)
-        handler.handleAction(term, dict, outer, inFunction, cont, ccxt);
+        handler.handleAction(term, cont, ccxt);
       else
         errors.reportError("cannot find compiler for action:" + term, term.getLoc());
     } else if (Abstract.isName(term, Names.NOTHING))
@@ -110,12 +111,13 @@ public class Actions {
 
   private static class CompileEscape implements ICompileAction {
     @Override
-    public void handleAction(IAbstract call, CafeDictionary dict, CafeDictionary outer,
-                             String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract call, IContinuation cont, CodeContext ccxt) {
       MethodNode mtd = ccxt.getMtd();
       HWM hwm = ccxt.getMtdHwm();
       CodeCatalog bldCat = ccxt.getBldCat();
       CodeRepository repository = ccxt.getRepository();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       InsnList ins = mtd.instructions;
       String funName = CafeSyntax.escapeOp(call);
@@ -152,11 +154,11 @@ public class Actions {
           if (var.getJavaInvokeSig().equals(IFuncImplementation.IFUNCTION_INVOKE_SIG)) {
             argSpecs = SrcSpec.generics(varType, dict, bldCat, repository, errors, loc);
 
-            Expressions.argArray(args, argSpecs, errors, dict, outer, inFunction, ccxt);
+            Expressions.argArray(args, argSpecs, ccxt);
           } else {
             argSpecs = SrcSpec.typeSpecs(var.getJavaInvokeSig(), dict, bldCat, errors, loc);
 
-            Expressions.compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
+            Expressions.compileArgs(args, argSpecs, ccxt);
           }
 
           // actually invoke the escape
@@ -193,9 +195,10 @@ public class Actions {
 
   private static class CompileCall implements ICompileAction {
     @Override
-    public void handleAction(IAbstract app, CafeDictionary dict, CafeDictionary outer,
-                             String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract app, IContinuation cont, CodeContext ccxt) {
       Location loc = app.getLoc();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       assert CafeSyntax.isFunCall(app);
 
@@ -210,10 +213,10 @@ public class Actions {
       if (var != null) {
         switch (var.getKind()) {
           case builtin:
-            Expressions.invokeEscape(loc, var, app, errors, dict, outer, inFunction, callCont, ccxt);
+            Expressions.invokeEscape(loc, var, app, callCont, ccxt);
             return;
           case general:
-            Expressions.compileFunCall(loc, var, CafeSyntax.funCallArgs(app), errors, dict, outer, inFunction, callCont,
+            Expressions.compileFunCall(loc, var, CafeSyntax.funCallArgs(app), callCont,
                 ccxt);
             return;
           default:
@@ -230,8 +233,7 @@ public class Actions {
   // (assign <lval> <expression>)
   private static class CompileAssignment implements ICompileAction {
     @Override
-    public void handleAction(IAbstract term, CafeDictionary dict, CafeDictionary outer,
-                             String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract term, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isAssignment(term);
 
       IAbstract lval = CafeSyntax.assignmentLval(term);
@@ -241,6 +243,8 @@ public class Actions {
       final ErrorReport errors = ccxt.getErrors();
       InsnList ins = mtd.instructions;
       Location loc = lval.getLoc();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       doLineNumber(loc, mtd);
       int mark = hwm.bump(0);
@@ -252,7 +256,7 @@ public class Actions {
         else if (var.getAccess() == AccessMode.readOnly)
           errors.reportError("not permitted to assign to " + lval, loc);
         else
-          Expressions.compileExp(exp, dict, outer, inFunction, new StoreCont(var, dict), ccxt);
+          Expressions.compileExp(exp, new StoreCont(var, dict), ccxt);
       } else if (CafeSyntax.isDot(lval)) {
         IAbstract rec = CafeSyntax.dotRecord(lval);
         String field = Abstract.getId(CafeSyntax.dotField(lval));
@@ -269,7 +273,7 @@ public class Actions {
             errors.reportError(rec + " does not have field " + field, loc);
           else {
             LabelNode nxLbl = new LabelNode();
-            Expressions.compileExp(rec, dict, outer, inFunction, new CheckCont(nxLbl, var, dict), ccxt);
+            Expressions.compileExp(rec, new CheckCont(nxLbl, var, dict), ccxt);
             Utils.jumpTarget(ins, nxLbl);
 
             if (TypeUtils.isTypeVar(var.getType())) {
@@ -277,8 +281,7 @@ public class Actions {
               hwm.probe(1);
               ins.add(new LdcInsnNode(Utils.javaIdentifierOf(field)));
               LabelNode nxLbl2 = new LabelNode();
-              Expressions.compileExp(exp, dict, outer, inFunction, new CheckCont(nxLbl2, SrcSpec.generalSrc,
-                  dict), ccxt);
+              Expressions.compileExp(exp, new CheckCont(nxLbl2, SrcSpec.generalSrc, dict), ccxt);
               Utils.jumpTarget(ins, nxLbl2);
 
               ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.IVALUE));
@@ -291,7 +294,7 @@ public class Actions {
               ISpec fieldSpec = dict.getFieldSpec(var.getType(), field);
               if (fieldSpec == null)
                 fieldSpec = SrcSpec.generalSrc;
-              Expressions.compileExp(exp, dict, outer, inFunction, new CheckCont(nxLbl2, fieldSpec, dict),
+              Expressions.compileExp(exp, new CheckCont(nxLbl2, fieldSpec, dict),
                   ccxt);
               Utils.jumpTarget(ins, nxLbl2);
 
@@ -307,7 +310,7 @@ public class Actions {
         IContinuation succ = new JumpCont(exLabel);
         IContinuation fail = new ThrowContinuation("initialization failed");
 
-        Expressions.compileExp(exp, dict, outer, inFunction, new AssignmentCont(lval, dict, outer,
+        Expressions.compileExp(exp, new AssignmentCont(lval, dict, outer,
             AccessMode.readWrite, exLabel, succ, fail), ccxt);
         Utils.jumpTarget(mtd.instructions, exLabel);
         cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
@@ -322,27 +325,28 @@ public class Actions {
   // {A1,...,An}
   private static class CompileBlock implements ICompileAction {
     @Override
-    public void handleAction(IAbstract term, CafeDictionary dict, CafeDictionary outer,
-                             String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract term, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isBlock(term);
       MethodNode mtd = ccxt.getMtd();
-      final ErrorReport errors = ccxt.getErrors();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
       LabelNode endLbl = new LabelNode();
       CafeDictionary inner = dict.fork();
 
       IList actions = CafeSyntax.blockContents(term);
+      ccxt = ccxt.fork(inner, outer);
 
       for (int ix = 0; ix < actions.size(); ix++) {
         IAbstract act = (IAbstract) actions.getCell(ix);
         if (ix < actions.size() - 1) {
           LabelNode exLabel = new LabelNode();
 
-          compileAction(act, inner, outer, inFunction, new JumpCont(exLabel), ccxt.fork(exLabel));
+          compileAction(act, new JumpCont(exLabel), ccxt.fork(exLabel));
 
           Utils.jumpTarget(mtd.instructions, exLabel);
           dict.migrateFreeVars(inner);
         } else
-          compileAction(act, inner, outer, inFunction, cont, ccxt);
+          compileAction(act, cont, ccxt);
       }
       dict.migrateFreeVars(inner);
       // inner.dictUndo();
@@ -354,13 +358,13 @@ public class Actions {
   // switch <sel> in {<cases>} else <deflt>
   private static class CompileSwitchAction implements ICompileAction {
     @Override
-    public void handleAction(IAbstract term, final CafeDictionary dict,
-                             final CafeDictionary outer, final String inFunction, final IContinuation cont,
-                             final CodeContext ccxt) {
+    public void handleAction(IAbstract term, final IContinuation cont, final CodeContext ccxt) {
       assert CafeSyntax.isSwitch(term);
 
       IAbstract sel = CafeSyntax.switchSel(term);
       IAbstract deflt = CafeSyntax.switchDeflt(term);
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       MethodNode mtd = ccxt.getMtd();
       doLineNumber(sel.getLoc(), mtd);
@@ -369,11 +373,11 @@ public class Actions {
       assert sel instanceof Name;
       VarInfo var = Theta.varReference(((Name) sel).getId(), dict, outer, sel.getLoc(), errors);
 
-      ICaseCompile handler = (term1, dict1, cont1) -> {
-        compileAction(term1, dict1, outer, inFunction, cont1, ccxt);
+      ICaseCompile handler = (term1, cont1, hcxt) -> {
+        compileAction(term1, cont1, hcxt);
         return SrcSpec.prcSrc;
       };
-      CaseCompile.compileSwitch(term.getLoc(), var, CafeSyntax.switchCases(term), deflt, dict, outer, errors, handler,
+      CaseCompile.compileSwitch(term.getLoc(), var, CafeSyntax.switchCases(term), deflt, handler,
           cont, ccxt);
     }
   }
@@ -382,15 +386,16 @@ public class Actions {
   // <action> catch <handler>
   private static class CompileCatchAction implements ICompileAction {
     @Override
-    public void handleAction(IAbstract action, CafeDictionary dict,
-                             CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract action, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isCatchAction(action);
 
       Location loc = action.getLoc();
 
       MethodNode mtd = ccxt.getMtd();
       CodeCatalog bldCat = ccxt.getBldCat();
-      final ErrorReport errors = ccxt.getErrors();
+      ErrorReport errors = ccxt.getErrors();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       InsnList ins = mtd.instructions;
 
@@ -407,7 +412,8 @@ public class Actions {
 
       ins.add(start);
 
-      compileAction(body, forked, outer, inFunction, new JumpCont(exceptExit), ccxt.fork(except));
+      final CodeContext fCxt = ccxt.fork(except).fork(forked, outer);
+      compileAction(body, new JumpCont(exceptExit), fCxt);
 
       ins.add(except);
 
@@ -420,7 +426,7 @@ public class Actions {
 
       declare.cont(desc, outer, loc, ccxt);
 
-      compileAction(handler, forked, outer, inFunction, new JumpCont(exceptExit), ccxt);
+      compileAction(handler, new JumpCont(exceptExit), fCxt);
 
       dict.migrateFreeVars(forked);
 
@@ -436,8 +442,7 @@ public class Actions {
   private static class CompileConditional implements ICompileAction {
 
     @Override
-    public void handleAction(IAbstract action, CafeDictionary dict,
-                             CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract action, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isConditional(action);
       IAbstract condition = CafeSyntax.conditionalTest(action);
       IAbstract th = CafeSyntax.conditionalThen(action);
@@ -446,17 +451,20 @@ public class Actions {
       LabelNode elLabel = new LabelNode();
       MethodNode mtd = ccxt.getMtd();
       InsnList ins = mtd.instructions;
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       doLineNumber(condition.getLoc(), mtd);
 
       CafeDictionary thDict = dict.fork();
-      Conditions.compileCond(condition, Sense.jmpOnFail, elLabel, thDict, outer, inFunction, ccxt);
+      CodeContext fCxt = ccxt.fork(thDict,outer);
+      Conditions.compileCond(condition, Sense.jmpOnFail, elLabel, fCxt);
       Utils.jumpTarget(ins, thLabel);
-      compileAction(th, thDict, outer, inFunction, cont, ccxt);
+      compileAction(th, cont, fCxt);
       dict.migrateFreeVars(thDict);
       ins.add(elLabel);
       CafeDictionary elDict = dict.fork();
-      compileAction(el, elDict, outer, inFunction, cont, ccxt);
+      compileAction(el, cont, ccxt.fork(elDict, outer));
       dict.migrateFreeVars(elDict);
     }
   }
@@ -466,8 +474,7 @@ public class Actions {
   private static class CompileLoop implements ICompileAction {
 
     @Override
-    public void handleAction(IAbstract action, CafeDictionary dict,
-                             CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract action, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isLoop(action);
       MethodNode mtd = ccxt.getMtd();
       InsnList ins = mtd.instructions;
@@ -476,7 +483,7 @@ public class Actions {
 
       doLineNumber(action.getLoc(), mtd);
 
-      compileAction(CafeSyntax.loopAction(action), dict, outer, inFunction, new JumpCont(lbl), ccxt);
+      compileAction(CafeSyntax.loopAction(action), new JumpCont(lbl), ccxt);
     }
   }
 
@@ -485,23 +492,21 @@ public class Actions {
   private static class CompileLet implements ICompileAction {
 
     @Override
-    public void handleAction(final IAbstract action, CafeDictionary dict,
-                             final CafeDictionary outer, final String inFunction, final IContinuation cont,
-                             final CodeContext ccxt) {
+    public void handleAction(IAbstract action, IContinuation cont, CodeContext ccxt) {
       final ErrorReport errors = ccxt.getErrors();
       if (CafeSyntax.isLetExp(action)) {
         final LabelNode endDefLabel = new LabelNode();
+        CafeDictionary outer = ccxt.getOuter();
 
         IList theta = CafeSyntax.letDefs(action);
 
-        Theta.compileDefinitions(theta, dict, outer, endDefLabel, inFunction, new LocalDefiner(ccxt),
+        Theta.compileDefinitions(theta, endDefLabel, new LocalDefiner(ccxt),
             new IThetaBody() {
 
               @Override
               public ISpec compile(CafeDictionary thetaDict, CodeCatalog bldCat, ErrorReport errors,
                                    CodeRepository repository) {
-                compileAction(CafeSyntax.letBound(action), thetaDict, outer, inFunction,
-                    cont, ccxt.fork(endDefLabel));
+                compileAction(CafeSyntax.letBound(action), cont, ccxt.fork(endDefLabel).fork(thetaDict, outer));
                 return null;
               }
 
@@ -519,11 +524,12 @@ public class Actions {
   private static class CompileAssert implements ICompileAction {
 
     @Override
-    public void handleAction(IAbstract action, CafeDictionary dict,
-                             CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract action, IContinuation cont, CodeContext ccxt) {
       MethodNode mtd = ccxt.getMtd();
       HWM hwm = ccxt.getMtdHwm();
       InsnList ins = mtd.instructions;
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       String exceptionType = Type.getInternalName(AssertionError.class);
 
@@ -536,8 +542,7 @@ public class Actions {
 
       CafeDictionary asDict = dict.fork();
 
-      Conditions.compileCond(CafeSyntax.assertedCond(action), Sense.jmpOnOk, nxLabel, asDict, outer,
-          inFunction, ccxt);
+      Conditions.compileCond(CafeSyntax.assertedCond(action), Sense.jmpOnOk, nxLabel, ccxt.fork(asDict,outer));
 
       hwm.probe(3);
       ins.add(new TypeInsnNode(Opcodes.NEW, exceptionType));
@@ -554,8 +559,7 @@ public class Actions {
 
   private static class CompileIgnore implements ICompileAction {
     @Override
-    public void handleAction(IAbstract action, CafeDictionary dict,
-                             CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract action, IContinuation cont, CodeContext ccxt) {
       MethodNode mtd = ccxt.getMtd();
       InsnList ins = mtd.instructions;
 
@@ -563,16 +567,15 @@ public class Actions {
 
       doLineNumber(loc, mtd);
 
-      Expressions.compileExp(CafeSyntax.ignoredExp(action), dict, outer, inFunction, new CallCont(ins, cont),
-          ccxt);
+      Expressions.compileExp(CafeSyntax.ignoredExp(action), new CallCont(ins, cont), ccxt);
     }
   }
 
   private static class CompileThrow implements ICompileAction {
 
     @Override
-    public void handleAction(IAbstract term, CafeDictionary dict, CafeDictionary outer,
-                             String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract term,
+                             IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isThrow(term);
 
       String exceptionType = Type.getInternalName(EvaluationException.class);
@@ -584,7 +587,7 @@ public class Actions {
 
       int mark = hwm.bump(0);
 
-      Expressions.compileExp(CafeSyntax.thrownExp(term), dict, outer, inFunction, new NullCont(), ccxt);
+      Expressions.compileExp(CafeSyntax.thrownExp(term), new NullCont(), ccxt);
 
       ins.add(new TypeInsnNode(Opcodes.CHECKCAST, exceptionType));
       ins.add(new InsnNode(Opcodes.ATHROW));
@@ -595,12 +598,12 @@ public class Actions {
   private static class CompileValis implements ICompileAction {
 
     @Override
-    public void handleAction(IAbstract action, CafeDictionary dict,
-                             CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract action,
+                             IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isValis(action);
       MethodNode mtd = ccxt.getMtd();
       doLineNumber(action.getLoc(), mtd);
-      Expressions.compileExp(CafeSyntax.valisExp(action), dict, outer, inFunction, ccxt.getValisCont(), ccxt);
+      Expressions.compileExp(CafeSyntax.valisExp(action), ccxt.getValisCont(), ccxt);
     }
   }
 
@@ -609,8 +612,7 @@ public class Actions {
   private static class CompileIsDecl implements ICompileAction {
 
     @Override
-    public void handleAction(IAbstract term, CafeDictionary dict, CafeDictionary outer,
-                             String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract term, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isIsDeclaration(term);
       IAbstract lVal = CafeSyntax.isDeclLval(term);
       IAbstract exp = CafeSyntax.isDeclValue(term);
@@ -621,6 +623,8 @@ public class Actions {
       CodeRepository repository = ccxt.getRepository();
       ErrorReport errors = ccxt.getErrors();
       LabelNode endLabel = ccxt.getEndLabel();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       Location lValLoc = lVal.getLoc();
       if (CafeSyntax.termHasType(lVal) && Abstract.isName(lVal)) {
@@ -636,7 +640,7 @@ public class Actions {
           ISpec desc = SrcSpec.generic(lValLoc, varType, dict, repository, errors);
           DeclareLocal declare = new DeclareLocal(loc, vrName, desc, AccessMode.readOnly, dict, endLabel);
 
-          Expressions.compileExp(exp, dict, outer, inFunction, declare, ccxt);
+          Expressions.compileExp(exp, declare, ccxt);
         }
         cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
       } else if (CafeSyntax.isTypedTerm(lVal) && Abstract.isName(CafeSyntax.typedTerm(lVal))) {
@@ -652,7 +656,7 @@ public class Actions {
           ISpec desc = SrcSpec.generic(lValLoc, varType, dict, repository, errors);
           DeclareLocal declare = new DeclareLocal(loc, vrName, desc, AccessMode.readOnly, dict, endLabel);
 
-          Expressions.compileExp(exp, dict, outer, inFunction, declare, ccxt);
+          Expressions.compileExp(exp, declare, ccxt);
         }
         cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
       } else {
@@ -660,7 +664,7 @@ public class Actions {
         IContinuation succ = new JumpCont(exLabel);
         IContinuation fail = new ThrowContinuation("initialization failed");
 
-        Expressions.compileExp(exp, dict, outer, inFunction, new PatternCont(lVal, dict, outer,
+        Expressions.compileExp(exp,  new PatternCont(lVal, dict, outer,
             AccessMode.readOnly, mtd, exLabel, succ, fail), ccxt);
         Utils.jumpTarget(mtd.instructions, exLabel);
         cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
@@ -674,8 +678,7 @@ public class Actions {
   private static class CompileVarDecl implements ICompileAction {
 
     @Override
-    public void handleAction(IAbstract term, CafeDictionary dict, CafeDictionary outer,
-                             String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract term, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isVarDeclaration(term);
       IAbstract lVal = CafeSyntax.varDeclLval(term);
       IAbstract exp = CafeSyntax.varDeclValue(term);
@@ -685,6 +688,8 @@ public class Actions {
       CodeRepository repository = ccxt.getRepository();
       ErrorReport errors = ccxt.getErrors();
       LabelNode endLabel = ccxt.getEndLabel();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       Location loc = lVal.getLoc();
       if (CafeSyntax.isTypedTerm(lVal) && Abstract.isName(CafeSyntax.typedTerm(lVal))) {
@@ -700,7 +705,7 @@ public class Actions {
         else {
           DeclareLocal declare = new DeclareLocal(loc, vrId, desc, AccessMode.readWrite, dict, endLabel);
 
-          Expressions.compileExp(exp, dict, outer, inFunction, declare, ccxt);
+          Expressions.compileExp(exp, declare, ccxt);
         }
         cont.cont(desc, dict, loc, ccxt);
       } else {
@@ -708,7 +713,7 @@ public class Actions {
         IContinuation succ = new JumpCont(exLabel);
         IContinuation fail = new ThrowContinuation("initialization failed");
 
-        Expressions.compileExp(exp, dict, outer, inFunction, new PatternCont(lVal, dict, outer,
+        Expressions.compileExp(exp, new PatternCont(lVal, dict, outer,
             AccessMode.readWrite, mtd, exLabel, succ, fail), ccxt);
         Utils.jumpTarget(mtd.instructions, exLabel);
         cont.cont(SrcSpec.prcSrc, dict, loc, ccxt);
@@ -721,14 +726,15 @@ public class Actions {
   // while(<cond>,<body>)
   private static class CompileWhile implements ICompileAction {
     @Override
-    public void handleAction(IAbstract action, CafeDictionary dict,
-                             CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+    public void handleAction(IAbstract action, IContinuation cont, CodeContext ccxt) {
       Location loc = action.getLoc();
       assert CafeSyntax.isWhile(action);
       MethodNode mtd = ccxt.getMtd();
       InsnList ins = mtd.instructions;
       LabelNode loopLbl = new LabelNode();
       LabelNode endLbl = new LabelNode();
+      CafeDictionary dict = ccxt.getDict();
+      CafeDictionary outer = ccxt.getOuter();
 
       CafeDictionary forked = dict.fork();
       ins.add(loopLbl);
@@ -738,11 +744,9 @@ public class Actions {
       if (!CompilerUtils.isTrivial(CafeSyntax.whileTest(action)))
         // We do it this way because we want to allow the condition to bind variables. Slightly
         // slower in theory but probably makes no difference these days.
-        Conditions.compileCond(CafeSyntax.whileTest(action), Sense.jmpOnFail, endLbl, forked, outer,
-            inFunction, ccxt);
+        Conditions.compileCond(CafeSyntax.whileTest(action), Sense.jmpOnFail, endLbl, ccxt.fork(forked,outer));
 
-      compileAction(CafeSyntax.whileBody(action), forked, outer, inFunction,
-          new JumpCont(loopLbl), ccxt.fork(endLbl));
+      compileAction(CafeSyntax.whileBody(action), new JumpCont(loopLbl), ccxt.fork(endLbl).fork(forked,outer));
 
       dict.migrateFreeVars(forked);
       ins.add(endLbl);

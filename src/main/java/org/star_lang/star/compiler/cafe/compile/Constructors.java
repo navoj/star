@@ -366,7 +366,7 @@ public class Constructors {
     closure.signature = javaSig;
 
     closure.superName = Types.JAVA_OBJECT_TYPE;
-    closure.interfaces.addAll(Theta.constructorTypeSignatures(dict, refreshed, cxt, bldCat, errors, loc));
+    closure.interfaces.addAll(Theta.constructorTypeSignatures(refreshed, cxt, loc));
     closure.interfaces.add(Types.IFUNC);
     closure.interfaces.add(Types.ICONSTRUCTOR_FUNCTION);
     closure.interfaces.add(Types.IVALUE);
@@ -390,7 +390,7 @@ public class Constructors {
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, conType, javaName, javaSig, enterSig, javaName,
         AccessMode.readOnly);
 
-    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail(), Names.ENTER);
+    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail(), Names.ENTER).fork(funDict, dict);
 
     defineArgs(argTypes, loc, bldCat, errors, hwm, funDict, enterMtd, endFunLabel, fcxt);
 
@@ -461,7 +461,7 @@ public class Constructors {
           Theta.FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
           .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, funDict
           .getOwnerName());
-      definer = new LongArgDefiner(argArray, bldCat, repository);
+      definer = new LongArgDefiner(argArray, repository);
     }
 
     for (int ix = 0; ix < argTypes.length; ix++) {
@@ -684,7 +684,7 @@ public class Constructors {
 
     closure.superName = Types.JAVA_OBJECT_TYPE;
 
-    closure.interfaces.addAll(Theta.constructorTypeSignatures(dict, refreshed, cxt, bldCat, errors, loc));
+    closure.interfaces.addAll(Theta.constructorTypeSignatures(refreshed, cxt, loc));
     closure.interfaces.add(Types.IFUNC);
     closure.interfaces.add(Types.ICONSTRUCTOR_FUNCTION);
     closure.interfaces.add(Types.IVALUE);
@@ -707,7 +707,7 @@ public class Constructors {
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, conType, javaName, javaSig, enterSig, javaName,
         AccessMode.readOnly);
 
-    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail(), Names.ENTER);
+    CodeContext fcxt = cxt.fork(closure, enterMtd, hwm, cxt.getClassInit(), cxt.getClsHwm(), funDict.getLocalAvail(), Names.ENTER).fork(funDict, dict);
 
     TypeInterfaceType conArgType = TypeUtils.getRecordConstructorArgs(refreshed);
     IType argTypes[] = TypeUtils.tupleOfInterface(conArgType);
@@ -862,7 +862,7 @@ public class Constructors {
           Theta.FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
           .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, conDict
           .getOwnerName());
-      definer = new LongArgDefiner(argArray, bldCat, ccxt.getRepository());
+      definer = new LongArgDefiner(argArray, ccxt.getRepository());
       localVariables.add(new LocalVariableNode(Names.ARG_ARRAY, argArray.getJavaSig(), null, firstLabel, endLabel,
           Theta.FIRST_OFFSET));
       conDict.declare(Names.ARG_ARRAY, argArray);
@@ -944,7 +944,7 @@ public class Constructors {
         Theta.FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
         .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, conDict
         .getOwnerName());
-    definer = new LongArgDefiner(argArray, bldCat, ccxt.getRepository());
+    definer = new LongArgDefiner(argArray, ccxt.getRepository());
     localVariables.add(new LocalVariableNode(Names.ARG_ARRAY, argArray.getJavaSig(), null, firstLabel, endLabel,
         Theta.FIRST_OFFSET));
     conDict.declare(Names.ARG_ARRAY, argArray);
@@ -2315,7 +2315,7 @@ public class Constructors {
   }
 
   public static ISpec constructorCall(Location loc, VarInfo var, IAbstract args, ErrorReport errors,
-                                      CafeDictionary dict, CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+                                      CafeDictionary dict, CafeDictionary outer, IContinuation cont, CodeContext ccxt) {
     assert var.getKind() == JavaKind.constructor;
 
     MethodNode mtd = ccxt.getMtd();
@@ -2339,7 +2339,7 @@ public class Constructors {
       ins.add(new InsnNode(Opcodes.DUP));
       hwm.bump(2);
 
-      Expressions.compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
+      Expressions.compileArgs(args, argSpecs, ccxt);
 
       ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, var.getJavaType(), Types.INIT, var.getJavaInvokeSig()));
 
@@ -2350,7 +2350,7 @@ public class Constructors {
   }
 
   public static ISpec conFunCall(Location loc, VarInfo var, IAbstract call, ErrorReport errors, CafeDictionary dict,
-                                 CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+                                 CafeDictionary outer, IContinuation cont, CodeContext ccxt) {
     IType varType = Freshen.freshenForUse(var.getType());
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -2375,7 +2375,7 @@ public class Constructors {
     if (!methodType.equals(var.getJavaType()))
       ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
 
-    int arity = Expressions.compileArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
+    int arity = Expressions.compileArgs(args, argSpecs, ccxt);
 
     // actually invoke the constructor function
     Actions.doLineNumber(loc, mtd);
@@ -2398,12 +2398,11 @@ public class Constructors {
     return cont.cont(resltSpec, dict, loc, ccxt);
   }
 
-  public static ISpec buildTuple(Location loc, IAbstract con, ErrorReport errors, CafeDictionary dict,
-                                 CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+  public static ISpec buildTuple(Location loc, IAbstract con, IContinuation cont, CodeContext ccxt) {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
+    CafeDictionary dict = ccxt.getDict();
     InsnList ins = mtd.instructions;
 
     IList args = CafeSyntax.constructorArgs(con);
@@ -2434,7 +2433,7 @@ public class Constructors {
         ins.add(new InsnNode(Opcodes.DUP));
         Expressions.genIntConst(ins, hwm, ix);
 
-        ISpec actual = Expressions.compileExp(arg, dict, outer, inFunction, new JumpCont(nxLbl), ccxt);
+        ISpec actual = Expressions.compileExp(arg, new JumpCont(nxLbl), ccxt);
         Utils.jumpTarget(mtd.instructions, nxLbl);
         Expressions.checkType(actual, SrcSpec.generalSrc, mtd, dict, hwm);
         ins.add(new InsnNode(Opcodes.AASTORE));
@@ -2451,13 +2450,13 @@ public class Constructors {
     return cont.cont(SrcSpec.generalSrc, dict, loc, ccxt);
   }
 
-  public static ISpec recordCall(Location loc, VarInfo var, IAbstract call, ErrorReport errors, CafeDictionary dict,
-                                 CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+  public static ISpec recordCall(Location loc, VarInfo var, IAbstract call, IContinuation cont, CodeContext ccxt) {
     assert var.getKind() == JavaKind.constructor;
 
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
+    CafeDictionary dict = ccxt.getDict();
     InsnList ins = mtd.instructions;
 
     IType varType = Freshen.freshenForUse(var.getType());
@@ -2467,7 +2466,7 @@ public class Constructors {
 
     IList args = CafeSyntax.recordArgs(call);
 
-    ISpec[] argSpecs = SrcSpec.genericConstructorSpecs(varType, dict, bldCat, ccxt.getRepository(), errors, loc);
+    ISpec[] argSpecs = SrcSpec.genericConstructorSpecs(varType, dict, bldCat, ccxt.getRepository(), ccxt.getErrors(), loc);
 
     if (isEnum(var))
       ins.add(new FieldInsnNode(Opcodes.GETSTATIC, var.getJavaOwner(), var.getJavaSafeName(), var.getJavaSig()));
@@ -2478,7 +2477,7 @@ public class Constructors {
       ins.add(new InsnNode(Opcodes.DUP));
       hwm.bump(2);
 
-      Expressions.compileRecordArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
+      Expressions.compileRecordArgs(args, argSpecs, ccxt);
 
       ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, var.getJavaType(), Types.INIT, var.getJavaInvokeSig()));
 
@@ -2488,12 +2487,13 @@ public class Constructors {
     return cont.cont(argSpecs[argSpecs.length - 1], dict, loc, ccxt);
   }
 
-  public static ISpec recordFunCall(Location loc, VarInfo var, IAbstract call, ErrorReport errors, CafeDictionary dict,
-                                    CafeDictionary outer, String inFunction, IContinuation cont, CodeContext ccxt) {
+  public static ISpec recordFunCall(Location loc, VarInfo var, IAbstract call, ErrorReport errors,
+                                    IContinuation cont, CodeContext ccxt) {
     IType varType = Freshen.freshenForUse(var.getType());
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     CodeCatalog bldCat = ccxt.getBldCat();
+    CafeDictionary dict = ccxt.getDict();
 
     InsnList ins = mtd.instructions;
 
@@ -2514,7 +2514,7 @@ public class Constructors {
     if (!methodType.equals(var.getJavaType()))
       ins.add(new TypeInsnNode(Opcodes.CHECKCAST, methodType));
 
-    int arity = Expressions.compileRecordArgs(args, argSpecs, errors, dict, outer, inFunction, ccxt);
+    int arity = Expressions.compileRecordArgs(args, argSpecs, ccxt);
 
     // actually invoke the constructor function
     Actions.doLineNumber(loc, mtd);
