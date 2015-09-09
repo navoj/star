@@ -43,11 +43,11 @@ import java.util.Map.Entry;
  */
 
 public class GenerateCafe implements
-        TransformAction<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
-        TransformCondition<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
-        TransformExpression<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
-        TransformPattern<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
-        TransformStatement<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext> {
+    TransformAction<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
+    TransformCondition<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
+    TransformExpression<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
+    TransformPattern<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext>,
+    TransformStatement<List<IAbstract>, IAbstract, IAbstract, IAbstract, List<IAbstract>, CContext> {
 
   private final List<IAbstract> pkgDefs;
 
@@ -69,7 +69,7 @@ public class GenerateCafe implements
 
     Variable pkgVar = new Variable(pkgLoc, pkg.getPkgType(), pkg.getPkgName());
     pkgDefs.addAll(generator.compileVarDeclaration(pkgLoc, pkgVar, AccessMode.readOnly, pkg
-            .getPkgValue(), pkgCxt));
+        .getPkgValue(), pkgCxt));
 
     for (TypeDefinition type : pkg.getTypes())
       if (!types.contains(type.getName()) && !type.isImported()) {
@@ -129,7 +129,7 @@ public class GenerateCafe implements
       return FixedList.create(generateFunction(((Variable) defnPtn).getName(), (FunctionLiteral) value, context));
     else if (value instanceof PatternAbstraction)
       return FixedList.create(generatePtnAbstraction(((Variable) defnPtn).getName(), (PatternAbstraction) value,
-              context));
+          context));
     else if (value instanceof MemoExp)
       return FixedList.create(generateMemoFunction(entry.getVariable().getName(), (MemoExp) value, context));
     else {
@@ -175,7 +175,7 @@ public class GenerateCafe implements
           return compileVarDeclaration(loc, defnPtn, access, value, context);
         else {
           context.getErrors().reportError(
-                  "cannot handle assignment of " + defnPtn + "\n suggest not making its value mutually recursive", loc);
+              "cannot handle assignment of " + defnPtn + "\n suggest not making its value mutually recursive", loc);
           return FixedList.create();
         }
       }
@@ -329,7 +329,7 @@ public class GenerateCafe implements
       for (int ix = 0; ix < args.length; ix++)
         if (args[ix] == null)
           args[ix] = CafeSyntax.typeCast(loc, CafeSyntax.anonymous(loc), CafeSyntax.typeVar(loc, GenSym
-                  .genSym(StandardNames.ANONYMOUS_PREFIX)));
+              .genSym(StandardNames.ANONYMOUS_PREFIX)));
 
       return CafeSyntax.constructor(loc, scopedExpression(term.getFun(), ptnCxt), args);
     }
@@ -345,7 +345,7 @@ public class GenerateCafe implements
   public IAbstract transformMatchingPtn(MatchingPattern matching, CContext context) {
     Variable var = matching.getVar();
     CompilerUtils.extendCondition(context.getCond(), new Matches(matching.getLoc(), matching.getVar(), matching
-            .getPtn()));
+        .getPtn()));
     return varPattern(var, context);
   }
 
@@ -355,7 +355,7 @@ public class GenerateCafe implements
 
     Location loc = var.getLoc();
     IAbstract varType = var instanceof OverloadedVariable ? typeToAbstract(loc, cxt, ((OverloadedVariable) var)
-            .getDictType()) : typeToAbstract(loc, cxt, var.getType());
+        .getDictType()) : typeToAbstract(loc, cxt, var.getType());
 
     return CafeSyntax.typeCast(loc, Abstract.name(loc, name), varType);
   }
@@ -516,7 +516,7 @@ public class GenerateCafe implements
     String tmpName = GenSym.genSym("__copy");
     IAbstract tmp = Abstract.name(loc, tmpName);
     valActions.add(CafeSyntax.varDeclaration(loc, CafeSyntax.typeCast(loc, tmp, typeToAbstract(loc, dCxt, route
-            .getType())), CafeSyntax.copy(loc, rc)));
+        .getType())), CafeSyntax.copy(loc, rc)));
 
     if (replace instanceof RecordTerm) {
       RecordTerm record = (RecordTerm) replace;
@@ -576,7 +576,7 @@ public class GenerateCafe implements
         IContentExpression body = entry.getValue();
         IAbstract code = scopedExpression(body, context);
         cases.add(CafeSyntax.caseRule(key.getLoc(), AbstractValue.abstractValue(key.getLoc(), key.getValue(), context
-                .getErrors()), code));
+            .getErrors()), code));
       } else if (ptn != null)
         context.getErrors().reportError("invalid pattern in case: " + ptn, ptn.getLoc());
     }
@@ -708,7 +708,7 @@ public class GenerateCafe implements
   @Override
   public IAbstract transformOverloadedFieldAccess(OverloadedFieldAccess var, CContext context) {
     context.getErrors().reportError(StringUtils.msg("unresolved variable: ", var, " has type ", var.getType()),
-            var.getLoc());
+        var.getLoc());
 
     return CafeSyntax.voidExp(var.getLoc());
   }
@@ -726,7 +726,7 @@ public class GenerateCafe implements
   @Override
   public IAbstract transformOverloadVariable(OverloadedVariable var, CContext context) {
     context.getErrors().reportError(StringUtils.msg("unresolved variable: ", var, " has type ", var.getType()),
-            var.getLoc());
+        var.getLoc());
 
     return CafeSyntax.voidExp(var.getLoc());
   }
@@ -920,7 +920,7 @@ public class GenerateCafe implements
       return CafeSyntax.match(matches.getLoc(), lhs, rhs);
     else
       return CafeSyntax.conjunction(matches.getLoc(), CafeSyntax.match(matches.getLoc(), lhs, rhs), cond.get()
-              .transform(this, context));
+          .transform(this, context));
   }
 
   @Override
@@ -1111,9 +1111,22 @@ public class GenerateCafe implements
 
   @Override
   public List<IAbstract> transformProcedureCallAction(ProcedureCallAction call, CContext context) {
-    IAbstract proc = scopedExpression(call.getProc(), context);
-    IAbstract args[] = compileExps(call.getArgs(), context);
-    return FixedList.create(CafeSyntax.escape(call.getLoc(), ((Name) proc).getId(), args));
+    final IContentExpression prc = call.getProc();
+    IAbstract proc = scopedExpression(prc, context);
+
+    Location loc = call.getLoc();
+    assert CompilerUtils.isTupleTerm(call.getArgs());
+
+    List<IContentExpression> elements = ((ConstructorTerm)call.getArgs()).getElements();
+    List<IAbstract> args = compileExps(elements, context);
+
+    if (proc instanceof Name)
+      return FixedList.create(CafeSyntax.escape(call.getLoc(), ((Name) proc).getId(), args));
+    else {
+      // introduce a new variable
+      Name tmp = introduceVariable(loc, context, proc, prc.getType());
+      return FixedList.create(CafeSyntax.escape(call.getLoc(), ((Name) tmp).getId(), args));
+    }
   }
 
   @Override

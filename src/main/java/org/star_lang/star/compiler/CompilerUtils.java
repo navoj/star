@@ -2788,4 +2788,8 @@ public class CompilerUtils {
   public static boolean isTuplePattern(IContentPattern tpl) {
     return tpl instanceof ConstructorPtn && TypeUtils.isTupleType(tpl.getType());
   }
+
+  public static boolean isTupleTerm(IContentExpression term){
+    return term instanceof ConstructorTerm && TypeUtils.isTupleType(term.getType());
+  }
 }

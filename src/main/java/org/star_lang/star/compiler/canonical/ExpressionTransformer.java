@@ -876,7 +876,7 @@ public abstract class ExpressionTransformer {
     public IContentAction transformAction(IContentAction act) {
       ProcedureCallAction call = (ProcedureCallAction) act;
 
-      return new ProcedureCallAction(call.getLoc(), transform(call.getProc()), transformExpressions(call.getArgs()));
+      return new ProcedureCallAction(call.getLoc(), transform(call.getProc()), transform(call.getArgs()));
     }
 
     @Override

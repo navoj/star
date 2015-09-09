@@ -7,7 +7,6 @@ import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImportEntry;
 import org.star_lang.star.compiler.canonical.EnvironmentEntry.TypeAliasEntry;
 import org.star_lang.star.compiler.util.Pair;
 
-import java.util.Map.Entry;
 import java.util.Stack;
 
 /*
@@ -440,8 +439,7 @@ public class DefaultVisitor implements CanonicalVisitor {
   @Override
   public void visitProcedureCallAction(ProcedureCallAction call) {
     call.getProc().accept(this);
-    for (IContentExpression arg : call.getArgs())
-      arg.accept(this);
+    call.getArgs().accept(this);
   }
 
   @Override

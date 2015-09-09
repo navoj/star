@@ -1,0 +1,159 @@
+package org.star_lang.star.compiler.codegen;
+
+/*
+ * Copyright (c) 2015. Francis G. McCabe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+import org.star_lang.star.compiler.cafe.compile.CodeContext;
+import org.star_lang.star.compiler.cafe.compile.ISpec;
+import org.star_lang.star.compiler.cafe.compile.cont.CallCont;
+import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
+import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.data.type.Location;
+
+public class ExpressionCompile implements TransformExpression<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
+  private final CodeContext ccxt;
+
+  public ExpressionCompile(CodeContext ccxt) {
+    this.ccxt = ccxt;
+  }
+
+  @Override
+  public ISpec transformApplication(Application appl, IContinuation cont) {
+    return compileFunCall(appl.getLoc(),appl.getFunction(),appl.getArgs(),cont,ccxt);
+  }
+
+  @Override
+  public ISpec transformRecord(RecordTerm record, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformRecordSubstitute(RecordSubstitute update, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformCaseExpression(CaseExpression exp, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformCastExpression(CastExpression exp, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformConditionalExp(ConditionalExp act, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformContentCondition(ContentCondition cond, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformFieldAccess(FieldAccess dot, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformMemo(MemoExp memo, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformMethodVariable(MethodVariable var, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformNullExp(NullExp nil, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformFunctionLiteral(FunctionLiteral f, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformLetTerm(LetTerm let, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformOverloaded(Overloaded over, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformOverloadedFieldAccess(OverloadedFieldAccess over, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformOverloadVariable(OverloadedVariable var, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformPatternAbstraction(PatternAbstraction pattern, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformRaiseExpression(RaiseExpression exp, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformReference(Shriek reference, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformResolved(Resolved res, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformScalar(Scalar scalar, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformConstructor(ConstructorTerm tuple, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformValofExp(ValofExp val, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformVariable(Variable variable, IContinuation cont) {
+    return null;
+  }
+
+  @Override
+  public ISpec transformVoidExp(VoidExp exp, IContinuation cont) {
+    return null;
+  }
+
+  public static ISpec compileFunCall(Location loc, IContentExpression proc, IContentExpression args, IContinuation callCont, CodeContext cxt) {
+    return null;
+  }
+}

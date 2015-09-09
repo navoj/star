@@ -276,6 +276,15 @@ public class CafeSyntax {
     return new Apply(loc, Names.ESCAPE, Abstract.name(loc, op), block(loc, args));
   }
 
+  public static IAbstract escape(Location loc, String op, List<IAbstract> args) {
+    return new Apply(loc, Names.ESCAPE, Abstract.name(loc, op), block(loc, args));
+  }
+
+  public static IAbstract escape(Location loc, IAbstract op, IAbstract args) {
+    assert isBlock(args);
+    return new Apply(loc, Names.ESCAPE, op, args);
+  }
+
   public static boolean isEscape(IAbstract trm) {
     return Abstract.isBinary(trm, Names.ESCAPE) && Abstract.argPath(trm, 0) instanceof Name
         && isBlock(Abstract.argPath(trm, 1));

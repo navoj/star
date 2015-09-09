@@ -25,11 +25,11 @@ import java.util.Map.Entry;
  */
 
 public class DefaultTransformer<T> implements
-        TransformExpression<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-        TransformAction<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-        TransformPattern<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-        TransformStatement<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
-        TransformCondition<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T> {
+    TransformExpression<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+    TransformAction<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+    TransformPattern<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+    TransformStatement<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T>,
+    TransformCondition<IContentAction, IContentExpression, IContentPattern, ICondition, IStatement, T> {
 
   @Override
   public IContentExpression transformApplication(Application appl, T context) {
@@ -329,7 +329,7 @@ public class DefaultTransformer<T> implements
     List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
     for (Pair<IContentPattern, IContentAction> cse : act.getCases()) {
       Pair<IContentPattern, IContentAction> nc = Pair.pair(cse.left().transformPattern(this, context), cse.right()
-              .transform(this, context));
+          .transform(this, context));
       clean &= nc.left() == cse.left() && nc.right() == cse.right();
       cases.add(nc);
     }
@@ -431,16 +431,12 @@ public class DefaultTransformer<T> implements
   public IContentAction transformProcedureCallAction(ProcedureCallAction call, T context) {
     IContentExpression proc = call.getProc().transform(this, context);
     boolean clean = proc == call.getProc();
-    IContentExpression[] args = call.getArgs();
-    IContentExpression[] nArgs = new IContentExpression[args.length];
-    for (int ix = 0; ix < args.length; ix++) {
-      nArgs[ix] = args[ix].transform(this, context);
-      clean &= nArgs[ix] == args[ix];
-    }
+    IContentExpression arg = call.getArgs().transform(this, context);
+    clean &= arg == call.getArgs();
     if (clean)
       return call;
     else
-      return new ProcedureCallAction(call.getLoc(), proc, nArgs);
+      return new ProcedureCallAction(call.getLoc(), proc, arg);
   }
 
   @Override

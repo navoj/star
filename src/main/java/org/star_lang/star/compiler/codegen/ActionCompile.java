@@ -14,19 +14,17 @@ package org.star_lang.star.compiler.codegen;
  * permissions and limitations under the License.
  */
 
-import com.sun.org.apache.bcel.internal.classfile.Code;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
+import org.star_lang.star.compiler.cafe.compile.cont.CallCont;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
 import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.data.type.Location;
 
-/**
- * Created by fgm on 8/26/15.
- */
 public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
   private final CodeContext cxt;
 
@@ -86,7 +84,14 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
 
   @Override
   public ISpec transformProcedureCallAction(ProcedureCallAction call, IContinuation cont) {
-    return null;
+    Location loc = call.getLoc();
+
+    MethodNode mtd = cxt.getMtd();
+    InsnList ins = mtd.instructions;
+
+    CallCont callCont = new CallCont(ins, cont);
+
+    return ExpressionCompile.compileFunCall(loc, call.getProc(), call.getArgs(), callCont, cxt);
   }
 
   @Override

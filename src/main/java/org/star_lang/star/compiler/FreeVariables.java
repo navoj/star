@@ -1,36 +1,15 @@
 package org.star_lang.star.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.star_lang.star.compiler.canonical.Canonical;
-import org.star_lang.star.compiler.canonical.CanonicalVisitor;
-import org.star_lang.star.compiler.canonical.CaseAction;
-import org.star_lang.star.compiler.canonical.CaseExpression;
-import org.star_lang.star.compiler.canonical.DefaultVisitor;
-import org.star_lang.star.compiler.canonical.FunctionLiteral;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentAction;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.Matches;
-import org.star_lang.star.compiler.canonical.MemoExp;
-import org.star_lang.star.compiler.canonical.MethodVariable;
-import org.star_lang.star.compiler.canonical.OverloadedVariable;
-import org.star_lang.star.compiler.canonical.PatternAbstraction;
-import org.star_lang.star.compiler.canonical.PatternApplication;
-import org.star_lang.star.compiler.canonical.ProcedureCallAction;
-import org.star_lang.star.compiler.canonical.Search;
-import org.star_lang.star.compiler.canonical.VarDeclaration;
-import org.star_lang.star.compiler.canonical.VarEntry;
-import org.star_lang.star.compiler.canonical.Variable;
-import org.star_lang.star.compiler.canonical.WherePattern;
+import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.compiler.type.BuiltinInfo;
 import org.star_lang.star.compiler.type.DictInfo;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.Wrapper;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -169,8 +148,7 @@ public class FreeVariables extends DefaultVisitor
   public void visitProcedureCallAction(ProcedureCallAction call)
   {
     call.getProc().accept(this);
-    for (IContentExpression arg : call.getArgs())
-      arg.accept(this);
+    call.getArgs().accept(this);
   }
 
   private class Excluder extends DefaultVisitor
@@ -251,48 +229,6 @@ public class FreeVariables extends DefaultVisitor
   }
 
   public static List<Variable> freeVars(Canonical term, Dictionary cxt)
-  {
-    final List<Variable> freeVars = new ArrayList<>();
-
-    FreeVariables visitor = new FreeVariables(freeVars, cxt);
-
-    term.accept(visitor);
-
-    return freeVars;
-  }
-
-  public static List<Variable> findAllVars(Canonical term, Dictionary cxt)
-  {
-    List<Variable> freeVars = new ArrayList<>();
-    FreeVariables visitor = new FreeVariables(freeVars, null) {
-
-      @Override
-      public void visitMethodVariable(MethodVariable mtd)
-      {
-        visitVariable(mtd);
-      }
-
-      @Override
-      public void visitOverloadedVariable(OverloadedVariable var)
-      {
-        visitVariable(var);
-      }
-
-      @Override
-      public void visitVariable(Variable var)
-      {
-        if (!cxt.isDefinedVar(var.getName()))
-          if (!freeVars.contains(var) && excluder.isNotExcluded(var.getName()))
-            freeVars.add(var);
-      }
-    };
-
-    term.accept(visitor);
-
-    return freeVars;
-  }
-
-  public static List<Variable> freeTermVars(ICondition term, final Dictionary cxt)
   {
     final List<Variable> freeVars = new ArrayList<>();
 

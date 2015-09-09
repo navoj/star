@@ -354,8 +354,7 @@ public class Computations
   public IContentExpression transformProcedureCallAction(ProcedureCallAction call, ComputationContext context) {
     IContentExpression op = call.getProc();
     IContentExpression trOp = op.transform(this, context);
-
-    IContentExpression[] trArgs = transform(call.getArgs(), context);
+    IContentExpression trArgs = call.getArgs(). transform(this, context);
 
     Location loc = call.getLoc();
     return valofValis(loc, new VoidExp(loc), new ProcedureCallAction(loc, trOp, trArgs));
