@@ -28,9 +28,13 @@ public class ExpressionCompile implements TransformExpression<ISpec, ISpec, ISpe
     this.ccxt = ccxt;
   }
 
+  public static ISpec compile(IContentExpression exp,IContinuation cont,CodeContext cxt){
+    return exp.transform(new ExpressionCompile(cxt),cont);
+  }
+
   @Override
   public ISpec transformApplication(Application appl, IContinuation cont) {
-    return compileFunCall(appl.getLoc(),appl.getFunction(),appl.getArgs(),cont,ccxt);
+    return compileFunCall(appl.getLoc(), appl.getFunction(), appl.getArgs(), cont, ccxt);
   }
 
   @Override
@@ -154,6 +158,10 @@ public class ExpressionCompile implements TransformExpression<ISpec, ISpec, ISpe
   }
 
   public static ISpec compileFunCall(Location loc, IContentExpression proc, IContentExpression args, IContinuation callCont, CodeContext cxt) {
+    return null;
+  }
+
+  public static ISpec compileEscape(Location loc,String name,IContentExpression[] args,IContinuation callCont, CodeContext cxt){
     return null;
   }
 }

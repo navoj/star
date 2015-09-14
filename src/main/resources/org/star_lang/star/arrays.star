@@ -109,6 +109,9 @@ implementation filterable over list of %t determines %t is {
 implementation foldable over list of %e determines %e is {
   fun leftFold(F,I,A) is __array_left_fold(A,F,I);
   fun rightFold(F,I,A) is __array_right_fold(A,F,I);
+
+  fun leftFold1(F,A) is __array_left_fold1(A,F);
+  fun rightFold1(F,A) is __array_right_fold1(A,F);
 }
 
 implementation grouping over list determines (dictionary, %k,%v) is {

@@ -14,16 +14,23 @@ package org.star_lang.star.compiler.codegen;
  * permissions and limitations under the License.
  */
 
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.star_lang.star.compiler.cafe.compile.CodeContext;
-import org.star_lang.star.compiler.cafe.compile.ISpec;
-import org.star_lang.star.compiler.cafe.compile.cont.CallCont;
-import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
+import org.star_lang.star.compiler.ErrorReport;
+import org.star_lang.star.compiler.ast.Abstract;
+import org.star_lang.star.compiler.ast.IAbstract;
+import org.star_lang.star.compiler.ast.Name;
+import org.star_lang.star.compiler.cafe.CafeSyntax;
+import org.star_lang.star.compiler.cafe.compile.*;
+import org.star_lang.star.compiler.cafe.compile.cont.*;
 import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.compiler.generate.CContext;
+import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.compiler.util.AccessMode;
+import org.star_lang.star.compiler.util.FixedList;
+import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
+import org.star_lang.star.operators.assignment.runtime.Assignments;
 
 public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
   private final CodeContext cxt;
@@ -39,7 +46,26 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
 
   @Override
   public ISpec transformAssignment(Assignment act, IContinuation cont) {
-    return null;
+    IContentExpression lval = act.getLValue();
+    IContentExpression exp = act.getValue();
+
+    Location loc = act.getLoc();
+    IType type = act.getValue().getType();
+    String assignmentEscape;
+    if (TypeUtils.isRawBoolType(type))
+      assignmentEscape = Assignments.AssignRawBool.name;
+    else if (TypeUtils.isRawCharType(type))
+      assignmentEscape = Assignments.AssignRawChar.name;
+    else if (TypeUtils.isRawIntType(type))
+      assignmentEscape = Assignments.AssignRawInteger.name;
+    else if (TypeUtils.isRawLongType(type))
+      assignmentEscape = Assignments.AssignRawLong.name;
+    else if (TypeUtils.isRawFloatType(type))
+      assignmentEscape = Assignments.AssignRawFloat.name;
+    else
+      assignmentEscape = Assignments.Assign.name;
+
+    return ExpressionCompile.compileEscape(loc, assignmentEscape, new IContentExpression[]{lval, exp}, cont, cxt);
   }
 
   @Override
@@ -120,5 +146,25 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
       mtd.instructions.add(lnLbl);
       mtd.instructions.add(new LineNumberNode(loc.getLineCnt(), lnLbl));
     }
+  }
+
+  private MethodNode getMtd() {
+    return cxt.getMtd();
+  }
+
+  private HWM getHWM() {
+    return cxt.getMtdHwm();
+  }
+
+  private ErrorReport getErrors() {
+    return cxt.getErrors();
+  }
+
+  private CafeDictionary getDict() {
+    return cxt.getDict();
+  }
+
+  private CafeDictionary getOuter() {
+    return cxt.getOuter();
   }
 }

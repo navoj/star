@@ -40,12 +40,6 @@ public class QueryTests extends SRTest {
   }
 
   @Test
-  @Ignore
-  public void testIndexedQueries() {
-    runStar("complexqueries.star");
-  }
-
-  @Test
   public void testReducing() {
     runStar("reducingQueries.star");
   }
@@ -144,12 +138,6 @@ public class QueryTests extends SRTest {
   @Test
   public void testOtherwise() {
     runStar("otherwiseTest.star");
-  }
-
-  @Test
-  @Ignore
-  public void testIndexed() {
-    runStar("indexedTests.star");
   }
 
   @Test
