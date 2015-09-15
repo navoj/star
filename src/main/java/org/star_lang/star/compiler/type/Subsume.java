@@ -39,15 +39,13 @@ import org.star_lang.star.data.type.UniversalType;
  * permissions and limitations under the License.
  */
 
-public class Subsume
-{
+public class Subsume {
   private final Dictionary dict;
   private final Location loc;
   private final Stack<Pair<TypeVar, Integer>> resets = new Stack<>();
   private final boolean allow;
 
-  private Subsume(Dictionary face, Location loc, boolean allow)
-  {
+  private Subsume(Dictionary face, Location loc, boolean allow) {
     this.dict = face;
     this.loc = loc;
     this.allow = allow;
@@ -55,25 +53,22 @@ public class Subsume
 
   /**
    * Unify two type expressions.
-   * 
+   * <p>
    * Guaranteed to have no effect should the unification itself fail. I.e., partial unifications
    * will be thrown away.
-   * 
+   *
    * @param t1
    * @param t2
-   * @param loc
-   *          the location where the unification takes place. This is helpful in tracking down the
-   *          sources of a type error.
+   * @param loc the location where the unification takes place. This is helpful in tracking down the
+   *            sources of a type error.
    * @param cxt
    * @throws TypeConstraintException
    */
-  public static void subsume(IType t1, IType t2, Location loc, Dictionary cxt) throws TypeConstraintException
-  {
+  public static void subsume(IType t1, IType t2, Location loc, Dictionary cxt) throws TypeConstraintException {
     subsume(t1, t2, loc, cxt, false);
   }
 
-  public static void same(IType t1, IType t2, Location loc, Dictionary dict) throws TypeConstraintException
-  {
+  public static void same(IType t1, IType t2, Location loc, Dictionary dict) throws TypeConstraintException {
     Subsume sub = new Subsume(dict, loc, false);
     sub.subsume(t1, t2);
     sub.subsume(t2, t1);
@@ -81,27 +76,23 @@ public class Subsume
 
   /**
    * Test to see if one type expression subsumes another.
-   * 
+   * <p>
    * For non-quantified types, this is equivalent to unification. However, if one or both have
    * explicit quantifiers then the algorithm is somewhat more complex.
-   * 
+   * <p>
    * Guaranteed to have no effect should the test itself fail. I.e., partial subsumption tests will
    * be thrown away.
-   * 
+   *
    * @param t1
-   * @param t2
-   *          should be at least as polymorphic as t1
-   * @param loc
-   *          the location where the unification takes place. This is helpful in tracking down the
-   *          sources of a type error.
+   * @param t2    should be at least as polymorphic as t1
+   * @param loc   the location where the unification takes place. This is helpful in tracking down the
+   *              sources of a type error.
    * @param cxt
-   * @param allow
-   *          whether to allow type variables to be constrained with type constraints
+   * @param allow whether to allow type variables to be constrained with type constraints
    * @throws TypeConstraintException
    */
   public static void subsume(IType t1, IType t2, Location loc, Dictionary cxt, boolean allow)
-      throws TypeConstraintException
-  {
+      throws TypeConstraintException {
     Subsume sub = new Subsume(cxt, loc, allow);
     try {
       sub.subsume(t1, t2);
@@ -111,8 +102,7 @@ public class Subsume
     }
   }
 
-  public static boolean test(IType t1, IType t2, Location loc, Dictionary dict)
-  {
+  public static boolean test(IType t1, IType t2, Location loc, Dictionary dict) {
     Subsume sub = new Subsume(dict, loc, true);
     try {
       sub.subsume(t1, t2);
@@ -124,13 +114,11 @@ public class Subsume
     }
   }
 
-  public void resetBindings()
-  {
+  public void resetBindings() {
     resetBindings(0);
   }
 
-  private void resetBindings(int limit)
-  {
+  private void resetBindings(int limit) {
     while (resets.size() > limit) {
       Pair<TypeVar, Integer> v = resets.pop();
       v.left.reset(v.right);
@@ -139,14 +127,13 @@ public class Subsume
 
   /**
    * tp2 subsumes tp1 iff tp2 is 'more' general than tp1.
-   * 
-   * @param tp1
-   * @param tp2
+   *
+   * @param t1
+   * @param t2
    * @throws TypeConstraintException
    */
 
-  private void subsume(IType t1, IType t2) throws TypeConstraintException
-  {
+  private void subsume(IType t1, IType t2) throws TypeConstraintException {
     IType tp1 = checkAlias(t1);
     IType tp2 = checkAlias(t2);
 
@@ -291,13 +278,12 @@ public class Subsume
         }
       }
     } else if (tp2 instanceof TypeInterface)
-      subsume(TypeUtils.interfaceOfType(loc, tp1, dict), tp2);
+      subsume(TypeUtils.interfaceOfType(loc, tp1, dict, null), tp2);
     else
       throw new TypeConstraintException(FixedList.create(tp1, " not consistent with ", tp2));
   }
 
-  private IType checkAlias(IType type) throws TypeConstraintException
-  {
+  private IType checkAlias(IType type) throws TypeConstraintException {
     type = TypeUtils.deRef(type);
     if (dict != null) {
       if (type instanceof TypeExp) {
@@ -324,8 +310,7 @@ public class Subsume
     return type;
   }
 
-  private void bindVar(TypeVar v, IType tp) throws TypeConstraintException
-  {
+  private void bindVar(TypeVar v, IType tp) throws TypeConstraintException {
     if (OccursCheck.occursCheck(tp, v))
       throw new TypeConstraintException("type would be circular");
     else if (v.isReadOnly()) { // some special hacking needed here 'cos readonly type var ~= Type

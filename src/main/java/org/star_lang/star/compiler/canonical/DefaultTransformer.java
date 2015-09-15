@@ -1,10 +1,6 @@
 
 package org.star_lang.star.compiler.canonical;
 
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.ContractEntry;
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImplementationEntry;
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImportEntry;
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.TypeAliasEntry;
 import org.star_lang.star.compiler.util.Pair;
 
 import java.util.*;

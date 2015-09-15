@@ -1,10 +1,5 @@
 package org.star_lang.star.compiler.canonical;
 
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.ContractEntry;
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImplementationEntry;
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.ImportEntry;
-import org.star_lang.star.compiler.canonical.EnvironmentEntry.TypeAliasEntry;
-
 public interface TransformStatement<A, E, P, C, D, T>
 {
   D transformContractDefn(ContractEntry con, T context);

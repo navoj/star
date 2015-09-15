@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.star_lang.star.compiler.type;
 
@@ -34,16 +34,14 @@ import org.star_lang.star.data.type.TypeVar;
  */
 
 @SuppressWarnings("serial")
-public class VarInfo implements DictInfo
-{
+public class VarInfo implements DictInfo {
   private AccessMode access;
   private final Variable var;
   private boolean initialized;
   private final IType face;
   private final boolean typeClosed;
 
-  VarInfo(Variable ref, AccessMode readOnly, boolean initialized)
-  {
+  VarInfo(Variable ref, AccessMode readOnly, boolean initialized) {
     this.access = readOnly;
     this.var = ref;
     this.initialized = initialized;
@@ -52,56 +50,47 @@ public class VarInfo implements DictInfo
   }
 
   @Override
-  public Variable getVariable()
-  {
+  public Variable getVariable() {
     return var;
   }
 
   @Override
-  public AccessMode getAccess()
-  {
+  public AccessMode getAccess() {
     return access;
   }
 
-  public void setAccess(AccessMode access)
-  {
+  public void setAccess(AccessMode access) {
     this.access = access;
   }
 
   @Override
-  public boolean isInitialized()
-  {
+  public boolean isInitialized() {
     return initialized;
   }
 
-  public void setInitialized(boolean initialized)
-  {
+  public void setInitialized(boolean initialized) {
     this.initialized = initialized;
   }
 
   @Override
-  public Location getLoc()
-  {
+  public Location getLoc() {
     return var.getLoc();
   }
 
   @Override
-  public String getName()
-  {
+  public String getName() {
     return var.getName();
   }
 
   @Override
-  public IType getType()
-  {
+  public IType getType() {
     return var.getType();
   }
 
-  public IType getFace(ErrorReport errors, Dictionary dict)
-  {
+  public IType getFace(ErrorReport errors, Dictionary dict) {
     if (TypeUtils.isTypeVar(face)) {
       Location loc = var.getLoc();
-      IType face = Freshen.freshenForUse(TypeUtils.interfaceOfType(loc, var.getType(), dict));
+      IType face = Freshen.freshenForUse(TypeUtils.interfaceOfType(loc, var.getType(), dict, errors));
 
       try {
         Subsume.subsume(this.face, face, loc, dict);
@@ -115,18 +104,16 @@ public class VarInfo implements DictInfo
   }
 
   @Override
-  public boolean isTypeVarInScope(TypeVar var)
-  {
+  public boolean isTypeVarInScope(TypeVar var) {
     return !typeClosed && OccursCheck.occursIn(getType(), var);
   }
 
-  public IType localType(Location loc, String field, Dictionary dict, ErrorReport errors)
-  {
+  public IType localType(Location loc, String field, Dictionary dict, ErrorReport errors) {
     IType type = TypeUtils.deRef(getType());
 
     if (TypeUtils.isTypeVar(face) && !TypeUtils.isTypeVar(type)) {
       try {
-        IType face = TypeUtils.interfaceOfType(loc, type, dict);
+        IType face = TypeUtils.interfaceOfType(loc, type, dict,errors);
         Pair<IType, Map<String, Quantifier>> fface = Freshen.freshen(face, AccessMode.readOnly, AccessMode.readWrite);
         Subsume.subsume(this.face, fface.left, loc, dict);
       } catch (TypeConstraintException e) {
@@ -147,8 +134,7 @@ public class VarInfo implements DictInfo
     return TypeUtils.getInterfaceMemberType(face, field);
   }
 
-  public IType typeOfField(Location loc, String field, Dictionary dict, ErrorReport errors)
-  {
+  public IType typeOfField(Location loc, String field, Dictionary dict, ErrorReport errors) {
     IType type = TypeUtils.deRef(getType());
 
     if (TypeUtils.isTypeInterface(type))
@@ -168,8 +154,7 @@ public class VarInfo implements DictInfo
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     var.prettyPrint(disp);
 
     if (!initialized)
@@ -181,8 +166,7 @@ public class VarInfo implements DictInfo
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
     prettyPrint(disp);
     return disp.toString();

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.canonical.MethodVariable;
@@ -201,7 +202,7 @@ public class TypeUtils {
   public static IType typeExp(IType con, List<IType> args) {
     if (!con.kind().check(args.size()))
       throw new IllegalArgumentException(StringUtils.msg(con, " expects ", con.kind().arity(), " type arguments, got ",
-              args.size()));
+          args.size()));
     else if (con instanceof Type && args.isEmpty())
       return con;
     else
@@ -452,7 +453,7 @@ public class TypeUtils {
     return ((TypeInterface) type).numOfFields();
   }
 
-  public static IType interfaceOfType(Location loc, IType tipe, Dictionary dict) {
+  public static IType interfaceOfType(Location loc, IType tipe, Dictionary dict,ErrorReport errors) {
     List<Quantifier> quants = new ArrayList<>();
     IType type = unwrap(tipe, quants);
 
@@ -487,7 +488,7 @@ public class TypeUtils {
             try {
               unify(getConstructorResultType(conType), type, loc, dict);
             } catch (TypeConstraintException e) {
-              assert false : "internal";
+              errors.reportError(StringUtils.msg(e.getWords()), loc);
             }
 
             IType conArgType = TypeUtils.getConstructorArgType(conType);
@@ -506,7 +507,7 @@ public class TypeUtils {
                 try {
                   Subsume.same(entry.getValue(), fldType, loc, dict);
                 } catch (TypeConstraintException e) {
-                  assert false : "internal error";
+                  errors.reportError(StringUtils.msg(e.getWords()), loc);
                 }
               else
                 members.put(entry.getKey(), entry.getValue());
@@ -798,7 +799,7 @@ public class TypeUtils {
     if (isTupleLabel(type))
       return true;
     else if (type.equals(StandardNames.FUN_ARROW) || type.equals(StandardNames.PTN_TYPE) || type.equals(
-            StandardNames.CONSTRUCTOR_TYPE))
+        StandardNames.CONSTRUCTOR_TYPE))
       return true;
     else
       return Intrinsics.isIntrinsicType(type);
@@ -818,7 +819,7 @@ public class TypeUtils {
   }
 
   public static IType getAttributeType(Dictionary cxt, IType type, String att, boolean testOnly)
-          throws TypeConstraintException {
+      throws TypeConstraintException {
     type = deRef(type);
 
     if (type instanceof TypeInterfaceType)
@@ -858,7 +859,7 @@ public class TypeUtils {
 
               if (conArgType instanceof ExistentialType) {
                 Pair<IType, Map<String, Quantifier>> ref = Freshen.freshen(conArgType, AccessMode.readOnly,
-                        AccessMode.readWrite);
+                    AccessMode.readWrite);
                 conArgType = ref.left;
                 if (conArgType instanceof TypeInterface) {
                   return Freshen.requant(((TypeInterface) conArgType).getFieldType(att), ref.right);
@@ -962,7 +963,7 @@ public class TypeUtils {
 
               if (conArgType instanceof ExistentialType) {
                 Pair<IType, Map<String, Quantifier>> ref = Freshen.freshen(conArgType, AccessMode.readOnly,
-                        AccessMode.readWrite);
+                    AccessMode.readWrite);
                 conArgType = ref.left;
                 if (conArgType instanceof TypeInterface) {
                   return Freshen.requant(((TypeInterface) conArgType).getType(att), ref.right);
@@ -1277,8 +1278,8 @@ public class TypeUtils {
     type = deRef(type);
 
     return type instanceof Type && (isRawBoolType(type) || isRawCharType(type) || isRawIntType(type) || isRawLongType(
-            type) || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type)
-            || isRawBinaryType(type));
+        type) || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type)
+        || isRawBinaryType(type));
   }
 
   public static IType cookedType(IType type) {
@@ -1410,7 +1411,7 @@ public class TypeUtils {
   }
 
   public static void addTypeConstraint(TypeVar var, Location loc, String att, IType type, Dictionary cxt, boolean allow)
-          throws TypeConstraintException {
+      throws TypeConstraintException {
     var.addConstraint(new FieldTypeConstraint(var, att, type), allow, loc, cxt);
   }
 
@@ -1435,7 +1436,7 @@ public class TypeUtils {
           TypeExp t1 = (TypeExp) o1;
           TypeExp t2 = (TypeExp) o2;
           int comp = t1.typeArity() == t2.typeArity() ? compare(t1.getTypeCon(), t2.getTypeCon())
-                  : t1.typeArity() - t2.typeArity();
+              : t1.typeArity() - t2.typeArity();
 
           if (comp == 0) {
             for (int ix = 0; ix < t1.typeArity() && comp == 0; ix++)
