@@ -117,9 +117,7 @@ public class StandardNames
   public static final String OVERLOADED_TYPE = graphic(AbstractType.OVERLOADED_TYPE);
   public static final String CONSTRUCTOR_TYPE = graphic(AbstractType.CONSTRUCTOR_TYPE);
 
-  public static final String FORALL = keyword(AbstractType.FORALL);
   public static final String FOR_ALL = keyword(AbstractType.FOR_ALL);
-  public static final String ST = keyword(AbstractType.ST);
   public static final String S_T = keyword(AbstractType.S_T);
   public static final String EXISTS = keyword(AbstractType.EXISTS);
 

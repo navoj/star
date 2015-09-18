@@ -233,9 +233,7 @@ public class Operators implements PrettyPrintable
 
 
     definePrefixAssoc(StandardNames.EXISTS, 1005);
-    definePrefixAssoc(StandardNames.FORALL, 1005);
     definePrefixAssoc(StandardNames.FOR_ALL, FOR_ALL_PRIORITY);
-    defineRight(StandardNames.ST, S_T_PRIORITY);
     defineRight(StandardNames.S_T, S_T_PRIORITY);
 
     defineRight(StandardNames.UNI_TILDA, 950);
@@ -503,11 +501,6 @@ public class Operators implements PrettyPrintable
     }
 
     return false;
-  }
-
-  public boolean isABracket(String str)
-  {
-    return isLeftBracket(str) || isRightBracket(str);
   }
 
   public void defineBracketPair(int inner, String left, String right, String operator) throws OperatorException

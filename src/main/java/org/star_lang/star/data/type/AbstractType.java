@@ -37,9 +37,7 @@ public abstract class AbstractType implements IType
   public static final String HAS_KIND = "has kind";
   public static final String TUPLE = "tuple";
   public static final String IS_TUPLE = "is tuple";
-  public static final String FORALL = "forall";
   public static final String FOR_ALL = "for all";
-  public static final String ST = "suchthat";
   public static final String S_T = "such that";
   public static final String EXISTS = "exists";
 

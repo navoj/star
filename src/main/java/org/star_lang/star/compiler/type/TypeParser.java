@@ -542,7 +542,7 @@ public class TypeParser {
    * <p>
    * %t depends on tp
    * <p>
-   * constraint 'n constraint
+   * constraint and constraint
    *
    * @param varHandler callback to handle occurrences of names
    */
