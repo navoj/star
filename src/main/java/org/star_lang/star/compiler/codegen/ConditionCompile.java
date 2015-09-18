@@ -15,10 +15,10 @@ package org.star_lang.star.compiler.codegen;
  */
 
 import org.objectweb.asm.tree.LabelNode;
-import org.star_lang.star.compiler.cafe.compile.CodeContext;
-import org.star_lang.star.compiler.cafe.compile.ISpec;
-import org.star_lang.star.compiler.cafe.compile.Sense;
+import org.star_lang.star.compiler.cafe.compile.*;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
+import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
+import org.star_lang.star.compiler.cafe.compile.cont.PttrnCont;
 import org.star_lang.star.compiler.canonical.*;
 
 /**
@@ -26,77 +26,95 @@ import org.star_lang.star.compiler.canonical.*;
  */
 public class ConditionCompile implements TransformCondition<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
   private final CodeContext cxt;
-  private final Sense sense;
-  private final LabelNode elLabel;
+  private final IContinuation fail;
 
-  public ConditionCompile(Sense sense, LabelNode elLabel, CodeContext cxt) {
+  public ConditionCompile(IContinuation fail, CodeContext cxt) {
     this.cxt = cxt;
-    this.sense = sense;
-    this.elLabel = elLabel;
+    this.fail = fail;
   }
 
-  public static ISpec compile(ICondition cond, Sense sense, LabelNode elLabel, CodeContext cxt, IContinuation cont) {
-    ConditionCompile comp = new ConditionCompile(sense, elLabel, cxt);
+  public static ISpec compile(ICondition cond, CodeContext cxt, IContinuation fail, IContinuation cont) {
+    ConditionCompile comp = new ConditionCompile(fail, cxt);
     return cond.transform(comp, cont);
   }
 
   @Override
-  public ISpec transformConditionCondition(ConditionCondition conditionCondition, IContinuation context) {
+  public ISpec transformConditionCondition(ConditionCondition cond, IContinuation cont) {
+
+    LabelNode nxLbl = new LabelNode();
+    JumpCont intCont = new JumpCont(nxLbl);
+
+    LabelNode elLbl = new LabelNode();
+    JumpCont elseCont = new JumpCont(elLbl);
+
+    compile(cond.getTest(), cxt, elseCont, intCont);
+    Utils.jumpTarget(cxt.getIns(), nxLbl);
+    compile(cond.getLhs(), cxt, fail, intCont);
+    Utils.jumpTarget(cxt.getIns(), elLbl);
+    compile(cond.getRhs(), cxt, fail, cont);
+
+    return cont.cont(SrcSpec.prcSrc, cxt.getDict(), cond.getLoc(), cxt);
+  }
+
+  @Override
+  public ISpec transformConjunction(Conjunction conjunction, IContinuation cont) {
+    LabelNode nxLbl = new LabelNode();
+    JumpCont intCont = new JumpCont(nxLbl);
+
+    compile(conjunction.getLhs(), cxt, fail, intCont);
+    Utils.jumpTarget(cxt.getIns(), nxLbl);
+    return compile(conjunction.getRhs(), cxt, fail, cont);
+  }
+
+  @Override
+  public ISpec transformDisjunction(Disjunction disjunction, IContinuation cont) {
+    compile(disjunction.getLhs(), cxt, fail, cont);
+    return compile(disjunction.getRhs(), cxt, fail, cont);
+  }
+
+  @Override
+  public ISpec transformFalseCondition(FalseCondition falseCondition, IContinuation cont) {
+    return fail.cont(SrcSpec.prcSrc, cxt.getDict(), falseCondition.getLoc(), cxt);
+  }
+
+  @Override
+  public ISpec transformImplies(Implies implies, IContinuation cont) {
     return null;
   }
 
   @Override
-  public ISpec transformConjunction(Conjunction conjunction, IContinuation context) {
+  public ISpec transformIsTrue(IsTrue i, IContinuation cont) {
     return null;
   }
 
   @Override
-  public ISpec transformDisjunction(Disjunction disjunction, IContinuation context) {
+  public ISpec transformListSearch(ListSearch ptn, IContinuation cont) {
     return null;
   }
 
   @Override
-  public ISpec transformFalseCondition(FalseCondition falseCondition, IContinuation context) {
+  public ISpec transformMatches(Matches matches, IContinuation cont) {
+    PttrnCont ptnCont = new PttrnCont(matches.getPtn(),new Patterns.NamePtn(),cxt,cont,fail);
+    return ExpressionCompile.compile(matches.getExp(),ptnCont,cxt);
+  }
+
+  @Override
+  public ISpec transformNegation(Negation negation, IContinuation cont) {
+    return compile(negation.getNegated(), cxt, cont, fail);
+  }
+
+  @Override
+  public ISpec transformOtherwise(Otherwise otherwise, IContinuation cont) {
     return null;
   }
 
   @Override
-  public ISpec transformImplies(Implies implies, IContinuation context) {
+  public ISpec transformSearch(Search predication, IContinuation cont) {
     return null;
   }
 
   @Override
-  public ISpec transformIsTrue(IsTrue i, IContinuation context) {
-    return null;
-  }
-
-  @Override
-  public ISpec transformListSearch(ListSearch ptn, IContinuation context) {
-    return null;
-  }
-
-  @Override
-  public ISpec transformMatches(Matches matches, IContinuation context) {
-    return null;
-  }
-
-  @Override
-  public ISpec transformNegation(Negation negation, IContinuation context) {
-    return null;
-  }
-
-  @Override
-  public ISpec transformOtherwise(Otherwise otherwise, IContinuation context) {
-    return null;
-  }
-
-  @Override
-  public ISpec transformSearch(Search predication, IContinuation context) {
-    return null;
-  }
-
-  @Override
-  public ISpec transformTrueCondition(TrueCondition trueCondition, IContinuation context) {
-    return null;
+  public ISpec transformTrueCondition(TrueCondition trueCondition, IContinuation cont) {
+    return cont.cont(SrcSpec.prcSrc, cxt.getDict(), trueCondition.getLoc(), cxt);
   }
 }
