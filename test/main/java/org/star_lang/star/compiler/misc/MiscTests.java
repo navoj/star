@@ -235,6 +235,13 @@ public class MiscTests extends SRTest
   }
 
   @Test
+  public void badFunction(){
+    exception.expectMessage("non-valid element");
+
+    runStar("badFunPkg.star");
+  }
+
+  @Test
   public void testDisplay() throws EvaluationException
   {
     IValue list = Factory.newArray(StandardTypes.stringType, Factory.newString("one"), Factory.newString("two"),

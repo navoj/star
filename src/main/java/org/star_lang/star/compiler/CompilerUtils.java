@@ -2488,7 +2488,7 @@ public class CompilerUtils {
       return isProgramHeadPtn(Abstract.deParen(term));
     else
       return term instanceof Apply && !Abstract.isTupleTerm(term) && !isAnonAggConLiteral(term) && !StandardNames
-          .isKeyword(Abstract.getOperator(term));
+          .isKeyword(Abstract.getOperator(term)) && Abstract.isIdentifier(Abstract.getOperator(term));
   }
 
   public static IAbstract nameOfFunction(IAbstract def) {
