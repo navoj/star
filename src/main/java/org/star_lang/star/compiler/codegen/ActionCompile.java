@@ -15,22 +15,26 @@ package org.star_lang.star.compiler.codegen;
  */
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.cafe.CafeSyntax;
+import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.*;
-import org.star_lang.star.compiler.cafe.compile.cont.*;
+import org.star_lang.star.compiler.cafe.compile.cont.CallCont;
+import org.star_lang.star.compiler.cafe.compile.cont.DeclareLocal;
+import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
+import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
 import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.generate.CContext;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
-import org.star_lang.star.compiler.util.FixedList;
+import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.assignment.runtime.Assignments;
+
+import java.util.List;
 
 public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
   private final CodeContext cxt;
@@ -39,9 +43,45 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
     this.cxt = cxt;
   }
 
+  public static ISpec compile(IContentAction act, CodeContext cxt, IContinuation cont) {
+    ActionCompile compiler = new ActionCompile(cxt);
+    return act.transform(compiler, cont);
+  }
+
   @Override
   public ISpec transformAssertAction(AssertAction act, IContinuation cont) {
-    return null;
+    MethodNode mtd = getMtd();
+    HWM hwm = getHWM();
+    InsnList ins = mtd.instructions;
+    CafeDictionary dict = getDict();
+    CafeDictionary outer = getOuter();
+
+    String exceptionType = Type.getInternalName(AssertionError.class);
+
+    Location loc = act.getLoc();
+    String msg = "assert failed at " + loc.toString();
+
+    LabelNode badLabel = new LabelNode();
+
+    doLineNumber(loc, mtd);
+
+    CafeDictionary asDict = dict.fork();
+
+    IContinuation fail = new JumpCont(badLabel);
+
+    ConditionCompile.compile(new IsTrue(loc, act.getAssertion()), cxt.fork(asDict, outer), fail, cont);
+
+    Utils.jumpTarget(ins, badLabel);
+    hwm.probe(3);
+    ins.add(new TypeInsnNode(Opcodes.NEW, exceptionType));
+    ins.add(new InsnNode(Opcodes.DUP));
+    ins.add(new LdcInsnNode(msg));
+    ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, exceptionType, Types.INIT, "(" + Types.OBJECT_SIG + ")V"));
+    ins.add(new InsnNode(Opcodes.ATHROW));
+
+    dict.migrateFreeVars(asDict);
+
+    return SrcSpec.prcSrc;
   }
 
   @Override
@@ -75,12 +115,71 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
 
   @Override
   public ISpec transformConditionalAction(ConditionalAction act, IContinuation cont) {
-    return null;
+    MethodNode mtd = getMtd();
+    InsnList ins = mtd.instructions;
+    CafeDictionary dict = getDict();
+    CafeDictionary outer = getOuter();
+
+    Location loc = act.getLoc();
+
+    LabelNode thenLabel = new LabelNode();
+    LabelNode elseLabel = new LabelNode();
+
+    doLineNumber(loc, mtd);
+
+    CafeDictionary asDict = dict.fork();
+
+    IContinuation fail = new JumpCont(elseLabel);
+    IContinuation then = new JumpCont(thenLabel);
+    CodeContext thenCxt = cxt.fork(asDict, outer);
+
+    ConditionCompile.compile(act.getCond(), thenCxt, fail, then);
+    Utils.jumpTarget(ins, thenLabel);
+
+    compile(act.getThPart(), thenCxt, cont);
+
+    Utils.jumpTarget(ins, elseLabel);
+    act.getElPart().transform(this, cont);
+
+    dict.migrateFreeVars(asDict);
+
+    return SrcSpec.prcSrc;
   }
 
   @Override
   public ISpec transformExceptionHandler(ExceptionHandler handler, IContinuation cont) {
-    return null;
+    Location loc = handler.getLoc();
+    MethodNode mtd = getMtd();
+    InsnList ins = mtd.instructions;
+    doLineNumber(loc);
+
+    CafeDictionary forked = getDict().fork();
+
+    LabelNode start = new LabelNode();
+    LabelNode except = new LabelNode();
+    LabelNode exceptExit = new LabelNode();
+
+    ins.add(start);
+
+    CodeContext bodyCxt = cxt.fork(except).fork(forked, getOuter());
+    compile(handler.getBody(), bodyCxt, new JumpCont(exceptExit));
+
+    ins.add(except);
+
+    ISpec desc = SrcSpec.typeSpec(loc, StandardTypes.exceptionType, getDict(), cxt.getBldCat(), getErrors());
+
+    DeclareLocal declare = new DeclareLocal(loc, Names.EXCEPTION_VAR, desc, AccessMode.readOnly, forked, exceptExit);
+
+    declare.cont(desc, getOuter(), loc, cxt);
+
+    compile(handler.getHandler(), bodyCxt, new JumpCont(exceptExit));
+
+    getDict().migrateFreeVars(forked);
+
+    ins.add(exceptExit);
+    mtd.tryCatchBlocks.add(new TryCatchBlockNode(start, except, except, Types.EVALUATION_EXCEPTION));
+
+    return cont.cont(SrcSpec.prcSrc, getDict(), loc, cxt);
   }
 
   @Override
@@ -90,7 +189,15 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
 
   @Override
   public ISpec transformIgnored(Ignore ignore, IContinuation cont) {
-    return null;
+
+    MethodNode mtd = getMtd();
+    InsnList ins = mtd.instructions;
+
+    Location loc = ignore.getLoc();
+
+    doLineNumber(loc);
+
+    return ExpressionCompile.compile(ignore.getIgnored(), new CallCont(ins, cont), cxt);
   }
 
   @Override
@@ -100,12 +207,27 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
 
   @Override
   public ISpec transformWhileLoop(WhileAction act, IContinuation cont) {
-    return null;
+    CafeDictionary forked = getDict().fork();
+    LabelNode loopLbl = new LabelNode();
+    IContinuation aboutTurn = new JumpCont(loopLbl);
+    InsnList ins = getIns();
+    final CodeContext condCxt = cxt.fork(forked, getOuter());
+
+    Utils.jumpTarget(ins, loopLbl);
+
+    if (!CompilerUtils.isTrivial(act.getControl())) {
+      ConditionCompile.compile(act.getControl(), condCxt, cont, aboutTurn);
+    }
+
+    compile(act.getBody(), condCxt, aboutTurn);
+    getDict().migrateFreeVars(forked);
+
+    return SrcSpec.prcSrc;
   }
 
   @Override
   public ISpec transformNullAction(NullAction act, IContinuation cont) {
-    return null;
+    return cont.cont(SrcSpec.prcSrc, getDict(), act.getLoc(), cxt);
   }
 
   @Override
@@ -114,7 +236,7 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
 
     MethodNode mtd = cxt.getMtd();
     InsnList ins = mtd.instructions;
-
+    doLineNumber(call.getLoc(), mtd);
     CallCont callCont = new CallCont(ins, cont);
 
     return ExpressionCompile.compileFunCall(loc, call.getProc(), call.getArgs(), callCont, cxt);
@@ -122,17 +244,54 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
 
   @Override
   public ISpec transformRaiseAction(RaiseAction raise, IContinuation cont) {
-    return null;
+    doLineNumber(raise.getLoc());
+
+    HWM hwm = getHWM();
+    int mark = hwm.mark();
+    InsnList ins = getIns();
+    LabelNode nxt = new LabelNode();
+    IContinuation nxtCont = new JumpCont(nxt);
+    String exceptionType = Type.getInternalName(EvaluationException.class);
+
+    ExpressionCompile.compile(raise.getRaised(), nxtCont, cxt);
+    Utils.jumpTarget(ins, nxt);
+    ins.add(new TypeInsnNode(Opcodes.CHECKCAST, exceptionType));
+    ins.add(new InsnNode(Opcodes.ATHROW));
+
+    hwm.reset(mark);
+    return cont.cont(SrcSpec.prcSrc, getDict(), raise.getLoc(), cxt);
   }
 
   @Override
   public ISpec transformSequence(Sequence sequence, IContinuation cont) {
-    return null;
+    List<IContentAction> body = sequence.getActions();
+    if (!body.isEmpty()) {
+      int length = body.size();
+      LabelNode endLabel = new LabelNode();
+      CodeContext innerCxt = cxt.fork(endLabel);
+      InsnList ins = getIns();
+
+      for (int ix = 0; ix < length - 1; ix++) {
+        LabelNode nxt = new LabelNode();
+        IContinuation nxtCont = new JumpCont(nxt);
+
+        compile(body.get(ix), innerCxt, nxtCont);
+
+        Utils.jumpTarget(ins, nxt);
+      }
+
+      compile(body.get(length - 1), innerCxt, cont);
+      Utils.jumpTarget(ins, endLabel);
+      return SrcSpec.prcSrc;
+    } else
+      return cont.cont(SrcSpec.prcSrc, getDict(), sequence.getLoc(), cxt);
   }
 
   @Override
   public ISpec transformValisAction(ValisAction act, IContinuation cont) {
-    return null;
+    IContentExpression value = act.getValue();
+    doLineNumber(act.getLoc());
+    return ExpressionCompile.compile(value, cxt.getValisCont(), cxt);
   }
 
   @Override
@@ -148,8 +307,17 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
     }
   }
 
+  private void doLineNumber(Location loc) {
+    doLineNumber(loc, getMtd());
+  }
+
   private MethodNode getMtd() {
     return cxt.getMtd();
+  }
+
+  private InsnList getIns() {
+    MethodNode mtd = getMtd();
+    return mtd.instructions;
   }
 
   private HWM getHWM() {

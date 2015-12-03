@@ -1,17 +1,13 @@
 package org.star_lang.star.code.repository;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.util.TraceClassVisitor;
 import org.star_lang.star.code.CafeCode;
 import org.star_lang.star.code.HasCode;
 import org.star_lang.star.code.repository.CodeRepository.RepositoryListener;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.ClassRoot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /*
@@ -77,7 +73,6 @@ public class RepositoryClassLoader extends ClassLoader implements RepositoryList
         }
       }
     } catch (RepositoryException e) {
-    } finally {
     }
   }
 
@@ -93,7 +88,6 @@ public class RepositoryClassLoader extends ClassLoader implements RepositoryList
         }
       }
     } catch (RepositoryException e) {
-    } finally {
     }
     return true;
   }

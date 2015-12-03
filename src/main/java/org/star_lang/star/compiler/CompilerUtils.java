@@ -70,7 +70,6 @@ import org.star_lang.star.data.value.Option;
 
 public class CompilerUtils {
   public static ICondition truth = new TrueCondition(Location.nullLoc);
-  public static ICondition falseity = new FalseCondition(Location.nullLoc);
 
   public static Iterable<IAbstract> unWrap(final IAbstract term, final String operator) {
     return new Iterable<IAbstract>() {
@@ -222,14 +221,6 @@ public class CompilerUtils {
       it.next();
     }
     return count;
-  }
-
-  public static boolean filterUnwrap(final IAbstract term, final String operator, Predicate<IAbstract> test) {
-    for (IAbstract t : unWrap(term, operator)) {
-      if (!test.test(t))
-        return false;
-    }
-    return true;
   }
 
   public static IAbstract tupleUp(Location loc, String operator, List<IAbstract> els) {

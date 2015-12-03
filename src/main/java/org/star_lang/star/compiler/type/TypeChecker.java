@@ -2890,30 +2890,6 @@ public class TypeChecker {
     return orig;
   }
 
-  static IContentExpression verifyType(IType rType, Map<String, Quantifier> bounds, IType eType,
-                                       IContentExpression orig, Dictionary cxt, ErrorReport errors) {
-    Location loc = orig.getLoc();
-    try {
-      Subsume.subsume(eType, rType, loc, cxt);
-      checkForRawBindings(loc, bounds);
-    } catch (TypeConstraintException e) {
-      errors.reportError(StringUtils.msg(orig, " has type ", rType, "\nwhich is not consistent with ", eType,
-          "\nbecause ", e.getWords()), merge(loc, e.getLocs()));
-    }
-
-    return orig;
-  }
-
-  static void checkForRawBindings(Location loc, Map<String, Quantifier> bound) throws TypeConstraintException {
-    for (Entry<String, Quantifier> e : bound.entrySet()) {
-      IType tp = TypeUtils.deRef(e.getValue().getVar());
-
-      if (TypeUtils.isRawType(tp))
-        throw new TypeConstraintException(StringUtils.msg("not permitted to constrain ", e.getKey(), " with raw type ",
-            tp), loc);
-    }
-  }
-
   private static IContentPattern verifyType(IType expectedType, Location loc, IContentPattern orig, Dictionary cxt,
                                             ErrorReport errors) {
     try {

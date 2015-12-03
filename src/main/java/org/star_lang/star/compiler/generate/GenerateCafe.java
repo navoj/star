@@ -1225,15 +1225,6 @@ public class GenerateCafe implements
     return mergeActions(extra, code);
   }
 
-  private static List<IAbstract> mergeActions(List<IAbstract> lhs, IAbstract rhs) {
-    IAbstract els[] = new IAbstract[lhs.size() + 1];
-    int ix = 0;
-    for (IAbstract el : lhs)
-      els[ix++] = el;
-    els[ix] = rhs;
-    return FixedList.create(els);
-  }
-
   private static List<IAbstract> mergeActions(List<IAbstract> lhs, List<IAbstract> rhs) {
     if (lhs.isEmpty())
       return rhs;
