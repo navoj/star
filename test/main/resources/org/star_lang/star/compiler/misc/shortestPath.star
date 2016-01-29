@@ -21,7 +21,7 @@ shortestPath is package {
   type intmap of t is alias of dictionary of (integer, t);
   type graph is alias of intmap of intmap of weight;
 
-  implementation (computation) over option is {
+  implementation (computation) over option determines string is {
 	fun _encapsulate(x) is some(x);
 	fun _abort(e) is none;
 	fun _handle(o, h) is o;
@@ -32,8 +32,8 @@ shortestPath is package {
 	  };
   };
 
-  implementation execution over option is {
-	fun _perform(some(x), _) is x;
+  implementation execution over option determines string is {
+	  fun _perform(some(x), _) is x;
   };
 
   weight has type (graph, vertex, vertex) => option of weight;
@@ -83,7 +83,6 @@ shortestPath is package {
 			  alistToMap(valof parallel(fmap(( ((i, v)) => task { valis (i, shortmap(i, v)); }), g as (cons of ((integer, intmap of weight))))));
 		};
 	};
-
 
   fun mapLookup(m, k) is m[k];
 

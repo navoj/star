@@ -1,22 +1,5 @@
 performTest is package{
-  type maybe of %t is possible(%t) or impossible(exception);
-  
-  implementation (computation) over maybe is {
-    fun _encapsulate(X) is possible(X)
-    
-    fun _combine(possible(X),F) is F(X)
-     |  _combine(impossible(E),_) is impossible(E)
-    
-    fun _abort(R) is impossible(R)
-    
-    fun _handle(impossible(R),EF) is EF(R)
-     |  _handle(M,EF) is M;
-  }
-  
-  implementation execution over maybe is {    
-    fun _perform(possible(X),_) is X
-     |  _perform(impossible(R),F) is F(R)
-  }
+  import maybe
   
   fun ff(LL) is maybe computation{
     for L in LL do{

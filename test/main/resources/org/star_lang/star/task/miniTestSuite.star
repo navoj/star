@@ -5,7 +5,7 @@ type testState is testState;
 /* "test-state transformer", simple state monad */
 type test of %a is Test((testState) => (testState, %a));
 
-implementation (computation) over test is {
+implementation (computation) over test determines exception is {
   fun _encapsulate(x) is Test((st) => (st, x))
   fun _abort(msg) is
 	 valof {
@@ -22,7 +22,7 @@ implementation (computation) over test is {
 	  });
 };
 
-implementation execution over test is {
+implementation execution over test determines exception is {
   fun _perform(Test(f), _) is /* not really a good idea */
 	valof {
 	  def (_, v) is f(testState);

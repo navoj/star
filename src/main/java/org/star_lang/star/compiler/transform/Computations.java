@@ -28,13 +28,12 @@ import java.util.Map.Entry;
  * permissions and limitations under the License.
  */
 
-
 public class Computations
-        implements
-        TransformAction<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
-        TransformExpression<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
-        TransformPattern<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
-        TransformCondition<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext> {
+    implements
+    TransformAction<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
+    TransformExpression<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
+    TransformPattern<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
+    TransformCondition<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext> {
   public static final String ENCAPSULATE = "_encapsulate";
   public static final String COMBINE = "_combine";
   public static final String ABORT = "_abort";
@@ -149,7 +148,7 @@ public class Computations
     IContentExpression handlerFun = exp2fun(loc, exVar, handleExp, handlerCxt);
 
     return handle(loc, body, handlerFun, context.getmType(), body.getType(), context.getDict(), context.getOuter(),
-            context.getErrors());
+        context.getErrors());
   }
 
   @Override
@@ -204,7 +203,7 @@ public class Computations
     IType loopResultType = TypeUtils.typeExp(iterMtype, resType);
 
     IContentExpression loopExp = QueryPlanner.transformForLoop(loc, loop.getDefined(), loop.getControl(), body,
-            resType, resType, mType, dict, outer, errors);
+        resType, resType, mType, dict, outer, errors);
 
     // build the check function, which we will bind by hand...
 
@@ -213,25 +212,25 @@ public class Computations
     List<Triple<IContentPattern[], ICondition, IContentExpression>> eqns = new ArrayList<>();
 
     Triple<IContentPattern[], ICondition, IContentExpression> eq1 = Triple.create(new IContentPattern[]{CompilerUtils
-            .noneFoundPtn(loc, resType)}, CompilerUtils.truth, cxt.getExp() != null ? cxt.getExp() : encapsulate(loc,
-            new VoidExp(loc, resType), cxt));
+        .noneFoundPtn(loc, resType)}, CompilerUtils.truth, cxt.getExp() != null ? cxt.getExp() : encapsulate(loc,
+        new VoidExp(loc, resType), cxt));
     eqns.add(eq1);
 
     // If there was a valis, we take the result as our computation
     Variable resVar = new Variable(loc, resType, GenSym.genSym("__res"));
     Triple<IContentPattern[], ICondition, IContentExpression> eq2 = Triple.create(new IContentPattern[]{CompilerUtils
-            .noMorePtn(loc, resVar)}, CompilerUtils.truth, encapsulate(loc, resVar, cxt));
+        .noMorePtn(loc, resVar)}, CompilerUtils.truth, encapsulate(loc, resVar, cxt));
     eqns.add(eq2);
 
     Variable exVar = new Variable(loc, StandardTypes.exceptionType, GenSym.genSym("__ex"));
     Triple<IContentPattern[], ICondition, IContentExpression> eq3 = Triple.create(new IContentPattern[]{CompilerUtils
-            .abortIterPtn(loc, resType, exVar)}, CompilerUtils.truth, abort(loc, exVar, cxt));
+        .abortIterPtn(loc, resType, exVar)}, CompilerUtils.truth, abort(loc, exVar, cxt));
     eqns.add(eq3);
 
     IType checkType = Freshen.generalizeType(TypeUtils.functionType(loopResultType, taskType));
     String checkName = GenSym.genSym("__check");
     IContentExpression check = MatchCompiler.generateFunction(eqns, null, checkType, free, checkName, loc, dict, outer,
-            errors);
+        errors);
     Variable checkVar = new Variable(loc, checkType, checkName);
 
     // The bind function ...
@@ -333,12 +332,12 @@ public class Computations
     IContentPattern[] loopArgs = new IContentPattern[]{anon};
 
     IContentExpression lpBody = CompilerUtils.isTrivial(loopGuard) ? loopBody : new ConditionalExp(loc, loopTaskType,
-            loopGuard, loopBody, bind(loc, anon, encapsulate(loc, new VoidExp(loc), context), context));
+        loopGuard, loopBody, bind(loc, anon, encapsulate(loc, new VoidExp(loc), context), context));
     lpBody = collectBindings(lpBody, gdCxt);
     Triple<IContentPattern[], ICondition, IContentExpression> eqn = Triple
-            .create(loopArgs, CompilerUtils.truth, lpBody);
+        .create(loopArgs, CompilerUtils.truth, lpBody);
     FunctionLiteral loopFun = MatchCompiler.generateFunction(eqns, eqn, loopFunType, freeVars, loopVar.getName(), loc,
-            context.getDict(), context.getOuter(), context.getErrors());
+        context.getDict(), context.getOuter(), context.getErrors());
     return new LetTerm(loc, loopCall, new VarEntry(loc, loopVar, loopFun, AccessMode.readOnly, Visibility.priVate));
   }
 
@@ -354,7 +353,7 @@ public class Computations
   public IContentExpression transformProcedureCallAction(ProcedureCallAction call, ComputationContext context) {
     IContentExpression op = call.getProc();
     IContentExpression trOp = op.transform(this, context);
-    IContentExpression trArgs = call.getArgs(). transform(this, context);
+    IContentExpression trArgs = call.getArgs().transform(this, context);
 
     Location loc = call.getLoc();
     return valofValis(loc, new VoidExp(loc), new ProcedureCallAction(loc, trOp, trArgs));
@@ -419,7 +418,7 @@ public class Computations
 
       IContentExpression performed = performedTask(inner, context.getmType());
       return handle(loc, performed, handler, context.getmType(), performed.getType(), context.getDict(), context
-              .getOuter(), context.getErrors());
+          .getOuter(), context.getErrors());
     } else if (isInjection(inner))
       return inject(loc, context.getmType(), injectedValue(inner), context.getDict(), context.getErrors());
     else
@@ -872,7 +871,7 @@ public class Computations
     Variable[] free = FreeVariables.freeFreeVars(args, exp, cxt);
 
     return MatchCompiler.generateFunction(null, Triple.create(args, CompilerUtils.truth, exp), funType, free,
-            StandardNames.FUNCTION, loc, cxt, outer, errors);
+        StandardNames.FUNCTION, loc, cxt, outer, errors);
   }
 
   private static IContentExpression exp2fun(Location loc, IContentExpression exp, ComputationContext context) {
@@ -881,7 +880,7 @@ public class Computations
     Variable[] free = FreeVariables.freeFreeVars(args, exp, context.getDict());
 
     return MatchCompiler.generateFunction(null, Triple.create(args, CompilerUtils.truth, exp), funType, free,
-            StandardNames.FUNCTION, loc, context.getDict(), context.getOuter(), context.getErrors());
+        StandardNames.FUNCTION, loc, context.getDict(), context.getOuter(), context.getErrors());
   }
 
   // bind has type
@@ -890,7 +889,7 @@ public class Computations
   private static IContentExpression bind(Location loc, IContentPattern ptn, IContentExpression exp,
                                          ComputationContext context) {
     return bind(loc, context.getExp(), ptn, exp, context.getmType(), context.getDict(), context.getOuter(), context
-            .getErrors());
+        .getErrors());
   }
 
   public static IContentExpression bind(Location loc, IContentExpression cont, IContentPattern ptn,
@@ -935,7 +934,7 @@ public class Computations
 
   public static IContentExpression handle(Location loc, IContentExpression body, IContentExpression handler,
                                           IType mType, IType bMonad, Dictionary dict, Dictionary outer, ErrorReport errors) {
-    IType exType = StandardTypes.exceptionType;
+    IType exType = new TypeVar();
     IType handleType = TypeUtils.functionType(bMonad, TypeUtils.functionType(exType, bMonad), bMonad);
 
     IContentExpression handle = TypeChecker.typeOfName(loc, HANDLE, handleType, dict, errors);
@@ -959,13 +958,13 @@ public class Computations
     IType encapType = TypeUtils.functionType(aType, aMonad);
 
     IContentExpression encapsulate = TypeChecker.typeOfName(loc, ENCAPSULATE, encapType, context.getDict(), context
-            .getErrors());
+        .getErrors());
 
     return Application.apply(loc, aMonad, encapsulate, exp);
   }
 
   private static IContentExpression abort(Location loc, IContentExpression exp, ComputationContext context) {
-    IType exType = StandardTypes.exceptionType;
+    IType exType = new TypeVar();
     IType mType = context.getmType();
     TypeExp aMonad = new TypeExp(mType, new TypeVar());
     IType abortType = TypeUtils.functionType(exType, aMonad);
@@ -990,7 +989,7 @@ public class Computations
   public static IContentExpression perform(Location loc, IType mType, IContentExpression exp, Dictionary dict,
                                            ErrorReport errors) {
     IContentExpression raise = TypeChecker.typeOfName(loc, StandardNames.RAISE_FUN, TypeUtils.functionType(
-            StandardTypes.exceptionType, new TypeVar()), dict, errors);
+        new TypeVar(), new TypeVar()), dict, errors);
 
     return perform(loc, mType, exp, raise, dict, errors);
   }
@@ -999,8 +998,8 @@ public class Computations
                                            IContentExpression onAbort, Dictionary dict, ErrorReport errors) {
     IType aMonad = exp.getType();
     IType aType = TypeUtils.isType(aMonad, mType, 1) ? TypeUtils.getTypeArg(aMonad, 0) : new TypeVar();
-
-    IType handlerType = TypeUtils.functionType(StandardTypes.exceptionType, aType);
+    IType exType = new TypeVar();
+    IType handlerType = TypeUtils.functionType(exType, aType);
     IType performType = TypeUtils.functionType(aMonad, handlerType, aType);
 
     IContentExpression perform = TypeChecker.typeOfName(loc, PERFORM, performType, dict, errors);
@@ -1016,7 +1015,7 @@ public class Computations
       if (op instanceof MethodVariable && appl.arity() == 2) {
         MethodVariable method = (MethodVariable) op;
         if (method.getName().equals(PERFORM)
-                && mType.typeLabel().equals(TypeUtils.getTypeArg(method.getContract(), 0).typeLabel())) {
+            && mType.typeLabel().equals(TypeUtils.getTypeArg(method.getContract(), 0).typeLabel())) {
           return true;
         }
       }
@@ -1091,7 +1090,7 @@ public class Computations
       if (op instanceof MethodVariable && appl.arity() == 2) {
         MethodVariable method = (MethodVariable) op;
         if (method.getName().equals(COMBINE)
-                && mType.typeLabel().equals(TypeUtils.getTypeArg(method.getContract(), 0).typeLabel())) {
+            && mType.typeLabel().equals(TypeUtils.getTypeArg(method.getContract(), 0).typeLabel())) {
           IContentExpression combTask = appl.getArg(0);
 
           if (isEncapsulated(combTask, mType)) {
@@ -1121,7 +1120,7 @@ public class Computations
       if (op instanceof MethodVariable && appl.arity() == 1) {
         MethodVariable method = (MethodVariable) op;
         return method.getName().equals(ENCAPSULATE)
-                && mType.typeLabel().equals(TypeUtils.getTypeArg(method.getContract(), 0).typeLabel());
+            && mType.typeLabel().equals(TypeUtils.getTypeArg(method.getContract(), 0).typeLabel());
       }
     }
     return false;

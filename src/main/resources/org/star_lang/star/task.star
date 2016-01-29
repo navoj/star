@@ -75,14 +75,14 @@ taskWait has type (action(action(task of %a))) => task of %a
 fun taskWait(start) is taskWaitExt((wakeup) => valof { start(wakeup); valis TaskSleep; })
   
 -- implement the computation contract
-implementation (computation) over task is {
+implementation (computation) over task determines exception is {
   _encapsulate = taskReturn;
   _abort = taskFail;
   _handle = taskCatch;
   _combine = taskBind;
 }
 
-implementation execution over task is {
+implementation execution over task determines exception is {
   _perform = executeTask;
 }
 

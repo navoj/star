@@ -18,22 +18,22 @@ private import base;
 private import strings;
 
 -- computation is an operator. 
-contract (computation) over %%c is {
-  _encapsulate has type for all %t such that (%t)=>%%c of %t;
-  _abort has type for all %t such that (exception)=>%%c of %t;
-  _handle has type for all %t such that (%%c of %t, (exception)=>%%c of %t) => %%c of %t;
-  _combine has type for all %s, %t such that (%%c of %s,(%s)=>%%c of %t)=>%%c of %t
-  _delay has type for all %t such that (()=>%%c of %t)=>%%c of %t;
+contract (computation) over m determines e is {8
+  _encapsulate has type for all t such that (t)=>m of t;
+  _abort has type for all t such that (e)=>m of t;
+  _handle has type for all t such that (m of t, (e)=>m of t) => m of t;
+  _combine has type for all s, t such that (m of s,(s)=>m of t)=>m of t
+  _delay has type for all t such that (()=>m of t)=>m of t;
   
   fun _delay(F) default is _combine(_encapsulate(()),(_) => F());
 }
 
-contract execution over %%c is {
-  _perform has type for all t such that (%%c of t,(exception)=>t) => t;
+contract execution over m determines e is {
+  _perform has type for all t such that (m of t,(e)=>t) => t;
 }
 
-contract injection over (%%m,%%n) is {
-  _inject has type for all %t such that (%%m of %t)=>%%n of %t;
+contract injection over (m,n) is {
+  _inject has type for all t such that (m of t)=>n of t;
 }
  
 -- default exception handling function
@@ -56,7 +56,7 @@ fun runCombo(Act,C,H) is valof{
   }
 }
 
-implementation (computation) over action is {
+implementation (computation) over action determines exception is {
   fun _encapsulate(V) is _done(V);
   fun _abort(E) is _aborted(E);
   fun _handle(A,H) is _delayed(() => runCombo(A,_encapsulate,H));
@@ -66,7 +66,7 @@ implementation (computation) over action is {
   fun _delay(F) is _delayed(F);
 }
  
-implementation execution over action is {
+implementation execution over action determines exception is {
   fun _perform(A,H) is runCombo(A,id,H);
 };
 

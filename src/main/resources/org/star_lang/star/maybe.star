@@ -20,7 +20,7 @@ private import compute;
 
 type maybe of %t is possible(%t) or impossible(exception);
 
-implementation (computation) over maybe is {
+implementation (computation) over maybe determines exception is {
   fun _encapsulate(X) is possible(X)
     
   fun _combine(possible(X),F) is F(X)
@@ -32,7 +32,7 @@ implementation (computation) over maybe is {
    |  _handle(M,EF) is M
 }
   
-implementation execution over maybe is {
+implementation execution over maybe determines exception is {
     fun _perform(possible(X),_) is X
      |  _perform(impossible(R),F) is F(R)
 }

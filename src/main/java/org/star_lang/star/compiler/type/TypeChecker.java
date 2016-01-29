@@ -630,8 +630,9 @@ public class TypeChecker {
       return new ValofExp(loc, expectedType, valofBody);
     } else if (CompilerUtils.isRunComputation(term)) {
       IType monadType = TypeVar.var(GenSym.genSym("m"), 1, readWrite);
+      IType exType = new TypeVar();
 
-      ((TypeVar) monadType).setConstraint(new ContractConstraint(Computations.EXECUTION, monadType));
+      ((TypeVar) monadType).setConstraint(new ContractConstraint(Computations.EXECUTION, monadType, TypeUtils.determinedType(exType)));
 
       IType mType = TypeUtils.typeExp(monadType, expectedType);
       IType abortType = TypeUtils.functionType(StandardTypes.exceptionType, expectedType);
@@ -4031,8 +4032,8 @@ public class TypeChecker {
     } else if (CompilerUtils.isPerformAction(action)) {
       TypeVar monadType = TypeVar.var("%%m", 1, readWrite);
       IType actType = TypeUtils.typeExp(monadType, unitType);
-      IType exType = StandardTypes.exceptionType;
-      monadType.setConstraint(new ContractConstraint(Computations.EXECUTION, monadType));
+      IType exType = new TypeVar();
+      monadType.setConstraint(new ContractConstraint(Computations.EXECUTION, monadType, TypeUtils.determinedType(exType)));
 
       IContentExpression performed = typeOfExp(CompilerUtils.performedAction(action), actType, cxt, outer);
 
@@ -4166,7 +4167,8 @@ public class TypeChecker {
 
       TypeVar monadType = TypeVar.var("%%m", 1, readWrite);
       IType actType = TypeUtils.typeExp(monadType, resultType);
-      monadType.setConstraint(new ContractConstraint(Computations.COMPUTATION, monadType));
+      IType exType = new TypeVar();
+      monadType.setConstraint(new ContractConstraint(Computations.COMPUTATION, monadType,TypeUtils.determinedType(exType)));
 
       try {
         Subsume.subsume(actType, TypeUtils.typeExp(actionType, resultType), loc, cxt);
