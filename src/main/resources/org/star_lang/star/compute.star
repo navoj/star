@@ -18,7 +18,7 @@ private import base;
 private import strings;
 
 -- computation is an operator. 
-contract (computation) over m determines e is {8
+contract (computation) over m determines e is {
   _encapsulate has type for all t such that (t)=>m of t;
   _abort has type for all t such that (e)=>m of t;
   _handle has type for all t such that (m of t, (e)=>m of t) => m of t;
