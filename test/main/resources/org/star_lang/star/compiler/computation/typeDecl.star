@@ -1,6 +1,4 @@
 typeDecl is package{
-  import task;
-
   -- aa has type (() => task of integer) => task of integer
   fun aa(f) is task {
     try {

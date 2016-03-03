@@ -20,7 +20,6 @@ tasking is package{
   }
   
   implementation execution over task is {
-    _perform(xx(X),_) is X;
-    _perform(drop(MSG),EF) is EF(MSG);
+    _perform(xx(X)) is X;
   }
 }

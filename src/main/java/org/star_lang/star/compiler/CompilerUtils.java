@@ -1112,28 +1112,12 @@ public class CompilerUtils {
       return comp;
   }
 
-  public static IAbstract runCompAbort(IAbstract term) {
-    assert isRunComputation(term);
-
-    IAbstract comp = Abstract.unaryArg(term);
-
-    if (Abstract.isBinary(comp, StandardNames.ON_ABORT))
-      return Abstract.binaryRhs(comp);
-    else
-      return Abstract.name(term.getLoc(), StandardNames.RAISE_FUN);
-  }
-
   public static boolean isPerformAction(IAbstract term) {
     if (Abstract.isUnary(term, StandardNames.PERFORM)) {
       IAbstract performed = Abstract.unaryArg(term);
       return !Abstract.isBinary(performed, StandardNames.ON_ABORT) || isBlockTerm(Abstract.binaryRhs(performed));
     }
     return false;
-  }
-
-  public static boolean isBasicPerform(IAbstract term) {
-    return Abstract.isUnary(term, StandardNames.PERFORM) && !Abstract.isBinary(Abstract.unaryArg(term),
-        StandardNames.ON_ABORT);
   }
 
   public static IAbstract performedAction(IAbstract term) {
@@ -1143,18 +1127,6 @@ public class CompilerUtils {
       return Abstract.binaryLhs(term);
     else
       return term;
-  }
-
-  public static IAbstract performedAbort(IAbstract term) {
-    assert isPerformAction(term);
-    term = Abstract.unaryArg(term);
-    if (Abstract.isBinary(term, StandardNames.ON_ABORT))
-      return blockContent(Abstract.binaryRhs(term));
-    else {
-      Location loc = term.getLoc();
-      Name XX = Abstract.name(loc, GenSym.genSym("$X"));
-      return defaultCaseRule(loc, XX, raise(loc, XX));
-    }
   }
 
   public static boolean isLambdaExp(IAbstract term) {

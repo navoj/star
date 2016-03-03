@@ -32,8 +32,8 @@ shortestPath is package {
 	  };
   };
 
-  implementation execution over option determines string is {
-	  fun _perform(some(x), _) is x;
+  implementation execution over option is {
+	  fun _perform(some(x)) is x;
   };
 
   weight has type (graph, vertex, vertex) => option of weight;

@@ -82,7 +82,7 @@ serialization is package {
 
 -- must be implemented, but is never called actually; will probably replaced by injection
   implementation execution over shoverM is {
-    _perform(_, _) is raise "Not implemented";
+    _perform(_) is raise "Not implemented";
   };
 
 /* type of all shovers */
@@ -253,7 +253,7 @@ serialization is package {
 
 -- must be implemented, but is never called actually; will probably replaced by injection
   implementation execution over yanker is {
-    _perform(_, _) is raise "Not implemented";
+    _perform(_) is raise "Not implemented";
   };
 
 /* read word of N bits (%i) from bytebuffer */

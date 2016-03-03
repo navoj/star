@@ -28,8 +28,8 @@ contract (computation) over m determines e is {
   fun _delay(F) default is _combine(_encapsulate(()),(_) => F());
 }
 
-contract execution over m determines e is {
-  _perform has type for all t such that (m of t,(e)=>t) => t;
+contract execution over m is {
+  _perform has type for all t such that (m of t) => t;
 }
 
 contract injection over (m,n) is {
@@ -66,8 +66,8 @@ implementation (computation) over action determines exception is {
   fun _delay(F) is _delayed(F);
 }
  
-implementation execution over action determines exception is {
-  fun _perform(A,H) is runCombo(A,id,H);
+implementation execution over action is {
+  fun _perform(A) is runCombo(A,id,raiser_fun);
 };
 
 implementation injection over (action,action) is {

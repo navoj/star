@@ -49,9 +49,9 @@ public class Computations
 
   public static final IType unitType = StandardTypes.unitType;
 
-  public static IContentExpression monasticate(IContentAction act, IType mType, ErrorReport errors, Dictionary dict,
+  public static IContentExpression monasticate(IContentAction act, IType mType, IType eType, ErrorReport errors, Dictionary dict,
                                                Dictionary outer) {
-    ComputationContext cxt = new ComputationContext(mType, dict, outer, errors);
+    ComputationContext cxt = new ComputationContext(mType, eType, dict, outer, errors);
     Computations trans = new Computations();
     IContentExpression res = delay(act.getLoc(), collectBindings(act.transform(trans, cxt), cxt), cxt);
     if (StarCompiler.TRACE_MONASTICATION)
@@ -398,7 +398,7 @@ public class Computations
     ErrorReport errors = cxt.getErrors();
     IType mType = cxt.getmType();
 
-    assert TypeUtils.isType(exp.getType(), mType, 1);
+    assert TypeUtils.isType(exp.getType(), mType, 1, dict);
 
     for (Pair<Variable, IContentExpression> entry : cxt.getTempVars()) {
       exp = bind(entry.left().getLoc(), exp, entry.left(), entry.right(), mType, dict, outer, errors);
@@ -412,7 +412,7 @@ public class Computations
     Location loc = inner.getLoc();
 
     if (isPerform(inner, context.getmType())) {
-      Variable ex = new Variable(loc, StandardTypes.exceptionType, GenSym.genSym("__exception"));
+      Variable ex = new Variable(loc, context.geteType(), GenSym.genSym("__exception"));
       IContentExpression abort = abort(loc, ex, context);
       IContentExpression handler = exp2fun(loc, ex, abort, context);
 
@@ -871,7 +871,7 @@ public class Computations
     Variable[] free = FreeVariables.freeFreeVars(args, exp, cxt);
 
     return MatchCompiler.generateFunction(null, Triple.create(args, CompilerUtils.truth, exp), funType, free,
-        StandardNames.FUNCTION, loc, cxt, outer, errors);
+        GenSym.genSym(StandardNames.LAMBDA), loc, cxt, outer, errors);
   }
 
   private static IContentExpression exp2fun(Location loc, IContentExpression exp, ComputationContext context) {
@@ -880,7 +880,7 @@ public class Computations
     Variable[] free = FreeVariables.freeFreeVars(args, exp, context.getDict());
 
     return MatchCompiler.generateFunction(null, Triple.create(args, CompilerUtils.truth, exp), funType, free,
-        StandardNames.FUNCTION, loc, context.getDict(), context.getOuter(), context.getErrors());
+        GenSym.genSym(StandardNames.LAMBDA), loc, context.getDict(), context.getOuter(), context.getErrors());
   }
 
   // bind has type
@@ -894,7 +894,7 @@ public class Computations
 
   public static IContentExpression bind(Location loc, IContentExpression cont, IContentPattern ptn,
                                         IContentExpression exp, IType mType, Dictionary dict, Dictionary outer, ErrorReport errors) {
-    assert TypeUtils.isType(exp.getType(), mType, 1);
+    assert TypeUtils.isType(exp.getType(), mType, 1, dict);
 
     if (cont == null)
       return exp;
@@ -933,7 +933,8 @@ public class Computations
   }
 
   public static IContentExpression handle(Location loc, IContentExpression body, IContentExpression handler,
-                                          IType mType, IType bMonad, Dictionary dict, Dictionary outer, ErrorReport errors) {
+                                          IType mType, IType bMonad, Dictionary dict,
+                                          Dictionary outer, ErrorReport errors) {
     IType exType = new TypeVar();
     IType handleType = TypeUtils.functionType(bMonad, TypeUtils.functionType(exType, bMonad), bMonad);
 
@@ -942,7 +943,8 @@ public class Computations
     return Application.apply(loc, bMonad, handle, body, handler);
   }
 
-  private static IContentExpression combine(Location loc, IContentExpression val, IContentExpression cont, IType mType,
+  private static IContentExpression combine(Location loc, IContentExpression val, IContentExpression cont,
+                                            IType mType,
                                             IType aMonad, IType bMonad, Dictionary dict, ErrorReport errors) {
     IType bindType = TypeUtils.functionType(aMonad, cont.getType(), bMonad);
 
@@ -986,25 +988,15 @@ public class Computations
     return Application.apply(loc, aMonad, delay, delayFun);
   }
 
-  public static IContentExpression perform(Location loc, IType mType, IContentExpression exp, Dictionary dict,
-                                           ErrorReport errors) {
-    IContentExpression raise = TypeChecker.typeOfName(loc, StandardNames.RAISE_FUN, TypeUtils.functionType(
-        new TypeVar(), new TypeVar()), dict, errors);
-
-    return perform(loc, mType, exp, raise, dict, errors);
-  }
-
   public static IContentExpression perform(Location loc, IType mType, IContentExpression exp,
-                                           IContentExpression onAbort, Dictionary dict, ErrorReport errors) {
+                                          Dictionary dict, ErrorReport errors) {
     IType aMonad = exp.getType();
-    IType aType = TypeUtils.isType(aMonad, mType, 1) ? TypeUtils.getTypeArg(aMonad, 0) : new TypeVar();
-    IType exType = new TypeVar();
-    IType handlerType = TypeUtils.functionType(exType, aType);
-    IType performType = TypeUtils.functionType(aMonad, handlerType, aType);
+    IType aType = TypeUtils.isType(aMonad, mType, 1, dict) ? TypeUtils.getTypeArg(aMonad, 0) : new TypeVar();
+    IType performType = TypeUtils.functionType(aMonad, aType);
 
     IContentExpression perform = TypeChecker.typeOfName(loc, PERFORM, performType, dict, errors);
 
-    return Application.apply(loc, aType, perform, exp, onAbort);
+    return Application.apply(loc, aType, perform, exp);
   }
 
   private static boolean isPerform(IContentExpression exp, IType mType) {
@@ -1012,7 +1004,7 @@ public class Computations
       Application appl = (Application) exp;
       IContentExpression op = appl.getFunction();
 
-      if (op instanceof MethodVariable && appl.arity() == 2) {
+      if (op instanceof MethodVariable && appl.arity() == 1) {
         MethodVariable method = (MethodVariable) op;
         if (method.getName().equals(PERFORM)
             && mType.typeLabel().equals(TypeUtils.getTypeArg(method.getContract(), 0).typeLabel())) {
@@ -1033,13 +1025,9 @@ public class Computations
       Application appl = (Application) exp;
       IContentExpression op = appl.getFunction();
 
-      if (op instanceof MethodVariable && appl.arity() == 2) {
+      if (op instanceof MethodVariable && appl.arity() == 1) {
         MethodVariable method = (MethodVariable) op;
-        if (method.getName().equals(PERFORM)) {
-          IContentExpression handler = appl.getArg(1);
-          if (handler instanceof Variable && ((Variable) handler).getName().equals(StandardNames.RAISE_FUN))
-            return true;
-        }
+        return method.getName().equals(PERFORM);
       }
     }
     return false;

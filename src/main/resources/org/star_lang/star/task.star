@@ -82,8 +82,8 @@ implementation (computation) over task determines exception is {
   _combine = taskBind;
 }
 
-implementation execution over task determines exception is {
-  _perform = executeTask;
+implementation execution over task is {
+  fun _perform(T) is executeTask(T,raiser_fun);
 }
 
 implementation injection over (task,task) is {

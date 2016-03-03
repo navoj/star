@@ -82,14 +82,14 @@ public class TypeUtils {
     return type.typeLabel().equals(name) && TypeUtils.typeArity(type) == arity;
   }
 
-  public static boolean isType(IType type, IType tf, int arity) {
+  public static boolean isType(IType type, IType tf, int arity, Dictionary dictionary) {
     type = unwrap(type);
     if (type instanceof TypeExp) {
       TypeExp tpExp = (TypeExp) type;
       IType tyCon = deRef(tpExp.getTypeCon());
       if (tyCon instanceof Type) {
         Type ty = (Type) tyCon;
-        return ty.typeLabel().equals(tf.typeLabel()) && ty.getArity() == arity && tpExp.typeArity() == arity;
+        return dictionary.kindOfType(ty.typeLabel()).check(arity);
       }
     }
     return false;

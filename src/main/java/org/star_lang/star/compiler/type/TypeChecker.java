@@ -630,17 +630,14 @@ public class TypeChecker {
       return new ValofExp(loc, expectedType, valofBody);
     } else if (CompilerUtils.isRunComputation(term)) {
       IType monadType = TypeVar.var(GenSym.genSym("m"), 1, readWrite);
-      IType exType = new TypeVar();
 
-      ((TypeVar) monadType).setConstraint(new ContractConstraint(Computations.EXECUTION, monadType, TypeUtils.determinedType(exType)));
+      ((TypeVar) monadType).setConstraint(new ContractConstraint(Computations.EXECUTION, monadType));
 
       IType mType = TypeUtils.typeExp(monadType, expectedType);
-      IType abortType = TypeUtils.functionType(StandardTypes.exceptionType, expectedType);
 
       IContentExpression action = typeOfExp(CompilerUtils.runComputation(term), mType, dict, outer);
-      IContentExpression abort = typeOfExp(CompilerUtils.runCompAbort(term), abortType, dict, outer);
       if (!(action instanceof VoidExp))
-        return Computations.perform(loc, monadType, action, abort, dict, errors);
+        return Computations.perform(loc, monadType, action, dict, errors);
       else
         return action;
     } else if (CompilerUtils.isComputationExpression(term)) {
@@ -658,6 +655,19 @@ public class TypeChecker {
             .getWords()), merge(loc, e.getLocs()));
       }
 
+      // Pick up the exception type by using the computation contract
+      IType exceptionType = new TypeVar();
+      TypeVar contractType = new TypeVar();
+
+      contractType.setConstraint(new ContractConstraint(StandardNames.COMPUTATION, contractType, TypeUtils.determinedType(exceptionType)));
+
+      try {
+        Subsume.subsume(mType, contractType, loc, valCxt);
+      } catch (TypeConstraintException e) {
+        errors.reportError(StringUtils.msg(mType, " expression not consistent with ", contractType, " because ", e
+            .getWords()), merge(loc, e.getLocs()));
+      }
+
       for (IAbstract act : CompilerUtils.unWrap(CompilerUtils.computationBody(term), StandardNames.TERM))
         body.addAll(checkAction(act, mType, taskResltType, valCxt, outer));
 
@@ -665,7 +675,7 @@ public class TypeChecker {
       if (!hasValis(valofBody) && !TypeUtils.unifyUnitType(taskResltType, loc, dict))
         errors.reportError(StringUtils.msg(mType, " expression: ", term, " not guaranteed to return a value"), loc);
 
-      return Computations.monasticate(valofBody, mType, errors, valCxt, outer);
+      return Computations.monasticate(valofBody, mType, exceptionType, errors, valCxt, outer);
     } else if (CompilerUtils.isRaise(term)) {
       IContentExpression code = typeOfExp(CompilerUtils.raisedCode(term), stringType, dict, outer);
       IContentExpression raised = typeOfExp(CompilerUtils.raisedException(term), new TypeVar(), dict, outer);
@@ -4033,27 +4043,12 @@ public class TypeChecker {
       TypeVar monadType = TypeVar.var("%%m", 1, readWrite);
       IType actType = TypeUtils.typeExp(monadType, unitType);
       IType exType = new TypeVar();
-      monadType.setConstraint(new ContractConstraint(Computations.EXECUTION, monadType, TypeUtils.determinedType(exType)));
+      monadType.setConstraint(new ContractConstraint(Computations.EXECUTION, monadType));
 
       IContentExpression performed = typeOfExp(CompilerUtils.performedAction(action), actType, cxt, outer);
 
-      if (!CompilerUtils.isBasicPerform(action)) {
-        IType abortType = TypeUtils.functionType(exType, unitType);
-
-        List<Pair<IContentPattern, IContentAction>> cases = checkCaseBranches(loc, CompilerUtils.performedAbort(action),
-            exType, resultType, cxt);
-        Variable exceptionVar = new Variable(loc, exType, StandardNames.EXCEPTION);
-        IContentAction handler = MatchCompiler.generateCaseAction(loc, exceptionVar, cases, cxt, outer, errors);
-
-        FunctionLiteral handlerFun = new FunctionLiteral(loc, GenSym.genSym("perform_"), abortType,
-            new IContentPattern[]{exceptionVar}, new ValofExp(loc, unitType, handler, new ValisAction(loc,
-            new VoidExp(loc))), FreeVariables.findFreeVars(handler, cxt));
-        IContentAction body = new Ignore(loc, Computations.perform(loc, monadType, performed, handlerFun, cxt, errors));
-
-        return FixedList.create((IContentAction) new ExceptionHandler(loc, body, handler));
-      } else
-        return FixedList.create((IContentAction) new Ignore(loc, Computations.perform(loc, monadType, performed, cxt,
-            errors)));
+      return FixedList.create((IContentAction) new Ignore(loc, Computations.perform(loc, monadType, performed, cxt,
+          errors)));
     } else if (CompilerUtils.isTypeAnnotation(action)) {
       IType type = TypeParser.parseType(CompilerUtils.typeAnnotation(action), cxt, errors, readWrite);
 
@@ -4168,7 +4163,7 @@ public class TypeChecker {
       TypeVar monadType = TypeVar.var("%%m", 1, readWrite);
       IType actType = TypeUtils.typeExp(monadType, resultType);
       IType exType = new TypeVar();
-      monadType.setConstraint(new ContractConstraint(Computations.COMPUTATION, monadType,TypeUtils.determinedType(exType)));
+      monadType.setConstraint(new ContractConstraint(Computations.COMPUTATION, monadType, TypeUtils.determinedType(exType)));
 
       try {
         Subsume.subsume(actType, TypeUtils.typeExp(actionType, resultType), loc, cxt);

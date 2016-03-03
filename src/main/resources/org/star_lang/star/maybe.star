@@ -32,7 +32,6 @@ implementation (computation) over maybe determines exception is {
    |  _handle(M,EF) is M
 }
   
-implementation execution over maybe determines exception is {
-    fun _perform(possible(X),_) is X
-     |  _perform(impossible(R),F) is F(R)
+implementation execution over maybe is {
+    fun _perform(possible(X)) is X
 }

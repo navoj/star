@@ -22,8 +22,8 @@ implementation (computation) over test determines exception is {
 	  });
 };
 
-implementation execution over test determines exception is {
-  fun _perform(Test(f), _) is /* not really a good idea */
+implementation execution over test is {
+  fun _perform(Test(f)) is /* not really a good idea */
 	valof {
 	  def (_, v) is f(testState);
 	  valis v;

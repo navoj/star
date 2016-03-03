@@ -12,17 +12,7 @@ import java.util.Set;
 import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-import org.star_lang.star.data.type.ConstructorSpecifier;
-import org.star_lang.star.data.type.ContractImplementation;
-import org.star_lang.star.data.type.IAlgebraicType;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeAlias;
-import org.star_lang.star.data.type.ITypeDescription;
-import org.star_lang.star.data.type.IValueSpecifier;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.TypeContract;
-import org.star_lang.star.data.type.TypeExists;
-import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.*;
 import org.star_lang.star.operators.Intrinsics;
 
 /*
@@ -79,6 +69,17 @@ public class Dict implements Dictionary
         if (con instanceof ConstructorSpecifier)
           declareConstructor((ConstructorSpecifier) con);
       }
+    }
+  }
+
+  @Override
+  public Kind kindOfType(String name) {
+    ITypeDescription desc = getTypeDescription(name);
+
+    if(desc==null)
+      return Kind.unknown;
+    else {
+      return desc.kind();
     }
   }
 

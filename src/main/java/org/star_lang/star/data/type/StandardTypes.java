@@ -51,7 +51,6 @@ public class StandardTypes
   public static final String ANY = "any";
   public static final String QUOTED = "quoted";
   public static final String LIST = "list";
-  public static final String RELATION = "relation";
   public static final String BINARY = "binary";
   public static final String NON_BINARY = "nonBinary";
   public static final String RAW_BINARY = "binary_";
@@ -73,7 +72,6 @@ public class StandardTypes
   public static final IType rawIntegerType = TypeUtils.typeExp(RAW_INTEGER);
   public static final IType rawStringType = TypeUtils.typeExp(RAW_STRING);
   public static final IType rawDecimalType = TypeUtils.typeExp(RAW_DECIMAL);
-  public static final IType rawFileType = TypeUtils.typeExp(RAW_FILE_TYPE);
   public static final IType rawBinaryType = TypeUtils.typeExp(RAW_BINARY);
 
   public static final IType astType = TypeUtils.typeExp(QUOTED);

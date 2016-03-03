@@ -42,10 +42,14 @@ performTest is package{
     perform ff(MM);
     
     perform doIf(L1,1);
-    
-    perform doIf(L1,1) on abort { case X do logMsg(info,"Got exception (1): $X"); }
-    
-    perform doIf(L1,5) on abort { case X do logMsg(info,"Got exception (2): $X"); }
+
+    try{
+      perform doIf(L1,1)
+    } on abort { case X do logMsg(info,"Got exception (1): $X"); }
+
+    try{
+      perform doIf(L1,5)
+    } on abort { case X do logMsg(info,"Got exception (2): $X"); }
     
     def HH is handle(L1,"omega");
     

@@ -21,7 +21,6 @@ trace is package{
   }
   
   implementation execution over trace is {
-    fun _perform(xx(X),_) is X
-     |  _perform(drop(MSG),EF) is EF(MSG)
+    fun _perform(xx(X)) is X
   }
 }

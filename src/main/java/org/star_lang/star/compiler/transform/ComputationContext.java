@@ -36,25 +36,27 @@ public class ComputationContext implements PrettyPrintable
 {
   private final IContentExpression exp;
   private final IType mType;
+  private final IType eType;
   private final List<Pair<Variable, IContentExpression>> extras;
   private final Dictionary dict;
   private final Dictionary outer;
   private final ErrorReport errors;
 
-  public ComputationContext(IType mType, IContentExpression exp, List<Pair<Variable, IContentExpression>> tempVars,
-      Dictionary dict, Dictionary outer, ErrorReport errors)
+  public ComputationContext(IType mType, IType eType, IContentExpression exp, List<Pair<Variable, IContentExpression>> tempVars,
+                            Dictionary dict, Dictionary outer, ErrorReport errors)
   {
     this.exp = exp;
     this.mType = mType;
+    this.eType = eType;
     this.extras = tempVars;
     this.dict = dict;
     this.outer = outer;
     this.errors = errors;
   }
 
-  public ComputationContext(IType mType, Dictionary dict, Dictionary outer, ErrorReport errors)
+  public ComputationContext(IType mType, IType eType, Dictionary dict, Dictionary outer, ErrorReport errors)
   {
-    this(mType, null, new ArrayList<>(), dict, outer, errors);
+    this(mType, eType, null, new ArrayList<>(), dict, outer, errors);
   }
 
   public IContentExpression getExp()
@@ -65,6 +67,10 @@ public class ComputationContext implements PrettyPrintable
   public IType getmType()
   {
     return mType;
+  }
+
+  public IType geteType() {
+    return eType;
   }
 
   public Dictionary getDict()
@@ -89,7 +95,7 @@ public class ComputationContext implements PrettyPrintable
 
   public ComputationContext fork(IContentExpression exp)
   {
-    return new ComputationContext(mType, exp, new ArrayList<>(), dict, outer, errors);
+    return new ComputationContext(mType, eType, exp, new ArrayList<>(), dict, outer, errors);
   }
 
   public ComputationContext fork()
@@ -99,7 +105,7 @@ public class ComputationContext implements PrettyPrintable
 
   public ComputationContext fork(List<Pair<Variable, IContentExpression>> extras)
   {
-    return new ComputationContext(mType, exp, extras, dict, outer, errors);
+    return new ComputationContext(mType, eType, exp, extras, dict, outer, errors);
   }
 
   public Variable declareTempVar(IContentExpression val)
