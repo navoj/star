@@ -4198,7 +4198,7 @@ public class TypeChecker {
             body));
       else {
         IContentExpression loopExp = QueryPlanner.transformForLoop(action.getLoc(), cond.right(), cond.left(), body,
-            resultType, resultType, actionType, cxt, outer, errors);
+            resultType, resultType, cxt, outer, errors);
 
         List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
         if (!resultType.equals(Computations.unitType)) {

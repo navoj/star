@@ -19,10 +19,8 @@ import org.star_lang.star.compiler.SRTest;
  * permissions and limitations under the License.
  */
 
-public class TaskExpTest extends SRTest
-{
-  public TaskExpTest()
-  {
+public class TaskExpTest extends SRTest {
+  public TaskExpTest() {
     super(TaskExpTest.class);
   }
 
@@ -30,105 +28,98 @@ public class TaskExpTest extends SRTest
   public ExpectedException exception = ExpectedException.none();
 
   @Test
-  public void testBasicTask()
-  {
+  public void testBasicTask() {
     runStar("basicTask.star");
   }
 
   @Test
-  public void testSimpleCombine()
-  {
+  public void testSimpleCombine() {
     runStar("simpleCombine.star");
   }
 
   @Test
-  public void testSubTask()
-  {
+  public void testSubTask() {
     runStar("subTask.star");
   }
 
   @Test
-  public void testInjection()
-  {
+  public void testInjection() {
     runStar("injectTest.star");
   }
 
   @Test
-  public void caseTest()
-  {
+  public void caseTest() {
     runStar("caseTask.star");
   }
 
   @Test
-  public void testConditionalTask()
-  {
+  public void condValisTask() {
+    runStar("condValisTask.star");
+  }
+
+  @Test
+  public void forloopTask() {
+    runStar("forloopTask.star");
+  }
+
+  @Test
+  public void testConditionalTask() {
     runStar("condtask.star");
   }
 
   @Test
-  public void testForLoopTask()
-  {
+  public void testForLoopTask() {
     runStar("loopingTask.star");
   }
 
   @Test
-  public void testWhileTask()
-  {
+  public void testWhileTask() {
     runStar("whileTask.star");
   }
 
   @Test
-  public void testWhileSearchTask()
-  {
+  public void testWhileSearchTask() {
     runStar("whileSearch.star");
   }
 
   @Test
-  public void testTaskCond()
-  {
+  public void testTaskCond() {
     runStar("taskCondTest.star");
   }
 
   @Test
-  public void testCondExpTask()
-  {
+  public void testCondExpTask() {
     runStar("condexptask.star");
   }
 
   @Test
-  public void testMaybe()
-  {
+  public void testMaybe() {
     runStar("maybeTest.star");
   }
 
   @Test
-  public void testPerform()
-  {
+  public void testPerform() {
     runStar("performTest.star");
   }
 
   @Test
-  public void testValofValis()
-  {
+  public void testValofValis() {
     runStar("sendOrder.star");
   }
 
   @Test
-  public void testTypeDecl()
-  {
+  public void testTypeDecl() {
     runStar("typeDecl.star");
   }
 
   @Test
-  public void testTypeBug()
-  {
+  public void testTypeBug() {
     exception.expectMessage("task not equal to rendezvous");
     runStar("typeBug.star");
   }
 
   @Test
-  public void testFixedException()
-  {
+  public void testFixedException() {
     runStar("fixedException.star");
   }
 }

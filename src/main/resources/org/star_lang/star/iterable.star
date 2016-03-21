@@ -18,6 +18,7 @@ private import base;
 private import casting;
 private import strings;
 private import sequences;
+private import compute;
 
 type IterState of t is NoneFound or NoMore(t) or ContinueWith(t) or AbortIter(exception);
 
@@ -65,3 +66,16 @@ implementation indexed_iterable over string determines (integer,char) is {
 contract grouping over coll determines (m,k,v) where indexable over m of (k,coll of v) determines (k,coll of v) is {
   (group by) has type ((coll of v), (v)=>k) => m of (k,coll of v)
 }
+
+implementation (computation) over IterState determines exception is {
+  fun _encapsulate(X) is ContinueWith(X)
+  fun _combine(NoneFound,F) is NoneFound
+   |  _combine(ContinueWith(X),F) is F(X)
+   |  _combine(NoMore(X),F) is F(X)
+   |  _combine(AbortIter(x),_) is AbortIter(x)
+  fun _handle(AbortIter(x),E) is E(x)
+   |  _handle(V,_) default is V
+  fun _abort(E) is AbortIter(E)
+}
+
+

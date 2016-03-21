@@ -170,23 +170,27 @@ public class Computations
      * is transformed to:
      *
      * <pre>
-     * _combine(_encapsulate(0),
-     *   function(initC) is valof{
-     *     var C := initC;
-     *     valis _combine(_encapsulate(_iterate(S, let{
-     *            fn(X,CC) is valof { if X<0 then valis NoMore(C+5) else { C := C+X; valis CC}};
-     *          } in fn,NoneFound)),
-     *          let{
-     *            check(NoneFound) is _encapsulate(C+1)
-     *            check(NoMore(V)) is _encapsulate(V); -- escape from loop
-     *            check(AbortIter(E)) is _abort(E);    -- abort loop
-     *          } in check)
-     *   })
+     * _delay(memo valof{
+     *   var C := 0
+     *   valis let{
+     *     fun check(NoneFound) is _encapsulate(C+1)
+     *      |  check(NoMore(XX) is _encapsulate(XX)
+     *      |  check(AbortIter(E) is _abort(X)
+     *   } in check(_iterate(Src,let{
+     *     fun bd(X,St) is valof{
+     *       if X<0 then
+     *         valis NoMore(C+5)
+     *       else
+     *         C := C+X
+     *       valis St
+     *     } in bd,NoneFound)
+     * })
      * </pre>
      */
 
     IContentAction body = loop.getBody();
     Location loc = loop.getLoc();
+
     IType mType = cxt.getmType();
     IType iterMtype = TypeUtils.typeCon(StandardNames.ITERSTATE, 1);
     Dictionary dict = cxt.getDict();
@@ -202,8 +206,15 @@ public class Computations
 
     IType loopResultType = TypeUtils.typeExp(iterMtype, resType);
 
+//    IContentExpression cont = cxt.getExp();
+
+//    ComputationContext bdyCxt = cxt.fork(cont);
+//    IContentExpression bodyExp = collectBindings(loop.getBody().transform(this, bdyCxt), bdyCxt);
+
+    // return collectBindings(new ConditionalExp(loc, thn.getType(), test, thn, els), condCxt);
+
     IContentExpression loopExp = QueryPlanner.transformForLoop(loc, loop.getDefined(), loop.getControl(), body,
-        resType, resType, mType, dict, outer, errors);
+        resType, resType, dict, outer, errors);
 
     // build the check function, which we will bind by hand...
 
@@ -446,22 +457,22 @@ public class Computations
 
   @Override
   public IContentExpression transformApplication(Application appl, ComputationContext context) {
-    // if (isPerform(appl, context.getmType())) {
-    // IContentExpression task = appl.getArg(0);
-    //
-    // if (isVoidCombine(task, context.getmType()))
-    // task = combinedTask(task);
-    //
-    // return context.declareTempVar(task);
-    // } else {
-    IContentExpression op = appl.getFunction();
-    IContentExpression trOp = op.transform(this, context);
-    IContentExpression trArgs = appl.getArgs().transform(this, context);
-    if (trOp != op || trArgs != appl.getArgs())
-      return new Application(appl.getLoc(), appl.getType(), trOp, trArgs);
-    else
-      return appl;
-    // }
+    if (isPerform(appl, context.getmType())) {
+      IContentExpression task = appl.getArg(0);
+
+      if (isVoidCombine(task, context.getmType()))
+        task = combinedTask(task);
+
+      return context.declareTempVar(task);
+    } else {
+      IContentExpression op = appl.getFunction();
+      IContentExpression trOp = op.transform(this, context);
+      IContentExpression trArgs = appl.getArgs().transform(this, context);
+      if (trOp != op || trArgs != appl.getArgs())
+        return new Application(appl.getLoc(), appl.getType(), trOp, trArgs);
+      else
+        return appl;
+    }
   }
 
   @Override
@@ -989,7 +1000,7 @@ public class Computations
   }
 
   public static IContentExpression perform(Location loc, IType mType, IContentExpression exp,
-                                          Dictionary dict, ErrorReport errors) {
+                                           Dictionary dict, ErrorReport errors) {
     IType aMonad = exp.getType();
     IType aType = TypeUtils.isType(aMonad, mType, 1, dict) ? TypeUtils.getTypeArg(aMonad, 0) : new TypeVar();
     IType performType = TypeUtils.functionType(aMonad, aType);

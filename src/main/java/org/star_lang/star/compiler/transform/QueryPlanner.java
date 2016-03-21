@@ -285,8 +285,8 @@ public class QueryPlanner
   }
 
   public static IContentExpression transformForLoop(Location loc, List<Variable> definedVars, ICondition cond,
-      IContentAction body, IType stType, IType returnType, IType mType, Dictionary cxt, Dictionary outer,
-      ErrorReport errors)
+                                                    IContentAction body, IType stType, IType returnType, Dictionary cxt, Dictionary outer,
+                                                    ErrorReport errors)
   {
     IContentExpression initState = CompilerUtils.noneFound(loc, stType);
 
