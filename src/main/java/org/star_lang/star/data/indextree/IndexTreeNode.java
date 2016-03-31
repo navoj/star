@@ -239,6 +239,18 @@ public class IndexTreeNode<K, V> extends IndexTree<K, V>
   }
 
   @Override
+  public Entry<K,V> pick(){
+    if(!l1.isEmpty())
+      return l1.pick();
+    else if(!l2.isEmpty())
+      return l2.pick();
+    else if(!r1.isEmpty())
+      return r1.pick();
+    else
+      return r2.pick();
+  }
+
+  @Override
   public void prettyPrint(PrettyPrintDisplay disp)
   {
     if (SHOW_HEX) {

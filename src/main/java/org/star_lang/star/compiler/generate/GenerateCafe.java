@@ -1117,7 +1117,7 @@ public class GenerateCafe implements
     Location loc = call.getLoc();
     assert CompilerUtils.isTupleTerm(call.getArgs());
 
-    List<IContentExpression> elements = ((ConstructorTerm)call.getArgs()).getElements();
+    List<IContentExpression> elements = ((ConstructorTerm) call.getArgs()).getElements();
     List<IAbstract> args = compileExps(elements, context);
 
     if (proc instanceof Name)
@@ -1284,17 +1284,14 @@ public class GenerateCafe implements
     CContext shallow = cxt.fork(false);
     IAbstract init = scopedExpression(exp, shallow);
     Wrapper<ICondition> condition = Wrapper.create(CompilerUtils.truth);
-    CContext condCxt = cxt.fork(condition);
+    final List<IAbstract> res = new ArrayList<>();
+    CContext condCxt = cxt.fork(condition).fork(res);
+
     IAbstract ptn = generatePtn(lval, condCxt);
 
-    final List<IAbstract> res = new ArrayList<>();
-    switch (access) {
-      case readOnly:
-        res.add(CafeSyntax.isDeclaration(loc, ptn, init));
-        break;
-      default:
-        res.add(CafeSyntax.varDeclaration(loc, ptn, init));
-    }
+    res.add(access == AccessMode.readOnly ?
+        CafeSyntax.isDeclaration(loc, ptn, init) :
+        CafeSyntax.varDeclaration(loc, ptn, init));
 
     ICondition cond = condition.get();
     if (!CompilerUtils.isTrivial(cond))

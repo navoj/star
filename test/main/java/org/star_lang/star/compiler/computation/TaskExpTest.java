@@ -119,6 +119,11 @@ public class TaskExpTest extends SRTest {
   }
 
   @Test
+  public void letComp(){
+    runStar("letcomp.star");
+  }
+
+  @Test
   public void testFixedException() {
     runStar("fixedException.star");
   }

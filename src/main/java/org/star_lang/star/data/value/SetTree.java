@@ -79,7 +79,6 @@ public class SetTree implements ISet, PrettyPrintable {
     return set.contains(key);
   }
 
-
   @Override
   public ISet insert(IValue value) {
     return new SetTree(set.insert(value));
@@ -124,7 +123,7 @@ public class SetTree implements ISet, PrettyPrintable {
   public ISet map(IFunction trans) throws EvaluationException {
     IndexSet<IValue> result = IndexSet.emptySet();
 
-    for(IValue el:set)
+    for (IValue el : set)
       result = result.insert(trans.enter(el));
     return new SetTree(result);
   }
@@ -180,13 +179,23 @@ public class SetTree implements ISet, PrettyPrintable {
     for (IValue entry : set) {
       disp.append(sep);
       sep = ", ";
-      if(entry instanceof PrettyPrintable)
-        ((PrettyPrintable)entry).prettyPrint(disp);
+      if (entry instanceof PrettyPrintable)
+        ((PrettyPrintable) entry).prettyPrint(disp);
       else
         disp.append(entry.toString());
     }
     disp.popIndent(mark);
     disp.append("]");
+  }
+
+  @Override
+  public IValue pick() {
+    return set.pick();
+  }
+
+  @Override
+  public SetTree remaining() {
+    return new SetTree((Sets<IValue>) set.remaining());
   }
 
   @Override

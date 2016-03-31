@@ -2,23 +2,8 @@ package org.star_lang.star.operators.hash;
 
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.hash.runtime.HashTreeIterable.HashIterate;
-import org.star_lang.star.operators.hash.runtime.HashTreeIterable.HashIxIterate;
-import org.star_lang.star.operators.hash.runtime.HashTreeIterable.HashLeftFold;
-import org.star_lang.star.operators.hash.runtime.HashTreeIterable.HashLeftFold1;
-import org.star_lang.star.operators.hash.runtime.HashTreeIterable.HashRightFold;
-import org.star_lang.star.operators.hash.runtime.HashTreeIterable.HashRightFold1;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.DeleteFromHash;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashContains;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashCreate;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashDelete;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashEmpty;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashEqual;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashGet;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashMerge;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashSize;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.HashUpdate;
-import org.star_lang.star.operators.hash.runtime.HashTreeOps.UpdateIntoHash;
+import org.star_lang.star.operators.hash.runtime.HashTreeIterable.*;
+import org.star_lang.star.operators.hash.runtime.HashTreeOps.*;
 
 /*
   * Copyright (c) 2015. Francis G. McCabe
@@ -56,5 +41,8 @@ public class HashTreeOps
     cxt.declareBuiltin(new Builtin(HashLeftFold1.name, HashLeftFold1.type(), HashLeftFold1.class));
     cxt.declareBuiltin(new Builtin(HashRightFold.name, HashRightFold.type(), HashRightFold.class));
     cxt.declareBuiltin(new Builtin(HashRightFold1.name, HashRightFold1.type(), HashRightFold1.class));
+
+    cxt.declareBuiltin(new Builtin(HashPick.name, HashPick.type(), HashPick.class));
+    cxt.declareBuiltin(new Builtin(HashRemaining.name, HashRemaining.type(), HashRemaining.class));
   }
 }

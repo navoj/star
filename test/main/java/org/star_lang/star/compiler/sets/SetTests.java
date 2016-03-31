@@ -23,7 +23,7 @@ import org.star_lang.star.compiler.SRTest;
  * Created by fgm on 7/15/15.
  */
 public class SetTests extends SRTest {
-  public SetTests(){
+  public SetTests() {
     super(SetTests.class);
   }
 
@@ -31,37 +31,37 @@ public class SetTests extends SRTest {
   public ExpectedException exception = ExpectedException.none();
 
   @Test
-  public void testBasic()
-  {
+  public void testBasic() {
     runStar("basicsets.star");
   }
 
   @Test
-  public void testExtend()
-  {
+  public void testExtend() {
     runStar("complexkey.star");
   }
 
   @Test
-  public void testFloatSet()
-  {
+  public void testFloatSet() {
     runStar("floatSet.star");
   }
 
   @Test
-  public void testSetMap()
-  {
+  public void testSetMap() {
     runStar("setmap.star");
   }
 
   @Test
-  public void largeSetTest()
-  {
+  public void largeSetTest() {
     runStar("largeSetTest.star");
   }
 
   @Test
-  public void updateSets(){
+  public void updateSets() {
     runStar("setupdates.star");
+  }
+
+  @Test
+  public void matchSets() {
+    runStar("setMatch.star");
   }
 }

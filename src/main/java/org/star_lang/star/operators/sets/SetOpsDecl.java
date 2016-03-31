@@ -37,6 +37,9 @@ public class SetOpsDecl {
     cxt.declareBuiltin(new Builtin(SetOps.SetEmpty.name, SetOps.SetEmpty.type(), SetOps.SetEmpty.class));
     cxt.declareBuiltin(new Builtin(SetOps.SetSize.name, SetOps.SetSize.type(), SetOps.SetSize.class));
 
+    cxt.declareBuiltin(new Builtin(SetOps.SetPick.name, SetOps.SetPick.type(), SetOps.SetPick.class));
+    cxt.declareBuiltin(new Builtin(SetOps.SetRemaining.name, SetOps.SetRemaining.type(), SetOps.SetRemaining.class));
+
     cxt.declareBuiltin(new Builtin(SetIterableOps.SetIterate.name, SetIterableOps.SetIterate.type(), SetIterableOps.SetIterate.class));
     cxt.declareBuiltin(new Builtin(SetIterableOps.SetUpdate.name, SetIterableOps.SetUpdate.type(), SetIterableOps.SetUpdate.class));
 

@@ -29,7 +29,7 @@ public class IndexSet<T> implements Sets<T>, PrettyPrintable {
     this.tree = IndexTree.emptyTree();
   }
 
-  public static<T> IndexSet<T> emptySet(){
+  public static <T> IndexSet<T> emptySet() {
     return new IndexSet<>();
   }
 
@@ -93,19 +93,30 @@ public class IndexSet<T> implements Sets<T>, PrettyPrintable {
   @Override
   public <S> S fold(Fold<T, S> folder, S init) {
     S result = init;
-    for(Entry<T,Object> entry:tree){
-      result = folder.apply(entry.getKey(),result);
+    for (Entry<T, Object> entry : tree) {
+      result = folder.apply(entry.getKey(), result);
     }
     return result;
   }
 
   @Override
   public Iterator<T> iterator() {
-    return new WrapIterator<>(Entry::getKey,tree.iterator());
+    return new WrapIterator<>(Entry::getKey, tree.iterator());
   }
 
   @Override
   public Iterator<T> reverseIterator() {
-    return new WrapIterator<>(Entry::getKey,tree.reverseIterator());
+    return new WrapIterator<>(Entry::getKey, tree.reverseIterator());
+  }
+
+  @Override
+  public T pick() {
+    Entry<T, ?> entry = tree.pick();
+    return entry.getKey();
+  }
+
+  @Override
+  public Sets<T> remaining() {
+    return new IndexSet<>(tree.remaining());
   }
 }

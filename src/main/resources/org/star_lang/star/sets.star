@@ -61,8 +61,9 @@ implementation sequence over set of %v determines %v is {
   fun _apnd(H,V) is __set_insert(H,V);
   fun _nil() is __set_create();
   ptn _empty() from X where __set_empty(X);
-  ptn _pair((raise "not implemented"),(raise "not implemented")) from X;
-  ptn _back((raise "not implemented"),(raise "not implemented")) from X;
+
+  ptn _pair(__set_pick(X),__set_remaining(X)) from X where not __set_empty(X)
+  ptn _back(__set_remaining(X),__set_pick(X)) from X where not __set_empty(X)
 }
 
 implementation iterable over set of %v determines %v is {

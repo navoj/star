@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.star_lang.star.data.indextree.IndexTreeTest;
+import org.star_lang.star.data.indextree.PickAndRemaining;
 import org.star_lang.star.data.indextree.TestBasicVsCatch;
 
 /*
@@ -20,7 +21,7 @@ import org.star_lang.star.data.indextree.TestBasicVsCatch;
   * permissions and limitations under the License.
   */
 @RunWith(Suite.class)
-@SuiteClasses({ IndexTreeTest.class, TestBasicVsCatch.class })
+@SuiteClasses({ IndexTreeTest.class, TestBasicVsCatch.class, PickAndRemaining.class})
 public class DataTestSuite
 {
 }

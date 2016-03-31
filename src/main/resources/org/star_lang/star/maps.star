@@ -38,7 +38,7 @@ implementation pPrint over dictionary of (%k,%v) where pPrint over %k and pPrint
 	                    cons(ppSequence(2,dispEntries(M)),cons(ppStr("]"),nil))))
 } using {
   fun dispEntries(M) is interleave(cons of { all ppSequence(0,cons(ppDisp(K),cons(ppStr("->"),cons(ppDisp(V),nil)))) where
-      K->V in M},ppStr(",\n"))
+      K->V in M},ppNl)
 }
 
 implementation indexable over dictionary of (%k,%v) determines (%k,%v) is {
@@ -59,8 +59,9 @@ implementation sequence over dictionary of (%k,%v) determines ((%k,%v)) is {
   fun _apnd(H,(K,V)) is __hashUpdate(H,K,V);
   fun _nil() is __hashCreate();
   ptn _empty() from X where __hash_empty(X);
-  ptn _pair((raise "not implemented"),(raise "not implemented")) from X;
-  ptn _back((raise "not implemented"),(raise "not implemented")) from X;
+
+  ptn _pair(__hash_pick(X),__hash_remaining(X)) from X where not __hash_empty(X)
+  ptn _back(__hash_remaining(X),__hash_pick(X)) from X where not __hash_empty(X)
 }
 
 implementation iterable over dictionary of (%k,%v) determines %v is {

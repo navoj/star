@@ -24,7 +24,7 @@ import org.star_lang.star.compiler.util.PrettyPrintDisplay;
  */
 
 @SuppressWarnings("serial")
-public abstract class IndexTree<K, V> implements Mapping<K, V>
+public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
 {
   protected final int mask;
   protected final short maskLen;
@@ -246,5 +246,13 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>
       }
     };
   }
-  
+
+  @Override
+  public IndexTree<K,V> remaining(){
+    if(!isEmpty()){
+      Entry<K,V> el = pick();
+      return delete(el.getKey());
+    } else
+      return null;
+  }
 }

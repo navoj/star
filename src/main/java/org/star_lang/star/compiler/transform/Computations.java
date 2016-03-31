@@ -566,12 +566,20 @@ public class Computations
   public IContentExpression transformLetTerm(LetTerm let, ComputationContext context) {
     Location loc = let.getLoc();
     IContentExpression bound = let.getBoundExp();
-    IContentExpression trBound = bound.transform(this, context);
+    ComputationContext bndCxt = context.fork(context.getExp());
+
+    IContentExpression trBound = bound.transform(this, bndCxt);
 
     if (trBound == let.getBoundExp())
       return let;
-    else
-      return new LetTerm(loc, trBound, let.getEnvironment());
+    else{
+      final List<IStatement> env = let.getEnvironment();
+      for(Pair<Variable,IContentExpression> e : bndCxt.getTempVars()){
+        final IContentExpression performed = e.right();
+        env.add(new VarEntry(loc,e.left(),perform(loc,bndCxt.getmType(), performed,context.getDict(),context.getErrors()),AccessMode.readOnly,Visibility.priVate));
+      }
+      return new LetTerm(loc, trBound, env);
+    }
   }
 
   @Override
@@ -875,14 +883,14 @@ public class Computations
     return exp2fun(loc, ptn, exp, context.getDict(), context.getOuter(), context.getErrors());
   }
 
-  public static IContentExpression exp2fun(Location loc, IContentPattern ptn, IContentExpression exp, Dictionary cxt,
+  public static IContentExpression exp2fun(Location loc, IContentPattern ptn, IContentExpression exp, Dictionary dict,
                                            Dictionary outer, ErrorReport errors) {
     IType funType = TypeUtils.functionType(ptn.getType(), exp.getType());
     IContentPattern[] args = new IContentPattern[]{ptn};
-    Variable[] free = FreeVariables.freeFreeVars(args, exp, cxt);
+    Variable[] free = FreeVariables.freeFreeVars(args, exp, dict);
 
     return MatchCompiler.generateFunction(null, Triple.create(args, CompilerUtils.truth, exp), funType, free,
-        GenSym.genSym(StandardNames.LAMBDA), loc, cxt, outer, errors);
+        GenSym.genSym(StandardNames.LAMBDA), loc, dict, outer, errors);
   }
 
   private static IContentExpression exp2fun(Location loc, IContentExpression exp, ComputationContext context) {
@@ -925,7 +933,7 @@ public class Computations
 
       IContentExpression nxtFun = exp2fun(loc, ptn, cont, dict, outer, errors);
 
-      return combine(loc, exp, nxtFun, mType, aMonad, bMonad, dict, errors);
+      return combine(loc, exp, nxtFun, aMonad, bMonad, dict, errors);
     }
   }
 
@@ -955,7 +963,6 @@ public class Computations
   }
 
   private static IContentExpression combine(Location loc, IContentExpression val, IContentExpression cont,
-                                            IType mType,
                                             IType aMonad, IType bMonad, Dictionary dict, ErrorReport errors) {
     IType bindType = TypeUtils.functionType(aMonad, cont.getType(), bMonad);
 

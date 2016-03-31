@@ -25,25 +25,21 @@ import org.star_lang.star.compiler.util.Singleton;
  */
 
 @SuppressWarnings("serial")
-public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
-{
+public class IndexTreeLeaf<K, V> extends IndexTree<K, V> {
   private final List<Pair<K, V>> leafs;
 
-  public IndexTreeLeaf(int mask, List<Pair<K, V>> leafs)
-  {
+  public IndexTreeLeaf(int mask, List<Pair<K, V>> leafs) {
     super((short) 32, mask);
     this.leafs = leafs;
   }
 
-  public IndexTreeLeaf(int mask, K key, V value)
-  {
+  public IndexTreeLeaf(int mask, K key, V value) {
     super((short) 32, mask);
     this.leafs = new Singleton<>(Pair.pair(key, value));
   }
 
   @Override
-  protected V find(K key, int hash)
-  {
+  protected V find(K key, int hash) {
     if (hash == mask) {
       for (Pair<K, V> p : leafs) {
         if (p.left.equals(key))
@@ -54,8 +50,7 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
   }
 
   @Override
-  protected boolean contains(K key, int hash)
-  {
+  protected boolean contains(K key, int hash) {
     if (hash == mask) {
       for (Pair<K, V> p : leafs)
         if (p.left.equals(key))
@@ -65,19 +60,18 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
   }
 
   @Override
-  protected IndexTree<K, V> mergeTree(IndexTree<K, V> other)
-  {
+  protected IndexTree<K, V> mergeTree(IndexTree<K, V> other) {
     if (other instanceof IndexTreeLeaf)
       return mergeLeafs((IndexTreeLeaf<K, V>) other);
     else
       return other.mergeTree(this);
   }
 
-  protected IndexTree<K, V> mergeLeafs(IndexTreeLeaf<K, V> otherLeaf)
-  {
+  protected IndexTree<K, V> mergeLeafs(IndexTreeLeaf<K, V> otherLeaf) {
     if (otherLeaf.mask == mask) {
       List<Pair<K, V>> newList = new ArrayList<>();
-      outer: for (Pair<K, V> thisP : leafs) {
+      outer:
+      for (Pair<K, V> thisP : leafs) {
         for (Pair<K, V> otherP : otherLeaf.leafs) {
           if (thisP.left.equals(otherP.left)) {
             continue outer;
@@ -104,41 +98,41 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
       IndexTree<K, V> R2 = empty;
 
       switch (nth4Way(mask, cml)) {
-      case 0:
-        L1 = this;
-        break;
-      case 1:
-        L2 = this;
-        break;
-      case 2:
-        R1 = this;
-        break;
-      case 3:
-        R2 = this;
-        break;
-      default:
-        throw new IllegalStateException();
+        case 0:
+          L1 = this;
+          break;
+        case 1:
+          L2 = this;
+          break;
+        case 2:
+          R1 = this;
+          break;
+        case 3:
+          R2 = this;
+          break;
+        default:
+          throw new IllegalStateException();
       }
 
       switch (nth4Way(otherLeaf.mask, cml)) {
-      case 0:
-        assert L1 == empty;
-        L1 = otherLeaf;
-        break;
-      case 1:
-        assert L2 == empty;
-        L2 = otherLeaf;
-        break;
-      case 2:
-        assert R1 == empty;
-        R1 = otherLeaf;
-        break;
-      case 3:
-        assert R2 == empty;
-        R2 = otherLeaf;
-        break;
-      default:
-        throw new IllegalStateException();
+        case 0:
+          assert L1 == empty;
+          L1 = otherLeaf;
+          break;
+        case 1:
+          assert L2 == empty;
+          L2 = otherLeaf;
+          break;
+        case 2:
+          assert R1 == empty;
+          R1 = otherLeaf;
+          break;
+        case 3:
+          assert R2 == empty;
+          R2 = otherLeaf;
+          break;
+        default:
+          throw new IllegalStateException();
       }
 
       return new IndexTreeNode<>((short) cml, cm, L1, L2, R1, R2);
@@ -146,8 +140,7 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
   }
 
   @Override
-  protected IndexTree<K, V> delete(K key, int hash)
-  {
+  protected IndexTree<K, V> delete(K key, int hash) {
     if (this.mask == hash) {
       for (int cx = 0; cx < leafs.size(); cx++) {
         Pair<K, V> entry = leafs.get(cx);
@@ -159,8 +152,7 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
       return this;
   }
 
-  private static <K, V> List<Pair<K, V>> removeIx(List<Pair<K, V>> list, int offset)
-  {
+  private static <K, V> List<Pair<K, V>> removeIx(List<Pair<K, V>> list, int offset) {
     List<Pair<K, V>> newList = new ArrayList<>();
     for (int ix = 0; ix < list.size(); ix++)
       if (ix != offset)
@@ -169,80 +161,73 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
   }
 
   @Override
-  public boolean isEmpty()
-  {
+  public boolean isEmpty() {
     return leafs.isEmpty();
   }
 
   @Override
-  public int size()
-  {
+  public int size() {
     return leafs.size();
   }
 
   @Override
-  public Iterator<Entry<K, V>> iterator()
-  {
+  public Iterator<Entry<K, V>> iterator() {
     return new Iterator<Entry<K, V>>() {
       Iterator<Pair<K, V>> it = leafs.iterator();
 
       @Override
-      public boolean hasNext()
-      {
+      public boolean hasNext() {
         return it.hasNext();
       }
 
       @Override
-      public Entry<K, V> next()
-      {
+      public Entry<K, V> next() {
         return it.next();
       }
 
       @Override
-      public void remove()
-      {
+      public void remove() {
         throw new UnsupportedOperationException();
       }
     };
   }
 
   @Override
-  public Iterator<Entry<K, V>> reverseIterator()
-  {
+  public Iterator<Entry<K, V>> reverseIterator() {
     return new Iterator<Entry<K, V>>() {
       int pos = leafs.size();
 
       @Override
-      public boolean hasNext()
-      {
+      public boolean hasNext() {
         return pos > 0;
       }
 
       @Override
-      public Entry<K, V> next()
-      {
+      public Entry<K, V> next() {
         return leafs.get(--pos);
       }
 
       @Override
-      public void remove()
-      {
+      public void remove() {
         throw new UnsupportedOperationException();
       }
     };
   }
 
   @Override
-  public <S> S fold(Fold<Entry<K, V>, S> folder, S state)
-  {
+  public <S> S fold(Fold<Entry<K, V>, S> folder, S state) {
     for (Entry<K, V> entry : leafs)
       state = folder.apply(entry, state);
     return state;
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public Entry<K, V> pick() {
+    return leafs.get(0);
+  }
+
+  @Override
+  public void prettyPrint(PrettyPrintDisplay disp) {
     for (Pair<K, V> p : leafs) {
       K key = p.left();
       if (key instanceof PrettyPrintable)
@@ -263,8 +248,7 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
   }
 
   @Override
-  public int hashCode()
-  {
+  public int hashCode() {
     int hash = 0;
     for (Pair<K, V> p : leafs)
       hash = hash * 37 + p.hashCode();
@@ -273,15 +257,15 @@ public class IndexTreeLeaf<K, V> extends IndexTree<K, V>
   }
 
   @Override
-  public boolean equals(Object obj)
-  {
+  public boolean equals(Object obj) {
     if (obj == this)
       return true;
     if (obj instanceof IndexTreeLeaf) {
       @SuppressWarnings("unchecked")
       IndexTreeLeaf<K, V> other = (IndexTreeLeaf<K, V>) obj;
       if (other.leafs.size() == leafs.size()) {
-        leafLoop: for (Pair<K, V> p : leafs) {
+        leafLoop:
+        for (Pair<K, V> p : leafs) {
           for (Pair<K, V> o : other.leafs) {
             if (p.equals(o))
               continue leafLoop;

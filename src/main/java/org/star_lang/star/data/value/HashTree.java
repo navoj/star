@@ -32,23 +32,19 @@ import org.star_lang.star.data.type.TypeVar;
  */
 
 @SuppressWarnings("serial")
-public class HashTree implements IMap, PrettyPrintable
-{
+public class HashTree implements IMap, PrettyPrintable {
   private final IndexTree<IValue, IValue> indexTree;
 
-  public HashTree(IndexTree<IValue, IValue> indexTree)
-  {
+  public HashTree(IndexTree<IValue, IValue> indexTree) {
     this.indexTree = indexTree;
   }
 
-  public HashTree()
-  {
+  public HashTree() {
     this.indexTree = IndexTree.emptyTree();
   }
 
   @Override
-  public IType getType()
-  {
+  public IType getType() {
     for (Entry<IValue, IValue> entry : this) {
       return TypeUtils.dictionaryType(entry.getKey().getType(), entry.getValue().getType());
     }
@@ -56,70 +52,59 @@ public class HashTree implements IMap, PrettyPrintable
   }
 
   @Override
-  public IMap copy() throws EvaluationException
-  {
+  public IMap copy() throws EvaluationException {
     return this;
   }
 
   @Override
-  public IValue shallowCopy() throws EvaluationException
-  {
+  public IValue shallowCopy() throws EvaluationException {
     return this;
   }
 
   @Override
-  public void accept(IValueVisitor visitor)
-  {
+  public void accept(IValueVisitor visitor) {
     visitor.visitMap(this);
   }
 
   @Override
-  public Iterator<Entry<IValue, IValue>> iterator()
-  {
+  public Iterator<Entry<IValue, IValue>> iterator() {
     return indexTree.iterator();
   }
 
   @Override
-  public Iterator<Entry<IValue, IValue>> reverseIterator()
-  {
+  public Iterator<Entry<IValue, IValue>> reverseIterator() {
     return indexTree.reverseIterator();
   }
 
   @Override
-  public boolean contains(IValue key)
-  {
+  public boolean contains(IValue key) {
     return indexTree.contains(key);
   }
 
   @Override
-  public IValue getMember(IValue key)
-  {
+  public IValue getMember(IValue key) {
     return indexTree.find(key);
   }
 
   @Override
-  public IMap setMember(IValue key, IValue value) throws EvaluationException
-  {
+  public IMap setMember(IValue key, IValue value) throws EvaluationException {
     return new HashTree(indexTree.insrt(key, value));
   }
 
   @Override
-  public HashTree removeMember(IValue key) throws EvaluationException
-  {
+  public HashTree removeMember(IValue key) throws EvaluationException {
     return new HashTree(indexTree.delete(key));
   }
 
   @Override
-  public boolean isEmpty()
-  {
+  public boolean isEmpty() {
     return indexTree.isEmpty();
   }
 
   @Override
-  public IMap filterOut(IPattern filter) throws EvaluationException
-  {
+  public IMap filterOut(IPattern filter) throws EvaluationException {
     IndexTree<IValue, IValue> tree = IndexTree.emptyTree();
-    for (Iterator<Entry<IValue, IValue>> it = indexTree.iterator(); it.hasNext();) {
+    for (Iterator<Entry<IValue, IValue>> it = indexTree.iterator(); it.hasNext(); ) {
       Entry<IValue, IValue> next = it.next();
 
       IValue tpl = NTuple.tuple(next.getKey(), next.getValue());
@@ -130,10 +115,9 @@ public class HashTree implements IMap, PrettyPrintable
   }
 
   @Override
-  public IMap update(IPattern filter, IFunction transform) throws EvaluationException
-  {
+  public IMap update(IPattern filter, IFunction transform) throws EvaluationException {
     IndexTree<IValue, IValue> tree = IndexTree.emptyTree();
-    for (Iterator<Entry<IValue, IValue>> it = indexTree.iterator(); it.hasNext();) {
+    for (Iterator<Entry<IValue, IValue>> it = indexTree.iterator(); it.hasNext(); ) {
       Entry<IValue, IValue> next = it.next();
 
       IValue tpl = NTuple.tuple(next.getKey(), next.getValue());
@@ -149,14 +133,12 @@ public class HashTree implements IMap, PrettyPrintable
   }
 
   @Override
-  public int size()
-  {
+  public int size() {
     return indexTree.size();
   }
 
   @Override
-  public boolean equals(IMap other, IFunction valQ) throws EvaluationException
-  {
+  public boolean equals(IMap other, IFunction valQ) throws EvaluationException {
     if (other.size() == size()) {
       for (Entry<IValue, IValue> entry : this) {
         IValue oVal = other.getMember(entry.getKey());
@@ -168,9 +150,17 @@ public class HashTree implements IMap, PrettyPrintable
     return false;
   }
 
+  public IValue pick() {
+    Entry<IValue, IValue> member = indexTree.pick();
+    return NTuple.tuple(member.getKey(), member.getValue());
+  }
+
+  public HashTree remaining() {
+    return new HashTree(indexTree.remaining());
+  }
+
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     disp.appendWord(StandardNames.DICTIONARY);
     disp.appendWord(StandardNames.OF);
     disp.append("{");
@@ -181,8 +171,7 @@ public class HashTree implements IMap, PrettyPrintable
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 }

@@ -118,4 +118,18 @@ public interface ISet extends IValue, Iterable<IValue> {
    */
 
   Iterator<IValue> reverseIterator();
+
+  /**
+   * Pick an element at random (not guaranteed)
+   *
+   * @return
+   */
+  IValue pick();
+
+  /**
+   * Pick an element and return the rest
+   *
+   * @return
+   */
+  ISet remaining();
 }

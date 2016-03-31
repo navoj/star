@@ -17,7 +17,7 @@ import java.util.Iterator;
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-public interface Sets<T> extends Iterable<T>, PrettyPrintable {
+public interface Sets<T> extends Iterable<T>, Pick<T>, PrettyPrintable {
   /**
    * Is the set empty?
    *
@@ -71,7 +71,7 @@ public interface Sets<T> extends Iterable<T>, PrettyPrintable {
   /**
    * Allow a set to be traversed in the reverse direction as well as the forward direction
    *
-   * @return
+   * @return an iterator that goes backwards
    */
 
   Iterator<T> reverseIterator();

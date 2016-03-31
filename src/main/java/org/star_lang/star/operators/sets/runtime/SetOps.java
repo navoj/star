@@ -341,7 +341,56 @@ public class SetOps {
     public static IType type() {
       TypeVar vl = new TypeVar();
       return new UniversalType(vl, TypeUtils.functionType(TypeUtils.setType(vl),
-              StandardTypes.rawIntegerType));
+          StandardTypes.rawIntegerType));
+    }
+  }
+
+
+  public static class SetPick implements IFunction {
+    public static final String name = "__set_pick";
+
+    @CafeEnter
+    public static IValue enter(SetTree set) {
+      return set.pick();
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter((SetTree) args[0]);
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      TypeVar v = new TypeVar();
+      return new UniversalType(v, TypeUtils.functionType(TypeUtils.setType(v), v));
+    }
+  }
+
+  public static class SetRemaining implements IFunction {
+    public static final String name = "__set_remaining";
+
+    @CafeEnter
+    public static IValue enter(SetTree set) {
+      return set.remaining();
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter((SetTree) args[0]);
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      TypeVar v = new TypeVar();
+      return new UniversalType(v, TypeUtils.functionType(TypeUtils.setType(v), TypeUtils.setType(v)));
     }
   }
 }

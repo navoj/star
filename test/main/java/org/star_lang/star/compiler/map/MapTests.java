@@ -160,4 +160,9 @@ public class MapTests extends SRTest
     runStar("recordMap.star");
   }
 
+  @Test
+  public void mapMatching()
+  {
+    runStar("mapMatch.star");
+  }
 }
