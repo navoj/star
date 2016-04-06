@@ -148,29 +148,35 @@ public class TypeChecker {
           }
         }
 
-        sealInterface(pkgFace, elements, definitions, thetaCxt, errors, loc, pkge);
-        TypeInterfaceType pFace = (TypeInterfaceType) TypeUtils.interfaceOfType(loc, pkgFace, thetaCxt, errors);
-        IType sealed = Freshen.generalizeType(Freshen.existentializeType(pFace, thetaCxt), thetaCxt);
+        try {
+          sealInterface(pkgFace, elements, definitions, thetaCxt, errors, loc, pkge);
+          TypeInterfaceType pFace = (TypeInterfaceType) TypeUtils.interfaceOfType(loc, pkgFace, thetaCxt, errors);
+          IType sealed = Freshen.generalizeType(Freshen.existentializeType(pFace, thetaCxt), thetaCxt);
 
-        assert elements.size() == pFace.getAllFields().size();
+          assert elements.size() == pFace.getAllFields().size();
 
-        IContentExpression record = new RecordTerm(loc, sealed, elements, pFace.getAllTypes());
-        IContentExpression pkgTheta;
-        if (!localActions.isEmpty()) {
-          localActions.add(new ValisAction(loc, record));
-          pkgTheta = new LetTerm(loc, new ValofExp(loc, sealed, new Sequence(loc, TypeUtils.typeExp(actionType, sealed),
-              localActions)), definitions);
-        } else
-          pkgTheta = new LetTerm(loc, record, definitions);
+          IContentExpression record = new RecordTerm(loc, sealed, elements, pFace.getAllTypes());
+          IContentExpression pkgTheta;
+          if (!localActions.isEmpty()) {
+            localActions.add(new ValisAction(loc, record));
+            pkgTheta = new LetTerm(loc, new ValofExp(loc, sealed, new Sequence(loc, TypeUtils.typeExp(actionType, sealed),
+                localActions)), definitions);
+          } else
+            pkgTheta = new LetTerm(loc, record, definitions);
 
-        pkgTheta = pkgTheta.transform(overloader, new OverContext(thetaCxt, errors, 0));
+          pkgTheta = pkgTheta.transform(overloader, new OverContext(thetaCxt, errors, 0));
 
-        // SimplifyCxt simplify = new SimplifyCxt();
-        // IContentExpression simplified = pkgTheta.transform(new Simplify(), simplify);
-        // System.out.println(simplify.getResolved());
+          // SimplifyCxt simplify = new SimplifyCxt();
+          // IContentExpression simplified = pkgTheta.transform(new Simplify(), simplify);
+          // System.out.println(simplify.getResolved());
 
-        return new PackageTerm(loc, pkgName(pkge.getUri()), pkgName, sealed, pkgTheta, exportedTypes, exportedAliases,
-            exportedContracts, pkge.getImports(), pkge.getUri());
+          return new PackageTerm(loc, pkgName(pkge.getUri()), pkgName, sealed, pkgTheta, exportedTypes, exportedAliases,
+              exportedContracts, pkge.getImports(), pkge.getUri());
+        } catch (TypeConstraintException e) {
+          errors.reportError(StringUtils.msg("public interface ", pkgFace, " not consistent with actual code\nbecause ", e
+              .getWords()), loc);
+          return null;
+        }
       }
     };
 
@@ -1765,7 +1771,14 @@ public class TypeChecker {
                                           Over overloader, Dictionary thetaCxt, Dictionary dict) {
         SortedMap<String, IContentExpression> elements = new TreeMap<>();
         checkContractImplementations(loc, constraintMap, thetaCxt, elements);
-        sealInterface(evidenceType, elements, definitions, thetaCxt, errors, loc, pkg);
+
+        try {
+          sealInterface(evidenceType, elements, definitions, thetaCxt, errors, loc, pkg);
+        } catch (TypeConstraintException e) {
+          errors.reportError(StringUtils.msg("public interface ", evidenceType, " not consistent with actual code\nbecause ", e
+              .getWords()), loc);
+          return new VoidExp(loc);
+        }
 
         TypeInterfaceType face = (TypeInterfaceType) TypeUtils.unwrap(TypeUtils.interfaceOfType(loc, evidenceType,
             dict, errors));
@@ -3775,8 +3788,8 @@ public class TypeChecker {
 
     IContentPattern els[] = new IContentPattern[arity];
 
-    for (int ix = 0; ix < elTypes.length; ix++)
-      els[ix] = typeOfPtn(Abstract.getArg(ptn, ix), elTypes[ix], condition, dict, outer, varHandler);
+    for (int ix = 0; ix < arity; ix++)
+      els[ix] = typeOfPtn(Abstract.getArg(ptn, ix), ix < arity ? elTypes[ix] : new TypeVar(), condition, dict, outer, varHandler);
 
     return new ConstructorPtn(loc, expectedType, els);
   }
@@ -4669,7 +4682,7 @@ public class TypeChecker {
   }
 
   private static void sealInterface(IType face, Map<String, IContentExpression> elements, List<IStatement> defs,
-                                    Dictionary dict, ErrorReport errors, Location loc, Pkg pkg) {
+                                    Dictionary dict, ErrorReport errors, Location loc, Pkg pkg) throws TypeConstraintException {
     SortedMap<String, IType> fieldTypes = new TreeMap<>();
     SortedMap<String, IType> localTypes = new TreeMap<>();
 
@@ -4687,12 +4700,7 @@ public class TypeChecker {
 
     TypeInterfaceType thetaFace = new TypeInterfaceType(localTypes, fieldTypes);
 
-    try {
-      Subsume.subsume(face, thetaFace, null, dict);
-    } catch (TypeConstraintException e) {
-      errors.reportError(StringUtils.msg("public interface ", face, " not consistent with actual code\nbecause ", e
-          .getWords()), loc);
-    }
+    Subsume.subsume(face, thetaFace, null, dict);
   }
 
   private static class Exporter extends DefaultVisitor {
