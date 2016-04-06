@@ -254,7 +254,6 @@ public class CompileDriver {
         System.out.println(pkgTerm.toString());
       if (errors.isErrorFree()) {
 
-        // IArray content = CafeGenerator.generatePackage(pkgTerm, errors);
         IArray content = GenerateCafe.generatePackage(pkgTerm, errors);
 
         if (StarCompiler.SHOWCAFE && preludeOverride) {
