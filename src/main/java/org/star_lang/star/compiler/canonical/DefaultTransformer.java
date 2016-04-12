@@ -226,12 +226,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentExpression transformRaiseExpression(RaiseExpression exp, T context) {
-    IContentExpression raised = exp.getRaise().transform(this, context);
-    if (raised == exp.getRaise())
+  public IContentExpression transformRaiseExpression(AbortExpression exp, T context) {
+    IContentExpression raised = exp.getAbort().transform(this, context);
+    if (raised == exp.getAbort())
       return exp;
     else
-      return new RaiseExpression(exp.getLoc(), exp.getType(), raised);
+      return new AbortExpression(exp.getLoc(), exp.getType(), raised);
   }
 
   @Override
@@ -360,7 +360,7 @@ public class DefaultTransformer<T> implements
     if (clean)
       return except;
     else
-      return new ExceptionHandler(except.getLoc(), body, handler);
+      return new ExceptionHandler(except.getLoc(), body, except.getAbortType(), handler);
   }
 
   @Override
@@ -400,12 +400,12 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
-  public IContentAction transformRaiseAction(RaiseAction raise, T context) {
-    IContentExpression raised = raise.getRaised().transform(this, context);
-    if (raised == raise.getRaised())
+  public IContentAction transformRaiseAction(AbortAction raise, T context) {
+    IContentExpression raised = raise.getABort().transform(this, context);
+    if (raised == raise.getABort())
       return raise;
     else
-      return new RaiseAction(raise.getLoc(), raised);
+      return new AbortAction(raise.getLoc(), raised);
   }
 
   @Override

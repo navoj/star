@@ -243,7 +243,7 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
   }
 
   @Override
-  public ISpec transformRaiseAction(RaiseAction raise, IContinuation cont) {
+  public ISpec transformRaiseAction(AbortAction raise, IContinuation cont) {
     doLineNumber(raise.getLoc());
 
     HWM hwm = getHWM();
@@ -253,7 +253,7 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
     IContinuation nxtCont = new JumpCont(nxt);
     String exceptionType = Type.getInternalName(EvaluationException.class);
 
-    ExpressionCompile.compile(raise.getRaised(), nxtCont, cxt);
+    ExpressionCompile.compile(raise.getABort(), nxtCont, cxt);
     Utils.jumpTarget(ins, nxt);
     ins.add(new TypeInsnNode(Opcodes.CHECKCAST, exceptionType));
     ins.add(new InsnNode(Opcodes.ATHROW));

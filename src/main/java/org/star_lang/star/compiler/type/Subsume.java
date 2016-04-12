@@ -184,8 +184,28 @@ public class Subsume {
       subsume(rTp1, tp2);
       resetBindings(mark);
     } else if (tp1 instanceof Type && tp2 instanceof Type) {
-      if (!tp1.typeLabel().equals(tp2.typeLabel())) {
-        throw new TypeConstraintException(FixedList.create(tp1, " not equal to ", tp2));
+      switch (tp1.typeLabel()) {
+        case StandardNames.FUN_TYPE:
+          switch (tp2.typeLabel()) {
+            case StandardNames.FUN_TYPE:
+            case StandardNames.CONSTRUCTOR_TYPE:
+              return;
+            default:
+              if (!tp1.typeLabel().equals(tp2.typeLabel()))
+                throw new TypeConstraintException(FixedList.create(tp1, " not consistent with ", tp2));
+          }
+        case StandardNames.PTN_TYPE:
+          switch (tp2.typeLabel()) {
+            case StandardNames.PTN_TYPE:
+            case StandardNames.CONSTRUCTOR_TYPE:
+              return;
+            default:
+              if (!tp1.typeLabel().equals(tp2.typeLabel()))
+                throw new TypeConstraintException(FixedList.create(tp1, " not consistent with ", tp2));
+          }
+        default:
+          if (!tp1.typeLabel().equals(tp2.typeLabel()))
+            throw new TypeConstraintException(FixedList.create(tp1, " not consistent with ", tp2));
       }
     } else if (tp1 instanceof TypeExp && tp2 instanceof TypeExp) {
       TypeExp c1 = (TypeExp) tp1;
@@ -206,20 +226,21 @@ public class Subsume {
         IType lArgs[] = c1.getTypeArgs();
         IType rArgs[] = c2.getTypeArgs();
 
-        String tpLabel = c1TyCon.typeLabel();
+        String tp1Label = c1TyCon.typeLabel();
+        String tp2Label = c2TyCon.typeLabel();
 
         // Special cases, e.g. for function types -- they are contravariant
-        if ((tpLabel.equals(StandardNames.FUN_ARROW) || tpLabel.equals(StandardNames.OVERLOADED_TYPE)) && arity1 == 2) {
+        if ((tp1Label.equals(StandardNames.FUN_TYPE) || tp1Label.equals(StandardNames.OVERLOADED_TYPE)) && arity1 == 2) {
           subsume(rArgs[0], lArgs[0]);
           subsume(lArgs[1], rArgs[1]);
-        } else if (tpLabel.equals(StandardNames.PTN_TYPE) && arity1 == 2) {
+        } else if (tp1Label.equals(StandardNames.PTN_TYPE) && arity1 == 2) {
           subsume(lArgs[0], rArgs[0]);
           subsume(rArgs[1], lArgs[1]);
-        } else if (tpLabel.equals(StandardNames.REF) && arity1 == 1) {
+        } else if (tp1Label.equals(StandardNames.REF) && arity1 == 1) {
           // ref types must be identical
           subsume(lArgs[0], rArgs[0]);
           subsume(rArgs[0], lArgs[0]);
-        } else if (tpLabel.equals(StandardNames.CONSTRUCTOR_TYPE) && arity1 == 2) {
+        } else if (tp1Label.equals(StandardNames.CONSTRUCTOR_TYPE) && arity1 == 2) {
           // constructor types must be identical
           subsume(lArgs[0], rArgs[0]);
           subsume(rArgs[0], lArgs[0]);

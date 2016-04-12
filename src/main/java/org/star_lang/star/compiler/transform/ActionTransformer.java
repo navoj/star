@@ -8,10 +8,7 @@ import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.data.type.IType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /*
@@ -117,7 +114,7 @@ public class ActionTransformer extends ExpressionTransformer {
     public IContentAction transformAction(IContentAction act) {
       ExceptionHandler except = (ExceptionHandler) act;
 
-      return new ExceptionHandler(act.getLoc(), transform(except.getBody()), transform(except.getHandler()));
+      return new ExceptionHandler(act.getLoc(), transform(except.getBody()), except.getAbortType(), transform(except.getHandler()));
     }
 
     @Override
@@ -192,15 +189,15 @@ public class ActionTransformer extends ExpressionTransformer {
   private class RaiseTransform implements TransformAction {
     @Override
     public IContentAction transformAction(IContentAction act) {
-      RaiseAction raise = (RaiseAction) act;
-      IContentExpression value = raise.getRaised();
+      AbortAction raise = (AbortAction) act;
+      IContentExpression value = raise.getABort();
       ConstructorTerm noMore = CompilerUtils.abortIter(act.getLoc(), act.getType(), value);
       return new ValisAction(act.getLoc(), noMore);
     }
 
     @Override
     public Class<? extends IContentAction> transformClass() {
-      return RaiseAction.class;
+      return AbortAction.class;
     }
   }
 

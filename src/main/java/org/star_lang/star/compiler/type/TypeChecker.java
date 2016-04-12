@@ -149,7 +149,7 @@ public class TypeChecker {
         }
 
         try {
-          sealInterface(pkgFace, elements, definitions, thetaCxt, errors, loc, pkge);
+          sealInterface(pkgFace, elements, definitions, thetaCxt, errors, pkge);
           TypeInterfaceType pFace = (TypeInterfaceType) TypeUtils.interfaceOfType(loc, pkgFace, thetaCxt, errors);
           IType sealed = Freshen.generalizeType(Freshen.existentializeType(pFace, thetaCxt), thetaCxt);
 
@@ -290,8 +290,8 @@ public class TypeChecker {
    *                     term)
    * @return the type of the expression
    */
-  public IContentExpression typeOfExp(IAbstract term, final IType expectedType, final Dictionary dict,
-                                      final Dictionary outer) {
+  IContentExpression typeOfExp(IAbstract term, final IType expectedType, final Dictionary dict,
+                               final Dictionary outer) {
     final Location loc = term.getLoc();
     int errCount = errors.errorCount();
 
@@ -526,20 +526,15 @@ public class TypeChecker {
       List<IAbstract> defs = CompilerUtils.letDefs(term);
       final IAbstract inRhs = CompilerUtils.letBound(term);
 
-      BoundChecker<IContentExpression> checker = new BoundChecker<IContentExpression>() {
+      BoundChecker<IContentExpression> checker = (definitions, localActions, overloader, thetaCxt, dict1) -> {
+        IContentExpression bndExp = typeOfExp(inRhs, expectedType, thetaCxt, outer);
 
-        @Override
-        public IContentExpression typeBound(List<IStatement> definitions, List<IContentAction> localActions,
-                                            Over overloader, Dictionary thetaCxt, Dictionary dict) {
-          IContentExpression bndExp = typeOfExp(inRhs, expectedType, thetaCxt, outer);
-
-          if (!localActions.isEmpty()) {
-            localActions.add(new ValisAction(loc, bndExp));
-            return new LetTerm(loc, new ValofExp(loc, expectedType, new Sequence(loc, TypeUtils.typeExp(actionType,
-                bndExp.getType()), localActions)), definitions);
-          } else
-            return new LetTerm(loc, bndExp, definitions);
-        }
+        if (!localActions.isEmpty()) {
+          localActions.add(new ValisAction(loc, bndExp));
+          return new LetTerm(loc, new ValofExp(loc, expectedType, new Sequence(loc, TypeUtils.typeExp(actionType,
+              bndExp.getType()), localActions)), definitions);
+        } else
+          return new LetTerm(loc, bndExp, definitions);
       };
       return checkTheta(term.getLoc(), defs, dict.fork(), dict, new TypeVar(), checker);
     } else if (CompilerUtils.isQuoted(term)) {
@@ -627,8 +622,8 @@ public class TypeChecker {
       return typeOfExp(CompilerUtils.typeAnnotatedTerm(term), type, dict, outer);
     } else if (CompilerUtils.isValofExp(term)) {
       Dictionary valCxt = dict.fork();
-      List<IContentAction> valofBody = checkAction(CompilerUtils.valofBody(term), actionType, expectedType, valCxt,
-          outer);
+      List<IContentAction> valofBody = checkAction(CompilerUtils.valofBody(term), actionType, expectedType,
+          StandardTypes.exceptionType, valCxt, outer);
 
       if (!hasValis(valofBody))
         errors.reportError(StringUtils.msg("valof expression: ", term, " not guaranteed to return a value"), loc);
@@ -662,10 +657,10 @@ public class TypeChecker {
       }
 
       // Pick up the exception type by using the computation contract
-      IType exceptionType = new TypeVar();
+      IType abortType = new TypeVar();
       TypeVar contractType = new TypeVar();
 
-      contractType.setConstraint(new ContractConstraint(StandardNames.COMPUTATION, contractType, TypeUtils.determinedType(exceptionType)));
+      contractType.setConstraint(new ContractConstraint(StandardNames.COMPUTATION, contractType, TypeUtils.determinedType(abortType)));
 
       try {
         Subsume.subsume(mType, contractType, loc, valCxt);
@@ -675,13 +670,13 @@ public class TypeChecker {
       }
 
       for (IAbstract act : CompilerUtils.unWrap(CompilerUtils.computationBody(term), StandardNames.TERM))
-        body.addAll(checkAction(act, mType, taskResltType, valCxt, outer));
+        body.addAll(checkAction(act, mType, taskResltType, abortType, valCxt, outer));
 
       IContentAction valofBody = body.size() != 1 ? new Sequence(loc, taskResltType, body) : body.get(0);
       if (!hasValis(valofBody) && !TypeUtils.unifyUnitType(taskResltType, loc, dict))
         errors.reportError(StringUtils.msg(mType, " expression: ", term, " not guaranteed to return a value"), loc);
 
-      return Computations.monasticate(valofBody, mType, exceptionType, errors, valCxt, outer);
+      return Computations.monasticate(valofBody, mType, abortType, errors, valCxt, outer);
     } else if (CompilerUtils.isRaise(term)) {
       IContentExpression code = typeOfExp(CompilerUtils.raisedCode(term), stringType, dict, outer);
       IContentExpression raised = typeOfExp(CompilerUtils.raisedException(term), new TypeVar(), dict, outer);
@@ -689,7 +684,7 @@ public class TypeChecker {
           dict, outer);
       IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
           raised, location);
-      return new RaiseExpression(loc, expectedType, ex);
+      return new AbortExpression(loc, expectedType, ex);
     } else if (CompilerUtils.isSquareSequenceTerm(term) || CompilerUtils.isLabeledSequenceTerm(term))
       return squareSequenceExpression(term, expectedType, dict, outer);
     else if (CompilerUtils.isRecordLiteral(term))
@@ -1070,7 +1065,7 @@ public class TypeChecker {
       }
     } else {
       errors.reportError(StringUtils.msg("expecting an argument of type ", conArgType,
-          "\nwhich is not consistent with ", arg), arg.getLoc());
+          "\nwhich is not consistent with ", arg), arg != null ? arg.getLoc() : loc);
       return new VoidExp(loc);
     }
   }
@@ -1279,7 +1274,7 @@ public class TypeChecker {
       sortbyTrm = null;
       compWithTrm = null;
     } else {
-      errors.reportError("invalid query form, expecting a 'where' clause", query.getLoc());
+      errors.reportError("invalid query form, expecting a 'where' clause", loc);
       return new VoidExp(loc);
     }
 
@@ -1485,7 +1480,7 @@ public class TypeChecker {
             IContentExpression location = Quoter.generateLocation(loc);
             IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
                 raised, location);
-            RaiseExpression deflt = new RaiseExpression(loc, expectedType, ex);
+            AbortExpression deflt = new AbortExpression(loc, expectedType, ex);
 
             return QueryPlanner.transformReduction(reducerFun, bound, queryInfo.left(), deflt, free, queryCxt, outer,
                 expectedType, loc, errors);
@@ -1773,7 +1768,7 @@ public class TypeChecker {
         checkContractImplementations(loc, constraintMap, thetaCxt, elements);
 
         try {
-          sealInterface(evidenceType, elements, definitions, thetaCxt, errors, loc, pkg);
+          sealInterface(evidenceType, elements, definitions, thetaCxt, errors, pkg);
         } catch (TypeConstraintException e) {
           errors.reportError(StringUtils.msg("public interface ", evidenceType, " not consistent with actual code\nbecause ", e
               .getWords()), loc);
@@ -2065,7 +2060,7 @@ public class TypeChecker {
             }
 
             List<IContentAction> bodyActions = new ArrayList<>();
-            bodyActions.addAll(checkAction(rhs, actionType, unitType, eqCxt, cxt));
+            bodyActions.addAll(checkAction(rhs, actionType, unitType, exceptionType, eqCxt, cxt));
             bodyActions.add(new ValisAction(eqnLoc, new VoidExp(eqnLoc)));
             IContentExpression body = new ValofExp(eqnLoc, unitType, bodyActions);
 
@@ -2157,7 +2152,7 @@ public class TypeChecker {
           }
 
           List<IContentAction> bodyActions = new ArrayList<>();
-          bodyActions.addAll(checkAction(rhs, actionType, unitType, eqCxt, cxt));
+          bodyActions.addAll(checkAction(rhs, actionType, unitType, exceptionType, eqCxt, cxt));
           bodyActions.add(new ValisAction(loc, new VoidExp(loc)));
           IContentExpression body = new ValofExp(loc, unitType, bodyActions);
 
@@ -2845,7 +2840,7 @@ public class TypeChecker {
             rhs), loc);
       return new ConditionCondition(loc, tst, lhs, rhs);
     } else if (CompilerUtils.isBoundTo(condition)) {
-      Wrapper<ICondition> cond = new Wrapper<>((ICondition) new TrueCondition(loc));
+      Wrapper<ICondition> cond = new Wrapper<>(new TrueCondition(loc));
       IContentExpression lhs = typeOfExp(CompilerUtils.boundToExp(condition), new TypeVar(), cxt, outer);
       IContentPattern rhs = typeOfPtn(CompilerUtils.boundToPtn(condition), lhs.getType(), cond, cxt, outer, varHandler);
 
@@ -3023,7 +3018,7 @@ public class TypeChecker {
     return Pair.pair(vars.toArray(new IContentExpression[vars.size()]), varTypes.toArray(new IType[varTypes.size()]));
   }
 
-  IContentExpression[] argTuple(IList tpl, IType expectedTypes[], Dictionary cxt, Dictionary outer) {
+  private IContentExpression[] argTuple(IList tpl, IType expectedTypes[], Dictionary cxt, Dictionary outer) {
     IContentExpression els[] = new IContentExpression[tpl.size()];
     for (int ix = 0; ix < tpl.size(); ix++) {
       boolean rawAllowed = TypeUtils.isRawType(expectedTypes[ix]);
@@ -3145,7 +3140,7 @@ public class TypeChecker {
     private final AccessMode access;
     private final Visibility visibility;
 
-    public VarHandler(AccessMode access, Visibility visibility) {
+    VarHandler(AccessMode access, Visibility visibility) {
       this.access = access;
       this.visibility = visibility;
     }
@@ -4019,8 +4014,8 @@ public class TypeChecker {
       return TypeUtils.tupleType(argTypes);
   }
 
-  private List<IContentAction> checkAction(final IAbstract action, final IType actionType, final IType resultType,
-                                           Dictionary cxt, Dictionary outer) {
+  private List<IContentAction> checkAction(final IAbstract action, final IType actionMonad, final IType resultType,
+                                           IType abortType, Dictionary cxt, Dictionary outer) {
     final Location loc = action.getLoc();
 
     if (CompilerUtils.isBlockTerm(action)) {
@@ -4028,12 +4023,12 @@ public class TypeChecker {
 
       List<IContentAction> acts = new ArrayList<>();
       for (IAbstract act : CompilerUtils.unWrap(CompilerUtils.blockContent(action)))
-        acts.addAll(checkAction(act, actionType, resultType, subCxt, outer));
+        acts.addAll(checkAction(act, actionMonad, resultType, abortType, subCxt, outer));
       return acts;
     } else if (Abstract.isBinary(action, StandardNames.TERM) || Abstract.isUnary(action, StandardNames.TERM)) {
       List<IContentAction> acts = new ArrayList<>();
       for (IAbstract act : CompilerUtils.unWrap(action))
-        acts.addAll(checkAction(act, actionType, resultType, cxt, outer));
+        acts.addAll(checkAction(act, actionMonad, resultType, abortType, cxt, outer));
       return acts;
     } else if (Abstract.isName(action, StandardNames.NOTHING) || CompilerUtils.isEmptyBlock(action))
       return FixedList.create();
@@ -4055,7 +4050,6 @@ public class TypeChecker {
     } else if (CompilerUtils.isPerformAction(action)) {
       TypeVar monadType = TypeVar.var("%%m", 1, readWrite);
       IType actType = TypeUtils.typeExp(monadType, unitType);
-      IType exType = new TypeVar();
       monadType.setConstraint(new ContractConstraint(Computations.EXECUTION, monadType));
 
       IContentExpression performed = typeOfExp(CompilerUtils.performedAction(action), actType, cxt, outer);
@@ -4114,10 +4108,10 @@ public class TypeChecker {
       IContentPattern var = typeOfPtn(varPtn, declType, condition, cxt, outer, new RuleVarHandler(readOnly,
           Visibility.priVate, outer, errors));
 
+      IContentExpression value = typeOfExp(varValue, declType, cxt, outer);
+
       if (!CompilerUtils.isTrivial(condition.get()))
         errors.reportError(StringUtils.msg("not permitted to have semantic condition ", condition.get(), " here"), loc);
-
-      IContentExpression value = typeOfExp(varValue, declType, cxt.fork(), outer);
 
       VarDeclaration decl = new VarDeclaration(loc, var, readOnly, value);
 
@@ -4147,7 +4141,7 @@ public class TypeChecker {
         public IContentAction typeBound(List<IStatement> definitions, List<IContentAction> localActions,
                                         Over overloader, Dictionary thetaCxt, Dictionary dict) {
           IContentAction bndAction = Over.resolve(thetaCxt, errors, pickAction(loc, resultType, checkAction(
-              CompilerUtils.letBound(action), actionType, resultType, thetaCxt, thetaCxt)));
+              CompilerUtils.letBound(action), actionMonad, resultType, abortType, thetaCxt, thetaCxt)));
 
           if (!localActions.isEmpty()) {
             localActions.add(bndAction);
@@ -4169,9 +4163,8 @@ public class TypeChecker {
       return FixedList.create((IContentAction) new Assignment(loc, lvalue, value));
     } else if (CompilerUtils.isAbortHandler(action)) {
       Dictionary subCxt = cxt.fork();
-      IContentAction body = pickAction(loc, resultType, checkAction(CompilerUtils.abortHandlerBody(action), actionType,
-          resultType, subCxt, outer));
-      IType exceptionType = StandardTypes.exceptionType;
+      IContentAction body = pickAction(loc, resultType, checkAction(CompilerUtils.abortHandlerBody(action), actionMonad,
+          resultType, abortType, subCxt, outer));
 
       TypeVar monadType = TypeVar.var("%%m", 1, readWrite);
       IType actType = TypeUtils.typeExp(monadType, resultType);
@@ -4179,34 +4172,37 @@ public class TypeChecker {
       monadType.setConstraint(new ContractConstraint(Computations.COMPUTATION, monadType, TypeUtils.determinedType(exType)));
 
       try {
-        Subsume.subsume(actType, TypeUtils.typeExp(actionType, resultType), loc, cxt);
+        Subsume.subsume(actType, TypeUtils.typeExp(actionMonad, resultType), loc, cxt);
       } catch (TypeConstraintException e) {
-        errors.reportError(StringUtils.msg("computation type: ", actionType, " is not consistent\nbecause ", e
+        errors.reportError(StringUtils.msg("computation type: ", actionMonad, " is not consistent\nbecause ", e
             .getWords()), merge(loc, e.getLocs()));
       }
 
       List<Pair<IContentPattern, IContentAction>> cases = checkCaseBranches(loc, CompilerUtils.abortHandlerHandler(
-          action), exceptionType, resultType, cxt);
-      Variable exceptionVar = new Variable(loc, exceptionType, StandardNames.EXCEPTION);
+          action), abortType, resultType, abortType, cxt);
+      Variable exceptionVar = new Variable(loc, abortType, StandardNames.EXCEPTION);
       IContentAction handler = MatchCompiler.generateCaseAction(loc, exceptionVar, cases, cxt, outer, errors);
-      return FixedList.create((IContentAction) new ExceptionHandler(loc, body, handler));
+      return FixedList.create((IContentAction) new ExceptionHandler(loc, body, abortType, handler));
     } else if (CompilerUtils.isRaise(action)) {
       IContentExpression code = typeOfExp(CompilerUtils.raisedCode(action), stringType, cxt, outer);
       IContentExpression raised = typeOfExp(CompilerUtils.raisedException(action), new TypeVar(), cxt, outer);
 
       IContentExpression location = typeOfExp(new Name(loc, StandardNames.MACRO_LOCATION), StandardTypes.locationType,
           cxt, outer);
-      IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
+      IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, exceptionType, code,
           raised, location);
-      return FixedList.create((IContentAction) new RaiseAction(loc, ex));
+      return FixedList.create((IContentAction) new AbortAction(loc, ex));
+    } else if (CompilerUtils.isAbort(action)) {
+      IContentExpression abort = typeOfExp(CompilerUtils.abortedWith(action), abortType, cxt, outer);
+      return FixedList.create((IContentAction) new AbortAction(loc, abort));
     } else if (CompilerUtils.isForLoop(action)) {
       Dictionary loopCxt = cxt.fork();
       Triple<ICondition, List<Variable>, List<Variable>> cond = typeOfCondition(CompilerUtils.forLoopCond(action),
           loopCxt, outer);
-      IContentAction body = pickAction(loc, resultType, checkAction(CompilerUtils.forLoopBody(action), actionType,
-          resultType, loopCxt, outer));
+      IContentAction body = pickAction(loc, resultType, checkAction(CompilerUtils.forLoopBody(action), actionMonad,
+          resultType, abortType, loopCxt, outer));
 
-      if (!TypeUtils.isType(actionType, StandardNames.ACTION))
+      if (!TypeUtils.isType(actionMonad, StandardNames.ACTION))
         return FixedList.create((IContentAction) new ForLoopAction(loc, cond.left(), cond.right(), cond.middle(),
             body));
       else {
@@ -4237,7 +4233,7 @@ public class TypeChecker {
       List<Variable> free = cond.middle();
       List<Variable> definedVars = cond.right();
 
-      IContentAction body = pickAction(loc, resultType, checkAction(bdyTerm, actionType, resultType, whileCxt, outer));
+      IContentAction body = pickAction(loc, resultType, checkAction(bdyTerm, actionMonad, resultType, abortType, whileCxt, outer));
 
       if (QueryPlanner.isTransformable(cond.left())) {
         /**
@@ -4295,9 +4291,9 @@ public class TypeChecker {
       List<Variable> free = condInfo.middle();
       List<Variable> definedVars = condInfo.right();
 
-      IContentAction thAct = pickAction(loc, resultType, checkAction(thPart, actionType, resultType, ifCxt, outer));
-      IContentAction elAct = (elPart != null ? pickAction(loc, resultType, checkAction(elPart, actionType, resultType,
-          cxt, outer)) : new NullAction(loc, resultType));
+      IContentAction thAct = pickAction(loc, resultType, checkAction(thPart, actionMonad, resultType, abortType, ifCxt, outer));
+      IContentAction elAct = (elPart != null ? pickAction(loc, resultType, checkAction(elPart, actionMonad, resultType,
+          abortType, cxt, outer)) : new NullAction(loc, resultType));
 
       if (QueryPlanner.isTransformable(cond)) {
         /**
@@ -4347,7 +4343,7 @@ public class TypeChecker {
       List<Variable> free = condInfo.middle();
       List<Variable> definedVars = condInfo.right();
 
-      IContentAction thAct = pickAction(loc, resultType, checkAction(thPart, actionType, resultType, ifCxt, outer));
+      IContentAction thAct = pickAction(loc, resultType, checkAction(thPart, actionMonad, resultType, abortType, ifCxt, outer));
 
       if (QueryPlanner.isTransformable(cond)) {
         if (definedVars.size() > 1) {
@@ -4393,7 +4389,7 @@ public class TypeChecker {
       Apply act = (Apply) Abstract.binaryRhs(action);
       IAbstract reform = new Apply(loc, Abstract.binary(loc, StandardNames.PERIOD, Abstract.binaryLhs(action), act
           .getOperator()), act.getArgs());
-      return checkAction(reform, actionType, resultType, cxt, outer);
+      return checkAction(reform, actionMonad, resultType, abortType, cxt, outer);
     } else if (CompilerUtils.isCaseAction(action)) {
       IAbstract selTerm = CompilerUtils.caseSel(action);
       IAbstract caseTerms = CompilerUtils.caseRules(action);
@@ -4401,7 +4397,7 @@ public class TypeChecker {
       IType selectorType = new TypeVar();
       IContentExpression selector = typeOfExp(selTerm, selectorType, cxt, outer);
       List<Pair<IContentPattern, IContentAction>> cases = checkCaseBranches(loc, caseTerms, selectorType, resultType,
-          cxt);
+          abortType, cxt);
 
       if (!CompilerUtils.isComputational(selector))
         return FixedList.create((IContentAction) MatchCompiler.generateCaseAction(loc, selector, cases, cxt, outer,
@@ -4471,12 +4467,11 @@ public class TypeChecker {
   }
 
   private List<Pair<IContentPattern, IContentAction>> checkCaseBranches(Location loc, IAbstract caseTerms,
-                                                                        IType selectorType, IType resultType, Dictionary dict) {
+                                                                        IType selectorType, IType resultType, IType abortType, Dictionary dict) {
     IContentExpression ex = MatchCompiler.genException(loc, dict, errors);
-    RaiseAction failure = new RaiseAction(loc, ex);
+    AbortAction failure = new AbortAction(loc, ex);
 
-    Pair<IContentPattern, IContentAction> deflt = Pair.pair((IContentPattern) Variable.anonymous(loc, new TypeVar()),
-        (IContentAction) failure);
+    Pair<IContentPattern, IContentAction> deflt = Pair.pair(Variable.anonymous(loc, new TypeVar()), failure);
 
     List<Pair<IContentPattern, IContentAction>> cases = new ArrayList<>();
 
@@ -4488,7 +4483,7 @@ public class TypeChecker {
             new RuleVarHandler(dict, errors));
 
         IContentAction caseArm = pickAction(loc, resultType, checkAction(CompilerUtils.caseRuleValue(el), actionType,
-            resultType, caseCxt, dict));
+            resultType, abortType, caseCxt, dict));
         if (!CompilerUtils.isTrivial(cond.get()))
           ptn = new WherePattern(loc, ptn, cond.get());
         deflt = Pair.pair(ptn, caseArm);
@@ -4498,7 +4493,7 @@ public class TypeChecker {
         IContentPattern ptn = typeOfPtn(CompilerUtils.caseRulePtn(el), selectorType, cond, caseCxt, dict,
             new RuleVarHandler(dict, errors));
         IContentAction caseArm = pickAction(loc, resultType, checkAction(CompilerUtils.caseRuleValue(el), actionType,
-            resultType, caseCxt, dict));
+            resultType, abortType, caseCxt, dict));
 
         if (!CompilerUtils.isTrivial(cond.get()))
           ptn = new WherePattern(loc, ptn, cond.get());
@@ -4512,7 +4507,7 @@ public class TypeChecker {
   }
 
   // Look for a valis action
-  public static boolean hasValis(IContentAction act) {
+  static boolean hasValis(IContentAction act) {
     if (act instanceof ValisAction)
       return true;
     else if (act instanceof Sequence) {
@@ -4536,7 +4531,7 @@ public class TypeChecker {
     else if (act instanceof ExceptionHandler) {
       ExceptionHandler handler = (ExceptionHandler) act;
       return hasValis(handler.getBody());
-    } else if (act instanceof RaiseAction)
+    } else if (act instanceof AbortAction)
       return true;
     else if (act instanceof WhileAction) {
       WhileAction loop = (WhileAction) act;
@@ -4546,14 +4541,14 @@ public class TypeChecker {
     return false;
   }
 
-  public static boolean hasValis(List<IContentAction> actions) {
+  private static boolean hasValis(List<IContentAction> actions) {
     for (IContentAction act : actions)
       if (hasValis(act))
         return true;
     return false;
   }
 
-  protected interface BoundChecker<T> {
+  private interface BoundChecker<T> {
     T typeBound(List<IStatement> definitions, List<IContentAction> localActions, Over overloader, Dictionary thetaCxt,
                 Dictionary dict);
   }
@@ -4656,7 +4651,7 @@ public class TypeChecker {
       OverContext overCxt = new OverContext(subTheta, errors, 0);
 
       for (IAbstract local : dependencies.getLocalActions()) {
-        List<IContentAction> actions = checkAction(local, actionType, unitType, thetaDict, dict);
+        List<IContentAction> actions = checkAction(local, actionType, unitType, exceptionType, thetaDict, dict);
         for (IContentAction action : actions)
           localActions.add(action.transform(overloader, overCxt));
       }
@@ -4682,7 +4677,7 @@ public class TypeChecker {
   }
 
   private static void sealInterface(IType face, Map<String, IContentExpression> elements, List<IStatement> defs,
-                                    Dictionary dict, ErrorReport errors, Location loc, Pkg pkg) throws TypeConstraintException {
+                                    Dictionary dict, ErrorReport errors, Pkg pkg) throws TypeConstraintException {
     SortedMap<String, IType> fieldTypes = new TreeMap<>();
     SortedMap<String, IType> localTypes = new TreeMap<>();
 
@@ -4708,29 +4703,25 @@ public class TypeChecker {
     private final ErrorReport errors;
     private final Map<String, IType> fieldTypes;
     private final Map<String, IType> localTypes;
-    private final Map<String, Location[]> fieldLocs = new HashMap<>();
-    private final Map<String, Location[]> typeLocs = new HashMap<>();
-    private final Pkg pkg;
 
-    protected Exporter(Dictionary dict, Map<String, IType> fieldTypes, Map<String, IType> localTypes, Pkg pkg, ErrorReport errors) {
+    Exporter(Dictionary dict, Map<String, IType> fieldTypes, Map<String, IType> localTypes, Pkg pkg, ErrorReport errors) {
       super(false);
       this.dict = dict;
       this.errors = errors;
       this.fieldTypes = fieldTypes;
       this.localTypes = localTypes;
-      this.pkg = pkg;
     }
 
     @Override
     public void visitContractEntry(ContractEntry contract) {
       IAlgebraicType contractType = contract.getContract().getContractType();
 
-      addTypeEntry(contract.getLoc(), contract.getName(), new Type(contract.getName(), Kind.kind(contractType
+      addTypeEntry(contract.getName(), new Type(contract.getName(), Kind.kind(contractType
           .typeArity())));
       Location loc = contract.getLoc();
 
       for (IValueSpecifier spec : contractType.getValueSpecifiers())
-        addFieldEntry(loc, spec.getLabel(), spec.getConType());
+        addFieldEntry(spec.getLabel(), spec.getConType());
     }
 
     @Override
@@ -4743,9 +4734,9 @@ public class TypeChecker {
           dict, errors);
       Location loc = entry.getLoc();
       for (Entry<String, IType> field : imported.getAllFields().entrySet())
-        addFieldEntry(loc, field.getKey(), field.getValue());
+        addFieldEntry(field.getKey(), field.getValue());
       for (Entry<String, IType> type : imported.getAllTypes().entrySet())
-        addTypeEntry(loc, type.getKey(), type.getValue());
+        addTypeEntry(type.getKey(), type.getValue());
     }
 
     @Override
@@ -4758,15 +4749,15 @@ public class TypeChecker {
         Location loc = type.getLoc();
 
         IAlgebraicType def = type.getTypeDescription();
-        addTypeEntry(loc, type.getName(), new Type(def.getName(), Kind.kind(def.typeArity())));
+        addTypeEntry(type.getName(), new Type(def.getName(), Kind.kind(def.typeArity())));
         for (IValueSpecifier spec : type.getTypeDescription().getValueSpecifiers())
-          addFieldEntry(loc, spec.getLabel(), spec.getConType());
+          addFieldEntry(spec.getLabel(), spec.getConType());
       }
     }
 
     @Override
     public void visitTypeWitness(TypeWitness witness) {
-      addTypeEntry(witness.getLoc(), witness.getType().typeLabel(), witness.getWitness());
+      addTypeEntry(witness.getType().typeLabel(), witness.getWitness());
     }
 
     @Override
@@ -4793,12 +4784,12 @@ public class TypeChecker {
 
     @Override
     public void visitVariable(Variable variable) {
-      addFieldEntry(variable.getLoc(), variable.getName(), variable.getType());
+      addFieldEntry(variable.getName(), variable.getType());
     }
 
     @Override
     public void visitOverloadedVariable(OverloadedVariable over) {
-      addFieldEntry(over.getLoc(), over.getName(), over.getType());
+      addFieldEntry(over.getName(), over.getType());
     }
 
     @Override
@@ -4815,23 +4806,21 @@ public class TypeChecker {
         Location loc = open.getLoc();
         TypeInterfaceType recordFace = (TypeInterfaceType) TypeUtils.unwrap(recordF);
         for (Entry<String, IType> fEntry : recordFace.getAllFields().entrySet())
-          addFieldEntry(loc, fEntry.getKey(), fEntry.getValue());
+          addFieldEntry(fEntry.getKey(), fEntry.getValue());
 
         for (Entry<String, IType> tEntry : recordFace.getAllTypes().entrySet())
-          addTypeEntry(loc, tEntry.getKey(), tEntry.getValue());
+          addTypeEntry(tEntry.getKey(), tEntry.getValue());
       }
     }
 
-    private void addFieldEntry(Location loc, String name, IType type) {
+    private void addFieldEntry(String name, IType type) {
       if (!fieldTypes.containsKey(name)) {
-        fieldLocs.put(name, new Location[]{loc});
         fieldTypes.put(name, type);
       }
     }
 
-    private void addTypeEntry(Location loc, String name, IType type) {
+    private void addTypeEntry(String name, IType type) {
       if (!localTypes.containsKey(name)) {
-        typeLocs.put(name, new Location[]{loc});
         localTypes.put(name, type);
       }
     }
@@ -5077,8 +5066,7 @@ public class TypeChecker {
             }
           }
 
-          for (ITypeDescription spec : javaInfo.getTypes())
-            dict.defineType(spec);
+          javaInfo.getTypes().forEach(dict::defineType);
 
           stmts.add(new JavaEntry(className, loc, javaInfo, visibility));
         }

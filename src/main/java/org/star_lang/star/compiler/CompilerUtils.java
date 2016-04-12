@@ -1467,6 +1467,16 @@ public class CompilerUtils {
     return Abstract.unary(loc, StandardNames.RAISE, Abstract.binary(loc, StandardNames.COLON, code, term));
   }
 
+  public static boolean isAbort(IAbstract term) {
+    return Abstract.isUnary(term, StandardNames.ABORT_WITH);
+  }
+
+  public static IAbstract abortedWith(IAbstract term) {
+    assert isAbort(term);
+
+    return Abstract.unaryArg(term);
+  }
+
   public static boolean isAbortHandler(IAbstract act) {
     return Abstract.isUnary(act, StandardNames.TRY) && Abstract.isBinary(Abstract.unaryArg(act), StandardNames.ON_ABORT)
         && isBlockTerm(Abstract.binaryRhs(Abstract.unaryArg(act)));

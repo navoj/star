@@ -38,7 +38,7 @@ public interface TransformAction<A, E, P, C, D, T> {
 
   A transformProcedureCallAction(ProcedureCallAction call, T context);
 
-  A transformRaiseAction(RaiseAction raise, T context);
+  A transformRaiseAction(AbortAction raise, T context);
 
   A transformSequence(Sequence sequence, T context);
 

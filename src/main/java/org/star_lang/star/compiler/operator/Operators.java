@@ -171,6 +171,7 @@ public class Operators implements PrettyPrintable
     defineRight(StandardNames.COMMA, 1000);
 
     definePrefix(StandardNames.RAISE, 1000);
+    definePrefix(StandardNames.ABORT_WITH, 1000);
 
     definePrefix(StandardNames.QUERY, 1000);
 

@@ -8,6 +8,7 @@ import org.star_lang.star.arith.ArithTests;
 import org.star_lang.star.array.ArrayTests;
 import org.star_lang.star.asynchio.TestIO;
 import org.star_lang.star.atomic.AtomicCellTests;
+import org.star_lang.star.compiler.computation.ComputationTests;
 import org.star_lang.star.compiler.computation.TaskExpTest;
 import org.star_lang.star.compiler.contracts.ContractTest;
 import org.star_lang.star.compiler.formatting.FormatTest;
@@ -41,28 +42,26 @@ import org.star_lang.star.transformer.TransformerTest;
 import org.star_lang.star.volunteer.VolunteerTest;
 
 /**
- *
  * Copyright (c) 2015. Francis G. McCabe
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 @RunWith(Suite.class)
-@SuiteClasses({ ActorTest.class, ArithTests.class, ArrayTests.class, AtomicCellTests.class, CompilerTest.class,
+@SuiteClasses({ActorTest.class, ArithTests.class, ArrayTests.class, AtomicCellTests.class, CompilerTest.class,
     ContractTest.class, DateTests.class, ExternalURITests.class, ForLoopTests.class, FormatTest.class, HelloTest.class,
     ImportTest.class, JavaImportTest.class, LibraryTestSuite.class, ListTests.class, MacroTests.class, MapTests.class,
     MetaModelTest.class, MiscTests.class, OverloadTests.class, PtnTest.class, PtnTests.class, QueryTest.class,
     QueryTests.class, RdfMacroTest.class, RegexpTests.class, RepositorySuite.class, SequenceTest.class, SpawnTest.class,
     StdLibTests.class, StringTests.class, TestRelations.class, TestUpdate.class, TransformerTest.class, SetTests.class,
-    TypesResolutionPOCTest.class, TaskExpTest.class, TaskTest.class, TypeTests.class, TypeJTest.class,
-    UnifyTests.class, URITests.class, ValidationTest.class, VolunteerTest.class, TestIO.class })
-public class CompilerTestSuite
-{
+    TypesResolutionPOCTest.class, ComputationTests.class, TaskExpTest.class, TaskTest.class, TypeTests.class, TypeJTest.class,
+    UnifyTests.class, URITests.class, ValidationTest.class, VolunteerTest.class, TestIO.class})
+public class CompilerTestSuite {
 }

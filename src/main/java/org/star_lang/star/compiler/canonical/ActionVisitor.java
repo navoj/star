@@ -18,7 +18,7 @@ public interface ActionVisitor
 
   void visitLetAction(LetAction let);
 
-  void visitRaiseAction(RaiseAction exp);
+  void visitRaiseAction(AbortAction exp);
 
   void visitWhileAction(WhileAction act);
 

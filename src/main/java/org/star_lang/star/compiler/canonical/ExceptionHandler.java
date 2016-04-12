@@ -2,17 +2,20 @@ package org.star_lang.star.compiler.canonical;
 
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
 @SuppressWarnings("serial")
 public class ExceptionHandler extends Action
 {
   private final IContentAction body;
+  private final IType abortType;
   private final IContentAction handler;
 
-  public ExceptionHandler(Location loc, IContentAction body, IContentAction handler)
+  public ExceptionHandler(Location loc, IContentAction body, IType abortType, IContentAction handler)
   {
     super(loc, body.getType());
+    this.abortType = abortType;
     this.body = body;
     this.handler = handler;
   }
@@ -25,6 +28,10 @@ public class ExceptionHandler extends Action
   public IContentAction getHandler()
   {
     return handler;
+  }
+
+  public IType getAbortType() {
+    return abortType;
   }
 
   @Override

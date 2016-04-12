@@ -144,7 +144,7 @@ public class Computations
 
     ComputationContext handlerCxt = context.fork(context.getExp());
     IContentExpression handleExp = collectBindings(except.getHandler().transform(this, handlerCxt), handlerCxt);
-    Variable exVar = new Variable(loc, StandardTypes.exceptionType, StandardNames.EXCEPTION);
+    Variable exVar = new Variable(loc, except.getAbortType(), StandardNames.EXCEPTION);
     IContentExpression handlerFun = exp2fun(loc, exVar, handleExp, handlerCxt);
 
     return handle(loc, body, handlerFun, context.getmType(), body.getType(), context.getDict(), context.getOuter(),
@@ -278,8 +278,8 @@ public class Computations
   }
 
   @Override
-  public IContentExpression transformRaiseAction(RaiseAction raise, ComputationContext context) {
-    IContentExpression raised = raise.getRaised();
+  public IContentExpression transformRaiseAction(AbortAction raise, ComputationContext context) {
+    IContentExpression raised = raise.getABort();
     return abort(raise.getLoc(), raised, context);
   }
 
@@ -612,8 +612,8 @@ public class Computations
   }
 
   @Override
-  public IContentExpression transformRaiseExpression(RaiseExpression exp, ComputationContext context) {
-    IContentExpression raised = exp.getRaise();
+  public IContentExpression transformRaiseExpression(AbortExpression exp, ComputationContext context) {
+    IContentExpression raised = exp.getAbort();
     return abort(exp.getLoc(), raised, context);
   }
 

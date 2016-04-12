@@ -179,7 +179,7 @@ public abstract class ExpressionTransformer {
       RecordSubstitute update = (RecordSubstitute) exp;
 
       return new RecordSubstitute(update.getLoc(), update.getType(), transform(update.getRoute()), transform(update
-              .getReplace()));
+          .getReplace()));
     }
   }
 
@@ -214,7 +214,7 @@ public abstract class ExpressionTransformer {
       }
 
       return new CaseExpression(caseExp.getLoc(), caseExp.getType(), transform(caseExp.getSelector()), newCases,
-              transform(caseExp.getDeflt()));
+          transform(caseExp.getDeflt()));
     }
   }
 
@@ -265,7 +265,7 @@ public abstract class ExpressionTransformer {
       for (int ix = 0; ix < tVars.length; ix++)
         tVars[ix] = (Variable) transform((IContentExpression) funFree[ix]);
       return new FunctionLiteral(exp.getLoc(), fun.getName(), exp.getType(), transformPatterns(fun.getArgs()),
-              transform(fun.getBody()), tVars);
+          transform(fun.getBody()), tVars);
     }
   }
 
@@ -346,7 +346,7 @@ public abstract class ExpressionTransformer {
       for (int ix = 0; ix < tVars.length; ix++)
         tVars[ix] = (Variable) transform((IContentExpression) funFree[ix]);
       return new PatternAbstraction(exp.getLoc(), ptn.getName(), exp.getType(), transform(ptn.getMatch()),
-              transform(ptn.getResult()), tVars);
+          transform(ptn.getResult()), tVars);
     }
   }
 
@@ -354,14 +354,14 @@ public abstract class ExpressionTransformer {
 
     @Override
     public Class<? extends IContentExpression> transformClass() {
-      return RaiseExpression.class;
+      return AbortExpression.class;
     }
 
     @Override
     public IContentExpression transformExp(IContentExpression exp) {
-      RaiseExpression raise = (RaiseExpression) exp;
+      AbortExpression raise = (AbortExpression) exp;
 
-      return new RaiseExpression(exp.getLoc(), exp.getType(), transform(raise.getRaise()));
+      return new AbortExpression(exp.getLoc(), exp.getType(), transform(raise.getAbort()));
     }
   }
 
@@ -584,7 +584,7 @@ public abstract class ExpressionTransformer {
     public ICondition transformCond(ICondition cond) {
       ConditionCondition cnd = (ConditionCondition) cond;
       return new ConditionCondition(cond.getLoc(), transform(cnd.getTest()), transform(cnd.getLhs()), transform(cnd
-              .getRhs()));
+          .getRhs()));
     }
   }
 
@@ -784,7 +784,7 @@ public abstract class ExpressionTransformer {
     public IContentAction transformAction(IContentAction act) {
       ConditionalAction cnd = (ConditionalAction) act;
       return new ConditionalAction(act.getLoc(), transform(cnd.getCond()), transform(cnd.getThPart()), transform(cnd
-              .getElPart()));
+          .getElPart()));
     }
 
     @Override
@@ -799,7 +799,7 @@ public abstract class ExpressionTransformer {
     public IContentAction transformAction(IContentAction act) {
       ExceptionHandler except = (ExceptionHandler) act;
 
-      return new ExceptionHandler(act.getLoc(), transform(except.getBody()), transform(except.getHandler()));
+      return new ExceptionHandler(act.getLoc(), transform(except.getBody()), except.getAbortType(), transform(except.getHandler()));
     }
 
     @Override
@@ -885,13 +885,13 @@ public abstract class ExpressionTransformer {
 
     @Override
     public IContentAction transformAction(IContentAction act) {
-      RaiseAction raise = (RaiseAction) act;
-      return new RaiseAction(raise.getLoc(), transform(raise.getRaised()));
+      AbortAction raise = (AbortAction) act;
+      return new AbortAction(raise.getLoc(), transform(raise.getABort()));
     }
 
     @Override
     public Class<? extends IContentAction> transformClass() {
-      return RaiseAction.class;
+      return AbortAction.class;
     }
 
   }
@@ -1026,7 +1026,7 @@ public abstract class ExpressionTransformer {
     public IContentPattern transformPtn(IContentPattern ptn) {
       PatternApplication apply = (PatternApplication) ptn;
       return new PatternApplication(apply.getLoc(), apply.getType(), transform(apply.getAbstraction()), transform(apply
-              .getArg()));
+          .getArg()));
     }
   }
 
@@ -1163,7 +1163,7 @@ public abstract class ExpressionTransformer {
       final IContentExpression transformedValue = transform(var.getValue());
 
       return new VarEntry(var.getDefined(), var.getLoc(), transform(var.getVarPattern()), transformedValue, var
-              .isReadOnly(), stmt.getVisibility());
+          .isReadOnly(), stmt.getVisibility());
     }
   }
 

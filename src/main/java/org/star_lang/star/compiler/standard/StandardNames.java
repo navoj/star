@@ -106,16 +106,17 @@ public class StandardNames
   public static final String UMAIN = "_main";
 
   public static final String ACTION_TYPE = standard(AbstractType.ACTION);
-  public static final String FUN_ARROW = graphic("=>");
-  public static final String FUNCTION = keyword("function");
+  public static final String FUN_TYPE = "=>";
+  public static final String FUN_ARROW = graphic(FUN_TYPE);
   public static final String MEMO = keyword("memo");
   public static final String LAMBDA = keyword("fn");
   public static final String UNI_TILDA = graphic("~");
   public static final String PATTERN = keyword("pattern");
-  public static final String PTN_TYPE = graphic("<=");
-  public static final String PTN_ARROW = graphic("<=");
+  public static final String PTN_TYPE = "<=";
+  public static final String PTN_ARROW = graphic(PTN_TYPE);
   public static final String OVERLOADED_TYPE = graphic(AbstractType.OVERLOADED_TYPE);
-  public static final String CONSTRUCTOR_TYPE = graphic(AbstractType.CONSTRUCTOR_TYPE);
+  public static final String CONSTRUCTOR_TYPE = AbstractType.CONSTRUCTOR_TYPE;
+  public static final String CONSTRUCTOR_ARROW = graphic(CONSTRUCTOR_TYPE);
 
   public static final String FOR_ALL = keyword(AbstractType.FOR_ALL);
   public static final String S_T = keyword(AbstractType.S_T);
@@ -212,6 +213,8 @@ public class StandardNames
 
   // error handling
   public static final String RAISE = keyword("raise");
+  public static final String ABORT_WITH = keyword("abort with");
+
   public static final String RAISE_FUN = standard("raiser_fun");
   public static final String TRY = keyword("try");
   public static final String CATCH = keyword("catch");

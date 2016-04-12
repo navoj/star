@@ -31,8 +31,8 @@ import org.star_lang.star.compiler.canonical.MatchingPattern;
 import org.star_lang.star.compiler.canonical.NullExp;
 import org.star_lang.star.compiler.canonical.PatternAbstraction;
 import org.star_lang.star.compiler.canonical.PatternApplication;
-import org.star_lang.star.compiler.canonical.RaiseAction;
-import org.star_lang.star.compiler.canonical.RaiseExpression;
+import org.star_lang.star.compiler.canonical.AbortAction;
+import org.star_lang.star.compiler.canonical.AbortExpression;
 import org.star_lang.star.compiler.canonical.RecordPtn;
 import org.star_lang.star.compiler.canonical.RegExpPattern;
 import org.star_lang.star.compiler.canonical.Scalar;
@@ -120,7 +120,7 @@ public class MatchCompiler
     Generate<IContentExpression> gen = new ExpressionCaseGenerator(type);
 
     IContentExpression ex = genException(loc, cxt, errors);
-    RaiseExpression failure = new RaiseExpression(loc, new TypeVar(), ex);
+    AbortExpression failure = new AbortExpression(loc, new TypeVar(), ex);
 
     return compileMatch(loc, newVars, list, failure, subCxt, outer, gen, definedVars, maxDepth, errors);
   }
@@ -187,7 +187,7 @@ public class MatchCompiler
               IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType,
                   code, raised, location);
 
-              RaiseExpression exit = new RaiseExpression(loc, returnType, ex);
+              AbortExpression exit = new AbortExpression(loc, returnType, ex);
               if (QueryPlanner.isTransformable(cond))
                 body = QueryPlanner.transformCondition(cond, definedVars, eqBody, exit, cxt, outer, errors);
               else if (!CompilerUtils.isTrivial(cond))
@@ -263,7 +263,7 @@ public class MatchCompiler
     IContentExpression ex = new ConstructorTerm(loc, EvaluationException.name, StandardTypes.exceptionType, code,
         raised, location);
 
-    RaiseExpression failure = new RaiseExpression(loc, new TypeVar(), ex);
+    AbortExpression failure = new AbortExpression(loc, new TypeVar(), ex);
 
     IContentExpression nBody = compileMatch(loc, newVars, list, failure, subCxt, outer, gen, definedVars, maxDepth,
         errors);
@@ -352,7 +352,7 @@ public class MatchCompiler
     Generate<IContentAction> gen = new ActionCaseGenerator();
 
     IContentExpression ex = genException(loc, cxt, errors);
-    RaiseAction failure = new RaiseAction(loc, ex);
+    AbortAction failure = new AbortAction(loc, ex);
 
     return compileMatch(loc, newVars, list, failure, cxt, outer, gen, definedVars, maxDepth, errors);
   }

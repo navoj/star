@@ -75,7 +75,7 @@ public interface CanonicalVisitor extends ActionVisitor
 
   void visitPredication(Search predication);
 
-  void visitRaiseExpression(RaiseExpression exp);
+  void visitRaiseExpression(AbortExpression exp);
 
   void visitReference(Shriek reference);
 

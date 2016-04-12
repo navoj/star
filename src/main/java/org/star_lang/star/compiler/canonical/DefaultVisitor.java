@@ -360,8 +360,8 @@ public class DefaultVisitor implements CanonicalVisitor {
   }
 
   @Override
-  public void visitRaiseAction(RaiseAction exp) {
-    exp.getRaised().accept(this);
+  public void visitRaiseAction(AbortAction exp) {
+    exp.getABort().accept(this);
   }
 
   protected int mark() {
@@ -439,8 +439,8 @@ public class DefaultVisitor implements CanonicalVisitor {
   }
 
   @Override
-  public void visitRaiseExpression(RaiseExpression exp) {
-    exp.getRaise().accept(this);
+  public void visitRaiseExpression(AbortExpression exp) {
+    exp.getAbort().accept(this);
   }
 
   @Override

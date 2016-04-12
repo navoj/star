@@ -36,7 +36,7 @@ public interface TransformExpression<A, E, P, C, D, T>
 
   E transformPatternAbstraction(PatternAbstraction pattern, T context);
 
-  E transformRaiseExpression(RaiseExpression exp, T context);
+  E transformRaiseExpression(AbortExpression exp, T context);
 
   E transformReference(Shriek reference, T context);
 

@@ -93,11 +93,6 @@ public class TaskExpTest extends SRTest {
   }
 
   @Test
-  public void testMaybe() {
-    runStar("maybeTest.star");
-  }
-
-  @Test
   public void testPerform() {
     runStar("performTest.star");
   }
@@ -114,7 +109,7 @@ public class TaskExpTest extends SRTest {
 
   @Test
   public void testTypeBug() {
-    exception.expectMessage("task not equal to rendezvous");
+    exception.expectMessage("task not consistent with rendezvous");
     runStar("typeBug.star");
   }
 

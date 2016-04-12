@@ -16,7 +16,6 @@ package org.star_lang.star.compiler.codegen;
 
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
-import org.star_lang.star.compiler.cafe.compile.cont.CallCont;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
 import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.data.type.Location;
@@ -118,7 +117,7 @@ public class ExpressionCompile implements TransformExpression<ISpec, ISpec, ISpe
   }
 
   @Override
-  public ISpec transformRaiseExpression(RaiseExpression exp, IContinuation cont) {
+  public ISpec transformRaiseExpression(AbortExpression exp, IContinuation cont) {
     return null;
   }
 

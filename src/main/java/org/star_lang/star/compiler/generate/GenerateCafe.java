@@ -732,8 +732,8 @@ public class GenerateCafe implements
   }
 
   @Override
-  public IAbstract transformRaiseExpression(RaiseExpression exp, CContext context) {
-    return CafeSyntax.throwExp(exp.getLoc(), generateExp(exp.getRaise(), context));
+  public IAbstract transformRaiseExpression(AbortExpression exp, CContext context) {
+    return CafeSyntax.throwExp(exp.getLoc(), generateExp(exp.getAbort(), context));
   }
 
   @Override
@@ -1130,8 +1130,8 @@ public class GenerateCafe implements
   }
 
   @Override
-  public List<IAbstract> transformRaiseAction(RaiseAction raise, CContext context) {
-    return FixedList.create(CafeSyntax.throwExp(raise.getLoc(), generateExp(raise.getRaised(), context)));
+  public List<IAbstract> transformRaiseAction(AbortAction raise, CContext context) {
+    return FixedList.create(CafeSyntax.throwExp(raise.getLoc(), generateExp(raise.getABort(), context)));
   }
 
   @Override
