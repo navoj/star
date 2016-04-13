@@ -282,12 +282,11 @@ public class TypeChecker {
 
   /**
    * Compute the type of an expression term
-   *
    * @param term         the abstract syntax of the term to type check
    * @param expectedType what the expected type of this term is
    * @param dict         the dictionary context to type check within
-   * @param outer        the dictionary context associated with the next outer definition layer (i.e., let
-   *                     term)
+   * @param outer        the dictionary context associated with the next outer definition layer (i.e., let term)
+   *
    * @return the type of the expression
    */
   IContentExpression typeOfExp(IAbstract term, final IType expectedType, final Dictionary dict,
