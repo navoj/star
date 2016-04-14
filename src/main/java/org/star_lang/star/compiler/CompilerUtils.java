@@ -21,23 +21,7 @@ import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
-import org.star_lang.star.compiler.canonical.Application;
-import org.star_lang.star.compiler.canonical.Conjunction;
-import org.star_lang.star.compiler.canonical.ConstructorPtn;
-import org.star_lang.star.compiler.canonical.ConstructorTerm;
-import org.star_lang.star.compiler.canonical.Disjunction;
-import org.star_lang.star.compiler.canonical.FalseCondition;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentAction;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.IsTrue;
-import org.star_lang.star.compiler.canonical.MethodVariable;
-import org.star_lang.star.compiler.canonical.NullAction;
-import org.star_lang.star.compiler.canonical.Scalar;
-import org.star_lang.star.compiler.canonical.ScalarPtn;
-import org.star_lang.star.compiler.canonical.TrueCondition;
-import org.star_lang.star.compiler.canonical.Variable;
+import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.TypeContracts;
@@ -2759,10 +2743,10 @@ public class CompilerUtils {
   }
 
   public static boolean isTuplePattern(IContentPattern tpl) {
-    return tpl instanceof ConstructorPtn && TypeUtils.isTupleType(tpl.getType());
+    return tpl instanceof TuplePtn && TypeUtils.isTupleType(tpl.getType());
   }
 
   public static boolean isTupleTerm(IContentExpression term) {
-    return term instanceof ConstructorTerm && TypeUtils.isTupleType(term.getType());
+    return term instanceof TupleTerm && TypeUtils.isTupleType(term.getType());
   }
 }

@@ -899,7 +899,7 @@ public class Patterns {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
     InsnList ins = mtd.instructions;
-    IList args = CafeSyntax.constructorArgs(ptn);
+    IList args = CafeSyntax.tupleEls(ptn);
     // Check we have the right size tuple
     int conIx = args.size();
     LabelNode nx = new LabelNode();

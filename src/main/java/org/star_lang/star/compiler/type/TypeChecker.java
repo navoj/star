@@ -233,7 +233,7 @@ public class TypeChecker {
         }
       }
       IContentExpression body = new Application(loc, TypeUtils.typeExp(actionType, unitType), Variable.create(loc,
-          mainType, StandardNames.MAIN), new ConstructorTerm(loc, mainArgs));
+          mainType, StandardNames.MAIN), new TupleTerm(loc, mainArgs));
 
       Triple<IContentPattern[], ICondition, IContentExpression> mainDo = Triple.create(new IContentPattern[]{
           umainArg}, CompilerUtils.truth, body);
@@ -282,11 +282,11 @@ public class TypeChecker {
 
   /**
    * Compute the type of an expression term
+   *
    * @param term         the abstract syntax of the term to type check
    * @param expectedType what the expected type of this term is
    * @param dict         the dictionary context to type check within
    * @param outer        the dictionary context associated with the next outer definition layer (i.e., let term)
-   *
    * @return the type of the expression
    */
   IContentExpression typeOfExp(IAbstract term, final IType expectedType, final Dictionary dict,
@@ -880,7 +880,7 @@ public class TypeChecker {
       for (int ix = 0; ix < arity; ix++)
         args[ix] = typeOfExp((IAbstract) tpl.getCell(ix), argTypes[ix], dict, outer);
 
-      return new ConstructorTerm(loc, TypeUtils.deRef(expectedType), args);
+      return new TupleTerm(loc, TypeUtils.deRef(expectedType), args);
     } else {
       errors.reportError(StringUtils.msg("expecting a tuple of ", argTypes.length, " elements"), loc);
       return new VoidExp(loc);
@@ -1354,7 +1354,7 @@ public class TypeChecker {
 
       IType boundType = bound.getType();
 
-      IContentExpression wrapBound = new ConstructorTerm(loc, bound, selector);
+      IContentExpression wrapBound = new TupleTerm(loc, bound, selector);
 
       IContentExpression transformed = QueryPlanner.transformQuery(loc, free, wrapBound, TypeUtils.arrayType(wrapBound
           .getType()), queryInfo.left(), dict, outer, errors);
@@ -1540,8 +1540,8 @@ public class TypeChecker {
     comp = ascending ? Application.apply(loc, booleanType, comp, X, Y)
         : Application.apply(loc, booleanType, comp, Y, X);
 
-    IContentPattern tpl1 = new ConstructorPtn(loc, Variable.anonymous(loc, boundType), X);
-    IContentPattern tpl2 = new ConstructorPtn(loc, Variable.anonymous(loc, boundType), Y);
+    IContentPattern tpl1 = new TuplePtn(loc, Variable.anonymous(loc, boundType), X);
+    IContentPattern tpl2 = new TuplePtn(loc, Variable.anonymous(loc, boundType), Y);
 
     selType = TypeUtils.tupleType(boundType, selType);
     IType pairCompType = TypeUtils.functionType(selType, selType, booleanType);
@@ -1579,7 +1579,7 @@ public class TypeChecker {
 
       acts.add(new VarDeclaration(loc, vr, readOnly, record));
       IContentExpression checkPr = info.getVariable();
-      acts.add(new Ignore(loc, new Application(loc, unitType, checkPr, new ConstructorTerm(loc, vr))));
+      acts.add(new Ignore(loc, new Application(loc, unitType, checkPr, new TupleTerm(loc, vr))));
 
       acts.add(new ValisAction(loc, vr));
     } else
@@ -1598,7 +1598,7 @@ public class TypeChecker {
 
       acts.add(new VarDeclaration(loc, vr, readOnly, record));
       IContentExpression checkPr = info.getVariable();
-      acts.add(new Ignore(loc, new Application(loc, unitType, checkPr, new ConstructorTerm(loc, vr))));
+      acts.add(new Ignore(loc, new Application(loc, unitType, checkPr, new TupleTerm(loc, vr))));
 
       acts.add(new ValisAction(loc, vr));
 
@@ -2424,7 +2424,7 @@ public class TypeChecker {
         }
 
         rules.add(Triple.create(new IContentPattern[]{match}, condition.get(),
-            (IContentExpression) new ConstructorTerm(ruleLoc, results)));
+            (IContentExpression) new TupleTerm(ruleLoc, results)));
       }
     }
 
@@ -2501,7 +2501,7 @@ public class TypeChecker {
         }
 
         rules.add(Triple.create(new IContentPattern[]{match}, condition.get(),
-            (IContentExpression) new ConstructorTerm(ruleLoc, results)));
+            (IContentExpression) new TupleTerm(ruleLoc, results)));
       }
     }
 
@@ -3114,7 +3114,7 @@ public class TypeChecker {
         for (int ix = 0; ix < arity; ix++)
           args[ix] = lvalueType((IAbstract) tpl.getCell(ix), TypeUtils.referenceType(argTypes[ix]), dict, outer);
 
-        return new ConstructorTerm(loc, args);
+        return new TupleTerm(loc, args);
       } else {
         errors.reportError(StringUtils.msg("expecting a tuple of ", argTypes.length, " elements"), loc);
         return new VoidExp(loc);
@@ -3546,7 +3546,7 @@ public class TypeChecker {
             tplArgs[ix] = var;
             varArgs[ix] = var;
           }
-          IContentExpression tpl = new ConstructorTerm(loc, TypeUtils.tupleType(elTypes), varArgs);
+          IContentExpression tpl = new TupleTerm(loc, TypeUtils.tupleType(elTypes), varArgs);
           IContentPattern con = new ConstructorPtn(loc, conName, expectedType, tplArgs);
 
           CompilerUtils.extendCondition(condition, new Matches(loc, tpl, appArg));
@@ -3654,11 +3654,11 @@ public class TypeChecker {
       }
 
       if (fun instanceof Variable)
-        return new PatternApplication(loc, expectedType, fun, new ConstructorPtn(loc, resPtns));
+        return new PatternApplication(loc, expectedType, fun, new TuplePtn(loc, resPtns));
       else {
         Variable tmp = Variable.create(fun.getLoc(), fun.getType(), GenSym.genSym("__Ptn$"));
         CompilerUtils.extendCondition(condition, new Matches(loc, fun, tmp));
-        return new PatternApplication(loc, expectedType, tmp, new ConstructorPtn(loc, resPtns));
+        return new PatternApplication(loc, expectedType, tmp, new TuplePtn(loc, resPtns));
       }
     } else {
       IContentExpression exp = typeOfExp(ptn, expectedType, cxt, outer);
@@ -3785,7 +3785,7 @@ public class TypeChecker {
     for (int ix = 0; ix < arity; ix++)
       els[ix] = typeOfPtn(Abstract.getArg(ptn, ix), ix < arity ? elTypes[ix] : new TypeVar(), condition, dict, outer, varHandler);
 
-    return new ConstructorPtn(loc, expectedType, els);
+    return new TuplePtn(loc, expectedType, els);
   }
 
   private boolean isLocallyDefinedConstructor(IContentExpression fun, IType type, Dictionary cxt) {
@@ -4247,7 +4247,7 @@ public class TypeChecker {
 
         if (!definedVars.isEmpty()) {
           List<IContentExpression> freeExps = new ArrayList<>(definedVars);
-          IContentExpression freeTpl = new ConstructorTerm(loc, freeExps);
+          IContentExpression freeTpl = new TupleTerm(loc, freeExps);
 
           IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, freeTpl.getType());
           IContentExpression reslt = CompilerUtils.possible(loc, freeTpl);
@@ -4256,7 +4256,7 @@ public class TypeChecker {
           IContentExpression test = QueryPlanner.transformReferenceExpression(cond.left(), free, whileCxt, outer, reslt,
               deflt, resltType, loc, errors);
 
-          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn.tuplePtn(
+          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, TuplePtn.tuplePtn(
               loc, definedVars.toArray(new IContentPattern[definedVars.size()]))));
           return FixedList.create((IContentAction) new WhileAction(loc, matches, body));
         } else {
@@ -4307,7 +4307,7 @@ public class TypeChecker {
 
         if (!definedVars.isEmpty()) {
           List<IContentExpression> freeExps = new ArrayList<>(definedVars);
-          IContentExpression freeTpl = new ConstructorTerm(loc, freeExps);
+          IContentExpression freeTpl = new TupleTerm(loc, freeExps);
 
           IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, freeTpl.getType());
           IContentExpression reslt = CompilerUtils.possible(loc, freeTpl);
@@ -4316,7 +4316,7 @@ public class TypeChecker {
           IContentExpression test = QueryPlanner.transformReferenceExpression(cond, free, ifCxt, outer, reslt, deflt,
               resltType, loc, errors);
 
-          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn.tuplePtn(
+          ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, TuplePtn.tuplePtn(
               loc, definedVars.toArray(new IContentPattern[definedVars.size()]))));
           return FixedList.create((IContentAction) new ConditionalAction(loc, matches, thAct, elAct));
         } else {
@@ -4347,8 +4347,8 @@ public class TypeChecker {
       if (QueryPlanner.isTransformable(cond)) {
         if (definedVars.size() > 1) {
           List<IContentExpression> freeExps = new ArrayList<>(definedVars);
-          IContentExpression freeTpl = new ConstructorTerm(loc, freeExps);
-          IContentPattern freeMtch = new ConstructorPtn(loc, definedVars.toArray(new IContentPattern[definedVars
+          IContentExpression freeTpl = new TupleTerm(loc, freeExps);
+          IContentPattern freeMtch = new TuplePtn(loc, definedVars.toArray(new IContentPattern[definedVars
               .size()]));
 
           IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, freeTpl.getType());
@@ -4453,6 +4453,15 @@ public class TypeChecker {
       }
     } else if (lhs instanceof ConstructorPtn) {
       ConstructorPtn con = (ConstructorPtn) lhs;
+
+      for (int ix = 0; ix < con.arity(); ix++) {
+        IContentPattern arg = con.getArg(ix);
+
+        extra = establishInterfaceType(arg, dict, extra, errors);
+      }
+      return extra;
+    } else if (lhs instanceof TuplePtn) {
+      TuplePtn con = (TuplePtn) lhs;
 
       for (int ix = 0; ix < con.arity(); ix++) {
         IContentPattern arg = con.getArg(ix);
@@ -4771,7 +4780,7 @@ public class TypeChecker {
     }
 
     @Override
-    public void visitTuplePtn(ConstructorPtn tpl) {
+    public void visitConstructorPtn(ConstructorPtn tpl) {
       for (IContentPattern arg : tpl.getElements())
         arg.accept(this);
     }
@@ -5676,6 +5685,11 @@ public class TypeChecker {
       List<IContentExpression> funArgs = ((ConstructorTerm) fun).getElements();
       for (int ix = 0; ix < ptnArgs.size(); ix++)
         checkFreeRefs(ptnArgs.get(ix), funArgs.get(ix), free);
+    } else if (ptn instanceof TuplePtn && fun instanceof TupleTerm) {
+      List<IContentPattern> ptnArgs = ((TuplePtn) ptn).getElements();
+      List<IContentExpression> funArgs = ((TupleTerm) fun).getElements();
+      for (int ix = 0; ix < ptnArgs.size(); ix++)
+        checkFreeRefs(ptnArgs.get(ix), funArgs.get(ix), free);
     } else if (ptn instanceof Variable && !(fun instanceof FunctionLiteral || fun instanceof PatternAbstraction)) {
       String vName = ((Variable) ptn).getName();
       for (Variable fr : free)
@@ -5690,6 +5704,10 @@ public class TypeChecker {
   private void declareVar(IContentPattern lhs, Dictionary thetaCxt, AccessMode access, Visibility visibility) {
     if (lhs instanceof ConstructorPtn) {
       ConstructorPtn tuple = (ConstructorPtn) lhs;
+      for (IContentPattern arg : tuple.getElements())
+        declareVar(arg, thetaCxt, access, visibility);
+    } else if (lhs instanceof TuplePtn) {
+      TuplePtn tuple = (TuplePtn) lhs;
       for (IContentPattern arg : tuple.getElements())
         declareVar(arg, thetaCxt, access, visibility);
     } else if (lhs instanceof Variable) {
@@ -5716,6 +5734,35 @@ public class TypeChecker {
         for (int ix = 0; ix < con.arity(); ix++)
           args[ix] = generalizeTypes(con.getArg(ix), valTpl.getArg(ix), declared, tmpCxt, thetaCxt, isReadOnly);
         return new ConstructorPtn(con.getLoc(), con.getLabel(), con.getType(), args);
+      } else {
+        for (int ix = 0; ix < con.arity(); ix++) {
+          IContentPattern arg = con.getArg(ix);
+          if (arg instanceof Variable && errors.isErrorFree()) {
+            Variable var = (Variable) arg;
+            String varName = var.getName();
+            IType varType = var.getType();
+
+            if (declared.containsKey(varName)) {
+              try {
+                TypeUtils.unify(varType, declared.get(varName), arg.getLoc(), thetaCxt);
+              } catch (TypeConstraintException e) {
+                errors.reportError(StringUtils.msg("type of: ", var, " does not match declared type: ", rhs.getType(),
+                    "\n typically because declared is too generic"), lhs.getLoc());
+              }
+            }
+          }
+        }
+        return lhs;
+      }
+    } else if (lhs instanceof TuplePtn) {
+      TuplePtn con = (TuplePtn) lhs;
+
+      if (rhs instanceof TupleTerm) {
+        IContentPattern args[] = new IContentPattern[con.arity()];
+        TupleTerm valTpl = (TupleTerm) rhs;
+        for (int ix = 0; ix < con.arity(); ix++)
+          args[ix] = generalizeTypes(con.getArg(ix), valTpl.getArg(ix), declared, tmpCxt, thetaCxt, isReadOnly);
+        return new TuplePtn(con.getLoc(), con.getType(), args);
       } else {
         for (int ix = 0; ix < con.arity(); ix++) {
           IContentPattern arg = con.getArg(ix);

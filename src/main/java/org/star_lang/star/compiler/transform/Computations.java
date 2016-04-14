@@ -329,7 +329,7 @@ public class Computations
     IType loopTaskType = TypeUtils.typeExp(context.getmType(), loop.getType());
     IType loopFunType = TypeUtils.functionType(unitType, loopTaskType);
     Variable loopVar = new Variable(loc, loopFunType, GenSym.genSym("loop"));
-    Application loopCall = new Application(loc, loopTaskType, loopVar, new ConstructorTerm(loc, new VoidExp(loc)));
+    Application loopCall = new Application(loc, loopTaskType, loopVar, new TupleTerm(loc, new VoidExp(loc)));
     ComputationContext lpCxt = context.fork(loopCall);
     Variable anon = Variable.anonymous(loc, unitType);
 
@@ -572,11 +572,11 @@ public class Computations
 
     if (trBound == let.getBoundExp())
       return let;
-    else{
+    else {
       final List<IStatement> env = let.getEnvironment();
-      for(Pair<Variable,IContentExpression> e : bndCxt.getTempVars()){
+      for (Pair<Variable, IContentExpression> e : bndCxt.getTempVars()) {
         final IContentExpression performed = e.right();
-        env.add(new VarEntry(loc,e.left(),perform(loc,bndCxt.getmType(), performed,context.getDict(),context.getErrors()),AccessMode.readOnly,Visibility.priVate));
+        env.add(new VarEntry(loc, e.left(), perform(loc, bndCxt.getmType(), performed, context.getDict(), context.getErrors()), AccessMode.readOnly, Visibility.priVate));
       }
       return new LetTerm(loc, trBound, env);
     }
@@ -651,6 +651,21 @@ public class Computations
       return con;
     else
       return new ConstructorTerm(con.getLoc(), con.getLabel(), con.getType(), els);
+  }
+
+  @Override
+  public IContentExpression transformTuple(TupleTerm con, ComputationContext context) {
+    List<IContentExpression> els = new ArrayList<>();
+    boolean clean = true;
+    for (IContentExpression el : con.getElements()) {
+      IContentExpression txEl = el.transform(this, context);
+      els.add(txEl);
+      clean &= txEl == el;
+    }
+    if (clean)
+      return con;
+    else
+      return new TupleTerm(con.getLoc(), con.getType(), els);
   }
 
   @Override
@@ -861,6 +876,21 @@ public class Computations
       return tuple;
     else
       return new ConstructorPtn(tuple.getLoc(), tuple.getLabel(), tuple.getType(), els);
+  }
+
+  @Override
+  public IContentPattern transformTuplePtn(TuplePtn tuple, ComputationContext context) {
+    List<IContentPattern> els = new ArrayList<>();
+    boolean clean = true;
+    for (IContentPattern el : tuple.getElements()) {
+      IContentPattern txEl = el.transformPattern(this, context);
+      els.add(txEl);
+      clean &= txEl == el;
+    }
+    if (clean)
+      return tuple;
+    else
+      return new TuplePtn(tuple.getLoc(), tuple.getType(), els);
   }
 
   @Override

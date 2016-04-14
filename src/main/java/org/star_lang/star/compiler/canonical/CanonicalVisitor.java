@@ -23,6 +23,10 @@ public interface CanonicalVisitor extends ActionVisitor
 
   void visitConjunction(Conjunction conjunction);
 
+  void visitConstructor(ConstructorTerm tuple);
+
+  void visitConstructorPtn(ConstructorPtn tuplePtn);
+
   void visitContentCondition(ContentCondition cond);
 
   void visitContractEntry(ContractEntry entry);
@@ -89,9 +93,9 @@ public interface CanonicalVisitor extends ActionVisitor
 
   void visitTrueCondition(TrueCondition trueCondition);
 
-  void visitTuple(ConstructorTerm tuple);
+  void visitTuple(TupleTerm tuple);
 
-  void visitTuplePtn(ConstructorPtn tuplePtn);
+  void visitTuplePtn(TuplePtn tuplePtn);
 
   void visitTypeAliasEntry(TypeAliasEntry entry);
 

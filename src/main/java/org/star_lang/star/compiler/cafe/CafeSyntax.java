@@ -18,6 +18,7 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.value.ResourceURI;
+
 /*
   * Copyright (c) 2015. Francis G. McCabe
   *
@@ -679,10 +680,6 @@ public class CafeSyntax {
     return new Apply(loc, Names.CATCH, body, handler);
   }
 
-  public static IAbstract throwAction(Location loc, IAbstract exp) {
-    return new Apply(loc, Names.THROW, exp);
-  }
-
   public static IAbstract throwExp(Location loc, IAbstract exp) {
     return Abstract.unary(loc, Names.THROW, exp);
   }
@@ -968,30 +965,6 @@ public class CafeSyntax {
     return Abstract.isApply(tp, Names.EXISTS, 2);
   }
 
-  public static boolean isRawCharType(IAbstract tp) {
-    return Abstract.isApply(tp, Names.RAW_CHAR_TYPE, 0);
-  }
-
-  public static boolean isRawStringType(IAbstract tp) {
-    return Abstract.isApply(tp, Names.RAW_STRING_TYPE, 0);
-  }
-
-  public static boolean isRawIntegerType(IAbstract tp) {
-    return Abstract.isApply(tp, Names.RAW_INT_TYPE, 0);
-  }
-
-  public static boolean isRawLongType(IAbstract tp) {
-    return Abstract.isApply(tp, Names.RAW_LONG_TYPE, 0);
-  }
-
-  public static boolean isRawFloatType(IAbstract tp) {
-    return Abstract.isApply(tp, Names.RAW_FLOAT_TYPE, 0);
-  }
-
-  public static boolean isRawDecimalType(IAbstract tp) {
-    return Abstract.isApply(tp, Names.RAW_DECIMAL_TYPE, 0);
-  }
-
   public static IAbstract tupleType(Location loc, List<IAbstract> argTypes) {
     return new Apply(loc, TypeUtils.tupleLabel(argTypes.size()), argTypes);
   }
@@ -1067,12 +1040,26 @@ public class CafeSyntax {
     return Abstract.binaryRhs(trm);
   }
 
-  public static IAbstract tuple(Location loc, IAbstract type, IAbstract... els) {
-    return constructor(loc, TypeUtils.tupleLabel(els.length), els);
+  public static IAbstract tuple(Location loc, IAbstract... args) {
+    return Abstract.unary(loc, Names.TUPLE, block(loc, args));
+  }
+
+  public static IAbstract tuple(Location loc, List<IAbstract> args) {
+    return Abstract.unary(loc, Names.TUPLE, block(loc, args));
+  }
+
+  public static IAbstract tuple(Location loc, IList args) {
+    return Abstract.unary(loc, Names.TUPLE, block(loc, args));
   }
 
   public static boolean isTuple(IAbstract term) {
-    return isConstructor(term) && TypeUtils.isTupleLabel(constructorOp(term));
+    return Abstract.isUnary(term, Names.TUPLE) && isBlock(Abstract.unaryArg(term));
+  }
+
+  public static IList tupleEls(IAbstract term) {
+    assert isTuple(term);
+
+    return blockContents(Abstract.unaryArg(term));
   }
 
   public static boolean isTruth(IAbstract trm) {

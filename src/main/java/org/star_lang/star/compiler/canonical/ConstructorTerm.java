@@ -10,8 +10,7 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
 @SuppressWarnings("serial")
-public class ConstructorTerm extends BaseExpression
-{
+public class ConstructorTerm extends BaseExpression {
   /**
    * The Tuple content expression constructs a labeled or unlabeled positional term
    */
@@ -19,61 +18,34 @@ public class ConstructorTerm extends BaseExpression
   private final List<IContentExpression> elements;
   private final String label;
 
-  public ConstructorTerm(Location loc, String label, IType type, List<IContentExpression> arguments)
-  {
+  public ConstructorTerm(Location loc, String label, IType type, List<IContentExpression> arguments) {
     super(loc, type);
     this.elements = arguments;
     this.label = label;
   }
 
-  public ConstructorTerm(Location loc, String label, IType type, IContentExpression... args)
-  {
+  public ConstructorTerm(Location loc, String label, IType type, IContentExpression... args) {
     this(loc, label, type, FixedList.create(args));
   }
 
-  public ConstructorTerm(Location loc, IType type, IContentExpression... args)
-  {
-    this(loc, TypeUtils.tupleLabel(args.length), type, FixedList.create(args));
-  }
-
-  public ConstructorTerm(Location loc, IContentExpression... args)
-  {
-    this(loc, TypeUtils.tupleLabel(args.length), makeType(args), FixedList.create(args));
-  }
-
-  public ConstructorTerm(Location loc, List<IContentExpression> args)
-  {
-    this(loc, TypeUtils.tupleLabel(args.size()), makeType(args), args);
-  }
-
-  public static IContentExpression tuple(Location loc, IContentExpression... args)
-  {
-    return new ConstructorTerm(loc, args);
-  }
-
-  public String getLabel()
-  {
+  public String getLabel() {
     return label;
   }
 
-  public List<IContentExpression> getElements()
-  {
+  public List<IContentExpression> getElements() {
     return elements;
   }
 
-  public int arity()
-  {
+  public int arity() {
     return elements.size();
   }
 
-  public IContentExpression getArg(int ix)
-  {
+  public IContentExpression getArg(int ix) {
     return elements.get(ix);
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     if (label == null || label.isEmpty() || TypeUtils.isTupleLabel(label)) {
       disp.append("(");
       disp.prettyPrint(elements, ", ");
@@ -99,27 +71,23 @@ public class ConstructorTerm extends BaseExpression
   }
 
   @Override
-  public void accept(CanonicalVisitor visitor)
-  {
-    visitor.visitTuple(this);
+  public void accept(CanonicalVisitor visitor) {
+    visitor.visitConstructor(this);
   }
 
   @Override
-  public <A, E, P, C, D, T> E transform(TransformExpression<A, E, P, C, D, T> transform, T context)
-  {
+  public <A, E, P, C, D, T> E transform(TransformExpression<A, E, P, C, D, T> transform, T context) {
     return transform.transformConstructor(this, context);
   }
 
-  private static IType makeType(IContentExpression args[])
-  {
+  private static IType makeType(IContentExpression args[]) {
     IType aTypes[] = new IType[args.length];
     for (int ix = 0; ix < args.length; ix++)
       aTypes[ix] = args[ix].getType();
     return TypeUtils.tupleType(aTypes);
   }
 
-  private static IType makeType(List<IContentExpression> args)
-  {
+  private static IType makeType(List<IContentExpression> args) {
     IType aTypes[] = new IType[args.size()];
     for (int ix = 0; ix < args.size(); ix++)
       aTypes[ix] = args.get(ix).getType();

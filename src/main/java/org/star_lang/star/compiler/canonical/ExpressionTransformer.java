@@ -56,6 +56,7 @@ public abstract class ExpressionTransformer {
     install(new ReferenceTrans());
     install(new ResolvedTrans());
     install(new ScalarTrans());
+    install(new ConstructorTrans());
     install(new TupleTrans());
     install(new ValofExpTrans());
     install(new VariableTrans());
@@ -64,6 +65,7 @@ public abstract class ExpressionTransformer {
     // Patterns
     install(new AggregatePtnTrans());
     install(new CastPtnTrans());
+    install(new ConstructorPtnTrans());
     install(new LiteralPtnTrans());
     install(new MatchingPtnTrans());
     install(new OverloadVariablePtnTrans());
@@ -423,7 +425,7 @@ public abstract class ExpressionTransformer {
     }
   }
 
-  private class TupleTrans implements TransformExpression {
+  private class ConstructorTrans implements TransformExpression {
 
     @Override
     public Class<? extends IContentExpression> transformClass() {
@@ -443,6 +445,31 @@ public abstract class ExpressionTransformer {
       }
       if (dirty)
         return new ConstructorTerm(exp.getLoc(), tpl.getLabel(), exp.getType(), els);
+      else
+        return exp;
+    }
+  }
+
+  private class TupleTrans implements TransformExpression {
+
+    @Override
+    public Class<? extends IContentExpression> transformClass() {
+      return TupleTerm.class;
+    }
+
+    @Override
+    public IContentExpression transformExp(IContentExpression exp) {
+      TupleTerm tpl = (TupleTerm) exp;
+      List<IContentExpression> els = new ArrayList<>();
+      List<IContentExpression> tplEls = tpl.getElements();
+      boolean dirty = false;
+      for (IContentExpression el : tplEls) {
+        IContentExpression transformed = transform(el);
+        els.add(transformed);
+        dirty |= transformed != el;
+      }
+      if (dirty)
+        return new TupleTerm(exp.getLoc(), exp.getType(), els);
       else
         return exp;
     }
@@ -1043,7 +1070,7 @@ public abstract class ExpressionTransformer {
     }
   }
 
-  private class TuplePtnTrans implements TransformPattern {
+  private class ConstructorPtnTrans implements TransformPattern {
     @Override
     public Class<? extends IContentPattern> transformClass() {
       return ConstructorPtn.class;
@@ -1056,6 +1083,22 @@ public abstract class ExpressionTransformer {
       for (IContentPattern el : con.getElements())
         nEls.add(transform(el));
       return new ConstructorPtn(ptn.getLoc(), con.getLabel(), ptn.getType(), nEls);
+    }
+  }
+
+  private class TuplePtnTrans implements TransformPattern {
+    @Override
+    public Class<? extends IContentPattern> transformClass() {
+      return TuplePtn.class;
+    }
+
+    @Override
+    public IContentPattern transformPtn(IContentPattern ptn) {
+      TuplePtn con = (TuplePtn) ptn;
+      List<IContentPattern> nEls = new ArrayList<>();
+      for (IContentPattern el : con.getElements())
+        nEls.add(transform(el));
+      return new TuplePtn(ptn.getLoc(), ptn.getType(), nEls);
     }
   }
 

@@ -142,6 +142,11 @@ public class ExpressionCompile implements TransformExpression<ISpec, ISpec, ISpe
   }
 
   @Override
+  public ISpec transformTuple(TupleTerm tupleTerm, IContinuation context) {
+    return null;
+  }
+
+  @Override
   public ISpec transformValofExp(ValofExp val, IContinuation cont) {
     return null;
   }

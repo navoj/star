@@ -95,6 +95,7 @@ public class Expressions {
     handlers.put(Names.CONSTRUCT, new CompileConstructor());
     handlers.put(Names.RECORD, new CompileRecord());
     handlers.put(Names.FACE, new CompileFace());
+    handlers.put(Names.TUPLE, new CompileTuple());
     handlers.put(Names.COPY, new CompileCopy());
     handlers.put(Names.PERIOD, new CompileDot());
     handlers.put(Names.SWITCH, new CompileCase());
@@ -373,7 +374,7 @@ public class Expressions {
             case builtin:
               return invokeEscape(loc, var, app, cont, ccxt);
             case constructor:
-              return Constructors.constructorCall(loc, var, CafeSyntax.funCallArgs(app), errors, dict, outer,
+              return Constructors.constructorCall(loc, var, CafeSyntax.tupleEls(CafeSyntax.funCallArgs(app)), errors, dict, outer,
                   cont, ccxt);
             case general:
               return compileFunCall(loc, var, CafeSyntax.funCallArgs(app), cont,
@@ -459,7 +460,7 @@ public class Expressions {
         if (var != null) {
           switch (var.getKind()) {
             case constructor:
-              return Constructors.constructorCall(loc, var, app, errors, dict, outer, cont, ccxt);
+              return Constructors.constructorCall(loc, var, CafeSyntax.constructorArgs(app), errors, dict, outer, cont, ccxt);
             case general:
               return Constructors.conFunCall(loc, var, app, errors, dict, outer, cont, ccxt);
             default:
@@ -470,6 +471,14 @@ public class Expressions {
       } else
         errors.reportError("expecting a constructor", app.getLoc());
       return SrcSpec.prcSrc;
+    }
+  }
+
+  // A tuple
+  private static class CompileTuple implements ICompileExpression {
+    @Override
+    public ISpec handleExp(Apply app, IContinuation cont, CodeContext ccxt) {
+      return Constructors.buildTuple(app.getLoc(), app, cont, ccxt);
     }
   }
 
@@ -588,8 +597,8 @@ public class Expressions {
     HWM hwm = ccxt.getMtdHwm();
     CafeDictionary dict = ccxt.getDict();
 
-    if (CafeSyntax.isConstructor(argTpl)) {
-      IList args = CafeSyntax.constructorArgs(argTpl);
+    if (CafeSyntax.isTuple(argTpl)) {
+      IList args = CafeSyntax.tupleEls(argTpl);
       if (argTpl.size() < Theta.MAX_ARGS) {
         for (int ix = 0; ix < args.size(); ix++) {
           IAbstract arg = (IAbstract) args.getCell(ix);
@@ -679,7 +688,7 @@ public class Expressions {
         argSpecs = SrcSpec.generics(varType, dict, bldCat, ccxt.getRepository(), errors, loc);
 
         if (CafeSyntax.isTuple(args))
-          argArray(CafeSyntax.constructorArgs(args), argSpecs, ccxt);
+          argArray(CafeSyntax.tupleEls(args), argSpecs, ccxt);
         else
           compileArgs(args, argSpecs, ccxt);
       } else {
@@ -913,7 +922,7 @@ public class Expressions {
 
         @Override
         public ISpec compile(CafeDictionary thetaDict, CodeCatalog bldCat, ErrorReport errors, CodeRepository repository) {
-          return compileExp(CafeSyntax.letBound(let), cont, ccxt.fork(thetaDict,ccxt.getOuter()));
+          return compileExp(CafeSyntax.letBound(let), cont, ccxt.fork(thetaDict, ccxt.getOuter()));
         }
 
         @Override
@@ -939,7 +948,7 @@ public class Expressions {
 
   private static class CompilePattern implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp,IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
       CafeDictionary dict = ccxt.getDict();
       return cont.cont(Theta.compilePattern(exp, dict, ccxt), dict, exp.getLoc(), ccxt);
     }
@@ -1019,7 +1028,7 @@ public class Expressions {
       Actions.doLineNumber(condition.getLoc(), mtd);
 
       CafeDictionary thDict = dict.fork();
-      CodeContext tcxt = ccxt.fork(thDict,outer);
+      CodeContext tcxt = ccxt.fork(thDict, outer);
       Conditions.compileCond(condition, Sense.jmpOnFail, elLabel, tcxt);
       Utils.jumpTarget(ins, thLabel);
       compileExp(th, reconcile, tcxt);
@@ -1055,7 +1064,7 @@ public class Expressions {
   private static class CompileValof implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp,final IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(Apply exp, final IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isValof(exp);
       final MethodNode mtd = ccxt.getMtd();
       final InsnList ins = mtd.instructions;

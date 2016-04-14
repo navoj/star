@@ -12,33 +12,7 @@ import java.util.TreeMap;
 import org.star_lang.star.StarCompiler;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.canonical.Canonical;
-import org.star_lang.star.compiler.canonical.CaseAction;
-import org.star_lang.star.compiler.canonical.CaseExpression;
-import org.star_lang.star.compiler.canonical.CastPtn;
-import org.star_lang.star.compiler.canonical.ConditionalAction;
-import org.star_lang.star.compiler.canonical.ConditionalExp;
-import org.star_lang.star.compiler.canonical.ConstructorPtn;
-import org.star_lang.star.compiler.canonical.ConstructorTerm;
-import org.star_lang.star.compiler.canonical.ExpressionTransformer;
-import org.star_lang.star.compiler.canonical.FunctionLiteral;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentAction;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.Matches;
-import org.star_lang.star.compiler.canonical.MatchingPattern;
-import org.star_lang.star.compiler.canonical.NullExp;
-import org.star_lang.star.compiler.canonical.PatternAbstraction;
-import org.star_lang.star.compiler.canonical.PatternApplication;
-import org.star_lang.star.compiler.canonical.AbortAction;
-import org.star_lang.star.compiler.canonical.AbortExpression;
-import org.star_lang.star.compiler.canonical.RecordPtn;
-import org.star_lang.star.compiler.canonical.RegExpPattern;
-import org.star_lang.star.compiler.canonical.Scalar;
-import org.star_lang.star.compiler.canonical.ScalarPtn;
-import org.star_lang.star.compiler.canonical.Variable;
-import org.star_lang.star.compiler.canonical.WherePattern;
+import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.transform.VarAnalysis.VarChecker;
 import org.star_lang.star.compiler.type.Dictionary;
@@ -446,7 +420,7 @@ public class MatchCompiler
       if (first instanceof MatchingPattern)
         eq = substitute(eq, var, cxt);
 
-      ConstructorPtn posCon = (ConstructorPtn) eq.args.head();
+      TuplePtn posCon = (TuplePtn) eq.args.head();
 
       List<IContentPattern> posArgs = posCon.getElements();
       for (int ix = posArgs.size(); ix > 0; ix--)
@@ -468,7 +442,7 @@ public class MatchCompiler
 
       T nBody = compileMatch(loc, varTail, subTriples, deflt, cxt, outer, gen, tupleDefined, depth - 1, errors);
 
-      cases.add(Pair.pair(ConstructorPtn.tuplePtn(loc, posArgs), nBody));
+      cases.add(Pair.pair(TuplePtn.tuplePtn(loc, posArgs), nBody));
     }
 
     // See if every constructor case is covered
@@ -915,7 +889,7 @@ public class MatchCompiler
 
       ConsList<IContentPattern> nArgs = eq.args.tail();
 
-      List<IContentPattern> elArgs = ((ConstructorPtn) head.getArg()).getElements();
+      List<IContentPattern> elArgs = ((TuplePtn) head.getArg()).getElements();
       for (int ix = elArgs.size(); ix > 0; ix--)
         nArgs = new ConsList<>(elArgs.get(ix - 1), nArgs);
 
@@ -1038,7 +1012,7 @@ public class MatchCompiler
   // partition is used in the mixed case situation -- we repartition the
   // equations so that each partition is 'pure'
   private enum PartitionMode {
-    initial, inVars, inConstructors, inPatterns, inScalars, inRegexps, unknown
+    initial, inVars, inConstructors, inPatterns, inScalars, inRegexps, inTuple, unknown
   }
 
   private static <T extends Canonical> List<List<MatchTriple<T>>> partition(List<MatchTriple<T>> list)
@@ -1090,6 +1064,8 @@ public class MatchCompiler
       return PartitionMode.inRegexps;
     else if (arg instanceof MatchingPattern)
       return argMode(((MatchingPattern) arg).getPtn());
+    else if (arg instanceof TuplePtn)
+      return PartitionMode.inTuple;
     else {
       assert false : "cannot determine " + arg + " as pattern form at " + arg.getLoc();
       return PartitionMode.unknown;

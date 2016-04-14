@@ -24,7 +24,7 @@ public class PatternApplication extends BasePattern
     super(loc, type);
     assert ptn!=null && Utils.noNulls(args);
     this.ptn = ptn;
-    this.arg = new ConstructorPtn(loc, args);
+    this.arg = new TuplePtn(loc, args);
   }
 
   public IContentExpression getAbstraction()

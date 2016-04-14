@@ -274,7 +274,7 @@ public class JavaImport {
           Variable escVar = new Variable(loc, builtinType, javaName(funName));
 
           if (seq.peek() == 'V') {
-            inner = new ValofExp(loc, StandardTypes.unitType, new ProcedureCallAction(loc, escVar, new ConstructorTerm(loc, eArgs)),
+            inner = new ValofExp(loc, StandardTypes.unitType, new ProcedureCallAction(loc, escVar, new TupleTerm(loc, eArgs)),
                 new ValisAction(loc, new VoidExp(loc)));
             resultType = StandardTypes.unitType;
           } else {

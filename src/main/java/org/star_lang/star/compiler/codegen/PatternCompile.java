@@ -75,6 +75,11 @@ public class PatternCompile implements TransformPattern<ISpec, ISpec, ISpec, ISp
   }
 
   @Override
+  public ISpec transformTuplePtn(TuplePtn tuplePtn, IContinuation context) {
+    return null;
+  }
+
+  @Override
   public ISpec transformVariablePtn(Variable variable, IContinuation cont) {
     return null;
   }

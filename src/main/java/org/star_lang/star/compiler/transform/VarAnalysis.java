@@ -4,31 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.star_lang.star.compiler.canonical.CanonicalVisitor;
-import org.star_lang.star.compiler.canonical.ConditionCondition;
-import org.star_lang.star.compiler.canonical.Conjunction;
-import org.star_lang.star.compiler.canonical.ConstructorPtn;
-import org.star_lang.star.compiler.canonical.ConstructorTerm;
-import org.star_lang.star.compiler.canonical.DefaultVisitor;
-import org.star_lang.star.compiler.canonical.Disjunction;
-import org.star_lang.star.compiler.canonical.FalseCondition;
-import org.star_lang.star.compiler.canonical.FieldAccess;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.Implies;
-import org.star_lang.star.compiler.canonical.IsTrue;
-import org.star_lang.star.compiler.canonical.ListSearch;
-import org.star_lang.star.compiler.canonical.Matches;
-import org.star_lang.star.compiler.canonical.MethodVariable;
-import org.star_lang.star.compiler.canonical.Negation;
-import org.star_lang.star.compiler.canonical.Otherwise;
-import org.star_lang.star.compiler.canonical.OverloadedVariable;
-import org.star_lang.star.compiler.canonical.RecordPtn;
-import org.star_lang.star.compiler.canonical.Scalar;
-import org.star_lang.star.compiler.canonical.Search;
-import org.star_lang.star.compiler.canonical.TrueCondition;
-import org.star_lang.star.compiler.canonical.Variable;
+import org.star_lang.star.compiler.canonical.*;
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -194,6 +170,10 @@ public class VarAnalysis
       ConstructorPtn posCon = (ConstructorPtn) ptn;
       for (int ix = 0; ix < posCon.arity(); ix++)
         findDefinedVars(posCon.getArg(ix), definedVars);
+    } else if (ptn instanceof TuplePtn) {
+      TuplePtn tpl = (TuplePtn) ptn;
+      for (int ix = 0; ix < tpl.arity(); ix++)
+        findDefinedVars(tpl.getArg(ix), definedVars);
     }
   }
 

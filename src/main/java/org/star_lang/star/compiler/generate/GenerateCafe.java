@@ -73,12 +73,12 @@ public class GenerateCafe implements
 
     for (TypeDefinition type : pkg.getTypes())
       if (!types.contains(type.getName()) && !type.isImported()) {
-        pkgDefs.add(generator.generateType(type.getTypeDescription(), pkgCxt));
+        pkgDefs.add(generator.generateType(type.getTypeDescription()));
         types.add(type.getName());
       }
     for (IAlgebraicType extra : pkgCxt.getIntroducedTypes().values())
       if (!types.contains(extra.getName())) {
-        pkgDefs.add(generator.generateType(extra, pkgCxt));
+        pkgDefs.add(generator.generateType(extra));
         types.add(extra.getName());
       }
 
@@ -115,7 +115,7 @@ public class GenerateCafe implements
   @Override
   public List<IAbstract> transformTypeEntry(TypeDefinition type, CContext context) {
     if (!type.isImported())
-      return FixedList.create(generateType(type.getTypeDescription(), context));
+      return FixedList.create(generateType(type.getTypeDescription()));
     else
       return FixedList.create();
   }
@@ -138,9 +138,9 @@ public class GenerateCafe implements
       Location loc = entry.getLoc();
       if (defnPtn instanceof Variable)
         return compileVarDeclaration(loc, defnPtn, access, value, context);
-      else if (defnPtn instanceof ConstructorPtn && value instanceof ConstructorTerm) {
-        List<IContentPattern> ptnEls = ((ConstructorPtn) defnPtn).getElements();
-        List<IContentExpression> valEls = ((ConstructorTerm) value).getElements();
+      else if (defnPtn instanceof TuplePtn && value instanceof TupleTerm) {
+        List<IContentPattern> ptnEls = ((TuplePtn) defnPtn).getElements();
+        List<IContentExpression> valEls = ((TupleTerm) value).getElements();
         if (ptnEls.size() != valEls.size()) {
           context.getErrors().reportError("inconsistent sizes in variable definition", loc);
           return FixedList.create();
@@ -166,7 +166,7 @@ public class GenerateCafe implements
             IContentExpression val = valEls.get(ix);
             localDefs.addAll(compileVarDeclaration(loc, ptn, access, val, context));
           }
-          Pair<IAbstract, IAbstract> args = findVarsInDefs(localDefs, loc, context);
+          Pair<IAbstract, IAbstract> args = findVarsInDefs(localDefs, loc);
           IAbstract let = CafeSyntax.letExp(loc, localDefs, args.left());
           return FixedList.create(CafeSyntax.isDeclaration(loc, args.right(), let));
         }
@@ -182,7 +182,7 @@ public class GenerateCafe implements
     }
   }
 
-  public IAbstract generateFunction(String name, FunctionLiteral fun, CContext cxt) {
+  private IAbstract generateFunction(String name, FunctionLiteral fun, CContext cxt) {
     ErrorReport errors = cxt.getErrors();
     LayeredMap<String, DictEntry> dict = cxt.getDict().fork();
     Location loc = fun.getLoc();
@@ -203,12 +203,12 @@ public class GenerateCafe implements
 
     IAbstract exp = scopedExpression(fun.getBody(), funCxt);
 
-    IAbstract funType = typeToAbstract(loc, cxt, fun.getType());
+    IAbstract funType = typeToAbstract(loc, fun.getType());
 
     return CafeSyntax.functionDefn(loc, name, argPtns, exp, funType);
   }
 
-  public IAbstract generateLambda(FunctionLiteral fun, CContext cxt) {
+  private IAbstract generateLambda(FunctionLiteral fun, CContext cxt) {
     LayeredMap<String, DictEntry> dict = cxt.getDict().fork();
     Location loc = fun.getLoc();
     CContext funCxt = cxt.fork(loc, dict);
@@ -226,14 +226,14 @@ public class GenerateCafe implements
     if (!CompilerUtils.isTrivial(condition.get()))
       cxt.getErrors().reportError("function argument pattern is too complex", fun.getLoc());
 
-    IAbstract funType = typeToAbstract(loc, cxt, fun.getType());
+    IAbstract funType = typeToAbstract(loc, fun.getType());
 
     IAbstract exp = scopedExpression(fun.getBody(), funCxt);
 
     return CafeSyntax.lambdaFun(loc, argPtns, CafeSyntax.typeCast(loc, exp, CafeSyntax.arrowTypeRes(funType)), funType);
   }
 
-  public IAbstract generateMemoFunction(String name, MemoExp memo, CContext cxt) {
+  private IAbstract generateMemoFunction(String name, MemoExp memo, CContext cxt) {
     LayeredMap<String, DictEntry> dict = cxt.getDict().fork();
     Location loc = memo.getLoc();
     CContext funCxt = cxt.fork(loc, dict);
@@ -243,7 +243,7 @@ public class GenerateCafe implements
     return CafeSyntax.memoDefn(loc, name, exp, memo.getType());
   }
 
-  public IAbstract generatePtnAbstraction(String name, PatternAbstraction def, CContext cxt) {
+  private IAbstract generatePtnAbstraction(String name, PatternAbstraction def, CContext cxt) {
     LayeredMap<String, DictEntry> dict = cxt.getDict().fork();
     Location loc = def.getLoc();
     CContext ptnCxt = cxt.fork(loc, dict);
@@ -258,10 +258,10 @@ public class GenerateCafe implements
 
     IAbstract exp = scopedExpression(def.getResult(), ptnCxt);
 
-    return CafeSyntax.patternDefn(loc, name, exp, ptnCode, typeToAbstract(loc, cxt, def.getType()));
+    return CafeSyntax.patternDefn(loc, name, exp, ptnCode, typeToAbstract(loc, def.getType()));
   }
 
-  private Pair<IAbstract, IAbstract> findVarsInDefs(List<IAbstract> defs, Location loc, CContext cxt) {
+  private Pair<IAbstract, IAbstract> findVarsInDefs(List<IAbstract> defs, Location loc) {
     List<IAbstract> vars = new ArrayList<>();
     List<IAbstract> args = new ArrayList<>();
     List<IAbstract> types = new ArrayList<>();
@@ -273,8 +273,8 @@ public class GenerateCafe implements
         findVarsInPtn(CafeSyntax.varDeclLval(stmt), vars, args, types);
     }
 
-    IAbstract ptn = makeTuple(cxt, loc, args);
-    IAbstract val = makeTuple(cxt, loc, vars);
+    IAbstract ptn = makeTuple(loc, args);
+    IAbstract val = makeTuple(loc, vars);
     return Pair.pair(ptn, val);
   }
 
@@ -283,9 +283,13 @@ public class GenerateCafe implements
       vars.add(ptn);
       args.add(CafeSyntax.typedTerm(ptn));
       types.add(CafeSyntax.typedType(ptn));
-    } else if (CafeSyntax.isConstructor(ptn))
+    } else if (CafeSyntax.isConstructor(ptn)) {
       for (IValue arg : CafeSyntax.constructorArgs(ptn))
         findVarsInPtn((IAbstract) arg, vars, args, types);
+    } else if(CafeSyntax.isTuple(ptn)){
+      for (IValue arg : CafeSyntax.tupleEls(ptn))
+        findVarsInPtn((IAbstract) arg, vars, args, types);
+    }
   }
 
   @Override
@@ -338,7 +342,7 @@ public class GenerateCafe implements
   @Override
   public IAbstract transformCastPtn(CastPtn ptn, CContext context) {
     IAbstract cast = generatePtn(ptn.getInner(), context);
-    return CafeSyntax.typeCast(ptn.getLoc(), cast, typeToAbstract(ptn.getLoc(), context, ptn.getType()));
+    return CafeSyntax.typeCast(ptn.getLoc(), cast, typeToAbstract(ptn.getLoc(), ptn.getType()));
   }
 
   @Override
@@ -354,8 +358,8 @@ public class GenerateCafe implements
     cxt.defineLocal(name, var, cxt.getAccess());
 
     Location loc = var.getLoc();
-    IAbstract varType = var instanceof OverloadedVariable ? typeToAbstract(loc, cxt, ((OverloadedVariable) var)
-        .getDictType()) : typeToAbstract(loc, cxt, var.getType());
+    IAbstract varType = var instanceof OverloadedVariable ? typeToAbstract(loc, ((OverloadedVariable) var)
+        .getDictType()) : typeToAbstract(loc, var.getType());
 
     return CafeSyntax.typeCast(loc, Abstract.name(loc, name), varType);
   }
@@ -418,6 +422,25 @@ public class GenerateCafe implements
   }
 
   @Override
+  public IAbstract transformTuplePtn(TuplePtn tuplePtn, CContext context) {
+    List<IContentPattern> elements = tuplePtn.getElements();
+    List<IAbstract> elPtns = new ArrayList<>();
+
+    for (IContentPattern el : elements) {
+      if (!(el instanceof Variable || el instanceof Scalar)) {
+        Location loc = el.getLoc();
+        Variable nVar = new Variable(el.getLoc(), el.getType(), GenSym.genSym("__x"));
+        CompilerUtils.extendCondition(context.getCond(), new Matches(loc, nVar, el));
+        elPtns.add(generatePtn(nVar, context));
+      } else
+        elPtns.add(generatePtn(el, context));
+    }
+
+    Location loc = tuplePtn.getLoc();
+    return CafeSyntax.tuple(loc, elPtns);
+  }
+
+  @Override
   public IAbstract transformVariablePtn(Variable var, CContext context) {
     return varPattern(var, context);
   }
@@ -449,10 +472,10 @@ public class GenerateCafe implements
       assert TypeUtils.isConstructorType(appliedFun.getType());
       assert CafeSyntax.isTuple(args);
       if (fun instanceof Name)
-        return CafeSyntax.constructor(loc, fun, CafeSyntax.constructorArgs(args));
+        return CafeSyntax.constructor(loc, fun, CafeSyntax.tupleEls(args));
       else {
         Name tmp = introduceVariable(loc, context, fun, appliedFun.getType());
-        return CafeSyntax.constructor(loc, tmp, CafeSyntax.constructorArgs(args));
+        return CafeSyntax.constructor(loc, tmp, CafeSyntax.tupleEls(args));
       }
     }
   }
@@ -474,11 +497,11 @@ public class GenerateCafe implements
         args[offset++] = generateExp(entry.getValue(), dCxt);
       }
       if (fun instanceof Name)
-        return CafeSyntax.funcall(loc, fun, CafeSyntax.tuple(loc, fun, args));
+        return CafeSyntax.funcall(loc, fun, CafeSyntax.tuple(loc, args));
       else {
         // introduce a new variable
         Name tmp = introduceVariable(loc, context, fun, funType);
-        return CafeSyntax.funcall(loc, tmp, CafeSyntax.tuple(loc, fun, args));
+        return CafeSyntax.funcall(loc, tmp, CafeSyntax.tuple(loc, args));
       }
     } else if (record.isAnonRecord()) {
       List<IAbstract> args = new ArrayList<>();
@@ -515,7 +538,7 @@ public class GenerateCafe implements
 
     String tmpName = GenSym.genSym("__copy");
     IAbstract tmp = Abstract.name(loc, tmpName);
-    valActions.add(CafeSyntax.varDeclaration(loc, CafeSyntax.typeCast(loc, tmp, typeToAbstract(loc, dCxt, route
+    valActions.add(CafeSyntax.varDeclaration(loc, CafeSyntax.typeCast(loc, tmp, typeToAbstract(loc, route
         .getType())), CafeSyntax.copy(loc, rc)));
 
     if (replace instanceof RecordTerm) {
@@ -560,7 +583,7 @@ public class GenerateCafe implements
 
       if (ptn instanceof Variable)
         context.getErrors().reportError("variable not permitted in case: " + ptn, ptn.getLoc());
-      else if (ptn instanceof ConstructorPtn || ptn instanceof RecordPtn) {
+      else if (ptn instanceof ConstructorPtn || ptn instanceof TuplePtn || ptn instanceof RecordPtn) {
         int mark = context.getMark();
         Wrapper<ICondition> condition = Wrapper.create(CompilerUtils.truth);
         CContext pCxt = context.fork(condition).fork(AccessMode.readOnly);
@@ -604,7 +627,7 @@ public class GenerateCafe implements
   public IAbstract transformCastExpression(CastExpression exp, CContext context) {
     Location loc = exp.getLoc();
     IAbstract val = generateExp(exp.getInner(), context);
-    IAbstract type = typeToAbstract(loc, context, exp.getType());
+    IAbstract type = typeToAbstract(loc, exp.getType());
     return CafeSyntax.typeCast(loc, val, type);
   }
 
@@ -681,19 +704,15 @@ public class GenerateCafe implements
   public IAbstract transformLetTerm(LetTerm let, CContext context) {
     final IContentExpression bound = let.getBoundExp();
 
-    BoundCompiler<IAbstract> compileBound = new BoundCompiler<IAbstract>() {
-
-      @Override
-      public IAbstract compileBound(List<IAbstract> definitions, List<IAbstract> doActions, CContext thetaCxt) {
-        Location loc = bound.getLoc();
-        CContext subCxt = thetaCxt.fork(doActions);
-        IAbstract boundExp = generateExp(bound, subCxt);
-        if (!doActions.isEmpty()) {
-          doActions.add(CafeSyntax.valis(loc, boundExp));
-          boundExp = CafeSyntax.valof(loc, CafeSyntax.block(loc, doActions));
-        }
-        return CafeSyntax.letExp(loc, definitions, boundExp);
+    BoundCompiler<IAbstract> compileBound = (definitions, doActions, thetaCxt) -> {
+      Location loc = bound.getLoc();
+      CContext subCxt = thetaCxt.fork(doActions);
+      IAbstract boundExp = generateExp(bound, subCxt);
+      if (!doActions.isEmpty()) {
+        doActions.add(CafeSyntax.valis(loc, boundExp));
+        boundExp = CafeSyntax.valof(loc, CafeSyntax.block(loc, doActions));
       }
+      return CafeSyntax.letExp(loc, definitions, boundExp);
     };
 
     return compileThetaEnv(let.getEnvironment(), compileBound, context);
@@ -759,7 +778,7 @@ public class GenerateCafe implements
 
   @Override
   public IAbstract transformResolved(Resolved res, CContext context) {
-    IContentExpression dictVars = new ConstructorTerm(res.getLoc(), res.getDicts());
+    IContentExpression dictVars = new TupleTerm(res.getLoc(), res.getDicts());
 
     IAbstract dicts = generateExp(dictVars, context.fork(false));
     // IAbstract dicts = generateExp(dictVars, context.fork(true));
@@ -783,13 +802,22 @@ public class GenerateCafe implements
   }
 
   @Override
-  public IAbstract transformConstructor(ConstructorTerm tuple, CContext context) {
+  public IAbstract transformConstructor(ConstructorTerm term, CContext context) {
+    Location loc = term.getLoc();
+
+    List<IAbstract> elExps = compileExps(term.getElements(), context.fork(true));
+    String label = term.getLabel();
+
+    return makeConstructor(label, loc, elExps);
+  }
+
+  @Override
+  public IAbstract transformTuple(TupleTerm tuple, CContext context) {
     Location loc = tuple.getLoc();
 
     List<IAbstract> elExps = compileExps(tuple.getElements(), context.fork(true));
-    String label = tuple.getLabel();
 
-    return makeTuple(context, tuple.getType(), label, loc, elExps);
+    return makeTuple(loc, elExps);
   }
 
   @Override
@@ -841,26 +869,22 @@ public class GenerateCafe implements
 
   private static String findThisVariable(final String name, CContext cxt) {
     final Wrapper<String> thisName = Wrapper.create(null);
-    cxt.visitCContext(new EntryVisitor<String, DictEntry>() {
-
-      @Override
-      public ContinueFlag visit(String key, DictEntry var) {
-        IType type = TypeUtils.unwrap(var.getType());
-        if (type instanceof TypeInterfaceType) {
-          if (((TypeInterfaceType) type).getAllFields().containsKey(name)) {
-            thisName.set(var.getName());
-            return ContinueFlag.stop;
-          }
+    cxt.visitCContext((key, var) -> {
+      IType type = TypeUtils.unwrap(var.getType());
+      if (type instanceof TypeInterfaceType) {
+        if (((TypeInterfaceType) type).getAllFields().containsKey(name)) {
+          thisName.set(var.getName());
+          return ContinueFlag.stop;
         }
-        return ContinueFlag.cont;
       }
+      return ContinueFlag.cont;
     });
     return thisName.get();
   }
 
   @Override
   public IAbstract transformVoidExp(VoidExp exp, CContext context) {
-    return CafeSyntax.constructor(exp.getLoc(), NTuple.$0Enum.getLabel());
+    return CafeSyntax.tuple(exp.getLoc());
   }
 
   @Override
@@ -1006,7 +1030,7 @@ public class GenerateCafe implements
 
       if (ptn instanceof Variable)
         cxt.getErrors().reportError("variable not permitted in case: " + ptn, ptn.getLoc());
-      else if (ptn instanceof ConstructorPtn || ptn instanceof RecordPtn || ptn instanceof ScalarPtn) {
+      else if (ptn instanceof ConstructorPtn || ptn instanceof TuplePtn || ptn instanceof RecordPtn || ptn instanceof ScalarPtn) {
         int mark = cxt.getMark();
         Wrapper<ICondition> condition = Wrapper.create(CompilerUtils.truth);
         CContext ptnCxt = cxt.fork(condition).fork(AccessMode.readOnly);
@@ -1079,13 +1103,9 @@ public class GenerateCafe implements
     final Location loc = let.getLoc();
     final IContentAction bound = let.getBoundAction();
 
-    BoundCompiler<List<IAbstract>> compileBound = new BoundCompiler<List<IAbstract>>() {
-
-      @Override
-      public List<IAbstract> compileBound(List<IAbstract> definitions, List<IAbstract> doActions, CContext thetaCxt) {
-        IAbstract boundAct = pickOne(bound.getLoc(), generateSubAction(bound, thetaCxt));
-        return FixedList.create(CafeSyntax.letExp(loc, definitions, boundAct));
-      }
+    BoundCompiler<List<IAbstract>> compileBound = (definitions, doActions, thetaCxt) -> {
+      IAbstract boundAct = pickOne(bound.getLoc(), generateSubAction(bound, thetaCxt));
+      return FixedList.create(CafeSyntax.letExp(loc, definitions, boundAct));
     };
 
     return compileThetaEnv(let.getEnvironment(), compileBound, context);
@@ -1117,7 +1137,7 @@ public class GenerateCafe implements
     Location loc = call.getLoc();
     assert CompilerUtils.isTupleTerm(call.getArgs());
 
-    List<IContentExpression> elements = ((ConstructorTerm) call.getArgs()).getElements();
+    List<IContentExpression> elements = ((TupleTerm) call.getArgs()).getElements();
     List<IAbstract> args = compileExps(elements, context);
 
     if (proc instanceof Name)
@@ -1125,7 +1145,7 @@ public class GenerateCafe implements
     else {
       // introduce a new variable
       Name tmp = introduceVariable(loc, context, proc, prc.getType());
-      return FixedList.create(CafeSyntax.escape(call.getLoc(), ((Name) tmp).getId(), args));
+      return FixedList.create(CafeSyntax.escape(call.getLoc(), tmp.getId(), args));
     }
   }
 
@@ -1160,7 +1180,7 @@ public class GenerateCafe implements
   }
 
   // Utilities
-  private static IAbstract typeToAbstract(final Location loc, final CContext cxt, IType type) {
+  private static IAbstract typeToAbstract(final Location loc, IType type) {
     TypeAbstract<Boolean> converter = new TypeAbstract<Boolean>(loc) {
 
       @Override
@@ -1188,23 +1208,12 @@ public class GenerateCafe implements
     return exps;
   }
 
-  private IAbstract[] compileExps(IContentExpression args[], CContext cxt) {
-    CContext deepCxt = cxt.fork(true);
-    IAbstract exps[] = new IAbstract[args.length];
-    for (int ix = 0; ix < args.length; ix++)
-      exps[ix] = generateExp(args[ix], deepCxt);
-    return exps;
-  }
-
-  private IAbstract makeTuple(CContext cxt, IType type, String label, Location loc, List<IAbstract> elExps) {
+  private IAbstract makeConstructor(String label, Location loc, List<IAbstract> elExps) {
     return CafeSyntax.constructor(loc, label, elExps);
   }
 
-  private IAbstract makeTuple(CContext cxt, Location loc, List<IAbstract> els) {
-    int arity = els.size();
-    String label = TypeUtils.tupleLabel(arity);
-
-    return CafeSyntax.constructor(loc, label, els);
+  private IAbstract makeTuple(Location loc, List<IAbstract> els) {
+    return CafeSyntax.tuple(loc, els);
   }
 
   private static IAbstract pickOne(Location loc, List<IAbstract> els) {
@@ -1241,7 +1250,7 @@ public class GenerateCafe implements
     }
   }
 
-  public IAbstract generateExp(IContentExpression exp, CContext cxt) {
+  private IAbstract generateExp(IContentExpression exp, CContext cxt) {
     IAbstract generated = exp.transform(this, cxt);
     setType((ASyntax) generated, exp.getType());
 
@@ -1269,7 +1278,7 @@ public class GenerateCafe implements
   }
 
   private Name introduceVariable(Location loc, CContext cxt, IAbstract val, IType type) {
-    IAbstract abType = typeToAbstract(loc, cxt, type);
+    IAbstract abType = typeToAbstract(loc, type);
 
     Name tmp = CafeSyntax.variable(loc, GenSym.genSym("$V"));
 
@@ -1299,7 +1308,7 @@ public class GenerateCafe implements
     return res;
   }
 
-  public IAbstract generatePtn(IContentPattern ptn, CContext cxt) {
+  private IAbstract generatePtn(IContentPattern ptn, CContext cxt) {
     IAbstract generated = ptn.transformPattern(this, cxt);
     setType((ASyntax) generated, ptn.getType());
 
@@ -1346,7 +1355,7 @@ public class GenerateCafe implements
     return boundExp;
   }
 
-  private IAbstract generateType(IAlgebraicType desc, CContext cxt) {
+  private IAbstract generateType(IAlgebraicType desc) {
     List<IAbstract> conSpecs = new ArrayList<>();
     Location loc = desc.getLoc();
 
@@ -1364,7 +1373,7 @@ public class GenerateCafe implements
           IType memberType = entry.getValue();
           String fldName = entry.getKey();
           Name field = new Name(loc, fldName);
-          IAbstract fieldType = typeToAbstract(loc, cxt, memberType);
+          IAbstract fieldType = typeToAbstract(loc, memberType);
           Integer ix = index.get(fldName);
           conArgs.set(ix, CafeSyntax.typeCast(loc, field, fieldType));
         }
@@ -1378,14 +1387,13 @@ public class GenerateCafe implements
       } else {
         IType[] argTypes = TypeUtils.getConstructorArgTypes(TypeUtils.unwrap(spec.getConType()));
 
-        for (int ix = 0; ix < argTypes.length; ix++) {
-          IType argType = argTypes[ix];
-          conArgs.add(typeToAbstract(loc, cxt, argType));
+        for (IType argType : argTypes) {
+          conArgs.add(typeToAbstract(loc, argType));
         }
         conSpecs.add(CafeSyntax.constructorSpec(loc, spec.getLabel(), conArgs));
       }
     }
-    return CafeSyntax.typeDef(loc, typeToAbstract(loc, cxt, TypeUtils.unwrap(desc.getType())), conSpecs);
+    return CafeSyntax.typeDef(loc, typeToAbstract(loc, TypeUtils.unwrap(desc.getType())), conSpecs);
   }
 
   private static void setType(ASyntax exp, IType type) {

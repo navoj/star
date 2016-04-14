@@ -14,6 +14,8 @@ public interface TransformExpression<A, E, P, C, D, T>
 
   E transformConditionalExp(ConditionalExp act, T context);
 
+  E transformConstructor(ConstructorTerm tuple, T context);
+
   E transformContentCondition(ContentCondition cond, T context);
 
   E transformFieldAccess(FieldAccess dot, T context);
@@ -44,7 +46,7 @@ public interface TransformExpression<A, E, P, C, D, T>
 
   E transformScalar(Scalar scalar, T context);
 
-  E transformConstructor(ConstructorTerm tuple, T context);
+  E transformTuple(TupleTerm tupleTerm, T context);
 
   E transformValofExp(ValofExp val, T context);
 

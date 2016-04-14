@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.star_lang.star.compiler.canonical;
 
@@ -32,15 +32,15 @@ import org.star_lang.star.operators.assignment.runtime.RefCell;
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
- */ /**
+ */
+
+/**
  * Description of a variable binding
- * 
+ *
  * @author fgm
- * 
  */
 @SuppressWarnings("serial")
-public class VarEntry extends EnvironmentEntry
-{
+public class VarEntry extends EnvironmentEntry {
   private final AccessMode access;
   private final Collection<Variable> defined;
   private final Map<String, IType> types;
@@ -48,8 +48,7 @@ public class VarEntry extends EnvironmentEntry
   private final IContentExpression value;
 
   public VarEntry(Collection<Variable> defined, Location loc, IContentPattern ptn, IContentExpression value,
-      AccessMode access, Visibility visibility)
-  {
+                  AccessMode access, Visibility visibility) {
     super(loc, visibility);
     this.defined = defined;
     this.varPattern = ptn;
@@ -58,44 +57,36 @@ public class VarEntry extends EnvironmentEntry
     this.types = new HashMap<>();
   }
 
-  public VarEntry(Location loc, IContentPattern ptn, IContentExpression value, AccessMode access, Visibility visibility)
-  {
+  public VarEntry(Location loc, IContentPattern ptn, IContentExpression value, AccessMode access, Visibility visibility) {
     this(findDefinedVars(ptn), loc, ptn, value, access, visibility);
   }
 
-  public IType getType()
-  {
+  public IType getType() {
     return varPattern.getType();
   }
 
-  public AccessMode isReadOnly()
-  {
+  public AccessMode isReadOnly() {
     return access;
   }
 
-  public IContentExpression getValue()
-  {
+  public IContentExpression getValue() {
     return value;
   }
 
-  public IContentPattern getVarPattern()
-  {
+  public IContentPattern getVarPattern() {
     return varPattern;
   }
 
-  public Variable getVariable()
-  {
+  public Variable getVariable() {
     return (Variable) varPattern;
   }
 
-  public Collection<Variable> getDefined()
-  {
+  public Collection<Variable> getDefined() {
     return defined;
   }
 
   @Override
-  public boolean defines(String name)
-  {
+  public boolean defines(String name) {
     for (Variable v : defined)
       if (v.getName().equals(name))
         return true;
@@ -103,8 +94,7 @@ public class VarEntry extends EnvironmentEntry
   }
 
   @Override
-  public Collection<String> definedFields()
-  {
+  public Collection<String> definedFields() {
     Set<String> fields = new HashSet<>();
     for (Variable v : defined)
       fields.add(v.getName());
@@ -112,25 +102,21 @@ public class VarEntry extends EnvironmentEntry
   }
 
   @Override
-  public Collection<String> definedTypes()
-  {
+  public Collection<String> definedTypes() {
     return types.keySet();
   }
 
-  private void prettyPrintDefinedNames(PrettyPrintDisplay disp)
-  {
+  private void prettyPrintDefinedNames(PrettyPrintDisplay disp) {
     varPattern.prettyPrint(disp);
   }
 
   @Override
-  public void accept(CanonicalVisitor visitor)
-  {
+  public void accept(CanonicalVisitor visitor) {
     visitor.visitVarEntry(this);
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     if (getVisibility() == Visibility.priVate)
       disp.appendWord(StandardNames.PRIVATE);
     varPattern.prettyPrint(disp);
@@ -147,8 +133,7 @@ public class VarEntry extends EnvironmentEntry
     value.prettyPrint(disp);
   }
 
-  private boolean showAsProgram()
-  {
+  private boolean showAsProgram() {
     if (value instanceof ProgramLiteral) {
       String name = ((ProgramLiteral) value).getName();
       if (varPattern instanceof Variable && ((Variable) varPattern).getName().equals(name))
@@ -158,33 +143,28 @@ public class VarEntry extends EnvironmentEntry
   }
 
   public static VarEntry createVarEntry(String name, IType type, Location loc, IContentExpression value,
-      Visibility visibility)
-  {
+                                        Visibility visibility) {
     return new VarEntry(loc, Variable.create(loc, type, name), value, AccessMode.readOnly, visibility);
   }
 
   public static VarEntry createVarEntry(Location loc, IContentPattern varPattern, IContentExpression value,
-      AccessMode access, Visibility visibility)
-  {
+                                        AccessMode access, Visibility visibility) {
     return new VarEntry(loc, varPattern, value, access, visibility);
   }
 
   public static VarEntry createReassignableVarEntry(Location loc, IContentPattern var, IContentExpression value,
-      Variable[] freeVars, Visibility visibility)
-  {
+                                                    Variable[] freeVars, Visibility visibility) {
     return new VarEntry(loc, var, new ConstructorTerm(loc, RefCell.cellLabel(var.getType()), var.getType(), value),
         AccessMode.readWrite, visibility);
   }
 
-  private static Collection<Variable> findDefinedVars(IContentPattern ptn)
-  {
+  private static Collection<Variable> findDefinedVars(IContentPattern ptn) {
     Collection<Variable> defined = new HashSet<>();
     findDefined(ptn, defined);
     return defined;
   }
 
-  private static void findDefined(IContentPattern ptn, Collection<Variable> defined)
-  {
+  private static void findDefined(IContentPattern ptn, Collection<Variable> defined) {
     if (ptn instanceof Variable) {
       Variable var = (Variable) ptn;
       if (!defined.contains(var))
@@ -192,6 +172,10 @@ public class VarEntry extends EnvironmentEntry
     } else if (ptn instanceof ConstructorPtn) {
       ConstructorPtn posCon = (ConstructorPtn) ptn;
       for (IContentPattern arg : posCon.getElements())
+        findDefined(arg, defined);
+    } else if (ptn instanceof TuplePtn) {
+      TuplePtn tpl = (TuplePtn) ptn;
+      for (IContentPattern arg : tpl.getElements())
         findDefined(arg, defined);
     } else if (ptn instanceof RecordPtn) {
       RecordPtn record = (RecordPtn) ptn;
@@ -205,8 +189,7 @@ public class VarEntry extends EnvironmentEntry
   }
 
   @Override
-  public <A, E, P, C, D, T> D transform(TransformStatement<A, E, P, C, D, T> transform, T context)
-  {
+  public <A, E, P, C, D, T> D transform(TransformStatement<A, E, P, C, D, T> transform, T context) {
     return transform.transformVarEntry(this, context);
   }
 }

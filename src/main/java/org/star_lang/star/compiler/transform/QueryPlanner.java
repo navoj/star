@@ -5,26 +5,7 @@ import java.util.List;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.FreeVariables;
-import org.star_lang.star.compiler.canonical.Application;
-import org.star_lang.star.compiler.canonical.ConditionalAction;
-import org.star_lang.star.compiler.canonical.Conjunction;
-import org.star_lang.star.compiler.canonical.ConstructorPtn;
-import org.star_lang.star.compiler.canonical.ConstructorTerm;
-import org.star_lang.star.compiler.canonical.Disjunction;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentAction;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.Implies;
-import org.star_lang.star.compiler.canonical.IsTrue;
-import org.star_lang.star.compiler.canonical.ListSearch;
-import org.star_lang.star.compiler.canonical.Matches;
-import org.star_lang.star.compiler.canonical.MemoExp;
-import org.star_lang.star.compiler.canonical.MethodVariable;
-import org.star_lang.star.compiler.canonical.Negation;
-import org.star_lang.star.compiler.canonical.Otherwise;
-import org.star_lang.star.compiler.canonical.Search;
-import org.star_lang.star.compiler.canonical.Variable;
+import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.transform.ConditionTransformer.ActionState;
 import org.star_lang.star.compiler.transform.ConditionTransformer.CountingState;
@@ -72,7 +53,7 @@ public class QueryPlanner
 
     IContentExpression nil = Application.apply(loc, type, new MethodVariable(loc, StandardNames.NIL, createType,
         StandardNames.SEQUENCE, sequenceType));
-    IContentExpression nilTpl = new ConstructorTerm(loc, nil, zero);
+    IContentExpression nilTpl = TupleTerm.tuple(loc, nil, zero);
     IContentExpression initState = CompilerUtils.continueWith(loc, nilTpl);
 
     WrapState succAdd = new CountingState(boundExp, type, countExp);
@@ -186,7 +167,7 @@ public class QueryPlanner
   {
     if (!defined.isEmpty()) {
       IContentExpression defExps[] = defined.toArray(new IContentExpression[defined.size()]);
-      IContentExpression defTpl = ConstructorTerm.tuple(loc, defExps);
+      IContentExpression defTpl = TupleTerm.tuple(loc, defExps);
 
       IType resltType = TypeUtils.typeExp(StandardNames.POSSIBLE, defTpl.getType());
       IContentExpression reslt = CompilerUtils.possible(loc, defTpl);
@@ -195,7 +176,7 @@ public class QueryPlanner
       IContentExpression test = transformReferenceExpression(cond, defined, cxt, outer, reslt, deflt, resltType, loc,
           errors);
 
-      ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, ConstructorPtn.tuplePtn(loc,
+      ICondition matches = new Matches(loc, test, CompilerUtils.possiblePtn(loc, resltType, TuplePtn.tuplePtn(loc,
           defined.toArray(new IContentPattern[defined.size()]))));
       return new ConditionalAction(loc, matches, body, other);
     } else {

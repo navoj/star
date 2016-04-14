@@ -22,13 +22,13 @@ public class Application extends BaseExpression
 
   public Application(Location loc, IType type, IContentExpression function, IContentExpression... args)
   {
-    this(loc, type, function, new ConstructorTerm(loc, args));
+    this(loc, type, function, new TupleTerm(loc, args));
   }
 
   public static IContentExpression apply(Location loc, IType type, IContentExpression function,
       IContentExpression... args)
   {
-    return new Application(loc, type, function, new ConstructorTerm(loc, args));
+    return new Application(loc, type, function, new TupleTerm(loc, args));
   }
 
   public IContentExpression getFunction()
@@ -43,8 +43,8 @@ public class Application extends BaseExpression
 
   public IContentExpression getArg(int ix)
   {
-    assert args instanceof ConstructorTerm;
-    return ((ConstructorTerm) args).getArg(ix);
+    assert args instanceof TupleTerm;
+    return ((TupleTerm) args).getArg(ix);
   }
 
   public int arity()

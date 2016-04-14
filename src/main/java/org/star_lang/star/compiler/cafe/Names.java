@@ -107,6 +107,7 @@ public class Names
   public static final String FCALL = keyword("funcall");
   public static final String ESCAPE = keyword("escape");
   public static final String CONSTRUCT = keyword("construct");
+  public static final String TUPLE = keyword("tuple");
   public static final String REGEXP = keyword("regexp");
 
   public static final String BUILTIN = keyword("builtin");

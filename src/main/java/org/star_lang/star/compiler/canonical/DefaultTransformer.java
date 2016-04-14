@@ -266,6 +266,21 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
+  public IContentExpression transformTuple(TupleTerm tuple, T context) {
+    boolean clean = true;
+    List<IContentExpression> els = new ArrayList<>();
+    for (IContentExpression el : tuple.getElements()) {
+      IContentExpression nEl = el.transform(this, context);
+      els.add(nEl);
+      clean &= nEl == el;
+    }
+    if (clean)
+      return tuple;
+    else
+      return new TupleTerm(tuple.getLoc(), tuple.getType(), els);
+  }
+
+  @Override
   public IContentExpression transformConstructor(ConstructorTerm tuple, T context) {
     boolean clean = true;
     List<IContentExpression> els = new ArrayList<>();
@@ -707,6 +722,21 @@ public class DefaultTransformer<T> implements
       return con;
     else
       return new ConstructorPtn(con.getLoc(), con.getLabel(), con.getType(), els);
+  }
+
+  @Override
+  public IContentPattern transformTuplePtn(TuplePtn con, T context) {
+    List<IContentPattern> els = new ArrayList<>();
+    boolean clean = true;
+    for (IContentPattern el : con.getElements()) {
+      IContentPattern arg = el.transformPattern(this, context);
+      els.add(arg);
+      clean &= arg == el;
+    }
+    if (clean)
+      return con;
+    else
+      return new TuplePtn(con.getLoc(), con.getType(), els);
   }
 
   @Override

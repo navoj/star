@@ -148,19 +148,33 @@ public class DefaultVisitor implements CanonicalVisitor {
   }
 
   @Override
-  public void visitTuple(ConstructorTerm tuple) {
+  public void visitConstructor(ConstructorTerm tuple) {
     for (IContentExpression expr : tuple.getElements()) {
       expr.accept(this);
     }
   }
 
   @Override
-  public void visitTuplePtn(ConstructorPtn tuplePtn) {
+  public void visitConstructorPtn(ConstructorPtn tuplePtn) {
     for (IContentPattern ptn : tuplePtn.getElements()) {
       ptn.accept(this);
     }
     if (!CompilerUtils.isTuplePattern(tuplePtn))
       tuplePtn.getFun().accept(this);
+  }
+
+  @Override
+  public void visitTuple(TupleTerm tuple) {
+    for (IContentExpression expr : tuple.getElements()) {
+      expr.accept(this);
+    }
+  }
+
+  @Override
+  public void visitTuplePtn(TuplePtn tuplePtn) {
+    for (IContentPattern ptn : tuplePtn.getElements()) {
+      ptn.accept(this);
+    }
   }
 
   @Override

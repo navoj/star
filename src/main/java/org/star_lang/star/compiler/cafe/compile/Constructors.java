@@ -2312,7 +2312,7 @@ public class Constructors {
     Utils.jumpTarget(ins, nxLabel);
   }
 
-  public static ISpec constructorCall(Location loc, VarInfo var, IAbstract args, ErrorReport errors,
+  public static ISpec constructorCall(Location loc, VarInfo var, IList args, ErrorReport errors,
                                       CafeDictionary dict, CafeDictionary outer, IContinuation cont, CodeContext ccxt) {
     assert var.getKind() == JavaKind.constructor;
 
@@ -2403,7 +2403,7 @@ public class Constructors {
     CafeDictionary dict = ccxt.getDict();
     InsnList ins = mtd.instructions;
 
-    IList args = CafeSyntax.constructorArgs(con);
+    IList args = CafeSyntax.tupleEls(con);
     int arity = args.size();
 
     if (arity == 0) {

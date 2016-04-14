@@ -6,39 +6,7 @@ import java.util.List;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.FreeVariables;
-import org.star_lang.star.compiler.canonical.Application;
-import org.star_lang.star.compiler.canonical.ConditionCondition;
-import org.star_lang.star.compiler.canonical.ConditionalAction;
-import org.star_lang.star.compiler.canonical.ConditionalExp;
-import org.star_lang.star.compiler.canonical.Conjunction;
-import org.star_lang.star.compiler.canonical.ConstructorPtn;
-import org.star_lang.star.compiler.canonical.ConstructorTerm;
-import org.star_lang.star.compiler.canonical.Disjunction;
-import org.star_lang.star.compiler.canonical.ExpressionTransformer;
-import org.star_lang.star.compiler.canonical.FalseCondition;
-import org.star_lang.star.compiler.canonical.FunctionLiteral;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentAction;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.IStatement;
-import org.star_lang.star.compiler.canonical.Implies;
-import org.star_lang.star.compiler.canonical.IsTrue;
-import org.star_lang.star.compiler.canonical.LetTerm;
-import org.star_lang.star.compiler.canonical.ListSearch;
-import org.star_lang.star.compiler.canonical.Matches;
-import org.star_lang.star.compiler.canonical.MethodVariable;
-import org.star_lang.star.compiler.canonical.Negation;
-import org.star_lang.star.compiler.canonical.Otherwise;
-import org.star_lang.star.compiler.canonical.Search;
-import org.star_lang.star.compiler.canonical.Sequence;
-import org.star_lang.star.compiler.canonical.TrueCondition;
-import org.star_lang.star.compiler.canonical.ValisAction;
-import org.star_lang.star.compiler.canonical.ValofExp;
-import org.star_lang.star.compiler.canonical.VarDeclaration;
-import org.star_lang.star.compiler.canonical.VarEntry;
-import org.star_lang.star.compiler.canonical.Variable;
-import org.star_lang.star.compiler.canonical.WherePattern;
+import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.DictionaryChecker;
@@ -71,16 +39,16 @@ import org.star_lang.star.data.type.TypeVar;
  * permissions and limitations under the License.
  */
 
-public class ConditionTransformer {
-  public static IContentExpression transformConstraint(ICondition query, List<Variable> definedVars, WrapState succAdd,
-                                                       IContentExpression initState, Dictionary cxt, Dictionary outer, ErrorReport errors) {
+class ConditionTransformer {
+  static IContentExpression transformConstraint(ICondition query, List<Variable> definedVars, WrapState succAdd,
+                                                IContentExpression initState, Dictionary cxt, Dictionary outer, ErrorReport errors) {
     query = FlowAnalysis.analyseFlow(query, definedVars, new DictionaryChecker(cxt, definedVars));
 
     if (query instanceof Search)
       return searchQuery((Search) query, CompilerUtils.truth, definedVars, succAdd, initState, cxt, outer, errors);
     else if (query instanceof ListSearch)
       return indexingSearchQuery((ListSearch) query, CompilerUtils.truth, definedVars, succAdd, initState, cxt, outer,
-              errors);
+          errors);
     else if (query instanceof Disjunction)
       return disjunctiveQuery((Disjunction) query, definedVars, succAdd, initState, cxt, outer, errors);
     else if (query instanceof Conjunction)
@@ -112,22 +80,16 @@ public class ConditionTransformer {
     final Location loc = neg.getLoc();
     final IType stType = initState.getType();
 
-    WrapState trueVal = new WrapState() {
-
-      @Override
-      public IContentExpression addToFront(IContentExpression state) {
-        return CompilerUtils.noMore(loc, CompilerUtils.trueLiteral(loc));
-      }
-    };
+    WrapState trueVal = state -> CompilerUtils.noMore(loc, CompilerUtils.trueLiteral(loc));
 
     IContentExpression negated = transformConstraint(neg.getNegated(), definedVars, trueVal, CompilerUtils
-            .continueWith(loc, CompilerUtils.falseLiteral(loc)), cxt, outer, errors);
+        .continueWith(loc, CompilerUtils.falseLiteral(loc)), cxt, outer, errors);
 
     String negFunName = GenSym.genSym("_F");
     IType negFunType = TypeUtils.functionType(stType);
     Variable[] failFree = FreeVariables.findFreeVars(initState, cxt);
     FunctionLiteral negFun = new FunctionLiteral(loc, negFunName, negFunType, new IContentPattern[]{}, initState,
-            failFree);
+        failFree);
     Variable negVar = Variable.create(loc, negFunType, negFunName);
 
     IStatement negDef = VarEntry.createVarEntry(loc, negVar, negFun, AccessMode.readOnly, Visibility.priVate);
@@ -154,7 +116,7 @@ public class ConditionTransformer {
                                                  IContentExpression initState, Dictionary cxt, Dictionary outer, ErrorReport errors) {
     Location loc = implies.getLoc();
     return transformConstraint(new Negation(loc, new Conjunction(loc, implies.getGenerate(), new Negation(loc, implies
-            .getTest()))), definedVars, succAdd, initState, cxt, outer, errors);
+        .getTest()))), definedVars, succAdd, initState, cxt, outer, errors);
   }
 
   private static IContentExpression otherwiseQuery(Otherwise other, List<Variable> definedVars, WrapState succAdd,
@@ -185,10 +147,10 @@ public class ConditionTransformer {
 
     // Find the variables that are defined by the condition
     FlowAnalysis.analyseCondition(other, definedVars, cDefined, cReq, VarAnalysis.findDefinedVars(other,
-            new DictionaryChecker(cxt, definedVars)));
+        new DictionaryChecker(cxt, definedVars)));
 
-    ConstructorTerm tmpAnswer = new ConstructorTerm(loc, cDefined.toArray(new IContentExpression[cDefined.size()]));
-    ConstructorPtn tmpPttrn = new ConstructorPtn(loc, cDefined.toArray(new IContentPattern[cDefined.size()]));
+    IContentExpression tmpAnswer = new TupleTerm(loc, cDefined.toArray(new IContentExpression[cDefined.size()]));
+    IContentPattern tmpPttrn = new TuplePtn(loc, cDefined.toArray(new IContentPattern[cDefined.size()]));
 
     cDefined = ListUtils.mergeLists(cDefined, definedVars);
 
@@ -201,25 +163,25 @@ public class ConditionTransformer {
     IType tmpStateFunType = TypeUtils.functionType(tmpStateType);
 
     IType sequenceType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.determinedContractType(
-            StandardNames.SEQUENCE, tmpType, ansType)), createType);
+        StandardNames.SEQUENCE, tmpType, ansType)), createType);
 
     IContentExpression nil = Application.apply(loc, tmpType, new MethodVariable(loc, StandardNames.NIL, createType,
-            StandardNames.SEQUENCE, sequenceType));
+        StandardNames.SEQUENCE, sequenceType));
     final IContentExpression initial = CompilerUtils.continueWith(loc, nil);
 
     IContentExpression otherLhs = transformConstraint(other.getLhs(), definedVars, increment, initial, cxt, outer,
-            errors);
+        errors);
     IContentExpression otherRhs = transformConstraint(other.getRhs(), cDefined, increment, initial, cxt, outer, errors);
 
     // create rhs function
     String rhsName = GenSym.genSym("_R");
     Triple<IContentPattern[], ICondition, IContentExpression> eqn = Triple.create(new IContentPattern[]{},
-            CompilerUtils.truth, otherRhs);
+        CompilerUtils.truth, otherRhs);
 
     Variable[] rhsFree = FreeVariables.findFreeVars(otherRhs, cxt);
 
     FunctionLiteral rhsFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(null, eqn,
-            tmpStateFunType, rhsFree, rhsName, loc, cxt, outer, errors));
+        tmpStateFunType, rhsFree, rhsName, loc, cxt, outer, errors));
 
     Variable rhsVar = Variable.create(loc, tmpStateFunType, rhsName);
 
@@ -237,7 +199,7 @@ public class ConditionTransformer {
     IType extType = TypeUtils.functionType(tmpPttrn.getType(), stateType, succState.getType());
 
     Triple<IContentPattern[], ICondition, IContentExpression> extEqn = Triple.create(new IContentPattern[]{tmpPttrn,
-            statePtn}, CompilerUtils.truth, succState);
+        statePtn}, CompilerUtils.truth, succState);
 
     Variable[] extFree = FreeVariables.findFreeVars(succState, cxt);
 
@@ -246,10 +208,10 @@ public class ConditionTransformer {
     Variable defVar = Variable.create(loc, statePtn.getType(), GenSym.genSym("sT"));
 
     extEqns.add(Triple.create(new IContentPattern[]{Variable.anonymous(loc, tmpPttrn.getType()), defVar},
-            CompilerUtils.truth, (IContentExpression) defVar));
+        CompilerUtils.truth, (IContentExpression) defVar));
 
     FunctionLiteral extFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(extEqns, null,
-            extType, extFree, extName, loc, cxt, outer, errors));
+        extType, extFree, extName, loc, cxt, outer, errors));
 
     Variable extVar = Variable.create(loc, extType, extName);
 
@@ -262,19 +224,19 @@ public class ConditionTransformer {
     IContentExpression otherSelCall = Application.apply(loc, stateType, otherSelVar, otherLhs, rhsVar);
 
     IContentExpression checkIter = TypeChecker.typeOfName(loc, StandardNames.CHECKITERFUNC, new TypeVar(), outer,
-            errors);
+        errors);
 
     // unwrap the result of the left join
     IContentExpression unwrap = Application.apply(loc, tmpType, checkIter, otherSelCall, new MethodVariable(loc,
-            StandardNames.NIL, createType, StandardNames.SEQUENCE, sequenceType));
+        StandardNames.NIL, createType, StandardNames.SEQUENCE, sequenceType));
 
     // The outermost iterate call
     IType outerIterType = TypeUtils.functionType(tmpType, extType, initState.getType(), succState.getType());
 
     IType itConType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.typeExp(TypeContracts
-            .contractImplTypeName(StandardNames.ITERABLE), tmpType, TypeUtils.determinedType(ansType))), outerIterType);
+        .contractImplTypeName(StandardNames.ITERABLE), tmpType, TypeUtils.determinedType(ansType))), outerIterType);
     Variable outerIter = new MethodVariable(loc, StandardNames.ITERATE, outerIterType, StandardNames.ITERABLE,
-            itConType);
+        itConType);
 
     IContentExpression outerCall = Application.apply(loc, stateType, outerIter, unwrap, extVar, initState);
     return new LetTerm(loc, outerCall, defs);
@@ -285,23 +247,17 @@ public class ConditionTransformer {
     final Location loc = query.getLoc();
     final IType stType = initState.getType();
 
-    WrapState trueVal = new WrapState() {
-
-      @Override
-      public IContentExpression addToFront(IContentExpression state) {
-        return CompilerUtils.noMore(loc, CompilerUtils.trueLiteral(loc));
-      }
-    };
+    WrapState trueVal = state -> CompilerUtils.noMore(loc, CompilerUtils.trueLiteral(loc));
 
     IContentExpression test = transformConstraint(query.getTest(), definedVars, trueVal, CompilerUtils.continueWith(
-            loc, CompilerUtils.falseLiteral(loc)), cxt, outer, errors);
+        loc, CompilerUtils.falseLiteral(loc)), cxt, outer, errors);
 
     String tstFunName = GenSym.genSym("_F");
     IType tstFunType = TypeUtils.functionType(stType);
 
     Variable[] failFree = FreeVariables.findFreeVars(initState, cxt);
     FunctionLiteral negFun = new FunctionLiteral(loc, tstFunName, tstFunType, new IContentPattern[]{},
-            transformConstraint(query.getRhs(), definedVars, succAdd, initState, cxt, outer, errors), failFree);
+        transformConstraint(query.getRhs(), definedVars, succAdd, initState, cxt, outer, errors), failFree);
     Variable negVar = Variable.create(loc, tstFunType, tstFunName);
 
     IStatement negDef = VarEntry.createVarEntry(loc, negVar, negFun, AccessMode.readOnly, Visibility.priVate);
@@ -371,7 +327,7 @@ public class ConditionTransformer {
         if (newState instanceof ConditionalExp) {
           ConditionalExp newCond = (ConditionalExp) newState;
           return new ConditionalExp(loc, newState.getType(), new Conjunction(loc, new Disjunction(loc, lhs, rhs),
-                  newCond.getCnd()), newCond.getThExp(), newCond.getElExp());
+              newCond.getCnd()), newCond.getThExp(), newCond.getElExp());
         }
 
         return new ConditionalExp(loc, newState.getType(), new Disjunction(loc, lhs, rhs), newState, initState);
@@ -404,7 +360,7 @@ public class ConditionTransformer {
     List<Variable> lhsRequired = new ArrayList<>();
 
     FlowAnalysis.analyseCondition(search, lhsDefined, lhsDefined, lhsRequired, VarAnalysis.findDefinedVars(search,
-            new DictionaryChecker(cxt, lhsDefined)));
+        new DictionaryChecker(cxt, lhsDefined)));
 
     rhs = QueryPlanner.pullupEqualities(rhs, cond, lhsDefined);
     // Pair<IContentExpression, IContentExpression> keys = Indexing.pullOutIndexTerms(prdPtn,
@@ -437,23 +393,23 @@ public class ConditionTransformer {
     List<Triple<IContentPattern[], ICondition, IContentExpression>> eqns = new ArrayList<>();
 
     IContentExpression succ = rhs != null ? transformConstraint(rhs, lhsDefined, succAdd, stVar, cxt, outer, errors)
-            : succAdd.addToFront(stVar);
+        : succAdd.addToFront(stVar);
 
     eqns.add(Triple.create(new IContentPattern[]{shiftFreeVars(prdPtn, cond, outer), stVar}, cond.get(), succ));
     eqns.add(Triple.create(new IContentPattern[]{Variable.anonymous(loc, prType), stVar}, CompilerUtils.truth,
-            (IContentExpression) stVar));
+        (IContentExpression) stVar));
 
     Variable sFvar = Variable.create(loc, stFunType, sfName);
 
     Variable[] freeVars = new Variable[]{};
     FunctionLiteral stFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(eqns, null,
-            stFunType, freeVars, sfName, loc, cxt, outer, errors));
+        stFunType, freeVars, sfName, loc, cxt, outer, errors));
     IStatement stDef = VarEntry.createVarEntry(loc, sFvar, stFun, AccessMode.readOnly, Visibility.priVate);
 
     IContentExpression sF = new LetTerm(loc, sFvar, stDef);
     IType itType = TypeUtils.functionType(sourceType, sF.getType(), stateType, stateType);
     IType itConType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.determinedContractType(
-            StandardNames.ITERABLE, sourceType, prType)), itType);
+        StandardNames.ITERABLE, sourceType, prType)), itType);
     Variable iterVar = new MethodVariable(loc, StandardNames.ITERATE, itType, StandardNames.ITERABLE, itConType);
 
     return Application.apply(loc, stateType, iterVar, source, sF, initState);
@@ -478,7 +434,7 @@ public class ConditionTransformer {
     List<Variable> lhsRequired = new ArrayList<>();
 
     FlowAnalysis.analyseCondition(search, lhsDefined, lhsDefined, lhsRequired, VarAnalysis.findDefinedVars(search,
-            new DictionaryChecker(cxt, lhsDefined)));
+        new DictionaryChecker(cxt, lhsDefined)));
 
     rhs = QueryPlanner.pullupEqualities(rhs, cond, lhsDefined);
 
@@ -509,18 +465,18 @@ public class ConditionTransformer {
     List<Triple<IContentPattern[], ICondition, IContentExpression>> eqns = new ArrayList<>();
 
     IContentExpression succ = rhs != null ? transformConstraint(rhs, lhsDefined, succAdd, stVar, cxt, outer, errors)
-            : succAdd.addToFront(stVar);
+        : succAdd.addToFront(stVar);
 
     eqns.add(Triple.create(new IContentPattern[]{shiftFreeVars(ixPtn, cond, outer),
-            shiftFreeVars(prdPtn, cond, outer), stVar}, cond.get(), succ));
+        shiftFreeVars(prdPtn, cond, outer), stVar}, cond.get(), succ));
     eqns.add(Triple.create(new IContentPattern[]{Variable.anonymous(loc, ixType), Variable.anonymous(loc, prType),
-            stVar}, CompilerUtils.truth, (IContentExpression) stVar));
+        stVar}, CompilerUtils.truth, (IContentExpression) stVar));
 
     Variable sFvar = Variable.create(loc, stFunType, sfName);
 
     Variable[] freeVars = new Variable[]{};
     FunctionLiteral stFun = (FunctionLiteral) Over.resolve(cxt, errors, MatchCompiler.generateFunction(eqns, null,
-            stFunType, freeVars, sfName, loc, cxt, outer, errors));
+        stFunType, freeVars, sfName, loc, cxt, outer, errors));
     IStatement stDef = VarEntry.createVarEntry(loc, sFvar, stFun, AccessMode.readOnly, Visibility.priVate);
 
     IContentExpression sF = new LetTerm(loc, sFvar, stDef);
@@ -528,7 +484,7 @@ public class ConditionTransformer {
     // Set up the call to iterate
     IType itType = TypeUtils.functionType(sourceType, sF.getType(), stateType, stateType);
     IType itConType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.determinedContractType(
-            StandardNames.IXITERABLE, sourceType, ixType, prType)), itType);
+        StandardNames.IXITERABLE, sourceType, ixType, prType)), itType);
     Variable iterVar = new MethodVariable(loc, StandardNames.IXITERATE, itType, StandardNames.IXITERABLE, itConType);
 
     return Application.apply(loc, stateType, iterVar, source, sF, initState);
@@ -565,23 +521,15 @@ public class ConditionTransformer {
     return conditioner.transform(ptn);
   }
 
-  public interface WrapState {
+  interface WrapState {
     IContentExpression addToFront(IContentExpression state);
   }
 
-  public static class PassThrough implements WrapState {
-
-    @Override
-    public IContentExpression addToFront(IContentExpression state) {
-      return state;
-    }
-  }
-
-  public static class IncrementState implements WrapState {
+  static class IncrementState implements WrapState {
     private final IContentExpression boundExp;
     private final IType resltType;
 
-    public IncrementState(IContentExpression boundExp, IType resltType) {
+    IncrementState(IContentExpression boundExp, IType resltType) {
       this.boundExp = boundExp;
       this.resltType = resltType;
     }
@@ -593,7 +541,7 @@ public class ConditionTransformer {
       IContentAction decl = new VarDeclaration(loc, CompilerUtils.continuePtn(loc, stVar), AccessMode.readOnly, state);
       IType consType = TypeUtils.functionType(resltType, boundExp.getType(), resltType);
       IType sequenceType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.determinedContractType(
-              StandardNames.SEQUENCE, resltType, boundExp.getType())), consType);
+          StandardNames.SEQUENCE, resltType, boundExp.getType())), consType);
 
       Variable cons = new MethodVariable(loc, StandardNames.APND, consType, StandardNames.SEQUENCE, sequenceType);
       IContentExpression consed = Application.apply(loc, resltType, cons, stVar, boundExp);
@@ -602,12 +550,12 @@ public class ConditionTransformer {
     }
   }
 
-  public static class CountingState implements WrapState {
+  static class CountingState implements WrapState {
     private final IContentExpression boundExp;
     private final IContentExpression limit;
     private final IType resType;
 
-    public CountingState(IContentExpression boundExp, IType resltType, IContentExpression limit) {
+    CountingState(IContentExpression boundExp, IType resltType, IContentExpression limit) {
       assert boundExp != null && resltType != null && limit != null;
       this.boundExp = boundExp;
       this.resType = resltType;
@@ -622,7 +570,7 @@ public class ConditionTransformer {
       Variable cntVar = new Variable(loc, integerType, GenSym.genSym("cnt"));
       Variable nxtVar = new Variable(loc, integerType, GenSym.genSym("cnt"));
       Variable stVar = Variable.create(loc, resType, GenSym.genSym("st"));
-      ConstructorPtn statePtn = new ConstructorPtn(loc, stVar, cntVar);
+      IContentPattern statePtn = new TuplePtn(loc, stVar, cntVar);
       Variable tplVar = Variable.create(loc, statePtn.getType(), GenSym.genSym("tpl"));
 
       IContentExpression one = CompilerUtils.integerLiteral(loc, 1);
@@ -632,10 +580,10 @@ public class ConditionTransformer {
 
       IType consType = TypeUtils.functionType(boundExp.getType(), resType, resType);
       IType sequenceType = TypeUtils.overloadedType(TypeUtils.tupleType(TypeUtils.determinedContractType(
-              StandardNames.SEQUENCE, resType, boundExp.getType())), consType);
+          StandardNames.SEQUENCE, resType, boundExp.getType())), consType);
 
       Variable cons = new MethodVariable(loc, StandardNames.ADD_TO_FRONT, consType, StandardNames.SEQUENCE,
-              sequenceType);
+          sequenceType);
       IContentExpression consed = Application.apply(loc, resType, cons, boundExp, stVar);
 
       IType arithContract = TypeUtils.typeExp(StandardNames.ARITHMETIC, integerType);
@@ -643,11 +591,11 @@ public class ConditionTransformer {
       IType plusContractType = TypeUtils.overloadedType(TypeUtils.tupleType(arithContract), plusType);
 
       IContentAction nxt = new VarDeclaration(loc, nxtVar, AccessMode.readOnly, Application.apply(loc, integerType,
-              new MethodVariable(loc, StandardNames.PLUS, plusType, StandardNames.ARITHMETIC, plusContractType), cntVar,
-              one));
+          new MethodVariable(loc, StandardNames.PLUS, plusType, StandardNames.ARITHMETIC, plusContractType), cntVar,
+          one));
 
       ICondition test = CompilerUtils.greaterEquals(loc, nxtVar, limit);
-      IContentExpression nxtTpl = new ConstructorTerm(loc, consed, nxtVar);
+      IContentExpression nxtTpl = new TupleTerm(loc, consed, nxtVar);
       Variable nxtStVar = Variable.create(loc, nxtTpl.getType(), GenSym.genSym("st"));
       IContentAction nxtDecl = new VarDeclaration(loc, nxtStVar, AccessMode.readOnly, nxtTpl);
 
@@ -659,12 +607,12 @@ public class ConditionTransformer {
       IContentAction result = new ConditionalAction(loc, test, done, cont);
 
       return new ValofExp(loc, state.getType(), new Sequence(loc, mType, FixedList.create(decl, tplDecl, nxt, nxtDecl,
-              result)));
+          result)));
     }
   }
 
   // Used in a reduction query.
-  public static class ReduceState implements WrapState {
+  static class ReduceState implements WrapState {
     private final IContentExpression boundExp;
     private final IContentExpression reducer;
     private final IType resType;
@@ -672,8 +620,8 @@ public class ConditionTransformer {
     private final Dictionary outer;
     private final ErrorReport errors;
 
-    public ReduceState(IContentExpression boundExp, IType resltType, IContentExpression reducer, Dictionary dict,
-                       Dictionary outer, ErrorReport errors) {
+    ReduceState(IContentExpression boundExp, IType resltType, IContentExpression reducer, Dictionary dict,
+                Dictionary outer, ErrorReport errors) {
       assert boundExp != null && resltType != null && reducer != null;
       this.boundExp = boundExp;
       this.resType = resltType;
@@ -699,24 +647,24 @@ public class ConditionTransformer {
       Variable nxtVar = new Variable(loc, resType, GenSym.genSym("O"));
       IContentPattern cont = CompilerUtils.continuePtn(loc, nxtVar);
       IContentExpression arm2 = CompilerUtils.continueWith(loc, Application.apply(loc, resType, reducer, boundExp,
-              nxtVar));
+          nxtVar));
 
       List<Pair<IContentPattern, IContentExpression>> cases = new ArrayList<>();
 
       cases.add(Pair.pair(noneFound, arm1));
       cases.add(Pair.pair(cont, arm2));
 
-      Pair<IContentPattern, IContentExpression> deflt = Pair.pair((IContentPattern) Variable.anonymous(loc, state
-              .getType()), state);
+      Pair<IContentPattern, IContentExpression> deflt = Pair.pair(Variable.anonymous(loc, state
+          .getType()), state);
 
       return MatchCompiler.generateCaseExpression(loc, state, cases, deflt, resType, dict, outer, errors);
     }
   }
 
-  public static class SetState implements WrapState {
+  static class SetState implements WrapState {
     private final IContentExpression boundExp;
 
-    public SetState(IContentExpression boundExp) {
+    SetState(IContentExpression boundExp) {
       this.boundExp = boundExp;
     }
 
@@ -727,10 +675,10 @@ public class ConditionTransformer {
     }
   }
 
-  public static class ActionState implements WrapState {
+  static class ActionState implements WrapState {
     private final IContentAction body;
 
-    public ActionState(IContentAction body) {
+    ActionState(IContentAction body) {
       this.body = body;
     }
 

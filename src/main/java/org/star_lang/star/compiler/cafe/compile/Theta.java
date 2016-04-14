@@ -201,7 +201,7 @@ public class Theta {
       if (var != null && var.getKind() == JavaKind.general) {
         CallCont callCont = new CallCont(ins, new NullCont());
 
-        Expressions.compileFunCall(loc, var, CafeSyntax.tuple(loc, CafeSyntax.tupleType(loc)),
+        Expressions.compileFunCall(loc, var, CafeSyntax.tuple(loc),
             callCont, ccxt);
       } else
         errors.reportError(Names.DO + " not declared", loc);
