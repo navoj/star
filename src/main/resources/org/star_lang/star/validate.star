@@ -406,6 +406,9 @@ private import macrosupport;
 
 # tuple?T :: pattern :- T:*pattern;
 
+# . #( ?E )# :: pattern :- E::expression;
+
+
 -- Quote patterb
 # quote(?E) :: pattern;
 # unquote(?E) :: pattern;

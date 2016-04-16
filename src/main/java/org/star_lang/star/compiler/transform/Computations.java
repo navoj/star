@@ -894,6 +894,15 @@ public class Computations
   }
 
   @Override
+  public IContentPattern transformValuePtn(ValuePtn valuePtn, ComputationContext context) {
+    IContentExpression val = valuePtn.getValue().transform(this, context);
+    if (val == valuePtn.getValue())
+      return valuePtn;
+    else
+      return new ValuePtn(valuePtn.getLoc(), val);
+  }
+
+  @Override
   public IContentPattern transformVariablePtn(Variable variable, ComputationContext context) {
     return variable;
   }

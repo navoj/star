@@ -286,7 +286,7 @@ public class GenerateCafe implements
     } else if (CafeSyntax.isConstructor(ptn)) {
       for (IValue arg : CafeSyntax.constructorArgs(ptn))
         findVarsInPtn((IAbstract) arg, vars, args, types);
-    } else if(CafeSyntax.isTuple(ptn)){
+    } else if (CafeSyntax.isTuple(ptn)) {
       for (IValue arg : CafeSyntax.tupleEls(ptn))
         findVarsInPtn((IAbstract) arg, vars, args, types);
     }
@@ -438,6 +438,12 @@ public class GenerateCafe implements
 
     Location loc = tuplePtn.getLoc();
     return CafeSyntax.tuple(loc, elPtns);
+  }
+
+  @Override
+  public IAbstract transformValuePtn(ValuePtn value, CContext context) {
+    IAbstract exp = value.getValue().transform(this, context);
+    return CafeSyntax.valuePtn(value.getLoc(), exp);
   }
 
   @Override

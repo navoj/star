@@ -1,25 +1,6 @@
 package org.star_lang.star.compiler;
 
-import static org.star_lang.star.data.type.StandardTypes.booleanType;
-import static org.star_lang.star.data.type.StandardTypes.integerType;
-import static org.star_lang.star.data.type.StandardTypes.longType;
-import static org.star_lang.star.data.type.StandardTypes.rawIntegerType;
-import static org.star_lang.star.data.type.StandardTypes.rawLongType;
-import static org.star_lang.star.data.type.StandardTypes.rawStringType;
-import static org.star_lang.star.data.type.StandardTypes.stringType;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.Predicate;
-
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IAbstractVisitor;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.ast.StringLiteral;
+import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.compiler.standard.StandardNames;
@@ -27,16 +8,17 @@ import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.TypeContracts;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.type.Visibility;
-import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Wrapper;
 import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.type.AbstractType;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.StandardTypes;
-import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.*;
 import org.star_lang.star.data.value.Option;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
+
+import static org.star_lang.star.data.type.StandardTypes.*;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -1403,6 +1385,15 @@ public class CompilerUtils {
   public static IAbstract varPtn(IAbstract exp) {
     assert Abstract.deParen(exp) instanceof Name;
     return Abstract.unary(exp.getLoc(), StandardNames.VAR, exp);
+  }
+
+  public static boolean isExpressionPtn(IAbstract term) {
+    return Abstract.isUnary(term, StandardNames.PERIOD);
+  }
+
+  public static IAbstract expressionPtn(IAbstract term) {
+    assert isExpressionPtn(term);
+    return Abstract.unaryArg(term);
   }
 
   public static boolean isForLoop(IAbstract act) {

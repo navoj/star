@@ -1062,6 +1062,20 @@ public class CafeSyntax {
     return blockContents(Abstract.unaryArg(term));
   }
 
+  public static IAbstract valuePtn(Location loc, IAbstract value) {
+    return Abstract.unary(loc, Names.VALUEPTN, value);
+  }
+
+  public static boolean isValuePtn(IAbstract trm) {
+    return Abstract.isUnary(trm, Names.VALUEPTN);
+  }
+
+  public static IAbstract valuePtnExp(IAbstract trm) {
+    assert isValuePtn(trm);
+
+    return Abstract.unaryArg(trm);
+  }
+
   public static boolean isTruth(IAbstract trm) {
     return isConstructor(trm, Names.TRUE);
   }

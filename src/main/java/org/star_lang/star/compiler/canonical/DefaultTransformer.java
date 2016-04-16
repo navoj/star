@@ -740,6 +740,15 @@ public class DefaultTransformer<T> implements
   }
 
   @Override
+  public IContentPattern transformValuePtn(ValuePtn valuePtn, T context) {
+    IContentExpression value = valuePtn.getValue().transform(this, context);
+    if (value == valuePtn.getValue())
+      return valuePtn;
+    else
+      return new ValuePtn(valuePtn.getLoc(), value);
+  }
+
+  @Override
   public IContentPattern transformVariablePtn(Variable variable, T context) {
     return variable;
   }

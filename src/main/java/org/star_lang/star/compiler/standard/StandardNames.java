@@ -31,8 +31,8 @@ import org.star_lang.star.operators.ast.runtime.AstMacroKey;
 
 public class StandardNames
 {
-  public static final Set<String> keywords = new TreeSet<>();
-  public static final Set<String> graphic = new TreeSet<>();
+  private static final Set<String> keywords = new TreeSet<>();
+  private static final Set<String> graphic = new TreeSet<>();
   public static final Set<String> standard = new TreeSet<>();
 
   public static final String TERM = graphic(";");

@@ -109,6 +109,7 @@ public class Names
   public static final String CONSTRUCT = keyword("construct");
   public static final String TUPLE = keyword("tuple");
   public static final String REGEXP = keyword("regexp");
+  public static final String VALUEPTN = keyword("value");
 
   public static final String BUILTIN = keyword("builtin");
   public static final String TYPEVAR = graphic("%");

@@ -17,6 +17,8 @@ public interface TransformPattern<A, E, P, C, D, T> {
 
   P transformTuplePtn(TuplePtn tuplePtn, T context);
 
+  P transformValuePtn(ValuePtn valuePtn, T context);
+
   P transformVariablePtn(Variable variable, T context);
 
   P transformWherePattern(WherePattern wherePattern, T context);

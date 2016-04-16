@@ -80,6 +80,11 @@ public class PatternCompile implements TransformPattern<ISpec, ISpec, ISpec, ISp
   }
 
   @Override
+  public ISpec transformValuePtn(ValuePtn valuePtn, IContinuation context) {
+    return null;
+  }
+
+  @Override
   public ISpec transformVariablePtn(Variable variable, IContinuation cont) {
     return null;
   }

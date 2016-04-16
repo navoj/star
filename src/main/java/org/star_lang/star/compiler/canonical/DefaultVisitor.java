@@ -233,6 +233,11 @@ public class DefaultVisitor implements CanonicalVisitor {
   }
 
   @Override
+  public void visitValuePtn(ValuePtn valuePtn) {
+    valuePtn.getValue().accept(this);
+  }
+
+  @Override
   public void visitReference(Shriek reference) {
     reference.getReference().accept(this);
   }

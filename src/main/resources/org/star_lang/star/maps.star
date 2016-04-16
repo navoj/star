@@ -38,7 +38,7 @@ implementation pPrint over dictionary of (%k,%v) where pPrint over %k and pPrint
 	                    cons(ppSequence(2,dispEntries(M)),cons(ppStr("]"),nil))))
 } using {
   fun dispEntries(M) is interleave(cons of { all ppSequence(0,cons(ppDisp(K),cons(ppStr("->"),cons(ppDisp(V),nil)))) where
-      K->V in M},ppNl)
+      K->V in M},ppStr(","))
 }
 
 implementation indexable over dictionary of (%k,%v) determines (%k,%v) is {

@@ -19,11 +19,12 @@ private import base
 private import folding
 private import casting
 private import iterable
+private import compute
 
 /*
-type option of %a is
+type option of a is
     none
-    or some(%a);
+    or some(a);
 */  
 
 implementation pPrint over option of %a where pPrint over %a is {
@@ -109,3 +110,23 @@ implementation for all t such that
     fun optionQuote(some(Q)) is Q as quoted
      |  optionQuote(none) is <|none|>
   }
+
+implementation (computation) over option determines () is {
+  fun _encapsulate(x) is some(x);
+  fun _abort(e) is none;
+  fun _handle(some(x), h) is some(x)
+   |  _handle(none,h) is h(())
+  fun _combine(m, f) is
+  	switch m in {
+  		case none is none;
+  		case some(x) is f(x);
+  	};
+}
+
+implementation execution over option is {
+  fun _perform(some(X)) is X
+}
+
+implementation injection over (option,option) is {
+  fun _inject(X) is X
+}

@@ -295,6 +295,7 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.MINUS, 100);
     definePrefix(StandardNames.PLUS, 100);
 
+    definePrefix(StandardNames.PERIOD, 75);
     definePrefix(StandardNames.QUESTION, 75);
     definePrefix(StandardNames.PCENT, 75);
     definePrefix(StandardNames.DBLCENT, 75);

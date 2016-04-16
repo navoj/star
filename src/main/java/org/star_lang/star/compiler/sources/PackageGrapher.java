@@ -152,6 +152,13 @@ public class PackageGrapher implements PrettyPrintable {
 
                 switch (tok.getType()) {
                   case identifier:
+                    if(tok.getImage().equals("(")){ // The package name may have been enclosed in parens
+                      tok = tokenizer.nextToken();
+                      if(tok.getType()!=TokenType.identifier){
+                        refUri = null;
+                        break;
+                      }
+                    }
                     refUri = catalog.resolve(tok.getImage());
                     break;
                   case string:

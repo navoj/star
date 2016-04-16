@@ -25,7 +25,6 @@ public class ComputationTests extends SRTest {
     super(ComputationTests.class);
   }
 
-
   @Test
   public void testMaybe() {
     runStar("maybeTest.star");
@@ -39,6 +38,11 @@ public class ComputationTests extends SRTest {
   @Test
   public void abortGood() {
     runStar("abortGood.star");
+  }
+
+  @Test
+  public void testSome() {
+    runStar("someTest.star");
   }
 
 }
