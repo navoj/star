@@ -3303,6 +3303,12 @@ public class TypeChecker {
         return Variable.anonymous(loc, expectedType);
       }
       return verifyType(expectedType, loc, raw, cxt, errors);
+    } else if (CompilerUtils.isExpressionPtn(ptn)) {
+      IContentExpression exp = typeOfExp(CompilerUtils.expressionPtn(ptn), expectedType, cxt, outer);
+      return new ValuePtn(loc,exp);
+    } else if (CompilerUtils.isVarPtn(ptn)) {
+      IAbstract v = CompilerUtils.varPtnVar(ptn);
+      return varHandler.typeOfVariable(v, expectedType, condition, Permission.allowed, cxt);
     } else if (CompilerUtils.isRegexp(ptn)) {
       try {
         TypeUtils.unify(expectedType, stringType, loc, cxt);
@@ -3481,9 +3487,6 @@ public class TypeChecker {
         errors.reportError(StringUtils.msg("expecting an identifier, not ", refTerm), refTerm.getLoc());
         return Variable.anonymous(loc, expectedType);
       }
-    } else if (CompilerUtils.isVarPtn(ptn)) {
-      IAbstract v = CompilerUtils.varPtnVar(ptn);
-      return varHandler.typeOfVariable(v, expectedType, condition, Permission.allowed, cxt);
     } else if (Abstract.isBinary(ptn, StandardNames.APPLY)) {
       String conName = ((Name) Abstract.getArg(ptn, 0)).getId();
 

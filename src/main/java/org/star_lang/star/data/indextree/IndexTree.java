@@ -24,38 +24,19 @@ import org.star_lang.star.compiler.util.PrettyPrintDisplay;
  */
 
 @SuppressWarnings("serial")
-public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
-{
+public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K, V>> {
   protected final int mask;
   protected final short maskLen;
   protected static final int MSB = ~(-1 >>> 1);
 
   protected static final boolean SHOW_HEX = false;
 
-  public IndexTree(short maskLen, int mask)
-  {
+  public IndexTree(short maskLen, int mask) {
     this.mask = mask;
     this.maskLen = maskLen;
   }
 
-  public int getMask()
-  {
-    return mask;
-  }
-
-  public short getMaskLen()
-  {
-    return maskLen;
-  }
-
-  protected static boolean nthBit(int mask, int pos)
-  {
-    int nth = MSB >>> pos;
-    return (mask & nth) == nth;
-  }
-
-  protected static int commonMaskLen(int H1, int H2)
-  {
+  protected static int commonMaskLen(int H1, int H2) {
     int C = 32;
     while (H1 != H2 && C > 0) {
       H1 = H1 >>> 1;
@@ -65,8 +46,7 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
     return C;
   }
 
-  protected static int common2WayMaskLen(int H1, int H2)
-  {
+  protected static int common2WayMaskLen(int H1, int H2) {
     int C = 32;
     while (H1 != H2 && C > 0) {
       H1 = H1 >>> 2;
@@ -77,14 +57,12 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
   }
 
   // construct a 2 bit number from a specified position in the mask
-  protected static int nth4Way(int mask, int pos)
-  {
+  protected static int nth4Way(int mask, int pos) {
     mask = mask >>> (30 - pos);
     return mask & 3;
   }
 
-  protected static int maskPrefix(int mask, int len)
-  {
+  protected static int maskPrefix(int mask, int len) {
     if (len == 0)
       return 0;
     else {
@@ -96,39 +74,34 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
   }
 
   @Override
-  public V find(K key)
-  {
+  public V find(K key) {
     return find(key, key.hashCode());
   }
 
   abstract protected V find(K key, int hash);
 
   @Override
-  public boolean contains(K key)
-  {
+  public boolean contains(K key) {
     return contains(key, key.hashCode());
   }
 
   abstract protected boolean contains(K key, int hash);
 
   @Override
-  public IndexTree<K, V> insrt(K key, V value)
-  {
+  public IndexTree<K, V> insrt(K key, V value) {
     return mergeTree(new IndexTreeLeaf<>(key.hashCode(), key, value));
   }
 
   abstract protected IndexTree<K, V> mergeTree(IndexTree<K, V> other);
 
   @Override
-  public IndexTree<K, V> delete(K key)
-  {
+  public IndexTree<K, V> delete(K key) {
     return delete(key, key.hashCode());
   }
 
   abstract protected IndexTree<K, V> delete(K key, int hash);
 
-  public static <K, V> IndexTree<K, V> emptyTree()
-  {
+  public static <K, V> IndexTree<K, V> emptyTree() {
     return new IndexTreeLeaf<>(-1, new ArrayList<>());
   }
 
@@ -139,14 +112,12 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
   abstract public int size();
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 
   @Override
-  public Iterator<Entry<K, V>> iterator()
-  {
+  public Iterator<Entry<K, V>> iterator() {
     return new Iterator<Entry<K, V>>() {
       Iterator<Entry<K, V>> leafIterator = new NullIterator<>();
 
@@ -158,13 +129,11 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
       }
 
       @Override
-      public boolean hasNext()
-      {
+      public boolean hasNext() {
         return leafIterator.hasNext() || !stack.isEmpty();
       }
 
-      private void probeNext()
-      {
+      private void probeNext() {
         while (!leafIterator.hasNext() && !stack.isEmpty()) {
           IndexTree<K, V> top = stack.pop();
           if (top instanceof IndexTreeNode<?, ?>) {
@@ -181,23 +150,20 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
       }
 
       @Override
-      public Entry<K, V> next()
-      {
+      public Entry<K, V> next() {
         Entry<K, V> next = leafIterator.next();
         probeNext();
         return next;
       }
 
       @Override
-      public void remove()
-      {
+      public void remove() {
         throw new UnsupportedOperationException("not permitted");
       }
     };
   }
-  
-  public Iterator<Entry<K, V>> reverseIterator()
-  {
+
+  public Iterator<Entry<K, V>> reverseIterator() {
     return new Iterator<Entry<K, V>>() {
       Iterator<Entry<K, V>> leafIterator = new NullIterator<>();
 
@@ -209,13 +175,11 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
       }
 
       @Override
-      public boolean hasNext()
-      {
+      public boolean hasNext() {
         return leafIterator.hasNext() || !stack.isEmpty();
       }
 
-      private void probeNext()
-      {
+      private void probeNext() {
         while (!leafIterator.hasNext() && !stack.isEmpty()) {
           IndexTree<K, V> top = stack.pop();
           if (top instanceof IndexTreeNode<?, ?>) {
@@ -232,25 +196,23 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K,V>>
       }
 
       @Override
-      public Entry<K, V> next()
-      {
+      public Entry<K, V> next() {
         Entry<K, V> next = leafIterator.next();
         probeNext();
         return next;
       }
 
       @Override
-      public void remove()
-      {
+      public void remove() {
         throw new UnsupportedOperationException("not permitted");
       }
     };
   }
 
   @Override
-  public IndexTree<K,V> remaining(){
-    if(!isEmpty()){
-      Entry<K,V> el = pick();
+  public IndexTree<K, V> remaining() {
+    if (!isEmpty()) {
+      Entry<K, V> el = pick();
       return delete(el.getKey());
     } else
       return null;

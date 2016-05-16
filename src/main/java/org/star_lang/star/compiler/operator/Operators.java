@@ -27,8 +27,7 @@ import org.star_lang.star.data.type.StandardTypes;
   * permissions and limitations under the License.
   */
 @SuppressWarnings("serial")
-public class Operators implements PrettyPrintable
-{
+public class Operators implements PrettyPrintable {
   public static final int FOR_ALL_PRIORITY = 1005;
   public static final int INSTANCE_OF_PRIORITY = 900;
   public static final int IMPLEMENTS_PRIORITY = 900;
@@ -52,14 +51,12 @@ public class Operators implements PrettyPrintable
 
   private static final Operators root = new Operators();
 
-  public Operators()
-  {
+  public Operators() {
     this(new HashMap<>(), new HashMap<>(), new HashSet<>());
   }
 
   private Operators(Map<String, Collection<Operator>> operators, Map<String, BracketPair> brackets,
-      Collection<String> specialTokens)
-  {
+                    Collection<String> specialTokens) {
     this.operators = operators;
     this.bracketPairs = brackets;
     this.specialTokens = specialTokens;
@@ -117,7 +114,7 @@ public class Operators implements PrettyPrintable
 
     defineRight(StandardNames.DO, 1200);
     defineInfix(StandardNames.IS, 1200);
-    
+
     defineInfix(StandardNames.COUNTS_AS, 1200);
 
     defineRight(StandardNames.ELSE, 1200);
@@ -166,8 +163,6 @@ public class Operators implements PrettyPrintable
     definePrefix(StandardNames.WITH, 999);
     definePrefix(StandardNames.WITHOUT, 999);
 
-    defineInfix(StandardNames.COMPUTATION, 999);
-
     defineRight(StandardNames.COMMA, 1000);
 
     definePrefix(StandardNames.RAISE, 1000);
@@ -195,7 +190,7 @@ public class Operators implements PrettyPrintable
     defineInfix(StandardNames.ORDERDESCENDINBY, 950);
     defineInfix(StandardNames.DESCENDINGBY, 950);
     defineInfix(StandardNames.WHERE, 940);
-    
+
     definePrefix(StandardNames.ALL, 935);
     definePrefix(StandardNames.ANY_OF, 935);
 
@@ -231,7 +226,6 @@ public class Operators implements PrettyPrintable
 
     defineInfix(StandardNames.MAP_ARROW, 900);
     defineInfix(StandardNames.PTN_ARROW, PTN_TYPE_PRIORITY);
-
 
     definePrefixAssoc(StandardNames.EXISTS, 1005);
     definePrefixAssoc(StandardNames.FOR_ALL, FOR_ALL_PRIORITY);
@@ -281,6 +275,8 @@ public class Operators implements PrettyPrintable
 
     definePrefix(StandardNames.UNIQUE, 400);
 
+    defineInfix(StandardNames.COMPUTATION, 200);
+
     defineInfix(StandardNames.APPLY, 200);
 
     defineInfix(StandardNames.MACRO_APPLY, 200);
@@ -317,13 +313,11 @@ public class Operators implements PrettyPrintable
     defineBrackets(2000, StandardNames.LQUOTE, StandardNames.RQUOTE, StandardNames.QUOTE);
   }
 
-  public static Operators operatorRoot()
-  {
+  public static Operators operatorRoot() {
     return root;
   }
 
-  public boolean isOperator(String operator, int priority)
-  {
+  public boolean isOperator(String operator, int priority) {
     Collection<Operator> opSpec = operators.get(operator);
     if (opSpec != null) {
       for (Operator op : opSpec)
@@ -333,8 +327,7 @@ public class Operators implements PrettyPrintable
     return false;
   }
 
-  public Operator isPrefixOperator(String operator, int priority)
-  {
+  public Operator isPrefixOperator(String operator, int priority) {
     if (operators.containsKey(operator)) {
       for (Operator op : operators.get(operator)) {
         if (op.getForm() == OperatorForm.prefix && op.getMinPriority() <= priority)
@@ -345,13 +338,11 @@ public class Operators implements PrettyPrintable
     return null;
   }
 
-  public static Operator isRootPrefixOperator(String op)
-  {
+  public static Operator isRootPrefixOperator(String op) {
     return operatorRoot().isPrefixOperator(op, 0);
   }
 
-  public Operator isPostfixOperator(String operator, int priority)
-  {
+  public Operator isPostfixOperator(String operator, int priority) {
     if (operators.containsKey(operator)) {
       for (Operator op : operators.get(operator)) {
         if (op.getForm() == OperatorForm.postfix && op.getMinPriority() <= priority)
@@ -362,13 +353,11 @@ public class Operators implements PrettyPrintable
     return null;
   }
 
-  public static Operator isRootPostfixOperator(String op)
-  {
+  public static Operator isRootPostfixOperator(String op) {
     return operatorRoot().isPostfixOperator(op, 0);
   }
 
-  public Operator isInfixOperator(String operator, int priority)
-  {
+  public Operator isInfixOperator(String operator, int priority) {
     if (operators.containsKey(operator)) {
       for (Operator op : operators.get(operator)) {
         if (op.getForm() == OperatorForm.infix && op.getMinPriority() <= priority)
@@ -379,13 +368,11 @@ public class Operators implements PrettyPrintable
     return null;
   }
 
-  public static Operator isRootInfixOperator(String op)
-  {
+  public static Operator isRootInfixOperator(String op) {
     return operatorRoot().isInfixOperator(op, 0);
   }
 
-  public boolean canDominate(String name, int priority)
-  {
+  public boolean canDominate(String name, int priority) {
     if (operators.containsKey(name)) {
       for (Operator op : operators.get(name))
         if (op.getPriority() > priority)
@@ -394,8 +381,7 @@ public class Operators implements PrettyPrintable
     return false;
   }
 
-  private void defineOperator(String operator, Operator spec, boolean force, ErrorReport errors, Location loc)
-  {
+  private void defineOperator(String operator, Operator spec, boolean force, ErrorReport errors, Location loc) {
     defineToken(operator);
 
     Collection<Operator> ops = operators.get(operator);
@@ -403,7 +389,7 @@ public class Operators implements PrettyPrintable
       ops = new HashSet<>();
       operators.put(operator, ops);
     } else {
-      for (Iterator<Operator> it = ops.iterator(); it.hasNext();) {
+      for (Iterator<Operator> it = ops.iterator(); it.hasNext(); ) {
         Operator op = it.next();
         if (spec.getForm() == op.getForm()) {
           if (!force && spec.getPriority() != op.getPriority())
@@ -416,8 +402,7 @@ public class Operators implements PrettyPrintable
     ops.add(spec);
   }
 
-  public void defineToken(String name)
-  {
+  public void defineToken(String name) {
     if (name.contains(" ")) {
       String fragments[] = name.split(" ");
       Tokenizer.declareMultiToken(fragments, name);
@@ -426,74 +411,62 @@ public class Operators implements PrettyPrintable
     specialTokens.add(name);
   }
 
-  public void definePrefixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
-  {
+  public void definePrefixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc) {
     definePrefixOperator(operator, priority, 0, force, errors, loc);
   }
 
   public void definePrefixOperator(String operator, int priority, int minPriority, boolean force, ErrorReport errors,
-      Location loc)
-  {
+                                   Location loc) {
     defineOperator(operator, new Operator(operator, OperatorForm.prefix, -1, priority, priority - 1, minPriority),
         force, errors, loc);
   }
 
-  public void definePrefixAssocOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
-  {
+  public void definePrefixAssocOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc) {
     defineOperator(operator, new Operator(operator, -1, priority, priority, OperatorForm.prefix), force, errors, loc);
   }
 
-  public void definePostfixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
-  {
+  public void definePostfixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc) {
     defineOperator(operator, new Operator(operator, priority - 1, priority, -1, OperatorForm.postfix), force, errors,
         loc);
   }
 
-  public void definePostfixAssocOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
-  {
+  public void definePostfixAssocOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc) {
     defineOperator(operator, new Operator(operator, priority, priority, -1, OperatorForm.postfix), force, errors, loc);
   }
 
-  public void defineInfixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
-  {
+  public void defineInfixOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc) {
     defineOperator(operator, new Operator(operator, priority - 1, priority, priority - 1, OperatorForm.infix), force,
         errors, loc);
   }
 
   public void defineInfixOperator(String operator, int priority, int minPriority, boolean force, ErrorReport errors,
-      Location loc)
-  {
+                                  Location loc) {
     defineOperator(operator, new Operator(operator, OperatorForm.infix, priority - 1, priority, priority - 1,
         minPriority), force, errors, loc);
   }
 
-  public void defineLeftOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
-  {
+  public void defineLeftOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc) {
     defineOperator(operator, new Operator(operator, priority, priority, priority - 1, OperatorForm.infix), force,
         errors, loc);
   }
 
-  public void defineRightOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc)
-  {
+  public void defineRightOperator(String operator, int priority, boolean force, ErrorReport errors, Location loc) {
     defineOperator(operator, new Operator(operator, priority - 1, priority, priority, OperatorForm.infix), force,
         errors, loc);
   }
 
-  public BracketPair getBracketPair(String left)
-  {
+  public BracketPair getBracketPair(String left) {
     if (bracketPairs.containsKey(left))
       return bracketPairs.get(left);
     else
       return null;
   }
 
-  public boolean isLeftBracket(String left)
-  {
+  public boolean isLeftBracket(String left) {
     return bracketPairs.containsKey(left);
   }
 
-  public boolean isRightBracket(String right)
-  {
+  public boolean isRightBracket(String right) {
     if (right.equals(")") || right.equals("]"))
       return true;
     for (Entry<String, BracketPair> entry : bracketPairs.entrySet()) {
@@ -505,8 +478,7 @@ public class Operators implements PrettyPrintable
     return false;
   }
 
-  public void defineBracketPair(int inner, String left, String right, String operator) throws OperatorException
-  {
+  public void defineBracketPair(int inner, String left, String right, String operator) throws OperatorException {
     if (bracketPairs.containsKey(left)) {
       BracketPair existing = bracketPairs.get(left);
       if (existing.innerPriority != inner || !existing.leftBracket.equals(left) || !existing.rightBracket.equals(right)
@@ -525,8 +497,7 @@ public class Operators implements PrettyPrintable
     }
   }
 
-  private static void defineBrackets(int inner, String left, String right, String operator)
-  {
+  private static void defineBrackets(int inner, String left, String right, String operator) {
     try {
       root.defineBracketPair(inner, left, right, operator);
     } catch (OperatorException e) {
@@ -534,43 +505,35 @@ public class Operators implements PrettyPrintable
     }
   }
 
-  private static void defineInfix(String op, int priority)
-  {
+  private static void defineInfix(String op, int priority) {
     root.defineInfixOperator(op, priority, false, null, Location.nullLoc);
   }
 
-  private static void defineRight(String op, int priority)
-  {
+  private static void defineRight(String op, int priority) {
     root.defineRightOperator(op, priority, false, null, Location.nullLoc);
   }
 
-  private static void defineLeft(String op, int priority)
-  {
+  private static void defineLeft(String op, int priority) {
     root.defineLeftOperator(op, priority, false, null, Location.nullLoc);
   }
 
-  private static void definePrefix(String op, int priority)
-  {
+  private static void definePrefix(String op, int priority) {
     root.definePrefixOperator(op, priority, false, null, Location.nullLoc);
   }
 
-  private static void definePrefix(String op, int priority, int minPriority)
-  {
+  private static void definePrefix(String op, int priority, int minPriority) {
     root.definePrefixOperator(op, priority, minPriority, false, null, Location.nullLoc);
   }
 
-  private static void definePrefixAssoc(String op, int priority)
-  {
+  private static void definePrefixAssoc(String op, int priority) {
     root.definePrefixAssocOperator(op, priority, false, null, Location.nullLoc);
   }
 
-  private static void definePostfix(String op, int priority)
-  {
+  private static void definePostfix(String op, int priority) {
     root.definePostfixOperator(op, priority, false, null, Location.nullLoc);
   }
 
-  public void declareOperator(ErrorReport errors, IAbstract stmt)
-  {
+  public void declareOperator(ErrorReport errors, IAbstract stmt) {
     final Location loc = stmt.getLoc();
     final boolean force;
     if (Abstract.isUnary(stmt, StandardNames.FORCE)) {
@@ -675,8 +638,7 @@ public class Operators implements PrettyPrintable
       errors.reportError("cannot understand meta statement: " + stmt, loc);
   }
 
-  private static String getOperator(ErrorReport errors, IAbstract term)
-  {
+  private static String getOperator(ErrorReport errors, IAbstract term) {
     if (term instanceof Name)
       return ((Name) term).getId();
     else if (Abstract.isParenTerm(term))
@@ -689,8 +651,7 @@ public class Operators implements PrettyPrintable
     }
   }
 
-  private static int getPriority(IAbstract term)
-  {
+  private static int getPriority(IAbstract term) {
     if (Abstract.isUnary(term, StandardTypes.INTEGER))
       term = Abstract.unaryArg(term);
     if (term instanceof IntegerLiteral)
@@ -699,8 +660,7 @@ public class Operators implements PrettyPrintable
       return -1;
   }
 
-  public Operators copy()
-  {
+  public Operators copy() {
     Operators copy = new Operators();
 
     for (Entry<String, Collection<Operator>> entry : operators.entrySet()) {
@@ -718,8 +678,7 @@ public class Operators implements PrettyPrintable
   }
 
   // Merge a set of operators with this one
-  public void importOperators(Operators others, ErrorReport errors, Location loc)
-  {
+  public void importOperators(Operators others, ErrorReport errors, Location loc) {
     for (Entry<String, Collection<Operator>> entry : others.operators.entrySet()) {
       for (Operator op : entry.getValue())
         defineOperator(entry.getKey(), op, true, errors, loc);
@@ -738,8 +697,7 @@ public class Operators implements PrettyPrintable
     }
   }
 
-  public static void main(String[] args)
-  {
+  public static void main(String[] args) {
     boolean eol = false;
     for (int ix = 2000; ix > 0; ix--) {
       for (Entry<String, Collection<Operator>> entry : root.operators.entrySet()) {
@@ -774,32 +732,32 @@ public class Operators implements PrettyPrintable
                 triggered = true;
                 System.out.print("(");
                 switch (form) {
-                case prefix:
-                  if (op.isRightAssoc())
-                    System.out.print("prefix");
-                  else
-                    System.out.print("nonpre");
-                  break;
-                case infix:
-                  if (op.isLeftAssoc())
-                    System.out.print("left");
-                  else if (op.isRightAssoc())
-                    System.out.print("right");
-                  else
-                    System.out.print("infix");
-                  break;
-                case postfix:
-                  if (op.isLeftAssoc())
-                    System.out.print("postfix");
-                  else
-                    System.out.print("nonpost");
-                  break;
-                case none:
-                  System.out.print("nonassoc");
-                  break;
+                  case prefix:
+                    if (op.isRightAssoc())
+                      System.out.print("prefix");
+                    else
+                      System.out.print("nonpre");
+                    break;
+                  case infix:
+                    if (op.isLeftAssoc())
+                      System.out.print("left");
+                    else if (op.isRightAssoc())
+                      System.out.print("right");
+                    else
+                      System.out.print("infix");
+                    break;
+                  case postfix:
+                    if (op.isLeftAssoc())
+                      System.out.print("postfix");
+                    else
+                      System.out.print("nonpost");
+                    break;
+                  case none:
+                    System.out.print("nonassoc");
+                    break;
                 }
               }
-              System.out.print(" \"" + op.getOperator() +"\" "+op.getPriority());
+              System.out.print(" \"" + op.getOperator() + "\" " + op.getPriority());
             }
           }
           if (triggered)
@@ -810,8 +768,7 @@ public class Operators implements PrettyPrintable
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     for (Entry<String, Collection<Operator>> entry : operators.entrySet()) {
       for (Operator op : entry.getValue()) {
         op.prettyPrint(disp);
@@ -834,8 +791,7 @@ public class Operators implements PrettyPrintable
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 }
