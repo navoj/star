@@ -2,13 +2,13 @@ strindex is package{
   prc main() do {
     def src is "the quick brown fox jumped over the lazy dog";
     
-    assert src[0] has value 't';
+    assert src[0] has value 0ct;
     
     var dog := src;
     
-    assert dog[4] has value 'q';
-    dog[4] := '%';
-    assert dog[4] has value '%';
+    assert dog[4] has value 0cq;
+    dog[4] := 0c%;
+    assert dog[4] has value 0c%;
     
     logMsg(info,"$dog");
     

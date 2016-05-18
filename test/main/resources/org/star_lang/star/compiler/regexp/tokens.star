@@ -44,20 +44,20 @@ tokens is package{
 	
 	fun reportTerminal(Lc) is (terminal,"",Lc);
 	
-    fun skipComments([' ',..L], Lc) is skipComments(L,nxtLoc(Lc,1))
-     |  skipComments(['\t',..L], Lc) is skipComments(L,nxtLoc(Lc,1))
-     |  skipComments(['\n',..L], Lc) is skipComments(L,nxtLne(Lc))
-     |  skipComments(['-','-',' ',..L], Lc) is lineComment(L,nxtLoc(Lc,3))
-     |  skipComments(['-','-','\t',..L], Lc) is lineComment(L,nxtLoc(Lc,3))
-     |  skipComments(['/','*',..L], Lc) is blockComment(L,nxtLoc(Lc,2))
+    fun skipComments([0c ,..L], Lc) is skipComments(L,nxtLoc(Lc,1))
+     |  skipComments([0c\t,..L], Lc) is skipComments(L,nxtLoc(Lc,1))
+     |  skipComments([0c\n,..L], Lc) is skipComments(L,nxtLne(Lc))
+     |  skipComments([0c-,0c-,0c ,..L], Lc) is lineComment(L,nxtLoc(Lc,3))
+     |  skipComments([0c-,0c-,0c\t,..L], Lc) is lineComment(L,nxtLoc(Lc,3))
+     |  skipComments([0c/,0c*,..L], Lc) is blockComment(L,nxtLoc(Lc,2))
      |  skipComments(L,Lc) default is (L,Lc)
 
-    fun lineComment(['\n',..L],Lc) is skipComments(L,nxtLne(Lc))
+    fun lineComment([0c\n,..L],Lc) is skipComments(L,nxtLne(Lc))
      |  lineComment([_,..L],Lc) is lineComment(L,nxtLoc(Lc,1))
      |  lineComment(L,Lc) default is (L,Lc)
 
-    fun blockComment(['*','/',..L],Lc) is skipComments(L,nxtLoc(Lc,2))
-     |  blockComment(['\n',..L],Lc) is blockComment(L,nxtLne(Lc))
+    fun blockComment([0c*,0c/,..L],Lc) is skipComments(L,nxtLoc(Lc,2))
+     |  blockComment([0c\n,..L],Lc) is blockComment(L,nxtLne(Lc))
      |  blockComment([_,..L],Lc) is blockComment(L,nxtLoc(Lc,1))
      |  blockComment(L,Lc) default is (L,Lc)
 
@@ -123,7 +123,7 @@ tokens is package{
   /* Decimal: */123.45a
   /* Floats: */123.45 12.34e10 345.12e-10
   /* Longs: */123l 23L 0x45l
-  /* Characters: */'a' 'b' '\n' '@' '\u34;' 
+  /* Characters: */0ca 0cb 0c\n 0c@ 0c\u34;
   /* Strings: */"a simple string" "a string with a \n in it" 0'6"a blob "stri\u56;ng"
   /* Interpolated */"A $var string" "an $(expression()+34) string"
   /* Some special symbols */ 'n 's """

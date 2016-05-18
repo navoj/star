@@ -230,15 +230,15 @@ public class Tokenizer {
                 return reportToken(identifier, StandardNames.ALSO);
             default:
               image.setLength(0);
-              grabChar(image, false);
-              if (hedChar() == '\'') {
-                nextChar(); // consume the closing quote
-                return reportToken(image.codePointAt(0));
-              } else {
-                image.setLength(0);
+//              grabChar(image, false);
+//              if (hedChar() == '\'') {
+//                nextChar(); // consume the closing quote
+//                return reportToken(image.codePointAt(0));
+//              } else {
+//                image.setLength(0);
                 errors.reportError("missing character close quote", thisLocation());
                 return reportToken(identifier, image.toString());
-              }
+//              }
           }
         case '"': // begin a string definition
           switch (ch = nextHedChar()) {

@@ -51,7 +51,7 @@ public class TokenizerTest
   @Test
   public void testTokens() throws IOException
   {
-    String str = "-- a test\n123.45 123 123.45f NAME ,..;;., ;; .., $$. $$ f .. # #$ [ [: [:] [:=] [::=] [:::] [:: _var _ nihon\u3000\u3053\u3068\u3048\u308a  `a`  `A.*[a-z]` \"\\u23; \" { } \n( ) begin 'n 's 's' 'y' 'm' 'b' '\\n' '\\'' \"a string\\n\" #[ ]# ]## [ ] #()# #(())# #())# end ==> # ## == is $$ #$ != = ** /**/*/**/";
+    String str = "-- a test\n123.45 123 123.45f NAME ,..;;., ;; .., $$. $$ f .. # #$ [ [: [:] [:=] [::=] [:::] [:: _var _ nihon\u3000\u3053\u3068\u3048\u308a  `a`  `A.*[a-z]` \"\\u23; \" { } \n( ) begin 'n 's 0cs 0c\\n 0c\\' \"a string\\n\" #[ ]# ]## [ ] #()# #(())# #())# end ==> # ## == is $$ #$ != = ** /**/*/**/";
     try (Reader strReader = new StringReader(str)) {
       ErrorReport errors = new ErrorReport();
       Tokenizer tok = new Tokenizer(ResourceURI.noUriEnum, errors, strReader, null);
