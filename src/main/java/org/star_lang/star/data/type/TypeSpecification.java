@@ -21,7 +21,7 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
 public interface TypeSpecification extends PrettyPrintable
 {
   /**
-   * What is the name of this type?
+   * What is the NAME of this type?
    * 
    * @return
    */

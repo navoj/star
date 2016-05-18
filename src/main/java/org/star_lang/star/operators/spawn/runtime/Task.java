@@ -44,7 +44,7 @@ public class Task implements PrettyPrintable, Callable<IValue>
       
       // If we'll need to differentiate between the main thread and others; then we could pass
       // a flag to createNew, determined either by something set in main(), or by relying
-      // on currentThread().name = "main"?
+      // on currentThread().NAME = "main"?
       v = createNew.enter();
       currentFiber.set(v);
     }

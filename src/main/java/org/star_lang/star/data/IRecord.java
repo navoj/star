@@ -46,7 +46,7 @@ public interface IRecord extends IConstructor
 {
   /**
    * Generic way of getting a member of the record. In many instances there is a type-specific
-   * implementation of each getter for the same name. However, that getter will typically not return
+   * implementation of each getter for the same NAME. However, that getter will typically not return
    * an {@link IValue} &mdash; especially for so-called raw types.
    * 
    * For example, if a record has an integer member for {@code age}, then

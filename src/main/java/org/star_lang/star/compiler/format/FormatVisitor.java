@@ -6,7 +6,6 @@ import java.util.List;
 import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IAbstractVisitor;
@@ -18,20 +17,17 @@ import org.star_lang.star.compiler.format.rules.FmtProgram;
 import org.star_lang.star.compiler.format.rules.FmtRule;
 import org.star_lang.star.data.IValue;
 
-final class FormatVisitor implements IAbstractVisitor
-{
+final class FormatVisitor implements IAbstractVisitor {
   private final FmtProgram fmtRules;
   private final FormatRanges formats;
 
-  FormatVisitor(FmtProgram fmtRules, FormatRanges formats)
-  {
+  FormatVisitor(FmtProgram fmtRules, FormatRanges formats) {
     this.fmtRules = fmtRules;
     this.formats = formats;
   }
 
   @Override
-  public void visitApply(Apply term)
-  {
+  public void visitApply(Apply term) {
     visit(term);
     term.getOperator().accept(this);
     for (IValue arg : term.getArgs())
@@ -39,49 +35,36 @@ final class FormatVisitor implements IAbstractVisitor
   }
 
   @Override
-  public void visitBooleanLiteral(BooleanLiteral lit)
-  {
+  public void visitBooleanLiteral(BooleanLiteral lit) {
     visit(lit);
   }
 
   @Override
-  public void visitCharLiteral(CharLiteral lit)
-  {
+  public void visitFloatLiteral(FloatLiteral lit) {
     visit(lit);
   }
 
   @Override
-  public void visitFloatLiteral(FloatLiteral lit)
-  {
+  public void visitIntegerLiteral(IntegerLiteral lit) {
     visit(lit);
   }
 
   @Override
-  public void visitIntegerLiteral(IntegerLiteral lit)
-  {
+  public void visitLongLiteral(LongLiteral lit) {
     visit(lit);
   }
 
   @Override
-  public void visitLongLiteral(LongLiteral lit)
-  {
-    visit(lit);
-  }
-
-  @Override
-  public void visitName(Name name)
-  {
+  public void visitName(Name name) {
     visit(name);
   }
 
   @Override
-  public void visitStringLiteral(StringLiteral str)
-  {
+  public void visitStringLiteral(StringLiteral str) {
     visit(str);
   }
 
-  private void visit(IAbstract term)
-  {
+  private void visit(IAbstract term) {
     List<String> categories = term.getCategories();
     if (categories != null) {
       for (String category : categories) {
@@ -95,8 +78,7 @@ final class FormatVisitor implements IAbstractVisitor
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit)
-  {
+  public void visitBigDecimal(BigDecimalLiteral lit) {
     visit(lit);
   }
 }

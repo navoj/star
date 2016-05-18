@@ -197,6 +197,7 @@ public class PrettyPrintDisplay {
         case Character.DECIMAL_DIGIT_NUMBER:
           appendChar(ch);
           continue;
+        case Character.CURRENCY_SYMBOL:
         case Character.MODIFIER_SYMBOL:
         case Character.MATH_SYMBOL:
         case Character.OTHER_SYMBOL:
@@ -204,7 +205,6 @@ public class PrettyPrintDisplay {
         case Character.START_PUNCTUATION:
         case Character.DASH_PUNCTUATION:
         case Character.END_PUNCTUATION:
-        case Character.CURRENCY_SYMBOL:
         case Character.COMBINING_SPACING_MARK:
         case Character.MODIFIER_LETTER:
         case Character.NON_SPACING_MARK:

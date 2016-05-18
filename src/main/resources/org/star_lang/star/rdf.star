@@ -16,13 +16,14 @@
  * permissions and limitations under the License.
  */
 
-import base;
-import folding;
-import arrays;
-import sequences;
-import iterable;
-import strings;
-import cons;
+private import base;
+private import arithmetic;
+private import folding;
+private import arrays;
+private import sequences;
+private import iterable;
+private import strings;
+private import cons;
 
 /*
    Supports triples and quads -- in the form of named graph structures.

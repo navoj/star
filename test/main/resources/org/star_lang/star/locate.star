@@ -22,11 +22,11 @@ demo is package{
   locate(node{label=Lb;right=R}, K) where Lb<K is locate(R,K);
   locate(_,_) default is false;
   
-  chCode has type (integer) =>char;
-  chCode(10) is `\n;
-  chCode(32) is ` ;
-  chCode(48) is `0;
-  chCode(X) default is `q;
+  chCode has type (integer) => integer;
+  chCode(10) is 0c\n;
+  chCode(32) is 0c ;
+  chCode(48) is 0c0;
+  chCode(X) default is 0cq;
  
   append has type (list of %t,list of %t) =>list of %t;
   append([],X) is X;

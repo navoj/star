@@ -36,6 +36,8 @@ public abstract class StringCompare implements IFunction
 
   public static class StringEQ extends StringCompare
   {
+    public static final String NAME = "__string_eq";
+
     @CafeEnter
     public static BoolWrap __string_eq(String s1, String s2)
     {
@@ -51,6 +53,8 @@ public abstract class StringCompare implements IFunction
 
   public static class StringNE extends StringCompare
   {
+    public static final String NAME = "__string_ne";
+
     @CafeEnter
     public static BoolWrap __string_ne(String s1, String s2)
     {

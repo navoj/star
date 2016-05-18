@@ -20,10 +20,10 @@ import org.star_lang.star.resource.ResourceException;
 
 public interface Catalog extends PrettyPrintable
 {
-  String CATALOG = "catalog"; // Standard name for a catalog
+  String CATALOG = "catalog"; // Standard NAME for a catalog
 
   /**
-   * The name of this catalog
+   * The NAME of this catalog
    * 
    * @return
    */

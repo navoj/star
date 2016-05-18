@@ -1,33 +1,10 @@
 package org.star_lang.star.compiler.grammar;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
-import org.star_lang.star.compiler.ast.Display;
-import org.star_lang.star.compiler.ast.FloatLiteral;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IAttribute;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.LongLiteral;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.ast.StringLiteral;
+import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.grammar.Token.TokenType;
-import org.star_lang.star.compiler.operator.BracketPair;
-import org.star_lang.star.compiler.operator.OpFormAttribute;
-import org.star_lang.star.compiler.operator.Operator;
-import org.star_lang.star.compiler.operator.OperatorException;
-import org.star_lang.star.compiler.operator.OperatorForm;
-import org.star_lang.star.compiler.operator.Operators;
+import org.star_lang.star.compiler.operator.*;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
@@ -35,6 +12,13 @@ import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.ResourceURI;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -54,10 +38,10 @@ import org.star_lang.star.data.value.ResourceURI;
 public class OpGrammar implements PrettyPrintable {
   private Tokenizer tokenizer;
 
-  public final static String LPAR = "(";
-  public final static String RPAR = ")";
-  public final static String MLPAR = "#(";
-  public final static String MRPAR = ")#";
+  final static String LPAR = "(";
+  final static String RPAR = ")";
+  final static String MLPAR = "#(";
+  final static String MRPAR = ")#";
 
   private final static int MAX_PRIORITY = 2000;
 
@@ -116,7 +100,7 @@ public class OpGrammar implements PrettyPrintable {
         IAbstract right = termStack.pop();
         IAbstract left = termStack.pop();
         termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-                OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
+            OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
       }
       wrapCount--;
     }
@@ -161,7 +145,6 @@ public class OpGrammar implements PrettyPrintable {
     Token hed = tokenizer.headToken();
 
     switch (hed.getType()) {
-      case character:
       case string:
       case blob:
       case regexp:
@@ -223,7 +206,7 @@ public class OpGrammar implements PrettyPrintable {
             return prefix.getPriority();
           } else {
             reportError("prefix operator '" + prefix.getOperator() + "' of priority " + prefix.getPriority()
-                    + " not permitted here (expecting " + priority + ")", leftLoc);
+                + " not permitted here (expecting " + priority + ")", leftLoc);
             return MIN_PRIORITY;
           }
         } else
@@ -272,7 +255,6 @@ public class OpGrammar implements PrettyPrintable {
               case longint:
               case floating:
               case decimal:
-              case character:
               case string:
               case regexp:
               case blob:
@@ -322,7 +304,7 @@ public class OpGrammar implements PrettyPrintable {
               term(infix.rightPriority(), bracket);
               if (termStack.size() == mark + 1) {
                 IAbstract term = Abstract.binary(leftArg.getLoc().extendWith(tokenizer.headToken().getLoc()), op,
-                        leftArg, termStack.pop());
+                    leftArg, termStack.pop());
                 setOpForm(infix, term);
                 termStack.push(term);
               }
@@ -352,7 +334,7 @@ public class OpGrammar implements PrettyPrintable {
           {
             IAbstract right = termStack.pop();
             termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), op, left, right,
-                    OpFormAttribute.name, new OpFormAttribute(infix.getPriority(), infix.getForm())));
+                OpFormAttribute.name, new OpFormAttribute(infix.getPriority(), infix.getForm())));
           }
           return termRight(infix.getPriority(), priority, bracket);
         } else
@@ -362,7 +344,6 @@ public class OpGrammar implements PrettyPrintable {
       case longint:
       case floating:
       case decimal:
-      case character:
       case string:
       case regexp:
       case blob:
@@ -381,10 +362,6 @@ public class OpGrammar implements PrettyPrintable {
     final Location loc = hed.getLoc();
 
     switch (hed.getType()) {
-      case character:
-        tokenizer.commitToken();
-        termStack.push(new CharLiteral(loc, hed.getImage().codePointAt(0)));
-        return MIN_PRIORITY;
       case string: {
         boolean isRaw = hed.isRaw();
         tokenizer.commitToken();
@@ -498,7 +475,7 @@ public class OpGrammar implements PrettyPrintable {
         termStack.push(lft);
       else {
         IAbstract join = Abstract.binary(lft.getLoc().extendWith(rgt.getLoc()), StandardNames.STRING_CATENATE, lft,
-                rgt, OpFormAttribute.name, new OpFormAttribute(Operators.CATENATE_PRIORITY, OperatorForm.infix));
+            rgt, OpFormAttribute.name, new OpFormAttribute(Operators.CATENATE_PRIORITY, OperatorForm.infix));
         termStack.push(join);
       }
       fragmentCount--;
@@ -666,7 +643,7 @@ public class OpGrammar implements PrettyPrintable {
                 IAbstract right = termStack.pop();
                 IAbstract left = termStack.pop();
                 termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-                        OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
+                    OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
               }
               wrapCount--;
             }
@@ -674,7 +651,7 @@ public class OpGrammar implements PrettyPrintable {
           token = tokenizer.nextToken();
           if (!isRightBracket(token, brackets))
             reportError("'" + token.toString() + "' not permitted here, expecting '" + brackets.rightBracket + "', '"
-                    + brackets.leftBracket + "' at " + loc, token.getLoc());
+                + brackets.leftBracket + "' at " + loc, token.getLoc());
           else if (DEBUG_PARSER)
             System.out.print("Right bracket from " + brackets.leftBracket + ":" + token.toString() + " at " + loc);
 
@@ -773,7 +750,7 @@ public class OpGrammar implements PrettyPrintable {
           }
           if (!isRightBracket(hed, pair))
             reportError("missing a " + pair.rightBracket + "\nleft " + pair.leftBracket + " at " + leftLoc, hed
-                    .getLoc());
+                .getLoc());
 
           hed = tokenizer.commitToken();
           lastLoc = hed.getLoc();
@@ -782,7 +759,7 @@ public class OpGrammar implements PrettyPrintable {
               IAbstract right = termStack.pop();
               IAbstract left = termStack.pop();
               termStack.push(Abstract.binary(left.getLoc().extendWith(right.getLoc()), StandardNames.TERM, left, right,
-                      OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
+                  OpFormAttribute.name, new OpFormAttribute(Operators.STATEMENT_PRIORITY, OperatorForm.infix)));
             }
             wrapCount--;
           }
@@ -794,7 +771,7 @@ public class OpGrammar implements PrettyPrintable {
           Token token = tokenizer.nextToken();
           if (!isRightBracket(token, pair))
             reportError("expecting " + pair.rightBracket + ", got '" + token.toString() + "', left " + pair.leftBracket
-                    + " at " + hed.getLoc(), token.getLoc());
+                + " at " + hed.getLoc(), token.getLoc());
           Location termLoc = opLoc.extendWith(hed.getLoc());
           // build <bk>(label,args)
           termStack.push(Abstract.binary(termLoc, bkOp, label, termStack.pop()));
@@ -845,7 +822,7 @@ public class OpGrammar implements PrettyPrintable {
     else if (term instanceof StringLiteral)
       return ((StringLiteral) term).getLit();
     else {
-      reportError("expecting an operator name", term.getLoc());
+      reportError("expecting an operator NAME", term.getLoc());
       return null;
     }
   }
@@ -995,8 +972,8 @@ public class OpGrammar implements PrettyPrintable {
         } else
           reportError("bracket pair priority must be between 0 and " + MAX_PRIORITY, term.getLoc());
       } else if (Abstract.isBinary(stmt, StandardNames.MACRORULE) || Abstract.isBinary(stmt, StandardNames.WFF_RULE)
-              || Abstract.isBinary(stmt, StandardNames.WFF_DEFINES) || Abstract.isBinary(stmt, StandardNames.FMT_RULE)
-              || CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isIsStatement(stmt))
+          || Abstract.isBinary(stmt, StandardNames.WFF_DEFINES) || Abstract.isBinary(stmt, StandardNames.FMT_RULE)
+          || CompilerUtils.isFunctionStatement(stmt) || CompilerUtils.isIsStatement(stmt))
         return true;
       else
         reportError("cannot understand meta statement:: " + term, term.getLoc());

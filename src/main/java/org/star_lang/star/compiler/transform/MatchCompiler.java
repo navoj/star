@@ -827,7 +827,7 @@ public class MatchCompiler
     IContentExpression var = vars.head();
     Map<IContentExpression, List<MatchTriple<T>>> cases = new HashMap<>();
 
-    // Sort pattern applications by name
+    // Sort pattern applications by NAME
     for (MatchTriple<T> eq : triples) {
       IContentPattern head = eq.args.head();
       if (head instanceof MatchingPattern) {

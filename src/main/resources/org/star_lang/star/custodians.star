@@ -15,8 +15,7 @@
  */
 
 private import base;
-
-
+private import arithmetic;
 
 -- if the predicate holds for the current value of the reference, it is returned and the
 -- update value is set into the reference; if it does not hold, the current value is
@@ -74,9 +73,11 @@ type custodian is _custodian {
 }
 
 implementation equality over custodian is {
-  cust1 = cust2 is state_eq(cust1.state,cust2.state);
+  fun cust1 = cust2 is state_eq(cust1.state,cust2.state);
+  fun hashCode(C) is state_hash(C)
 } using {
   state_eq(st1, st2) is (st1 = st2); -- referential equality on atomic references works
+  fun state_hash(C) is hashCode(C.state)
 }
 
 fun _new_custodian() is _custodian {

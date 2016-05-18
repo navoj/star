@@ -139,98 +139,98 @@ private import folding;
   private fun jParse(L) is jP(skipBlanks(L));
   
   private
-  fun skipBlanks(list of [' ',..L]) is skipBlanks(L)
-   |  skipBlanks(list of ['\t',..L]) is skipBlanks(L)
-   |  skipBlanks(list of ['\n',..L]) is skipBlanks(L)
-   |  skipBlanks(list of ['\r',..L]) is skipBlanks(L)
+  fun skipBlanks(list of [0c ,..L]) is skipBlanks(L)
+   |  skipBlanks(list of [0c\t,..L]) is skipBlanks(L)
+   |  skipBlanks(list of [0c\n,..L]) is skipBlanks(L)
+   |  skipBlanks(list of [0c\r,..L]) is skipBlanks(L)
    |  skipBlanks(L) default is L
 
   private
-  fun jP(sequence of ['t','r','u','e',..L]) is (iTrue,L)
-   |  jP(list of ['f','a','l','s','e',..L]) is (iFalse,L)
-   |  jP(list of ['n','u','l','l',..L]) is (iNull,L)
-   |  jP(L matching (list of ['-',.._])) is parseNumber(L)
+  fun jP(sequence of [0ct,0cr,0cu,0ce,..L]) is (iTrue,L)
+   |  jP(list of [0cf,0ca,0cl,0cs,0ce,..L]) is (iFalse,L)
+   |  jP(list of [0cn,0cu,0cl,0cl,..L]) is (iNull,L)
+   |  jP(L matching (list of [0c-,.._])) is parseNumber(L)
    |  jP(L matching (list of [D,.._])) where isDigit(D) is parseNumber(L)
-   |  jP(list of ['"',..L]) is parseStr(L,nil)
-   |  jP(list of ['[',..L]) is parseSeq(L)
-   |  jP(list of ['{',..L]) is parseMap(L)
+   |  jP(list of [0c",..L]) is parseStr(L,nil)
+   |  jP(list of [0c[,..L]) is parseSeq(L)
+   |  jP(list of [0c{,..L]) is parseMap(L)
    |  jP(L) default is raise "cannot parse "++implode(L)++" as json"
   
   private
-  fun parseSeq(list of [']',..L]) is (iSeq(list of []),L)
+  fun parseSeq(list of [0c],..L]) is (iSeq(list of []),L)
    |  parseSeq(L) is valof{
         def (El,L0) is jParse(L);
         var SoFar := list of [El];
         var LL := skipBlanks(L0);
     
-        while LL matches list of [',',..Lx] do {
+        while LL matches list of [0c,,..Lx] do {
           def (Elx,LLx) is jParse(Lx);
           SoFar := list of [SoFar..,Elx];
           LL := skipBlanks(LLx);
         };
     
-        if LL matches list of [']',..Lx] then
+        if LL matches list of [0c],..Lx] then
           valis (iSeq(SoFar),Lx)
         else
-          raise "missing ']'";
+          raise "missing 0c]";
       }
   
   private 
-  fun parseMap(list of ['}',..L]) is (iColl(dictionary of []),L)
+  fun parseMap(list of [0c},..L]) is (iColl(dictionary of []),L)
    |  parseMap(L) is valof{
         def (K1,V1,L0) is parsePair(L);
         var SoFar := dictionary of [K1->V1];
         var LL := skipBlanks(L0);
     
-        while LL matches list of [',',..Lx] do {
+        while LL matches list of [0c,,..Lx] do {
           def (Ky,Vl,LLx) is parsePair(Lx);
           SoFar[Ky] := Vl;
           LL := skipBlanks(LLx);
         }
     
-        if LL matches list of ['}',..Lx] then
+        if LL matches list of [0c},..Lx] then
           valis (iColl(SoFar),Lx)
         else
-          raise "missing '}'";
+          raise "missing 0c}";
       }
   
   private
   fun parsePair(L0) is valof{
     def (iText(K),L1) is jParse(L0);
-    if skipBlanks(L1) matches list of [':',..L2] then{
+    if skipBlanks(L1) matches list of [0c:,..L2] then{
       def (V,L3) is jParse(L2);
       valis (K,V,L3);
     }
-    else raise "expecting a ':'";
+    else raise "expecting a 0c:";
   }
     
   private
-  fun parseStr(list of ['"',..L],SoFar) is (iText(revImplode(SoFar)),L)
-   |  parseStr(list of ['\\','u',H1,H2,H3,H4,..L],SoFar) is parseStr(L,cons of [grabHex(list of [H1,H2,H3,H4],0),..SoFar])
-   |  parseStr(list of ['\\','\\',..L],SoFar) is parseStr(L,cons of ['\\',..SoFar])
-   |  parseStr(list of ['\\','b',..L],SoFar) is parseStr(L,cons of ['\b',..SoFar])
-   |  parseStr(list of ['\\','f',..L],SoFar) is parseStr(L,cons of ['\f',..SoFar])
-   |  parseStr(list of ['\\','n',..L],SoFar) is parseStr(L,cons of ['\n',..SoFar])
-   |  parseStr(list of ['\\','r',..L],SoFar) is parseStr(L,cons of ['\r',..SoFar])
-   |  parseStr(list of ['\\','t',..L],SoFar) is parseStr(L,cons of ['\t',..SoFar])
-   |  parseStr(list of ['\\',X,..L],SoFar) is parseStr(L,cons of [X,..SoFar])
+  fun parseStr(list of [0c",..L],SoFar) is (iText(revImplode(SoFar)),L)
+   |  parseStr(list of [0c\\,0cu,H1,H2,H3,H4,..L],SoFar) is parseStr(L,cons of [grabHex(list of [H1,H2,H3,H4],0),..SoFar])
+   |  parseStr(list of [0c\\,0c\\,..L],SoFar) is parseStr(L,cons of [0c\\,..SoFar])
+   |  parseStr(list of [0c\\,0cb,..L],SoFar) is parseStr(L,cons of [0c\b,..SoFar])
+   |  parseStr(list of [0c\\,0cf,..L],SoFar) is parseStr(L,cons of [0c\f,..SoFar])
+   |  parseStr(list of [0c\\,0cn,..L],SoFar) is parseStr(L,cons of [0c\n,..SoFar])
+   |  parseStr(list of [0c\\,0cr,..L],SoFar) is parseStr(L,cons of [0c\r,..SoFar])
+   |  parseStr(list of [0c\\,0ct,..L],SoFar) is parseStr(L,cons of [0c\t,..SoFar])
+   |  parseStr(list of [0c\\,X,..L],SoFar) is parseStr(L,cons of [X,..SoFar])
    |  parseStr(list of [X,..L],SoFar) is parseStr(L,cons of [X,..SoFar])
+
+  private
+  fun revImplode(S) is implode(reverse(S))
      
   private
-  fun grabHex(list of [],Hx) is Hx as char
+  fun grabHex(list of [],Hx) is Hx
    |  grabHex(list of [X,..L],Hx) where isHexDigit(X) is 
         grabHex(L,Hx*16+hexDigitVal(X))
 
   private 
-  fun isHexDigit(X) is ('0'=<X and X=<'9') or ('a'=<X and X=<'f') or ('A'=<X and X=<'F')
-  
+  fun isHexDigit(X) is (0c0=<X and X=<0c9) or (0ca=<X and X=<0cf) or (0cA=<X and X=<0cF)
+
   private 
-  fun revImplode(X) is string(__string_rev_implode(X));
-     
-  private 
-  fun hexDigitVal(X) where '0'=<X and X=<'9' is X as integer-'0' as integer
-   |  hexDigitVal(X) where 'a'=<X and X=<'f' is X as integer-'a' as integer+10
-   |  hexDigitVal(X) where 'A'=<X and X=<'F' is X as integer-'A' as integer+10
+  fun hexDigitVal(X) where 0c0=<X and X=<0c9 is X as integer-0c0 as integer
+   |  hexDigitVal(X) where 0ca=<X and X=<0cf is X as integer-0ca as integer+10
+   |  hexDigitVal(X) where 0cA=<X and X=<0cF is X as integer-0cA as integer+10
      
   fun parseNumber(Str) is let{
     fun parseInt(list of [D,..L],Nm) where isDigit(D) is parseInt(L,Nm*10l+digitVal(D))
@@ -240,22 +240,22 @@ private import folding;
           parseFrac(L,Nm+(digitVal(D)as float)*F,F/10.0)
      |  parseFrac(L,Nm,_) default is (Nm,L)
 
-    fun parseNum(list of ['-',..L]) is valof{
+    fun parseNum(list of [0c-,..L]) is valof{
           def (I,Rest) is parseNum(L);
           valis (negate(I),Rest)
         }
      |  parseNum(L) is parseMore@parseInt(L,0l)
 
-    fun parseMore(Nm,list of ['.',..L]) is 
+    fun parseMore(Nm,list of [0c.,..L]) is
 	      parseExp@parseFrac(L,Nm as float,0.1)
-     |  parseMore(Nm,L matching (list of ['e',.._])) is
+     |  parseMore(Nm,L matching (list of [0ce,.._])) is
 	      parseExp(Nm as float,L)
      |  parseMore(Nm,L) is (iNum(Nm),L)
 
-    fun parseExp(Nm,list of [E,..L]) where E='e' or E='E' is parseX(Nm,L)
+    fun parseExp(Nm,list of [E,..L]) where E=0ce or E=0cE is parseX(Nm,L)
      |  parseExp(Nm,L) is (iFlt(Nm),L)
 
-    fun parseX(Nm,list of ['+',..L]) is parseX(Nm,L)
+    fun parseX(Nm,list of [0c+,..L]) is parseX(Nm,L)
      |  parseX(Nm,L) is valof{
           def (Ex,LL) is parseInt(L,0l);
           valis (iFlt(Nm*10.0**(Ex as float)),LL)
@@ -265,29 +265,29 @@ private import folding;
      |  negate(iFlt(F)) is iFlt(-F)
 
     private
-    fun digitVal('0') is 0l
-     |  digitVal('1') is 1l
-     |  digitVal('2') is 2l
-     |  digitVal('3') is 3l
-     |  digitVal('4') is 4l
-     |  digitVal('5') is 5l
-     |  digitVal('6') is 6l
-     |  digitVal('7') is 7l
-     |  digitVal('8') is 8l
-     |  digitVal('9') is 9l
+    fun digitVal(0c0) is 0l
+     |  digitVal(0c1) is 1l
+     |  digitVal(0c2) is 2l
+     |  digitVal(0c3) is 3l
+     |  digitVal(0c4) is 4l
+     |  digitVal(0c5) is 5l
+     |  digitVal(0c6) is 6l
+     |  digitVal(0c7) is 7l
+     |  digitVal(0c8) is 8l
+     |  digitVal(0c9) is 9l
   } in parseNum(Str);
 
   private
-  fun isDigit('0') is true
-   |  isDigit('1') is true
-   |  isDigit('2') is true
-   |  isDigit('3') is true
-   |  isDigit('4') is true
-   |  isDigit('5') is true
-   |  isDigit('6') is true
-   |  isDigit('7') is true
-   |  isDigit('8') is true
-   |  isDigit('9') is true
+  fun isDigit(0c0) is true
+   |  isDigit(0c1) is true
+   |  isDigit(0c2) is true
+   |  isDigit(0c3) is true
+   |  isDigit(0c4) is true
+   |  isDigit(0c5) is true
+   |  isDigit(0c6) is true
+   |  isDigit(0c7) is true
+   |  isDigit(0c8) is true
+   |  isDigit(0c9) is true
    |  isDigit(_) default is false
 
   private fun razer(E) is raise E;

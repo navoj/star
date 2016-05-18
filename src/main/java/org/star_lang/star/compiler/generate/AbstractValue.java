@@ -1,10 +1,5 @@
 package org.star_lang.star.compiler.generate;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
@@ -12,7 +7,11 @@ import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.StandardTypes;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 
 /*
@@ -45,14 +44,10 @@ public class AbstractValue implements IValueVisitor
 
   private static IAbstract abstractValue(Location loc, Object val, IType type)
   {
-    if (type.equals(StandardTypes.charType))
-      return Abstract.newChar(loc, (Integer) val);
-    else if (val instanceof Integer)
+    if (val instanceof Integer)
       return Abstract.newInteger(loc, ((Integer) val));
     else if (val instanceof Double)
       return Abstract.newFloat(loc, ((Double) val));
-    else if (val instanceof Character)
-      return Abstract.newChar(loc, ((Character) val));
     else if (val instanceof String)
       return Abstract.newString(loc, ((String) val));
     else if (val instanceof Long)

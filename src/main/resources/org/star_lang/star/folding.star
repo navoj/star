@@ -27,7 +27,7 @@ contract filterable over t determines e is {
 
 -- This has to be here, to avoid circular packages
 
-implementation filterable over string determines char is {
+implementation filterable over string determines integer is {
   fun filter(P,string(S)) is string(__string_filter(S,P))
    |  filter(_,nonString) is nonString;
 }

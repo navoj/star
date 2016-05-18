@@ -6,10 +6,6 @@ import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.canonical.ContractEntry;
-import org.star_lang.star.compiler.canonical.ImplementationEntry;
-import org.star_lang.star.compiler.canonical.ImportEntry;
-import org.star_lang.star.compiler.canonical.TypeAliasEntry;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.BindingKind;
 import org.star_lang.star.compiler.type.TypeUtils;
@@ -18,7 +14,6 @@ import org.star_lang.star.data.IArray;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.*;
 import org.star_lang.star.data.value.Array;
-import org.star_lang.star.data.value.NTuple;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.operators.assignment.runtime.Assignments.*;
 import org.star_lang.star.operators.assignment.runtime.GetRefValue.*;
@@ -770,8 +765,6 @@ public class GenerateCafe implements
     assert TypeUtils.isReferenceType(argType);
     if (TypeUtils.isRawBoolType(TypeUtils.referencedType(argType)))
       return CafeSyntax.escape(loc, GetRawBoolRef.name, arg);
-    else if (TypeUtils.isRawCharType(TypeUtils.referencedType(argType)))
-      return CafeSyntax.escape(loc, GetRawCharRef.name, arg);
     else if (TypeUtils.isRawIntType(TypeUtils.referencedType(argType)))
       return CafeSyntax.escape(loc, GetRawIntegerRef.name, arg);
     else if (TypeUtils.isRawLongType(TypeUtils.referencedType(argType)))
@@ -1011,8 +1004,6 @@ public class GenerateCafe implements
     IAbstract rval = generateExp(act.getValue(), dpCxt);
     if (TypeUtils.isRawBoolType(type))
       return FixedList.create(CafeSyntax.escape(loc, AssignRawBool.name, lval, rval));
-    else if (TypeUtils.isRawCharType(type))
-      return FixedList.create(CafeSyntax.escape(loc, AssignRawChar.name, lval, rval));
     else if (TypeUtils.isRawIntType(type))
       return FixedList.create(CafeSyntax.escape(loc, AssignRawInteger.name, lval, rval));
     else if (TypeUtils.isRawLongType(type))

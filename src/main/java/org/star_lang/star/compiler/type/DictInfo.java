@@ -31,7 +31,7 @@ public interface DictInfo extends PrettyPrintable
   Location getLoc();
 
   /**
-   * What is the name of this entry?
+   * What is the NAME of this entry?
    * 
    * @return
    */

@@ -267,7 +267,7 @@ public class TypeAnalyser
 
       return TypeUtils.typeExp(tpName);
     } else if (CafeSyntax.isTypeVar(tp)) {
-      errors.reportError("Type name expected, got type variable: " + tp, loc);
+      errors.reportError("Type NAME expected, got type variable: " + tp, loc);
       return new TypeVar();
     } else if (CafeSyntax.isTypeExp(tp)) {
       String tpName = CafeSyntax.typeExpLabel(tp);
@@ -336,7 +336,7 @@ public class TypeAnalyser
             members.put(field, argType);
             index.put(field, ix);
           } else
-            errors.reportError("expecting field name, not: " + nme, nme.getLoc());
+            errors.reportError("expecting field NAME, not: " + nme, nme.getLoc());
         } else
           errors.reportError("expecting a named field, not: " + arg, arg.getLoc());
       }

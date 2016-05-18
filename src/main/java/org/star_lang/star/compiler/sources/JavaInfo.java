@@ -34,7 +34,7 @@ public class JavaInfo
   }
 
   /**
-   * Return the name of the imported Java class
+   * Return the NAME of the imported Java class
    * 
    * @return
    */

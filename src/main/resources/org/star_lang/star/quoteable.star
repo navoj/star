@@ -17,6 +17,7 @@
  */
 
 private import base;
+private import arithmetic;
 private import sequences;
 private import strings;
 private import casting;

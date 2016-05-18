@@ -18,6 +18,7 @@ private import base;
 private import strings;
 private import cons;
 private import iterable;
+private import arithmetic;
 
 import task;
 
@@ -73,7 +74,12 @@ type brv of %a is brv {
 -- A primitive rendezvous
 type prv of %a is
   BRV(brv of %a)  or
-  CHOOSE(prv of %a, integer_, prv of %a, integer_) 
+  CHOOSE(prv of %a, integer_, prv of %a, integer_)
+
+implementation equality over prv of %a is {
+  fun X = Y is __equal(X,Y);
+  fun hashCode(X) is integer(__hashCode(X))
+}
 
 choosePrv has type (prv of %a, prv of %a) => prv of %a
 

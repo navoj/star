@@ -1,13 +1,5 @@
 package org.star_lang.star.compiler.cafe.compile;
 
-import java.io.PrintStream;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import org.star_lang.star.code.CafeCode;
 import org.star_lang.star.code.repository.CodeCatalog;
 import org.star_lang.star.code.repository.CodeRepository;
@@ -20,40 +12,19 @@ import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.StringIterator;
 import org.star_lang.star.compiler.util.StringUtils;
-import org.star_lang.star.data.ConstructorFunction;
-import org.star_lang.star.data.EvaluationException;
-import org.star_lang.star.data.IConstructor;
-import org.star_lang.star.data.IFunction;
-import org.star_lang.star.data.IPattern;
-import org.star_lang.star.data.IRecord;
-import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.IValueVisitor;
-import org.star_lang.star.data.type.ExistentialType;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeContext;
-import org.star_lang.star.data.type.ITypeVisitor;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.QuantifiedType;
-import org.star_lang.star.data.type.TupleType;
-import org.star_lang.star.data.type.Type;
-import org.star_lang.star.data.type.TypeExp;
-import org.star_lang.star.data.type.TypeInterface;
-import org.star_lang.star.data.type.TypeInterfaceType;
-import org.star_lang.star.data.type.TypeVar;
-import org.star_lang.star.data.type.UniversalType;
-import org.star_lang.star.data.value.AnonRecord;
-import org.star_lang.star.data.value.BigNumWrap;
-import org.star_lang.star.data.value.BoolWrap;
-import org.star_lang.star.data.value.CharWrap;
-import org.star_lang.star.data.value.FailureException;
-import org.star_lang.star.data.value.FloatWrap;
-import org.star_lang.star.data.value.IntWrap;
-import org.star_lang.star.data.value.LongWrap;
-import org.star_lang.star.data.value.NTuple;
-import org.star_lang.star.data.value.ResourceURI;
-import org.star_lang.star.data.value.StringWrap;
+import org.star_lang.star.data.*;
+import org.star_lang.star.data.type.*;
+import org.star_lang.star.data.value.*;
 import org.star_lang.star.data.value.NTuple.NTpl;
 import org.star_lang.star.operators.string.runtime.ValueDisplay;
+
+import java.io.PrintStream;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -69,9 +40,7 @@ import org.star_lang.star.operators.string.runtime.ValueDisplay;
  * permissions and limitations under the License.
  */
 
-
-public class Types
-{
+public class Types {
   public static final String FUN_PREFIX = "function_";
   public static final String PRC_PREFIX = "procedure_";
   public static final String PTN_PREFIX = "pattern_";
@@ -102,8 +71,6 @@ public class Types
   public static final String JAVA_OBJECT_SIG = "L" + JAVA_OBJECT_TYPE + ";";
   public static final String BOOLEAN_TYPE = Utils.javaInternalClassName(BoolWrap.class);
   public static final String BOOLEAN_SIG = "L" + BOOLEAN_TYPE + ";";
-  public static final String CHAR_TYPE = Utils.javaInternalClassName(CharWrap.class);
-  public static final String CHAR_SIG = "L" + CHAR_TYPE + ";";
   public static final String INTEGER_TYPE = Utils.javaInternalClassName(IntWrap.class);
   public static final String INTEGER_SIG = "L" + INTEGER_TYPE + ";";
   public static final String LONG_TYPE = Utils.javaInternalClassName(LongWrap.class);
@@ -174,8 +141,7 @@ public class Types
   public static final String ENUM_SFX = "Enum";
   public static final String CON_SFX = "Con";
 
-  public static String javaTypeSig(IType type, ITypeContext dict)
-  {
+  public static String javaTypeSig(IType type, ITypeContext dict) {
     StringBuilder blder = new StringBuilder();
     JavaTypeSig sigBuilder = new JavaTypeSig(blder, dict);
     type.accept(sigBuilder, null);
@@ -183,26 +149,21 @@ public class Types
     return blder.toString();
   }
 
-  private static class JavaTypeSig implements ITypeVisitor<Void>
-  {
+  private static class JavaTypeSig implements ITypeVisitor<Void> {
     StringBuilder blder;
     private final ITypeContext dict;
 
-    JavaTypeSig(StringBuilder blder, ITypeContext dict)
-    {
+    JavaTypeSig(StringBuilder blder, ITypeContext dict) {
       this.dict = dict;
       this.blder = blder;
     }
 
     @Override
-    public void visitSimpleType(Type t, Void cxt)
-    {
+    public void visitSimpleType(Type t, Void cxt) {
       String label = t.typeLabel();
 
       if (TypeUtils.isRawBoolType(label))
         blder.append("Z");
-      else if (TypeUtils.isRawCharType(label))
-        blder.append("C");
       else if (TypeUtils.isRawIntType(label))
         blder.append("I");
       else if (TypeUtils.isRawLongType(label))
@@ -227,12 +188,9 @@ public class Types
     }
 
     @Override
-    public void visitTypeExp(TypeExp type, Void cxt)
-    {
+    public void visitTypeExp(TypeExp type, Void cxt) {
       if (TypeUtils.isRawBoolType(type))
         blder.append("Z");
-      else if (TypeUtils.isRawCharType(type))
-        blder.append("C");
       else if (TypeUtils.isRawIntType(type))
         blder.append("I");
       else if (TypeUtils.isRawLongType(type))
@@ -259,48 +217,41 @@ public class Types
     }
 
     @Override
-    public void visitTupleType(TupleType t, Void cxt)
-    {
+    public void visitTupleType(TupleType t, Void cxt) {
       blder.append(Types.TUPLE_TYPE);
     }
 
     @Override
-    public void visitTypeVar(TypeVar var, Void cxt)
-    {
+    public void visitTypeVar(TypeVar var, Void cxt) {
       blder.append(IVALUE_SIG);
     }
 
     @Override
-    public void visitExistentialType(ExistentialType t, Void cxt)
-    {
+    public void visitExistentialType(ExistentialType t, Void cxt) {
       t.getBoundType().accept(this, cxt);
     }
 
     @Override
-    public void visitUniversalType(UniversalType univ, Void cxt)
-    {
+    public void visitUniversalType(UniversalType univ, Void cxt) {
       TypeUtils.unwrap(univ).accept(this, cxt);
     }
 
     @Override
-    public void visitTypeInterface(TypeInterfaceType t, Void cxt)
-    {
+    public void visitTypeInterface(TypeInterfaceType t, Void cxt) {
       blder.append("L");
       blder.append(Utils.javaIdentifierOf(t.typeLabel()));
       blder.append(";");
     }
   }
 
-  public static String javaMethodSig(IType type)
-  {
+  public static String javaMethodSig(IType type) {
     StringBuilder blder = new StringBuilder();
     JavaMethodSig sigBuilder = new JavaMethodSig(blder);
     type.accept(sigBuilder, null);
     return blder.toString();
   }
 
-  public static String javaConstructorSig(List<IType> argTypes)
-  {
+  public static String javaConstructorSig(List<IType> argTypes) {
     StringBuilder blder = new StringBuilder();
     blder.append('(');
     JavaMethodSig visitor = new JavaMethodSig(blder);
@@ -311,8 +262,7 @@ public class Types
     return blder.toString();
   }
 
-  public static String javaConstructorSig(IType conType)
-  {
+  public static String javaConstructorSig(IType conType) {
     StringBuilder blder = new StringBuilder();
     JavaMethodSig methodSigGen = new JavaMethodSig(blder);
 
@@ -325,24 +275,19 @@ public class Types
     return blder.toString();
   }
 
-  private static class JavaMethodSig implements ITypeVisitor<Void>
-  {
+  private static class JavaMethodSig implements ITypeVisitor<Void> {
     StringBuilder blder;
 
-    JavaMethodSig(StringBuilder blder)
-    {
+    JavaMethodSig(StringBuilder blder) {
       this.blder = blder;
     }
 
     @Override
-    public void visitSimpleType(Type t, Void cxt)
-    {
+    public void visitSimpleType(Type t, Void cxt) {
       String label = t.typeLabel();
 
       if (TypeUtils.isRawBoolType(label))
         blder.append("Z");
-      else if (TypeUtils.isRawCharType(label))
-        blder.append("C");
       else if (TypeUtils.isRawIntType(label))
         blder.append("I");
       else if (TypeUtils.isRawLongType(label))
@@ -360,8 +305,7 @@ public class Types
     }
 
     @Override
-    public void visitTypeExp(TypeExp type, Void cxt)
-    {
+    public void visitTypeExp(TypeExp type, Void cxt) {
       if (TypeUtils.isFunType(type)) {
         blder.append('(');
         argTypesSig(TypeUtils.getFunArgType(type));
@@ -384,17 +328,13 @@ public class Types
     }
 
     @Override
-    public void visitTupleType(TupleType t, Void cxt)
-    {
+    public void visitTupleType(TupleType t, Void cxt) {
       argTypesSig(t);
     }
 
-    private void argTypeSig(IType type)
-    {
+    private void argTypeSig(IType type) {
       if (TypeUtils.isRawBoolType(type))
         blder.append("Z");
-      else if (TypeUtils.isRawCharType(type))
-        blder.append("I");
       else if (TypeUtils.isRawIntType(type))
         blder.append("I");
       else if (TypeUtils.isRawLongType(type))
@@ -413,8 +353,7 @@ public class Types
         blder.append(IVALUE_SIG);
     }
 
-    void argTypesSig(IType tpl)
-    {
+    void argTypesSig(IType tpl) {
       tpl = TypeUtils.unwrap(tpl);
 
       if (TypeUtils.isTupleType(tpl)) {
@@ -443,33 +382,28 @@ public class Types
     }
 
     @Override
-    public void visitTypeVar(TypeVar var, Void cxt)
-    {
+    public void visitTypeVar(TypeVar var, Void cxt) {
       blder.append(IVALUE_SIG);
     }
 
     @Override
-    public void visitExistentialType(ExistentialType t, Void cxt)
-    {
+    public void visitExistentialType(ExistentialType t, Void cxt) {
       t.getBoundType().accept(this, cxt);
     }
 
     @Override
-    public void visitUniversalType(UniversalType univ, Void cxt)
-    {
+    public void visitUniversalType(UniversalType univ, Void cxt) {
       TypeUtils.unwrap(univ).accept(this, cxt);
     }
 
     @Override
-    public void visitTypeInterface(TypeInterfaceType t, Void cxt)
-    {
+    public void visitTypeInterface(TypeInterfaceType t, Void cxt) {
       for (Entry<String, IType> entry : t.getAllFields().entrySet())
         argTypeSig(entry.getValue());
     }
   }
 
-  public static String javaType(IType type, ITypeContext dict, CodeCatalog bldCat, ErrorReport errors, Location loc)
-  {
+  public static String javaType(IType type, ITypeContext dict, CodeCatalog bldCat, ErrorReport errors, Location loc) {
     StringBuilder blder = new StringBuilder();
     JavaType sigBuilder = new JavaType(blder, dict, errors, loc);
     type.accept(sigBuilder, null);
@@ -492,12 +426,9 @@ public class Types
     return javaType;
   }
 
-  public static String javaSig(IType type, ITypeContext dict, CodeCatalog bldCat, ErrorReport errors, Location loc)
-  {
+  public static String javaSig(IType type, ITypeContext dict, CodeCatalog bldCat, ErrorReport errors, Location loc) {
     if (TypeUtils.isRawBoolType(type))
       return "Z";
-    else if (TypeUtils.isRawCharType(type))
-      return "I";
     else if (TypeUtils.isRawIntType(type))
       return "I";
     else if (TypeUtils.isRawLongType(type))
@@ -517,8 +448,7 @@ public class Types
   }
 
   public static String genericJavaType(IType type, ITypeContext dict, CodeCatalog bldCat, CodeRepository repository,
-      ErrorReport errors, Location loc)
-  {
+                                       ErrorReport errors, Location loc) {
     StringBuilder blder = new StringBuilder();
     JavaType sigBuilder = new JavaType(blder, dict, errors, loc);
     type.accept(sigBuilder, null);
@@ -537,12 +467,9 @@ public class Types
     return javaType;
   }
 
-  public static String genericJavaSig(IType type, CodeCatalog bldCat, ErrorReport errors, Location loc)
-  {
+  public static String genericJavaSig(IType type, CodeCatalog bldCat, ErrorReport errors, Location loc) {
     if (TypeUtils.isRawBoolType(type))
       return "Z";
-    else if (TypeUtils.isRawCharType(type))
-      return "C";
     else if (TypeUtils.isRawIntType(type))
       return "I";
     else if (TypeUtils.isRawLongType(type))
@@ -561,27 +488,22 @@ public class Types
       return IVALUE_SIG;
   }
 
-  private static class JavaType implements ITypeVisitor<Void>
-  {
+  private static class JavaType implements ITypeVisitor<Void> {
     StringBuilder blder;
     private final ITypeContext dict;
     private final ErrorReport errors;
     private final Location loc;
 
-    JavaType(StringBuilder blder, ITypeContext dict, ErrorReport errors, Location loc)
-    {
+    JavaType(StringBuilder blder, ITypeContext dict, ErrorReport errors, Location loc) {
       this.dict = dict;
       this.blder = blder;
       this.errors = errors;
       this.loc = loc;
     }
 
-    private void javaType(IType type)
-    {
+    private void javaType(IType type) {
       if (TypeUtils.isRawBoolType(type))
         blder.append("bool");
-      else if (TypeUtils.isRawCharType(type))
-        blder.append("int");
       else if (TypeUtils.isRawIntType(type))
         blder.append("int");
       else if (TypeUtils.isRawLongType(type))
@@ -615,20 +537,16 @@ public class Types
     }
 
     @Override
-    public void visitTupleType(TupleType t, Void cxt)
-    {
+    public void visitTupleType(TupleType t, Void cxt) {
       blder.append(TUPLE_TYPE);
     }
 
     @Override
-    public void visitSimpleType(Type t, Void cxt)
-    {
+    public void visitSimpleType(Type t, Void cxt) {
       String label = t.typeLabel();
 
       if (TypeUtils.isRawBoolType(label))
         blder.append("bool");
-      else if (TypeUtils.isRawCharType(label))
-        blder.append("int");
       else if (TypeUtils.isRawIntType(label))
         blder.append("int");
       else if (TypeUtils.isRawLongType(label))
@@ -655,8 +573,7 @@ public class Types
     }
 
     @Override
-    public void visitTypeExp(TypeExp type, Void cxt)
-    {
+    public void visitTypeExp(TypeExp type, Void cxt) {
       if (TypeUtils.isFunType(type) || TypeUtils.isPatternType(type) || TypeUtils.isConstructorType(type))
         new FunctionClassNameGenerator(blder).visitTypeExp(type, cxt);
       else
@@ -664,33 +581,28 @@ public class Types
     }
 
     @Override
-    public void visitTypeVar(TypeVar var, Void cxt)
-    {
+    public void visitTypeVar(TypeVar var, Void cxt) {
       blder.append(IVALUE);
     }
 
     @Override
-    public void visitExistentialType(ExistentialType t, Void cxt)
-    {
+    public void visitExistentialType(ExistentialType t, Void cxt) {
       t.getBoundType().accept(this, cxt);
     }
 
     @Override
-    public void visitUniversalType(UniversalType univ, Void cxt)
-    {
+    public void visitUniversalType(UniversalType univ, Void cxt) {
       // This is where type erasure can hurt us.
       TypeUtils.unwrap(univ).accept(this, cxt);
     }
 
     @Override
-    public void visitTypeInterface(TypeInterfaceType t, Void cxt)
-    {
+    public void visitTypeInterface(TypeInterfaceType t, Void cxt) {
       javaType(t);
     }
   }
 
-  public static String javaTypeName(String path, String label)
-  {
+  public static String javaTypeName(String path, String label) {
     if (TypeUtils.isTupleLabel(label))
       return TUPLE_TYPE;
     else if (isAnonType(label))
@@ -699,13 +611,11 @@ public class Types
       return path + "/type/" + Utils.javaIdentifierOf(label);
   }
 
-  public static boolean isAnonType(String label)
-  {
+  public static boolean isAnonType(String label) {
     return label.startsWith(Names.FACE);
   }
 
-  public static String genericFunctionClassName(IType type)
-  {
+  public static String genericFunctionClassName(IType type) {
     StringBuilder str = new StringBuilder();
 
     type = TypeUtils.unwrap(type);
@@ -733,8 +643,7 @@ public class Types
     return str.toString();
   }
 
-  private static void funArgType(StringBuilder str, IType argType)
-  {
+  private static void funArgType(StringBuilder str, IType argType) {
     argType = TypeUtils.deRef(argType);
 
     if (TypeUtils.isTupleType(argType)) {
@@ -754,12 +663,9 @@ public class Types
     }
   }
 
-  private static void argType(StringBuilder blder, IType tA)
-  {
+  private static void argType(StringBuilder blder, IType tA) {
     if (TypeUtils.isRawBoolType(tA))
       blder.append("__boolean");
-    else if (TypeUtils.isRawCharType(tA))
-      blder.append("__char");
     else if (TypeUtils.isRawIntType(tA))
       blder.append("__integer");
     else if (TypeUtils.isRawLongType(tA))
@@ -776,8 +682,7 @@ public class Types
       blder.append("_V");
   }
 
-  public static String functionClassName(IType type)
-  {
+  public static String functionClassName(IType type) {
     StringBuilder str = new StringBuilder();
 
     FunctionClassNameGenerator gen = new FunctionClassNameGenerator(str);
@@ -785,20 +690,17 @@ public class Types
     return str.toString();
   }
 
-  private static class FunctionClassNameGenerator implements ITypeVisitor<Void>
-  {
+  private static class FunctionClassNameGenerator implements ITypeVisitor<Void> {
     private final StringBuilder str;
 
-    FunctionClassNameGenerator(StringBuilder str)
-    {
+    FunctionClassNameGenerator(StringBuilder str) {
       this.str = str;
     }
 
     @Override
-    public void visitSimpleType(Type t, Void cxt)
-    {
+    public void visitSimpleType(Type t, Void cxt) {
       String label = t.typeLabel();
-      for (StringIterator it = new StringIterator(label); it.hasNext();) {
+      for (StringIterator it = new StringIterator(label); it.hasNext(); ) {
         int ch = it.next();
         if (Character.isJavaIdentifierPart(ch))
           str.appendCodePoint(ch);
@@ -808,8 +710,7 @@ public class Types
     }
 
     @Override
-    public void visitTypeExp(TypeExp type, Void cxt)
-    {
+    public void visitTypeExp(TypeExp type, Void cxt) {
       IType[] argTypes = type.getTypeArgs();
       if (TypeUtils.isProcedureType(type)) {
         str.append(PRC_PREFIX);
@@ -832,7 +733,7 @@ public class Types
         return;
       } else {
         String label = type.typeLabel();
-        for (StringIterator it = new StringIterator(label); it.hasNext();) {
+        for (StringIterator it = new StringIterator(label); it.hasNext(); ) {
           int ch = it.next();
           if (Character.isJavaIdentifierPart(ch))
             str.appendCodePoint(ch);
@@ -847,13 +748,11 @@ public class Types
     }
 
     @Override
-    public void visitTupleType(TupleType t, Void cxt)
-    {
+    public void visitTupleType(TupleType t, Void cxt) {
       str.append(NTuple.label);
     }
 
-    private void visitFunArg(IType argType, Void cxt)
-    {
+    private void visitFunArg(IType argType, Void cxt) {
       argType = TypeUtils.unwrap(argType);
 
       if (TypeUtils.isTupleType(argType)) {
@@ -883,14 +782,12 @@ public class Types
     }
 
     @Override
-    public void visitTypeVar(TypeVar var, Void cxt)
-    {
+    public void visitTypeVar(TypeVar var, Void cxt) {
       str.append("V");
     }
 
     @Override
-    public void visitExistentialType(ExistentialType t, Void cxt)
-    {
+    public void visitExistentialType(ExistentialType t, Void cxt) {
       str.append("exists_");
       IType tp = t;
       while (tp instanceof ExistentialType) {
@@ -903,8 +800,7 @@ public class Types
     }
 
     @Override
-    public void visitUniversalType(UniversalType univ, Void cxt)
-    {
+    public void visitUniversalType(UniversalType univ, Void cxt) {
       str.append("all_");
       IType tp = univ;
       while (tp instanceof UniversalType) {
@@ -917,10 +813,9 @@ public class Types
     }
 
     @Override
-    public void visitTypeInterface(TypeInterfaceType t, Void cxt)
-    {
+    public void visitTypeInterface(TypeInterfaceType t, Void cxt) {
       String label = t.typeLabel();
-      for (StringIterator it = new StringIterator(label); it.hasNext();) {
+      for (StringIterator it = new StringIterator(label); it.hasNext(); ) {
         int ch = it.next();
         if (Character.isJavaIdentifierPart(ch))
           str.appendCodePoint(ch);
@@ -934,20 +829,16 @@ public class Types
     }
   }
 
-  public static boolean isStdType(String name)
-  {
+  public static boolean isStdType(String name) {
     return name.startsWith(Types.FUN_PREFIX) || name.startsWith(Types.PRC_PREFIX) || name.startsWith(Types.PTN_PREFIX)
         || name.startsWith(Names.FACE) || name.startsWith(Types.CON_PREFIX);
   }
 
-  public static JavaKind varType(IType type)
-  {
+  public static JavaKind varType(IType type) {
     type = TypeUtils.deRef(type);
 
     if (TypeUtils.isRawBoolType(type))
       return JavaKind.rawBool;
-    else if (TypeUtils.isRawCharType(type))
-      return JavaKind.rawChar;
     else if (TypeUtils.isRawIntType(type))
       return JavaKind.rawInt;
     else if (TypeUtils.isRawLongType(type))
@@ -964,26 +855,23 @@ public class Types
       return JavaKind.general;
   }
 
-  public static int stackAmnt(JavaKind kind)
-  {
+  public static int stackAmnt(JavaKind kind) {
     switch (kind) {
-    case rawBool:
-    case rawChar:
-    case rawInt:
-    case general:
-    case rawBinary:
-    case rawString:
-    case rawDecimal:
-    default:
-      return 1;
-    case rawLong:
-    case rawFloat:
-      return 2;
+      case rawBool:
+      case rawInt:
+      case general:
+      case rawBinary:
+      case rawString:
+      case rawDecimal:
+      default:
+        return 1;
+      case rawLong:
+      case rawFloat:
+        return 2;
     }
   }
 
-  public static IType genericFunType(IType type)
-  {
+  public static IType genericFunType(IType type) {
     type = TypeUtils.unwrap(type);
 
     if (TypeUtils.isTupleFunctionType(type)) {
@@ -1051,8 +939,7 @@ public class Types
       return type;
   }
 
-  public static IType genericConstructorType(IType type)
-  {
+  public static IType genericConstructorType(IType type) {
     type = TypeUtils.unwrap(type);
 
     assert TypeUtils.isConstructorType(type);
@@ -1086,21 +973,18 @@ public class Types
     }
   }
 
-  private static IType genericType(IType tp)
-  {
+  private static IType genericType(IType tp) {
     if (TypeUtils.isRawType(tp))
       return tp;
     else
       return new TypeVar();
   }
 
-  public static String setterName(String field)
-  {
+  public static String setterName(String field) {
     return Names.capName("set", field);
   }
 
-  public static String getterName(String field)
-  {
+  public static String getterName(String field) {
     return Names.capName("get", field);
   }
 }

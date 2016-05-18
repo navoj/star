@@ -22,6 +22,7 @@ private import arrays;
 private import updateable;
 private import folding;
 private import iterable;
+private import arithmetic;
 
 -- a simple implementation of the dictionary interfaces using lists
 

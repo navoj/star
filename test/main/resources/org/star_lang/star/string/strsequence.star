@@ -1,8 +1,8 @@
 strsequence is package{
 
-  shChar has type (char,IterState of cons of char)=>IterState of cons of char;
+  shChar has type (integer,IterState of cons of integer)=>IterState of cons of integer;
   fun shChar(X,ContinueWith(st)) is valof{
-    logMsg(info,"char: $X");
+    logMsg(info,"codepoint: $X");
     valis ContinueWith(cons(X,st))
   };
   
@@ -16,7 +16,7 @@ strsequence is package{
     
     logMsg(info,"R=$R");
     
-    assert R=ContinueWith(cons of ['g', 'n', 'i', 'r', 't', 's', ' ', 'a']);
+    assert R=ContinueWith(cons of [0cg, 0cn, 0ci, 0cr, 0ct, 0cs, 0c , 0ca]);
     
     def TT is concat(SS," and more");
     assert TT="a string and more";

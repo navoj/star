@@ -25,9 +25,11 @@ private import casting;
 private import maps;
 private import sets
 private import option;
+private import arithmetic;
 
 implementation equality over list of %t where equality over %t is {
   fun X = Y is arrayEqual(X,Y);
+  fun hashCode(A) is integer(__hashCode(A))
 } using {
   fun arrayEqual(A1,A2) is __array_equal(A1,A2,(=));
 }

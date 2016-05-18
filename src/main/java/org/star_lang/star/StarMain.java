@@ -120,14 +120,14 @@ public class StarMain
   }
 
   /**
-   * Invoke a Star function based on a package uri and program name
+   * Invoke a Star function based on a package uri and program NAME
    * 
    * @param repository
    *          where code is stored
    * @param uri
    *          to the source of the program
    * @param name
-   *          name of the function to invoke
+   *          NAME of the function to invoke
    * @param args
    *          top-level arguments to the main program being executed
    * @throws LanguageException

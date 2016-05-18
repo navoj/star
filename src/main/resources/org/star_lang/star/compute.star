@@ -14,8 +14,9 @@
  * permissions and limitations under the License.
  */
 
-private import base;
-private import strings;
+private import base
+private import strings
+private import arithmetic
 
 -- computation is an operator. 
 contract (computation) over m determines e is {

@@ -104,6 +104,37 @@ public class SetOps {
     }
   }
 
+
+  public static class SetHash implements IFunction {
+    public static final String name = "__set_hash";
+
+    @CafeEnter
+    public static int enter(ISet ar1) throws EvaluationException {
+      return ar1.hashCode();
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return Factory.newInt(enter((ISet) args[0]));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      // for all %v st (set of (%v),set of (%v),(%v,%v)=>boolean) => boolean
+      TypeVar v = new TypeVar("%v");
+
+      IType setType = TypeUtils.setType(v);
+      IType intType = StandardTypes.integerType;
+
+      IType funType = TypeUtils.functionType(setType, intType);
+      return new UniversalType(v, funType);
+    }
+  }
+
   public static class SetInsert implements IFunction {
     public static final String name = "__set_insert";
 

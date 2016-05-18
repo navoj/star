@@ -55,12 +55,6 @@ public class CopyAbstract implements IAbstractVisitor
   }
 
   @Override
-  public void visitCharLiteral(CharLiteral lit)
-  {
-    stack.push(new CharLiteral(getLocation(lit), lit.getLit()));
-  }
-
-  @Override
   public void visitFloatLiteral(FloatLiteral flt)
   {
     stack.push(new FloatLiteral(getLocation(flt), flt.getLit()));

@@ -20,7 +20,7 @@ import java.io.Serializable;
 public interface IType extends Serializable, TypeTransformable
 {
   /**
-   * Every type has a name. It is not generally the same as toString().
+   * Every type has a NAME. It is not generally the same as toString().
    * 
    * @return the label associated with the type.
    */

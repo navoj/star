@@ -46,8 +46,10 @@ implementation sequence over queue of %e determines %e is {
 
 implementation equality over queue of %t where equality over %t is {
   (=) = qEqual;
+  hashCode = qHash
 } using {
   fun qEqual(queue{front=F1;back=B1},queue{front=F2;back=B2}) is F1++reverse(B1)=F2++reverse(B2);
+  fun qHash(queue{front=F;back=B}) is hashCode(F++reverse(B))
 };
 
 implementation sizeable over queue of %t is {

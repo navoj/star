@@ -96,7 +96,7 @@ public class Theta {
    * <p>
    * Ptn may be either
    * <p>
-   * name : type
+   * NAME : type
    * <p>
    * or a more complex pattern. In the latter case, the right hand side is not permitted to be a
    * function definition.
@@ -1131,7 +1131,6 @@ public class Theta {
 
         switch (free.getKind()) {
           case rawBool:
-          case rawChar:
           case rawInt:
             hwm.probe(2);
             ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));

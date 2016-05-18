@@ -17,55 +17,41 @@ import org.star_lang.star.data.IValue;
  * permissions and limitations under the License.
  */
 
-public class DefaultAbstractVisitor implements IAbstractVisitor
-{
+public class DefaultAbstractVisitor implements IAbstractVisitor {
 
   @Override
-  public void visitApply(Apply app)
-  {
+  public void visitApply(Apply app) {
     app.getOperator().accept(this);
     for (IValue el : app.getArgs())
       ((IAbstract) el).accept(this);
   }
 
   @Override
-  public void visitBooleanLiteral(BooleanLiteral lit)
-  {
+  public void visitBooleanLiteral(BooleanLiteral lit) {
   }
 
   @Override
-  public void visitCharLiteral(CharLiteral lit)
-  {
+  public void visitFloatLiteral(FloatLiteral flt) {
   }
 
   @Override
-  public void visitFloatLiteral(FloatLiteral flt)
-  {
+  public void visitStringLiteral(StringLiteral str) {
   }
 
   @Override
-  public void visitStringLiteral(StringLiteral str)
-  {
+  public void visitIntegerLiteral(IntegerLiteral lit) {
   }
 
   @Override
-  public void visitIntegerLiteral(IntegerLiteral lit)
-  {
+  public void visitLongLiteral(LongLiteral lit) {
   }
 
   @Override
-  public void visitLongLiteral(LongLiteral lit)
-  {
+  public void visitBigDecimal(BigDecimalLiteral lit) {
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit)
-  {
-  }
-
-  @Override
-  public void visitName(Name name)
-  {
+  public void visitName(Name name) {
   }
 
 }

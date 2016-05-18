@@ -52,7 +52,7 @@ public class RegexpUtils
         subVars.add(var.toString());
         blder.appendCodePoint(ch);
         if (ch != ')')
-          throw new LanguageException(StringUtils.msg("expecting a ')' in regular expression after variable name: ", var), varLoc);
+          throw new LanguageException(StringUtils.msg("expecting a ')' in regular expression after variable NAME: ", var), varLoc);
         return;
       }
 

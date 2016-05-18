@@ -195,14 +195,6 @@ delta is package {
     scalarDiffer(I,I,_) is list of [];
     scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
   }
-  
-  implementation diffable over char is {
-    diff = scalarDiff();
-  } using {
-    scalarDiff() is (function(X1,X2,Loc) is scalarDiffer(X1,X2,Loc));
-    scalarDiffer(I,I,_) is list of [];
-    scalarDiffer(I1,I2,Loc) is list of [delta(Loc, dOprUpdate, KFunc(I2), I2)]
-  }
 
   implementation diffable over string is {
     diff = scalarDiff();

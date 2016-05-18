@@ -28,7 +28,6 @@ import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
@@ -169,12 +168,6 @@ public class Expressions {
       BigDecimal big = ((BigDecimalLiteral) exp).getLit();
       genDecimalConst(ins, hwm, big);
       return cont.cont(SrcSpec.rawDecimalSrc, dict, loc, ccxt);
-    } else if (exp instanceof CharLiteral) {
-      int ch = ((CharLiteral) exp).getLit();
-
-      genIntConst(ins, hwm, ch);
-
-      return cont.cont(SrcSpec.rawCharSrc, dict, loc, ccxt);
     } else if (exp instanceof StringLiteral) {
       ins.add(new LdcInsnNode(((Literal) exp).getLit()));
 

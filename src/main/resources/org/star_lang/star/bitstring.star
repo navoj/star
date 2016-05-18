@@ -59,8 +59,6 @@ implementation bitstring over long is {
   fun .~. long(L) is long(__long_bit_neg(L));
   fun .#. long(L) is integer(__long_bit_count(L));
 }
-  
-fun hashCode(X) is integer(__hashCode(X));
 
 private fun showBits(X) is let{
   fun showBit(0) is "0"

@@ -92,7 +92,7 @@ contract reversible over t is {
   reverse has type (t)=>t;
 }
 
-contract explosion over (t,c) determines e is {
-  explode has type (t)=>c of e;
-  implode has type (c of e) => t;
+contract explosion over (t,c) is {
+  explode has type (t)=>c;
+  implode has type (c)=>t;
 }

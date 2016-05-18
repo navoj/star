@@ -78,6 +78,7 @@ public class StandardNames
   public static final String FALSE = standard(FalseValue.name);
 
   public static final String HASH = standard("hash");
+  public static final String HASHCODE = standard("hashCode");
   public static final String DICTIONARY = standard("dictionary");
   public static final String SET = standard("set");
   public static final String ANY = keyword("any");

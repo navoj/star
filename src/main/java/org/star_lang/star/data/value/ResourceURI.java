@@ -29,7 +29,7 @@ import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.URIUtils;
 
 /**
- * A Resource URI identifies a resource by name.
+ * A Resource URI identifies a resource by NAME.
  * <p/>
  * Follows the Star type definitions:
  * <p/>

@@ -25,10 +25,10 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
 public interface ITypeDescription extends PrettyPrintable
 {
   /**
-   * The name of this type. Note that a type expression may involve type variables, so a type's name
+   * The NAME of this type. Note that a type expression may involve type variables, so a type's NAME
    * is not sufficient information to construct instances of a type expression.
    * 
-   * @return the name of the type
+   * @return the NAME of the type
    */
   String getName();
 

@@ -1,16 +1,6 @@
 package org.star_lang.star.compiler.wff;
 
-import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
-import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
-import org.star_lang.star.compiler.ast.FloatLiteral;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IAbstractVisitor;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.LongLiteral;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.ast.StringLiteral;
+import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.data.IValue;
 
 /*
@@ -27,74 +17,57 @@ import org.star_lang.star.data.IValue;
  * permissions and limitations under the License.
  */
 
-public class Complexity implements IAbstractVisitor
-{
+public class Complexity implements IAbstractVisitor {
   private int count = 0;
 
-  private Complexity()
-  {
+  private Complexity() {
   }
 
-  public static int complexity(IAbstract term)
-  {
+  public static int complexity(IAbstract term) {
     Complexity comp = new Complexity();
     term.accept(comp);
     return comp.count;
   }
 
   @Override
-  public void visitApply(Apply app)
-  {
+  public void visitApply(Apply app) {
     count++;
     for (IValue arg : app.getArgs())
       ((IAbstract) arg).accept(this);
   }
 
   @Override
-  public void visitBooleanLiteral(BooleanLiteral lit)
-  {
+  public void visitBooleanLiteral(BooleanLiteral lit) {
     count++;
   }
 
   @Override
-  public void visitCharLiteral(CharLiteral lit)
-  {
+  public void visitFloatLiteral(FloatLiteral flt) {
     count++;
   }
 
   @Override
-  public void visitFloatLiteral(FloatLiteral flt)
-  {
+  public void visitIntegerLiteral(IntegerLiteral lit) {
     count++;
   }
 
   @Override
-  public void visitIntegerLiteral(IntegerLiteral lit)
-  {
+  public void visitLongLiteral(LongLiteral lit) {
     count++;
   }
 
   @Override
-  public void visitLongLiteral(LongLiteral lit)
-  {
+  public void visitBigDecimal(BigDecimalLiteral lit) {
     count++;
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit)
-  {
+  public void visitName(Name name) {
     count++;
   }
 
   @Override
-  public void visitName(Name name)
-  {
-    count++;
-  }
-
-  @Override
-  public void visitStringLiteral(StringLiteral str)
-  {
+  public void visitStringLiteral(StringLiteral str) {
     count++;
   }
 

@@ -24,8 +24,8 @@ implementation coercion over (string,boolean) is {
   fun coerce(string(X)) is __string_boolean(X);
 }
 
-implementation coercion over (string,char) is {
-  fun coerce(string(X)) is __string_char(X);
+implementation coercion over (string,list of integer) is {
+  fun coerce(string(X)) is __string_array(X);
 }
 
 implementation coercion over (string,integer) is {
@@ -57,8 +57,8 @@ implementation coercion over (boolean,string) is {
    |  coerce(false) is "false"
 }
 
-implementation coercion over (char,string) is {
-  fun coerce(char(C)) is string(__char_string(C))
+implementation coercion over (list of integer,string) is {
+  fun coerce(L) is string(__array_string(L))
 }
 
 implementation coercion over (integer,string) is {
@@ -135,22 +135,6 @@ implementation coercion over (uri,string) is {
 
 implementation coercion over (binary,string) is {
   fun coerce(S) is __binary_string(S);
-}
-
-implementation coercion over (integer,char) is {
-  fun coerce(integer(I)) is char(__integer_char(I));
-}
-
-implementation coercion over (char,integer) is {
-  fun coerce(char(C)) is integer(__char_integer(C));
-}
-
-implementation coercion over (long,char) is {
-  fun coerce(long(I)) is char(__integer_char(__long_integer(I)));
-}
-
-implementation coercion over (char,long) is {
-  fun coerce(char(C)) is long(__integer_long(__char_integer(C)));
 }
 
 implementation coercion over (quoted,string) is {

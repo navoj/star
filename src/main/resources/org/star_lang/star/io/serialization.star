@@ -467,32 +467,6 @@ serialization is package {
     };
   }
 
-/* serialize chars as three bytes; suffices to write all possible
- Unicode characters, which have 21 bits (note: (strict) UTF-8 is not a
- sufficient encoding to transmit and receive characters, so we stay
- with sending three bytes). */
-  implementation serializable over char is {
-    shove is shoveChar;
-
-    yank is yankChar;
-  } using {
-    MAGIC_CHAR is 0xE08080;
-    shoveChar(c) default is shoveChar0(c as integer);
-
-    shoveChar0(sv) is shoverM computation {
-      perform shoveWord8(word8(sv .&. 0xff));
-      perform shoveWord16(word16((sv .>>>. 8) .&. 0xffff));
-      valis ();
-    };
-
-    yankChar is yanker computation {
-      _word8(o1) is valof yankWord8;
-      _word16(s2) is valof yankWord16;
-      i is (o1 .|. (s2 .<<. 8));
-      valis i as char;
-    };
-  };
-
 /* serialize string, using UTF-8 internally */
   implementation serializable over string is {
     shove(s) is shoveString(s);

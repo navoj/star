@@ -26,7 +26,7 @@ public interface TypeInterface extends PrettyPrintable
    * Get the type of an individual field in the interface
    * 
    * @param name
-   * @return null if name not defined, otherwise the type associated with the field
+   * @return null if NAME not defined, otherwise the type associated with the field
    */
   IType getFieldType(String name);
 

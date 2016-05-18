@@ -18,6 +18,7 @@
 
 private import base;
 private import option;
+private import arithmetic;
 
 type binmap of (%k,%v) is 
      emptyTree

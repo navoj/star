@@ -15,6 +15,7 @@
  */
 
 private import base;
+private import arithmetic;
 private import strings;
 
 -- temporary "empty" implementation

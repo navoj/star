@@ -51,7 +51,6 @@ public class CaseCompile {
     switch (var.getKind()) {
       case rawBool:
         return booleanCases(loc, var, rules, deflt, handler, cont, ccxt);
-      case rawChar:
       case rawInt:
       case rawLong:
       case rawFloat:
@@ -294,7 +293,6 @@ public class CaseCompile {
 
     switch (var.getKind()) {
       case rawBool:
-      case rawChar:
       case rawInt:
         var.loadValue(mtd, hwm, dict);
         break;
@@ -339,14 +337,6 @@ public class CaseCompile {
 
         int mark = hwm.getDepth();
         switch (var.getKind()) {
-          case rawChar: {
-            var.loadValue(mtd, hwm, dict);
-            hwm.bump(1);
-            ins.add(new LdcInsnNode(((CharLiteral) cse.left()).getLit()));
-            ins.add(new JumpInsnNode(Opcodes.IF_ICMPNE, test));
-            handler.compile(cse.right(), reconcile, ccxt);
-            break;
-          }
           case rawInt: {
             var.loadValue(mtd, hwm, dict);
             hwm.bump(1);

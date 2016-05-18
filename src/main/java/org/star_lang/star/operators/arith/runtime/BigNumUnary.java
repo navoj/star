@@ -117,4 +117,27 @@ public class BigNumUnary
       return TypeUtils.functionType(decimalType, decimalType);
     }
   }
+
+  public static class DecimalHash implements IFunction {
+    public static final String name = "__decimal_hash";
+
+    @CafeEnter
+    public static int enter(BigDecimal s1) {
+      return  s1.hashCode();
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return Factory.newInt(enter(Factory.decimalValue(args[0])));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type(){
+      return TypeUtils.functionType(StandardTypes.rawDecimalType, StandardTypes.rawIntegerType);
+    }
+  }
 }

@@ -5,17 +5,7 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntAbs;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntCbrt;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntCeil;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntExp;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntFloor;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntLog;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntLog10;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntRandom;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntRound;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntSqrt;
-import org.star_lang.star.operators.arith.runtime.IntUnary.IntUMinus;
+import org.star_lang.star.operators.arith.runtime.IntUnary.*;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -45,6 +35,7 @@ public abstract class IntUnary {
     cxt.declareBuiltin(new Builtin("__integer_ceil", type, IntCeil.class));
     cxt.declareBuiltin(new Builtin("__integer_floor", type, IntFloor.class));
     cxt.declareBuiltin(new Builtin("__integer_round", type, IntRound.class));
+    cxt.declareBuiltin(new Builtin(IntHash.name, IntHash.type(), IntHash.class));
     cxt.declareBuiltin(new Builtin("__integer_log", type, IntLog.class));
     cxt.declareBuiltin(new Builtin("__integer_log10", type, IntLog10.class));
     cxt.declareBuiltin(new Builtin("__integer_exp", type, IntExp.class));

@@ -23,7 +23,6 @@ import org.star_lang.star.code.repository.CodeCatalog;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.BigDecimalLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
@@ -107,8 +106,6 @@ public class Patterns {
       handleFloat(termSpec, (FloatLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof BigDecimalLiteral)
       handleBignum(termSpec, (BigDecimalLiteral) ptn, dict, succ, fail, ccxt);
-    else if (ptn instanceof CharLiteral)
-      handleCharLiteral(termSpec, (CharLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof StringLiteral)
       handleStringLiteral(termSpec, (StringLiteral) ptn, dict, succ, fail, ccxt);
     else if (CafeSyntax.isTuple(ptn))
@@ -143,7 +140,7 @@ public class Patterns {
     ErrorReport errors = ccxt.getErrors();
 
     if (!(callPtn instanceof Name))
-      errors.reportError("require pattern name here, not " + callPtn, callPtn.getLoc());
+      errors.reportError("require pattern NAME here, not " + callPtn, callPtn.getLoc());
     else {
       Location loc = ptn.getLoc();
       String pttrnName = Abstract.getId(callPtn);
@@ -279,7 +276,7 @@ public class Patterns {
     CodeCatalog bldCat = ccxt.getBldCat();
 
     if (!(callPtn instanceof Name))
-      errors.reportError("require pattern name here, not " + callPtn, callPtn.getLoc());
+      errors.reportError("require pattern NAME here, not " + callPtn, callPtn.getLoc());
     else {
       Location loc = ptn.getLoc();
       String pttrnName = Abstract.getId(callPtn);
@@ -577,28 +574,6 @@ public class Patterns {
     hwm.reset(mark);
   }
 
-  private static void handleCharLiteral(ISpec termSpec, CharLiteral lit, CafeDictionary dict,
-                                        IContinuation succ, IContinuation fail, CodeContext ccxt) {
-    Location loc = lit.getLoc();
-    MethodNode mtd = ccxt.getMtd();
-    HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
-
-    Expressions.checkType(termSpec, SrcSpec.rawCharSrc, mtd, dict, hwm);
-
-    int mark = hwm.getDepth();
-    InsnList ins = mtd.instructions;
-
-    Expressions.genIntConst(ins, hwm, lit.getLit());
-
-    LabelNode okLabel = new LabelNode();
-    ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
-    ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
-    hwm.reset(mark);
-  }
-
   private static void handleStringLiteral(ISpec termSpec, StringLiteral lit, CafeDictionary dict,
                                           IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
@@ -637,7 +612,7 @@ public class Patterns {
 
     ICafeBuiltin matcher = Intrinsics.getBuiltin(RegexpOps.name);
     String regPtn = CafeSyntax.regexpExp(regexp);
-    // Each regular expression will have its own name - because it encodes the
+    // Each regular expression will have its own NAME - because it encodes the
     // pattern also
     String localName = Utils.javaIdentifierOf("regexp" + regPtn);
     String javaSig = Utils.javaTypeSig(Regexp.class);
@@ -690,7 +665,7 @@ public class Patterns {
 
       ins.add(new LdcInsnNode(regexp));
 
-      // Theta.setupClassTypeContext(klass.name, ins, hwm);
+      // Theta.setupClassTypeContext(klass.NAME, ins, hwm);
       ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, regexpClass, Types.INIT, "(" + Types.JAVA_STRING_SIG + ")V"));
 
       ins.add(new FieldInsnNode(Opcodes.PUTSTATIC, klass.name, name, javaSig));
@@ -728,7 +703,7 @@ public class Patterns {
 
       switch (var.getKind()) {
         case builtin:
-          errors.reportError(name + "is a builtin name, not permitted as a pattern", loc);
+          errors.reportError(name + "is a builtin NAME, not permitted as a pattern", loc);
           break;
         case constructor: {
           TypeDescription desc = (TypeDescription) dict.findType(var.getType().typeLabel());
@@ -753,12 +728,6 @@ public class Patterns {
           break;
         }
         case rawBool:
-          var.loadValue(mtd, hwm, dict);
-          ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
-          fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
-          break;
-
-        case rawChar:
           var.loadValue(mtd, hwm, dict);
           ins.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, okLabel));
           fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
@@ -868,7 +837,7 @@ public class Patterns {
         }
 
         default:
-          errors.reportError(StringUtils.msg(var.getName(), " is not a valid pattern name"), loc);
+          errors.reportError(StringUtils.msg(var.getName(), " is not a valid pattern NAME"), loc);
       }
     } else
       errors.reportError(StringUtils.msg("pattern constructor ", lbl, " not known"), loc);

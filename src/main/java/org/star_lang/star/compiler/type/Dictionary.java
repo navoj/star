@@ -24,7 +24,7 @@ import org.star_lang.star.data.type.*;
 
 public interface Dictionary extends ITypeContext {
   /**
-   * Is name a declared variable in this dictionary
+   * Is NAME a declared variable in this dictionary
    *
    * @param name
    * @return true if it is.
@@ -32,7 +32,7 @@ public interface Dictionary extends ITypeContext {
   boolean isDeclaredVar(String name);
 
   /**
-   * Is the name defined at all in the dictionary
+   * Is the NAME defined at all in the dictionary
    *
    * @param name
    * @return
@@ -69,7 +69,7 @@ public interface Dictionary extends ITypeContext {
   /**
    * Declare a variable with a defined access pattern
    *
-   * @param name        the name of the variable being declared
+   * @param name        the NAME of the variable being declared
    * @param var         the variable being declared
    * @param access      whether the variable can be updated or not
    * @param visibility  is this variable to be exported from current environment
@@ -86,7 +86,7 @@ public interface Dictionary extends ITypeContext {
   /**
    * Find the kind of a type in the dictionary
    *
-   * @param the name of the type in question
+   * @param the NAME of the type in question
    * @return its kind if known
    */
   Kind kindOfType(String name);
@@ -112,7 +112,7 @@ public interface Dictionary extends ITypeContext {
   Dictionary fork();
 
   /**
-   * Is a name declared in this dictionary but not in an outer dictionary?
+   * Is a NAME declared in this dictionary but not in an outer dictionary?
    * <p>
    * This is a test for a non-free variable.
    *

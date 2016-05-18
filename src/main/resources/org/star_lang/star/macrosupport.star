@@ -31,9 +31,9 @@ private import strings;
 
 implementation equality over quoted is {
   (=) = astEqual;
+  hashCode = astHash;
 } using {
   fun astEqual(boolAst(_,B),boolAst(_,B)) is true
-   |  astEqual(charAst(_,C),charAst(_,C)) is true
    |  astEqual(stringAst(_,S),stringAst(_,S)) is true
    |  astEqual(integerAst(_,I),integerAst(_,I)) is true
    |  astEqual(longAst(_,L),longAst(_,L)) is true
@@ -51,6 +51,14 @@ implementation equality over quoted is {
     }
     valis true;
   }
+
+  fun astHash(boolAst(_,B)) is hashCode(B)
+   |  astHash(stringAst(_,S)) is hashCode(S)
+   |  astHash(integerAst(_,I)) is hashCode(I)
+   |  astHash(longAst(_,L)) is hashCode(L)
+   |  astHash(floatAst(_,F)) is hashCode(F)
+   |  astHash(nameAst(_,Id)) is hashCode(Id)
+   |  astHash(applyAst(_,O,A)) is (37*astHash(O)) + hashCode(A)
 }
 
 -- invoked as part of ./ search in macros
@@ -151,7 +159,6 @@ fun __macro_isTuple(applyAst(_,nameAst(_,Op),_)) is Op matches `\$[0-9]+`
  |  __macro_isTuple(_) default is false
 
 fun __macro_location(boolAst(L,_)) is L
- |  __macro_location(charAst(L,_)) is L
  |  __macro_location(stringAst(L,_)) is L
  |  __macro_location(integerAst(L,_)) is L
  |  __macro_location(longAst(L,_)) is L

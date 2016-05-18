@@ -1,10 +1,5 @@
 package org.star_lang.star.compiler.wff;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
@@ -16,33 +11,35 @@ import org.star_lang.star.data.IList;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Compile a macro rule into a sequence of operations
- *
+ * <p>
  * Copyright (c) 2015. Francis G. McCabe
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
-public class WffCompile
-{
+public class WffCompile {
   private Map<String, Integer> dict = new HashMap<>();
   private int varCount = 0;
 
-  public WffCompile()
-  {
+  public WffCompile() {
   }
 
-  public WffRule compileRule(IAbstract rule, WffProgram ruleSet, ErrorReport errors)
-  {
+  public WffRule compileRule(IAbstract rule, WffProgram ruleSet, ErrorReport errors) {
     if (Abstract.isUnary(rule, StandardNames.META_HASH))
       return compileRule(Abstract.getArg(rule, 0), ruleSet, errors);
     if (Abstract.isBinary(rule, StandardNames.WFF_RULE)) {
@@ -89,8 +86,7 @@ public class WffCompile
     return null;
   }
 
-  private WffOp compilePattern(IAbstract ptn, ErrorReport errors)
-  {
+  private WffOp compilePattern(IAbstract ptn, ErrorReport errors) {
     if (ptn instanceof Apply) {
       Apply app = (Apply) ptn;
 
@@ -147,9 +143,7 @@ public class WffCompile
     } else if (ptn instanceof Name) {
       String sym = ((Name) ptn).getId();
 
-      if (sym.equals(StandardTypes.CHAR))
-        return new WffCharPtn();
-      else if (sym.equals(StandardTypes.STRING))
+      if (sym.equals(StandardTypes.STRING))
         return new WffStringPtn();
       else if (sym.equals(StandardNames.WFF_REGEXP))
         return new WffRegexpPtn();
@@ -171,8 +165,7 @@ public class WffCompile
       return new WffLitPtn(ptn);
   }
 
-  private WffCond compileBody(IAbstract bdy, WffProgram ruleSet, ErrorReport errors)
-  {
+  private WffCond compileBody(IAbstract bdy, WffProgram ruleSet, ErrorReport errors) {
     if (bdy instanceof Apply) {
       Apply body = ((Apply) bdy);
 
@@ -186,23 +179,23 @@ public class WffCompile
           final WffOp ptn;
 
           switch (categoryId) {
-          case StandardNames.WFF_KEYWORD:
-            ptn = new WffKeywordPtn();
-            break;
-          case StandardNames.WFF_IDENTIFIER:
-            ptn = new WffIdentifierPtn();
-            break;
-          case StandardNames.WFF_SYMBOL:
-            ptn = new WffSymbolPtn();
-            break;
-          case "integer":
-            ptn = new WffIntegerPtn();
-            break;
-          case "string":
-            ptn = new WffStringPtn();
-            break;
-          default:
-            ptn = null;
+            case StandardNames.WFF_KEYWORD:
+              ptn = new WffKeywordPtn();
+              break;
+            case StandardNames.WFF_IDENTIFIER:
+              ptn = new WffIdentifierPtn();
+              break;
+            case StandardNames.WFF_SYMBOL:
+              ptn = new WffSymbolPtn();
+              break;
+            case "integer":
+              ptn = new WffIntegerPtn();
+              break;
+            case "string":
+              ptn = new WffStringPtn();
+              break;
+            default:
+              ptn = null;
           }
 
           if (ptn != null)
@@ -219,7 +212,7 @@ public class WffCompile
         if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
           String var = identifierOf(((Apply) ptn).getArg(0));
           if (var == null)
-            errors.reportError("missing variable name", bdy.getLoc());
+            errors.reportError("missing variable NAME", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
               return new WffStarPtn(dict.get(var), identifierOf(category));
@@ -230,7 +223,7 @@ public class WffCompile
         } else if (ptn instanceof Name) {
           String var = identifierOf(ptn);
           if (var == null)
-            errors.reportError("missing validation variable name", bdy.getLoc());
+            errors.reportError("missing validation variable NAME", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
               return new WffStarPtn(dict.get(var), identifierOf(category));
@@ -245,7 +238,7 @@ public class WffCompile
         if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
           String var = identifierOf(((Apply) ptn).getArg(0));
           if (var == null)
-            errors.reportError("missing variable name", bdy.getLoc());
+            errors.reportError("missing variable NAME", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
               return new WffSequencePtn(dict.get(var), StandardNames.TERM, identifierOf(category));
@@ -256,7 +249,7 @@ public class WffCompile
         } else if (ptn instanceof Name) {
           String var = identifierOf(ptn);
           if (var == null)
-            errors.reportError("missing validation variable name", bdy.getLoc());
+            errors.reportError("missing validation variable NAME", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
               return new WffSequencePtn(dict.get(var), StandardNames.TERM, identifierOf(category));
@@ -271,7 +264,7 @@ public class WffCompile
         if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
           String var = identifierOf(((Apply) ptn).getArg(0));
           if (var == null)
-            errors.reportError("missing variable name", bdy.getLoc());
+            errors.reportError("missing variable NAME", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
               return new WffSequencePtn(dict.get(var), StandardNames.PIPE, identifierOf(category));
@@ -282,7 +275,7 @@ public class WffCompile
         } else if (ptn instanceof Name) {
           String var = identifierOf(ptn);
           if (var == null)
-            errors.reportError("missing validation variable name", bdy.getLoc());
+            errors.reportError("missing validation variable NAME", bdy.getLoc());
           else {
             if (dict.containsKey(var)) {
               return new WffSequencePtn(dict.get(var), StandardNames.PIPE, identifierOf(category));
@@ -330,14 +323,13 @@ public class WffCompile
     return new WffPtnNull();
   }
 
-  private WffBuildOp compileBuilder(IAbstract term, ErrorReport errors)
-  {
+  private WffBuildOp compileBuilder(IAbstract term, ErrorReport errors) {
     Location loc = term.getLoc();
 
     if (Abstract.isUnary(term, StandardNames.QUESTION)) {
       String var = identifierOf(((Apply) term).getArg(0));
       if (var == null) {
-        errors.reportError("missing variable name", loc);
+        errors.reportError("missing variable NAME", loc);
         return new WffLiteral(term);
       } else {
         if (dict.containsKey(var))
@@ -350,7 +342,7 @@ public class WffCompile
     } else if (term instanceof Name) {
       String var = identifierOf(term);
       if (var == null) {
-        errors.reportError("missing validation variable name", loc);
+        errors.reportError("missing validation variable NAME", loc);
         return new WffLiteral(term);
       } else if (dict.containsKey(var))
         return new WffVar(dict.get(var), var);
@@ -382,8 +374,7 @@ public class WffCompile
       return new WffLiteral(term);
   }
 
-  private static String identifierOf(IAbstract trm)
-  {
+  private static String identifierOf(IAbstract trm) {
     if (trm instanceof Name)
       return ((Name) trm).getId();
     else

@@ -71,7 +71,7 @@ public class OperatorListener implements TokenListener
     case gotOpenParen:
       if (token.getType() == TokenType.string) {
         String op = token.getImage();
-        if (!Tokenizer.isIdentifierStart(op))
+        if (!Tokenizer.isIdentifierStart(op.codePointAt(0)))
           TokenChar.recordToken(charMap, op);
       }
       listenerState = State.idle;

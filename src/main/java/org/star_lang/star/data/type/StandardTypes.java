@@ -30,9 +30,6 @@ public class StandardTypes
   public static final String STRING = "string";
   public static final String RAW_STRING = "string_";
   public static final String NON_STRING = NonStringWrapper.name;
-  public static final String CHAR = "char";
-  public static final String RAW_CHAR = "char_";
-  public static final String NON_CHAR = "nonChar";
   public static final String INTEGER = "integer";
   public static final String RAW_INTEGER = "integer_";
   public static final String NON_INTEGER = "nonInteger";
@@ -56,7 +53,6 @@ public class StandardTypes
   public static final String RAW_BINARY = "binary_";
   public static final String EXCEPTION = "exception";
 
-  public static final IType charType = TypeUtils.typeExp(CHAR);
   public static final IType longType = TypeUtils.typeExp(LONG);
   public static final IType floatType = TypeUtils.typeExp(FLOAT);
   public static final IType integerType = TypeUtils.typeExp(INTEGER);
@@ -66,7 +62,6 @@ public class StandardTypes
   public static final IType binaryType = TypeUtils.typeExp(BINARY);
 
   public static final IType rawBoolType = TypeUtils.typeExp(RAW_BOOLEAN);
-  public static final IType rawCharType = TypeUtils.typeExp(RAW_CHAR);
   public static final IType rawLongType = TypeUtils.typeExp(RAW_LONG);
   public static final IType rawFloatType = TypeUtils.typeExp(RAW_FLOAT);
   public static final IType rawIntegerType = TypeUtils.typeExp(RAW_INTEGER);

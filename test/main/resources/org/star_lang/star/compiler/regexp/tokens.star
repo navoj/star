@@ -4,7 +4,6 @@ tokens is package{
              or longTok(long,astLocation)
              or floatTok(float,astLocation)
              or decimalTok(decimal,astLocation)
-             or charTok(char,astLocation)
              or stringTok(string,astLocation)
              or terminal;
 
@@ -30,9 +29,7 @@ tokens is package{
     fun nxtLne((Count,Ln,Off)) is (Count+1,Ln+1,0);
 
     fun reportId(Id,Cnt,L,Lc) is (idTok(Id,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
-    
-    fun reportChr(S,Cnt,L,Lc) where S[0] has value ch is (charTok(ch, locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
-    
+
     fun reportString(S,Cnt,L,Lc) is (stringTok(S,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
     
     fun reportChrInteger(S,Cnt,L,Lc) where S[0] has value ch is (integerTok(ch as integer,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
@@ -106,9 +103,8 @@ tokens is package{
       case `([0-9]*\.[0-9]+[aA]:N)(.*:L)` is reportDecimal(N,size(N),L,Lc);
       case `([0-9]*\.[0-9]+[eE][0-9]+:N)(.*:L)` is reportFloat(N,size(N),L,Lc);
 	  case `([A-Za-z_][A-Za-z0-9_]*:I)(.*:L)` is reportId(I,size(I),L,Lc);
-	  case `'(.:ch)'(.*:L)` is reportChr(ch,3,L,Lc);
 	  case `(.:O)(.*:L)` is valof{
-	    logMsg(info,"Bad char: $O");
+	    logMsg(info,"Bad character: $O");
 	    valis reportId(O,1,L,Lc)
 	  }
 	  case "" is reportTerminal(Lc);

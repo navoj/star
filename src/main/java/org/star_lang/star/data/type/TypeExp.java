@@ -39,7 +39,7 @@ public class TypeExp implements IType
    * of simple non-generic types and generic type expressions.
    * 
    * @param label
-   *          the name of the type
+   *          the NAME of the type
    * @param args
    *          a varargs array of types that form the type arguments of the type expression.
    */

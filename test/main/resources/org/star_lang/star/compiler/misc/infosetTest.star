@@ -64,8 +64,13 @@ jsonTest is package{
     
     logMsg(info,"float parse = $("-45.45e23" as json)");
     assert "-45.45e23" as json matches F and approx(F,iFlt(-45.45e23));
+
+    def fred is "\"fred\""
+
+    logMsg(info,"explode fred = $(explode(fred) has type list of integer)");
+    logMsg(info,"string parse = $(__display(fred as json))");
     
-    assert "\"fred\"" as json matches iText("fred");
+    assert fred as json matches iText("fred");
     assert "\"fr\\ned\"" as json matches iText("fr\ned");
     assert "\"fr\\\\ed\"" as json matches iText("fr\\ed");
     assert "\"fr\\u1234ed\"" as json matches iText("fr\u1234;ed");

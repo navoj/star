@@ -76,11 +76,6 @@ implementation arithmetic over decimal is{
   def one is 1a;
 };
 
-implementation largeSmall over char is {
-  def largest is char(__integer_char(0xffffff_));
-  def smallest is char(__integer_char(0_));
-}
-
 implementation largeSmall over integer is {
   def largest is integer(0x7fffffff_);
   def smallest is integer(0x80000000_);

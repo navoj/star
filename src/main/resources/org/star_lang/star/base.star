@@ -21,58 +21,65 @@
 -- Define some standard contracts
 contract equality over t is {
   (=) has type (t,t) => boolean;
+  hashCode has type (t)=>integer;
 };
 
 implementation equality over boolean is {
   fun true=true is true
    |  false=false is true
    |  _ = _ default is false
-};
-
-implementation equality over char is {
-  fun char(X) = char(Y) is __char_eq(X,Y)
-   |  _ = _ default is false
+  fun hashCode(true) is 1
+   |  hashCode(false) is 0
 };
 
 implementation equality over integer is {
   fun integer(X) = integer(Y) is __integer_eq(X,Y)
    |  _ = _ default is false
+  fun hashCode(X) is X
 };
 
 implementation equality over long is {
   fun long(X) = long(Y) is __long_eq(X,Y)
    |  _ = _ default is false
+  fun hashCode(X) is integer(__hashCode(X))
 };
 
 implementation equality over float is {
   fun float(X) = float(Y) is __float_eq(X,Y)
    |  _ = _ default is false
+  fun hashCode(X) is integer(__hashCode(X))
 };
 
 implementation equality over decimal is {
   fun decimal(X) = decimal(Y) is __decimal_eq(X,Y)
    |  _ = _ default is false
+  fun hashCode(X) is integer(__hashCode(X))
 };
 
 implementation equality over string is {
   fun string(X) = string(Y) is __string_eq(X,Y) 
    | _ = _ default is false
+  fun hashCode(S) is integer(__hashCode(S))
 };
 
 implementation equality over any is {
   fun X = Y is __equal(X,Y);
+  fun hashCode(X) is integer(__hashCode(X))
 }
 
 implementation equality over binary is {
   fun X=Y is __binary_equal(X,Y);
+  fun hashCode(X) is integer(__hashCode(X))
 };
 
 implementation equality over astLocation is {
   fun L=R is __equal(L,R);
+  fun hashCode(L) is integer(__hashCode(L))
 };
 
 implementation equality over %t default is {
   fun L=R is __equal(L,R);
+  fun hashCode(L) is integer(__hashCode(L))
 };
 
 contract largeSmall over %t is {
@@ -116,13 +123,6 @@ implementation comparable over decimal is{
   fun decimal(X)>=decimal(Y) is __decimal_ge(X,Y);
 }
 
-implementation comparable over char is{
-  fun char(X)<char(Y) is __char_lt(X,Y);
-  fun char(X)=<char(Y) is __char_le(X,Y);
-  fun char(X)>char(Y) is __char_gt(X,Y);
-  fun char(X)>=char(Y) is __char_ge(X,Y);
-}
-
 implementation comparable over string is{
   fun string(X)<string(Y) is __string_lt(X,Y);
   fun string(X)=<string(Y) is __string_le(X,Y);
@@ -133,6 +133,7 @@ implementation comparable over string is{
 implementation equality over () is {
   fun () = () is true
    |  _ = _ default is false;
+  fun hashCode(()) is 0
 };
 
 implementation comparable over () is {
@@ -144,8 +145,10 @@ implementation comparable over () is {
 
 implementation equality over ((%l,%r) where equality over %l and equality over %r) is {
   (=) = pairEq;
+  hashCode = pairHash
 } using {
   fun pairEq((L1,R1),(L2,R2)) is L1=L2 and R1=R2;
+  fun pairHash(L) is integer(__hashCode(L))
 }
 
 implementation comparable over ((%l,%r) where comparable over %l and equality over %l and comparable over %r and equality over %r) is {
@@ -170,8 +173,10 @@ implementation comparable over ((%l,%r) where comparable over %l and equality ov
 implementation equality over ((%l,%m,%r) where equality over %l and
  equality over %m and equality over %r) is {
   (=) = tripleEq;
+  hashCode = tripleHash
 } using {
   fun tripleEq((L1,M1,R1),(L2,M2,R2)) is L1=L2 and M1=M2 and R1=R2;
+  fun tripleHash(L) is integer(__hashCode(L))
 }
 
 implementation comparable over ((%l,%m,%r) where comparable over %l and equality over %l 

@@ -58,7 +58,7 @@ public interface ISpec extends PrettyPrintable
   String getJavaInvokeSig();
 
   /**
-   * Get the java name of the method to invoke
+   * Get the java NAME of the method to invoke
    * 
    * @return
    */

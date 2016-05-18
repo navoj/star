@@ -255,7 +255,7 @@ public class TypeDescription implements IAlgebraicType
   }
 
   /**
-   * Return the name of the type in this description.
+   * Return the NAME of the type in this description.
    * 
    * @return a string identifying the type.
    */

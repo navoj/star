@@ -1,19 +1,8 @@
 package org.star_lang.star.compiler.cafe.compile.cont;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import org.star_lang.star.code.repository.CodeCatalog;
-import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
-import org.star_lang.star.compiler.cafe.compile.CodeContext;
-import org.star_lang.star.compiler.cafe.compile.Expressions;
-import org.star_lang.star.compiler.cafe.compile.HWM;
-import org.star_lang.star.compiler.cafe.compile.ISpec;
-import org.star_lang.star.compiler.cafe.compile.SrcSpec;
-import org.star_lang.star.compiler.cafe.compile.VarInfo;
+import org.objectweb.asm.tree.*;
+import org.star_lang.star.compiler.cafe.compile.*;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.data.type.Location;
 
@@ -38,8 +27,7 @@ public class DeclareLocal implements IContinuation
   {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
-    
+
     InsnList ins = mtd.instructions;
 
     if (!v.isInited()) {
@@ -55,7 +43,6 @@ public class DeclareLocal implements IContinuation
 
     switch (v.getKind()) {
     case rawBool:
-    case rawChar:
       ins.add(new VarInsnNode(Opcodes.ISTORE, offset));
       break;
     case rawInt:

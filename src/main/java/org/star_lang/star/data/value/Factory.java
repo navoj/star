@@ -1,13 +1,10 @@
 package org.star_lang.star.data.value;
 
-import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.*;
 import org.star_lang.star.data.value.BigNumWrap.BigNumWrapper;
 import org.star_lang.star.data.value.BigNumWrap.NonDecimalWrapper;
 import org.star_lang.star.data.value.BinaryWrap.BinaryWrapper;
-import org.star_lang.star.data.value.BinaryWrap.NonBinaryWrapper;
-import org.star_lang.star.data.value.CharWrap.CharWrapper;
 import org.star_lang.star.data.value.FloatWrap.FloatWrapper;
 import org.star_lang.star.data.value.IntWrap.IntWrapper;
 import org.star_lang.star.data.value.LongWrap.LongWrapper;
@@ -16,21 +13,18 @@ import org.star_lang.star.data.value.StringWrap.StringWrapper;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-
 
 /**
  * The Factory has two roles: to support the creation of values and to support accessing scalar
  * values.
- *
+ * <p>
  * Copyright (c) 2015. Francis G. McCabe
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the specific language governing
@@ -60,31 +54,6 @@ public class Factory {
       return ((BoolWrap) val).trueVal;
     } catch (Exception e) {
       throw new EvaluationException("not a boolean scalar");
-    }
-  }
-
-  /**
-   * Construct a char IValue
-   *
-   * @param ch the character. This is a `code point' rather than simply a 16 bit character.
-   * @return a @code{char} that conforms to the IValue interface.
-   */
-  public static CharWrap newChar(int ch) {
-    return new CharWrapper(ch);
-  }
-
-  /**
-   * Return the {@code char} value of a character scalar value.
-   *
-   * @param scalar character scalar to examine
-   * @return the char corresponding to the value.
-   * @throws EvaluationException if the passed in value is not a character, or if it corresponds to @code{nonChar}
-   */
-  public static int charValue(IValue scalar) throws EvaluationException {
-    try {
-      return ((CharWrapper) scalar).getValue();
-    } catch (Exception e) {
-      throw new EvaluationException("not a character");
     }
   }
 
@@ -210,10 +179,6 @@ public class Factory {
       return new FloatWrapper(d);
   }
 
-  public static FloatWrap nullFloat() {
-    return FloatWrap.nonFloatEnum;
-  }
-
   /**
    * Return the {@code double} value of a numeric scalar value.
    *
@@ -227,14 +192,6 @@ public class Factory {
       return ((FloatWrapper) scalar).getValue();
     } catch (Exception e) {
       throw new EvaluationException("not a float scalar");
-    }
-  }
-
-  public static Double floatValue(IValue scalar) {
-    try {
-      return ((FloatWrapper) scalar).getValue();
-    } catch (Exception e) {
-      return null;
     }
   }
 
@@ -284,19 +241,6 @@ public class Factory {
       return new BinaryWrapper(o);
   }
 
-  public static IValue nullBinary() {
-    return BinaryWrap.nonBinaryEnum;
-  }
-
-  public static Object binaryValue(IValue scalar) throws EvaluationException {
-    if (scalar instanceof BinaryWrapper)
-      return ((BinaryWrapper) scalar).getValue();
-    else if (scalar instanceof NonBinaryWrapper)
-      return null;
-    else
-      throw new EvaluationException("not a binary");
-  }
-
   /**
    * Return a new instance of a given type, using the value specifier associated with the label.
    * <p/>
@@ -304,9 +248,9 @@ public class Factory {
    * For example, to construct an instance of {@code someone} one might use:
    * <p/>
    * <pre>
-   * IValue name = Factory.newString(&quot;fred&quot;);
+   * IValue NAME = Factory.newString(&quot;fred&quot;);
    * IValue age = Factory.newInt(34);
-   * IValue R = Factory.newRecord(personType, &quot;someone&quot;, &quot;name&quot;, name, &quot;age&quot;, age);
+   * IValue R = Factory.newRecord(personType, &quot;someone&quot;, &quot;NAME&quot;, NAME, &quot;age&quot;, age);
    * </pre>
    *
    * @param type  a type description for the expected type.
@@ -324,7 +268,7 @@ public class Factory {
         if (!(args[ix] instanceof String && args[ix + 1] instanceof IValue)) {
           throw new EvaluationException("invalid arguments in newRecord");
         } else {
-          params[rspec.getIndex().get(args[ix])] = (IValue) args[ix + 1];
+          params[rspec.getIndex().get((String)args[ix])] = (IValue) args[ix + 1];
         }
       }
       return (IRecord) ((RecordSpecifier) spec).newInstance(params);
@@ -360,12 +304,9 @@ public class Factory {
    *                      and "peter", one might use:
    *                      <p/>
    *                      <pre>
-   *                                                                                     IValue peter = Factory.newString(&quot;peter&quot;);
-   *                                                                                     IValue pAge = Factory.newInt(34);
-   *                                                                                     IValue john = Factory.newString(&quot;john&quot;);
-   *                                                                                     IValue jAge = Factory.newInt(43);
-   *                                                                                     IMap ages = Factory.newMap(stringType, integerType, peter, pAge, john, jAge);
-   *                                                                                     </pre>
+   *                      IValue peter = Factory.newString(&quot;peter&quot;);
+   *                      IValue pAge = Factory.newInt(34);
+   *                      </pre>
    * @return a new IMap of the appropriate type with the initial contents.
    * @throws EvaluationException if something goes wrong
    */

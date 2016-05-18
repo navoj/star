@@ -106,9 +106,9 @@ public class CatalogUtils
                         errors.reportError("invalid URI\nbecause " + e.getMessage(), row.getLoc());
                       }
                     } else
-                      errors.reportError("expecting \"name\", not " + key, key.getLoc());
+                      errors.reportError("expecting \"NAME\", not " + key, key.getLoc());
                   } else
-                    errors.reportError("expecting: \"name\"->\"uri\"", row.getLoc());
+                    errors.reportError("expecting: \"NAME\"->\"uri\"", row.getLoc());
                 }
               } else
                 errors.reportError("invalid catalog contents " + content, content.getLoc());

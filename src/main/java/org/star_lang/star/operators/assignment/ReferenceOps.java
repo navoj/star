@@ -1,30 +1,16 @@
 package org.star_lang.star.operators.assignment;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.*;
 import org.star_lang.star.compiler.cafe.compile.HWM;
 import org.star_lang.star.compiler.cafe.compile.Inliner;
 import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.cafe.compile.Utils;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.operators.Builtin;
+import org.star_lang.star.operators.assignment.runtime.GetRefValue.*;
 import org.star_lang.star.operators.assignment.runtime.RefCell;
-import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRawBoolRef;
-import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRawCharRef;
-import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRawFloatRef;
-import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRawIntegerRef;
-import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRawLongRef;
-import org.star_lang.star.operators.assignment.runtime.GetRefValue.GetRef;
-import org.star_lang.star.operators.assignment.runtime.RefCell.BoolCell;
-import org.star_lang.star.operators.assignment.runtime.RefCell.Cell;
-import org.star_lang.star.operators.assignment.runtime.RefCell.CharCell;
-import org.star_lang.star.operators.assignment.runtime.RefCell.FloatCell;
-import org.star_lang.star.operators.assignment.runtime.RefCell.IntegerCell;
-import org.star_lang.star.operators.assignment.runtime.RefCell.LongCell;
+import org.star_lang.star.operators.assignment.runtime.RefCell.*;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -75,24 +61,6 @@ public class ReferenceOps {
       String javaCellName = Utils.javaInternalClassName(BoolCell.class);
       assert ins.getLast() instanceof TypeInsnNode && ((TypeInsnNode) ins.getLast()).desc.equals(javaCellName);
       ins.add(new FieldInsnNode(Opcodes.GETFIELD, javaCellName, RefCell.VALUEFIELD, Types.JAVA_BOOL_SIG));
-    }
-  }
-
-  public static class GetRawCharReference extends Builtin implements Inliner {
-    public GetRawCharReference() {
-      super(GetRawCharRef.name, GetRawCharRef.type(), GetRawCharRef.class);
-    }
-
-    @Override
-    public void preamble(MethodNode mtd, HWM stackHWM) {
-    }
-
-    @Override
-    public void inline(ClassNode klass, MethodNode mtd, HWM hwm, Location loc) {
-      InsnList ins = mtd.instructions;
-      String javaCellName = Utils.javaInternalClassName(CharCell.class);
-      assert ins.getLast() instanceof TypeInsnNode && ((TypeInsnNode) ins.getLast()).desc.equals(javaCellName);
-      ins.add(new FieldInsnNode(Opcodes.GETFIELD, javaCellName, RefCell.VALUEFIELD, Types.JAVA_INT_SIG));
     }
   }
 

@@ -22,10 +22,10 @@ import org.star_lang.star.compiler.type.Visibility;
 public interface IStatement extends Canonical
 {
   /**
-   * Test to see if this statement is 'about' a given name
+   * Test to see if this statement is 'about' a given NAME
    * 
    * @param name
-   * @return true if the statement is a definition for the name
+   * @return true if the statement is a definition for the NAME
    */
   boolean defines(String name);
 

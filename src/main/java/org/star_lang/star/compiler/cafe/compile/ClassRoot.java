@@ -114,7 +114,7 @@ public class ClassRoot implements CodeTree, CodeParser
       errors.reportError("IO problem in accessing resource " + uri + ": " + e.getMessage(), Location.location(uri));
     }
 
-    // Check for name is classRoot...
+    // Check for NAME is classRoot...
     if (term != null && CompilerUtils.isBraceTerm(term, CLASS_ROOT)) {
       for (IAbstract stmt : CompilerUtils.unWrap(CompilerUtils.braceArg(term))) {
         if (CompilerUtils.isIsForm(stmt)) {
@@ -153,7 +153,7 @@ public class ClassRoot implements CodeTree, CodeParser
       errors.reportError("IO problem in accessing resource " + uri + ": " + e.getMessage(), Location.location(uri));
     }
 
-    // Check for name is classRoot...
+    // Check for NAME is classRoot...
     if (term != null && CompilerUtils.isBraceTerm(term, CLASS_ROOT)) {
       for (IAbstract stmt : CompilerUtils.unWrap(CompilerUtils.braceArg(term))) {
         if (Abstract.isBinary(stmt, StandardNames.IS)) {

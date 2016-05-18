@@ -1,8 +1,6 @@
 package org.star_lang.star.operators.string.runtime;
 
-import java.util.Map.Entry;
-import java.util.Stack;
-
+import org.star_lang.star.compiler.grammar.Tokenizer;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
@@ -12,15 +10,13 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
-import org.star_lang.star.data.value.Array;
-import org.star_lang.star.data.value.ArrayBase;
-import org.star_lang.star.data.value.Cons;
-import org.star_lang.star.data.value.Factory;
-import org.star_lang.star.data.value.NTuple;
-import org.star_lang.star.data.value.StringWrap;
+import org.star_lang.star.data.value.*;
 import org.star_lang.star.data.value.StringWrap.StringWrapper;
 import org.star_lang.star.operators.CafeEnter;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps;
+
+import java.util.Map.Entry;
+import java.util.Stack;
 /*
   * Copyright (c) 2015. Francis G. McCabe
   *
@@ -42,6 +38,8 @@ public class StringOps {
 
   private static final IType rawIntType = StandardTypes.rawIntegerType;
   private static final IType rawStringType = StandardTypes.rawStringType;
+  private static final IType rawBoolType = StandardTypes.rawBoolType;
+  private static final IType booleanType = StandardTypes.booleanType;
 
   public static class StrLength implements IFunction {
     public static final String name = "__str_length";
@@ -174,7 +172,7 @@ public class StringOps {
 
     public static IType type() {
       return TypeUtils.functionType(StandardTypes.stringType, StandardTypes.stringType, TypeUtils
-              .arrayType(StandardTypes.stringType));
+          .arrayType(StandardTypes.stringType));
     }
   }
 
@@ -187,7 +185,7 @@ public class StringOps {
 
       int ix = 0;
       while (ix < data.length()) {
-        stack.push(Factory.newChar(data.codePointAt(ix)));
+        stack.push(Factory.newInt(data.codePointAt(ix)));
         ix = data.offsetByCodePoints(ix, 1);
       }
 
@@ -209,7 +207,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(rawStringType, TypeUtils.consType(StandardTypes.charType));
+      return TypeUtils.functionType(rawStringType, TypeUtils.consType(StandardTypes.integerType));
     }
   }
 
@@ -220,7 +218,7 @@ public class StringOps {
     public static IValue enter(String data) throws EvaluationException {
       ArrayBase base = new ArrayBase(data.length());
       for (int ix = 0; ix < data.length(); ) {
-        base.append(Factory.newChar(data.codePointAt(ix)));
+        base.append(Factory.newInt(data.codePointAt(ix)));
         ix = data.offsetByCodePoints(ix, 1);
       }
 
@@ -238,7 +236,45 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(rawStringType, TypeUtils.arrayType(StandardTypes.charType));
+      return TypeUtils.functionType(rawStringType, TypeUtils.arrayType(StandardTypes.integerType));
+    }
+  }
+
+  @CafeEnter
+  public static IValue enter(IArray ar1, int ix) throws EvaluationException {
+    if (ix >= 0 && ix < ar1.size())
+      return ar1.getCell(ix);
+    else
+      return null;
+  }
+
+  public static class Array2String implements IFunction {
+    public static final String name = "__array_string";
+
+    @CafeEnter
+    public static IValue enter(IArray src) throws EvaluationException {
+      StringBuffer buffer = new StringBuffer();
+
+      for (int ix = 0; ix < src.size(); ix++) {
+        int el = Factory.intValue(src.getCell(ix));
+        buffer.appendCodePoint(el);
+      }
+
+      return Factory.newString(buffer.toString());
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter((IArray) args[0]);
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(TypeUtils.arrayType(StandardTypes.integerType), rawStringType);
     }
   }
 
@@ -258,7 +294,7 @@ public class StringOps {
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
       return Factory
-              .newInt(enter(Factory.stringValue(args[0]), Factory.stringValue(args[1]), Factory.intValue(args[2])));
+          .newInt(enter(Factory.stringValue(args[0]), Factory.stringValue(args[1]), Factory.intValue(args[2])));
     }
 
     @Override
@@ -280,8 +316,8 @@ public class StringOps {
       if (str.isEmpty())
         return null;
       else
-        return NTuple.tuple(Factory.newChar(str.codePointAt(0)), Factory.newString(str.substring(str
-                .offsetByCodePoints(0, 1))));
+        return NTuple.tuple(Factory.newInt(str.codePointAt(0)), Factory.newString(str.substring(str
+            .offsetByCodePoints(0, 1))));
     }
 
     @Override
@@ -295,8 +331,8 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.patternType(TypeUtils.tupleType(StandardTypes.charType, StandardTypes.stringType),
-              StandardTypes.stringType);
+      return TypeUtils.patternType(TypeUtils.tupleType(StandardTypes.integerType, StandardTypes.stringType),
+          StandardTypes.stringType);
     }
   }
 
@@ -311,7 +347,7 @@ public class StringOps {
       else {
         int lastPoint = str.codePointBefore(str.length());
         return NTuple
-                .tuple(Factory.newString(str.substring(0, lastPoint)), Factory.newChar(str.codePointAt(lastPoint)));
+            .tuple(Factory.newString(str.substring(0, lastPoint)), Factory.newInt(str.codePointAt(lastPoint)));
       }
     }
 
@@ -327,7 +363,7 @@ public class StringOps {
 
     public static IType type() {
       IType strType = StandardTypes.stringType;
-      IType charType = StandardTypes.charType;
+      IType charType = StandardTypes.integerType;
       return TypeUtils.patternType(TypeUtils.tupleType(strType, charType), strType);
     }
   }
@@ -344,7 +380,7 @@ public class StringOps {
 
     @CafeEnter
     public static IValue enter(IValue ch, IValue tail) throws EvaluationException {
-      return Factory.newString(enter(Factory.charValue(ch), Factory.stringValue(tail)));
+      return Factory.newString(enter(Factory.intValue(ch), Factory.stringValue(tail)));
     }
 
     @Override
@@ -358,7 +394,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(StandardTypes.charType, StandardTypes.stringType, StandardTypes.stringType);
+      return TypeUtils.functionType(StandardTypes.integerType, StandardTypes.stringType, StandardTypes.stringType);
     }
   }
 
@@ -374,7 +410,7 @@ public class StringOps {
 
     @CafeEnter
     public static IValue enter(IValue tail, IValue ch) throws EvaluationException {
-      return Factory.newString(enter(Factory.stringValue(tail), Factory.charValue(ch)));
+      return Factory.newString(enter(Factory.stringValue(tail), Factory.intValue(ch)));
     }
 
     @Override
@@ -388,7 +424,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(StandardTypes.stringType, StandardTypes.charType, StandardTypes.stringType);
+      return TypeUtils.functionType(StandardTypes.stringType, StandardTypes.integerType, StandardTypes.stringType);
     }
   }
 
@@ -401,7 +437,7 @@ public class StringOps {
 
       int ix = 0;
       while (ix < str.length() && ArrayOps.moreToDo(state)) {
-        state = iter.enter(Factory.newChar(str.codePointAt(ix)), state);
+        state = iter.enter(Factory.newInt(str.codePointAt(ix)), state);
         ix = str.offsetByCodePoints(ix, 1);
       }
 
@@ -419,7 +455,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      IType e = StandardTypes.charType;
+      IType e = StandardTypes.integerType;
       IType st = StandardTypes.stringType;
       TypeVar tv = new TypeVar();
 
@@ -439,7 +475,7 @@ public class StringOps {
       while (ix < str.length()) {
         int cp = str.codePointAt(ix);
 
-        if (Factory.boolValue(filter.enter(Factory.newChar(cp))))
+        if (Factory.boolValue(filter.enter(Factory.newInt(cp))))
           out.appendCodePoint(cp);
         ix = str.offsetByCodePoints(ix, 1);
       }
@@ -458,7 +494,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      IType e = StandardTypes.charType;
+      IType e = StandardTypes.integerType;
       IType st = StandardTypes.rawStringType;
 
       return TypeUtils.functionType(st, TypeUtils.functionType(e, StandardTypes.booleanType), st);
@@ -473,7 +509,7 @@ public class StringOps {
       int ix = 0;
       int cx = 0;
       while (ix < str.length() && ArrayOps.moreToDo(state)) {
-        state = iter.enter(Factory.newInt(cx++), Factory.newChar(str.codePointAt(ix)), state);
+        state = iter.enter(Factory.newInt(cx++), Factory.newInt(str.codePointAt(ix)), state);
         ix = str.offsetByCodePoints(ix, 1);
       }
 
@@ -491,7 +527,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      IType e = StandardTypes.charType;
+      IType e = StandardTypes.integerType;
       IType st = rawStringType;
       IType i = StandardTypes.integerType;
       TypeVar tv = new TypeVar();
@@ -583,6 +619,34 @@ public class StringOps {
         for (IValue entry : set)
           entry.accept(this);
       }
+    }
+  }
+
+  public static class StringRevImplodeArray implements IFunction {
+    public static final String name = "__string_rev_implode_array";
+
+    @CafeEnter
+    public static String enter(IArray ar) throws EvaluationException {
+      StringBuffer buffer = new StringBuffer();
+
+      for (int ix = 0; ix < ar.size(); ix++)
+        buffer.insert(0, Factory.intValue(ar.getCell(ix)));
+
+      return buffer.toString();
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return Factory.newString(enter((IArray) args[0]));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(TypeUtils.arrayType(StandardTypes.integerType), rawStringType);
     }
   }
 
@@ -680,7 +744,7 @@ public class StringOps {
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newString(enter(Factory.stringValue(args[0]), Factory.stringValue(args[1]), Factory
-              .stringValue(args[2])));
+          .stringValue(args[2])));
     }
 
     @Override
@@ -872,8 +936,8 @@ public class StringOps {
     }
   }
 
-  public static class StringChar implements IFunction {
-    public static final String name = "__get_char";
+  public static class GetCodePoint implements IFunction {
+    public static final String name = "__get_codepoint";
 
     @CafeEnter
     public static int enter(String src, int ix) throws EvaluationException {
@@ -882,7 +946,7 @@ public class StringOps {
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
-      return Factory.newChar(enter(Factory.stringValue(args[0]), Factory.intValue(args[1])));
+      return Factory.newInt(enter(Factory.stringValue(args[0]), Factory.intValue(args[1])));
     }
 
     @Override
@@ -891,7 +955,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(rawStringType, rawIntType, StandardTypes.rawCharType);
+      return TypeUtils.functionType(rawStringType, rawIntType, StandardTypes.rawIntegerType);
     }
   }
 
@@ -909,7 +973,7 @@ public class StringOps {
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
       return Factory
-              .newString(enter(Factory.stringValue(args[0]), Factory.intValue(args[1]), Factory.intValue(args[2])));
+          .newString(enter(Factory.stringValue(args[0]), Factory.intValue(args[1]), Factory.intValue(args[2])));
     }
 
     @Override
@@ -925,8 +989,8 @@ public class StringOps {
     }
   }
 
-  public static class SubstituteChar implements IFunction {
-    public static final String name = "__substitute_char";
+  public static class SubstituteCodePoint implements IFunction {
+    public static final String name = "__substitute_codepoint";
 
     @CafeEnter
     public static String enter(String src, int pos, int ch) throws EvaluationException {
@@ -944,7 +1008,7 @@ public class StringOps {
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newString(enter(Factory.stringValue(args[0]), Factory.intValue(args[1]), Factory
-              .charValue(args[2])));
+          .intValue(args[2])));
     }
 
     @Override
@@ -953,12 +1017,12 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(rawStringType, rawIntType, StandardTypes.rawCharType, rawStringType);
+      return TypeUtils.functionType(rawStringType, rawIntType, StandardTypes.rawIntegerType, rawStringType);
     }
   }
 
-  public static class DeleteChar implements IFunction {
-    public static final String name = "__delete_char";
+  public static class DeleteCodePoint implements IFunction {
+    public static final String name = "__delete_codepoint";
 
     @CafeEnter
     public static String enter(String src, int pos) throws EvaluationException {
@@ -987,8 +1051,8 @@ public class StringOps {
     }
   }
 
-  public static class CharPresent implements IFunction {
-    public static final String name = "__char_present";
+  public static class CodePointPresent implements IFunction {
+    public static final String name = "__codepoint_present";
 
     @CafeEnter
     public static boolean enter(String src, int ch) throws EvaluationException {
@@ -997,7 +1061,7 @@ public class StringOps {
 
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
-      return Factory.newBool(enter(Factory.stringValue(args[0]), Factory.charValue(args[2])));
+      return Factory.newBool(enter(Factory.stringValue(args[0]), Factory.intValue(args[2])));
     }
 
     @Override
@@ -1006,7 +1070,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(rawStringType, StandardTypes.rawCharType, StandardTypes.booleanType);
+      return TypeUtils.functionType(rawStringType, StandardTypes.rawIntegerType, StandardTypes.booleanType);
     }
   }
 
@@ -1024,7 +1088,7 @@ public class StringOps {
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
       return Factory
-              .newString(enter(Factory.stringValue(args[0]), Factory.intValue(args[1]), Factory.intValue(args[2])));
+          .newString(enter(Factory.stringValue(args[0]), Factory.intValue(args[1]), Factory.intValue(args[2])));
     }
 
     @Override
@@ -1060,7 +1124,7 @@ public class StringOps {
     @Override
     public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newString(enter(Factory.stringValue(args[0]), Factory.intValue(args[1]),
-              Factory.intValue(args[2]), Factory.stringValue(args[3])));
+          Factory.intValue(args[2]), Factory.stringValue(args[3])));
     }
 
     @Override
@@ -1117,6 +1181,144 @@ public class StringOps {
 
     public static IType type() {
       return TypeUtils.functionType(rawStringType, rawStringType);
+    }
+  }
+
+  public static class IsLowerCase implements IFunction {
+    public static final String name = "__is_lower_case";
+
+    @CafeEnter
+    public static BoolWrap enter(int ch) throws EvaluationException {
+      return Factory.newBool(Character.isLowerCase(ch));
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter(Factory.intValue(args[0]));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(rawIntType, rawBoolType);
+    }
+  }
+
+  public static class IsUpperCase implements IFunction {
+    public static final String name = "__is_upper_case";
+
+    @CafeEnter
+    public static BoolWrap enter(int ch) throws EvaluationException {
+      return Factory.newBool(Character.isUpperCase(ch));
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter(Factory.intValue(args[0]));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(rawIntType, StandardTypes.booleanType);
+    }
+  }
+
+  public static class IsNumeric implements IFunction {
+    public static final String name = "__is_numeric";
+
+    @CafeEnter
+    public static BoolWrap enter(int ch) {
+      return Factory.newBool(Character.isDigit(ch));
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter(Factory.intValue(args[0]));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(rawIntType, booleanType);
+    }
+  }
+
+  public static class IsIdentifierStart implements IFunction {
+    public static final String name = "__isIdentifierStart";
+
+    @CafeEnter
+    public static BoolWrap enter(int ch) {
+      return Factory.newBool(Tokenizer.isIdentifierStart(ch));
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter(Factory.intValue(args[0]));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(rawIntType, rawBoolType);
+    }
+  }
+
+  public static class IsIdentifierChar implements IFunction {
+    public static final String name = "__isIdentifierChar";
+
+    @CafeEnter
+    public static BoolWrap enter(int ch) {
+      return Factory.newBool(Tokenizer.isIdentifierChar(ch));
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return enter(Factory.intValue(args[0]));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(rawIntType, rawBoolType);
+    }
+  }
+
+  public static class StringHash implements IFunction {
+    public static final String NAME = "__string_hash";
+
+    @CafeEnter
+    public static int enter(String s1) throws EvaluationException {
+      return s1.hashCode();
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return Factory.newInt(enter(Factory.stringValue(args[0])));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type() {
+      return TypeUtils.functionType(rawStringType, rawIntType);
     }
   }
 }

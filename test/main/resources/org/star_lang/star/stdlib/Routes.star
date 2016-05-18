@@ -19,8 +19,11 @@ Routes is package {
   routeEquals has type (Route of %op, Route of %op) => boolean where equality over %op;
   fun routeEquals(r1, r2) is r1.rem = r2.rem;
 
+  fun routeHash(r1) is hashCode(r1.rem)
+
   implementation equality over (Route of %op where equality over %op) is {
     (=) = routeEquals;
+    hashCode = routeHash
   };
 
   /* remainder of route */
@@ -38,8 +41,12 @@ Routes is package {
         routeRemEquals(r2in, r2in) and routeRemEquals(r2after, r2after)
    |  routeRemEquals(_, _) default is false
 
+   fun routeRemHash(RouteList(l1)) is hashCode("RouteList")*37+hashCode(l1)
+    |  routeRemHash(RouteQTLimit(rin,rafter)) is ((hashCode("RouteQTLimit")*37)+hashCode(rin))*37+hashCode(rafter)
+
   implementation equality over (RouteRem of %op where equality over %op) is {
     (=) = routeRemEquals;
+    hashCode = routeRemHash
   };
   
   type RouteElement of %op is
@@ -53,7 +60,11 @@ Routes is package {
         routeRemEquals(r1, r2)
    |  routeElementEquals(_, _) default is false;
 
+  fun routeElementHash(RouteOp(op)) is hashCode("RouteOp")*37+hashCode(op)
+   |  routeElementHash(RouteQTZone(r1)) is hashCode("RouteQTZone")*37+hashCode(r1)
+
   implementation equality over (RouteElement of %op where equality over %op) is {
     (=) = routeElementEquals;
+    hashCode = routeElementHash
   };
 }

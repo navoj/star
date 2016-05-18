@@ -1494,7 +1494,7 @@ public class CompilerUtils {
     if (name instanceof Name)
       return (Name) name;
     else
-      throw new IllegalArgumentException("expecting a function name");
+      throw new IllegalArgumentException("expecting a function NAME");
   }
 
   public static Name procedureName(IAbstract term) {

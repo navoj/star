@@ -456,8 +456,8 @@ public class CodeDirectory implements CodeCatalog
   }
 
   /**
-   * Introduce a hash into the file name so that upper/lower case file systems dont get confused and
-   * we truncate the file name to avoid over-long file names.
+   * Introduce a hash into the file NAME so that upper/lower case file systems dont get confused and
+   * we truncate the file NAME to avoid over-long file names.
    * 
    * @param fragment
    * @return

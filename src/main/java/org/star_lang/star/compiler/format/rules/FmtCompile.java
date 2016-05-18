@@ -268,7 +268,7 @@ public class FmtCompile
     if (Abstract.isUnary(term, StandardNames.QUESTION)) {
       String var = identifierOf(((Apply) term).getArg(0));
       if (var == null) {
-        errors.reportError("missing variable name", loc);
+        errors.reportError("missing variable NAME", loc);
         return new FmtLiteral(term);
       } else {
         if (dict.containsKey(var))
@@ -281,7 +281,7 @@ public class FmtCompile
     } else if (term instanceof Name) {
       String var = identifierOf(term);
       if (var == null) {
-        errors.reportError("missing validation variable name", loc);
+        errors.reportError("missing validation variable NAME", loc);
         return new FmtLiteral(term);
       } else {
         if (dict.containsKey(var))

@@ -20,9 +20,9 @@
 private import base;
 private import queue;
 private import strings;
+private import arithmetic;
 
 -- private import sequences;
--- private import arithmetic;
 -- private import casting;
 
 -- tuning parameters for the queue cleanup frequency
@@ -34,6 +34,11 @@ type cml_queue of %a is _CMLQueue {
   size has type integer_;
   cleanup_threshold has type integer_;
   isAlive has type (%a) => boolean;
+}
+
+implementation equality over cml_queue of %a is {
+  fun X = Y is __equal(X,Y);
+  fun hashCode(X) is integer(__hashCode(X))
 }
 
 private

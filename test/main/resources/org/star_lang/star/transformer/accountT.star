@@ -22,8 +22,10 @@ account is package{
   
   implementation equality over account is {
     fun X = Y is same_account(X,Y);
+    fun hashCode(A) is account_hash(A)
   } using {
     fun same_account(account{id=N1},account{id=N2}) is N1=N2
      |  same_account(_,_) default is false;
+    fun account_hash(account{id=N}) is hashCode(N)
   }
 }

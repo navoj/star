@@ -27,7 +27,7 @@ public interface CodeCatalog extends CodeTree, Iterable<Entry<String, CodeTree>>
    * Add a new code entry to the code catalog
    * 
    * @param path
-   *          a slash separated class name.
+   *          a slash separated class NAME.
    * @param code
    * @throws CatalogException
    */
@@ -37,7 +37,7 @@ public interface CodeCatalog extends CodeTree, Iterable<Entry<String, CodeTree>>
    * Hierarchical nodes can resolve paths.
    * 
    * @param path
-   *          a slash-separated string of path segments. The first segment is the name of a child
+   *          a slash-separated string of path segments. The first segment is the NAME of a child
    *          tree of this CodeCatalog.
    * @param extension
    *          the file extension to use when looking for this resource as a file
@@ -49,7 +49,7 @@ public interface CodeCatalog extends CodeTree, Iterable<Entry<String, CodeTree>>
    * Hierarchical nodes can resolve paths.
    * 
    * @param path
-   *          a slash-separated string of path segments. The first segment is the name of a child
+   *          a slash-separated string of path segments. The first segment is the NAME of a child
    *          tree of this CodeCatalog.
    * @return a CodeTree that corresponds to the requested sub-tree. Returns null if not present.
    */

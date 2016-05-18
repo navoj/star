@@ -252,37 +252,6 @@ public class VarInfo implements ISpec, Validate
       }
       hwm.bump(1);
       break;
-    case rawChar:
-      switch (getWhere()) {
-      case localVar:
-        ins.add(new VarInsnNode(Opcodes.ILOAD, getOffset()));
-        break;
-      case freeVar:
-        ins.add(new VarInsnNode(Opcodes.ALOAD, dict.find(Names.PRIVATE_THIS).getOffset()));
-        ins.add(new FieldInsnNode(Opcodes.GETFIELD, dict.getOwnerName(), getJavaSafeName(), getJavaSig()));
-        break;
-      case field:
-        record.loadValue(mtd, hwm, dict);
-        ins.add(new FieldInsnNode(Opcodes.GETFIELD, record.getJavaType(), getJavaSafeName(), getJavaSig()));
-        break;
-      case arrayArg:
-        record.loadValue(mtd, hwm, dict);
-        ins.add(new TypeInsnNode(Opcodes.CHECKCAST, Types.IVALUE_ARRAY));
-        Expressions.genIntConst(ins, hwm, getOffset());
-        ins.add(new InsnNode(Opcodes.AALOAD));
-        AutoBoxing.unboxValue(mtd, hwm, getType());
-        break;
-      case literal:
-        ins.add(new LdcInsnNode(getLiteral()));
-        break;
-      case staticField:
-        ins.add(new FieldInsnNode(Opcodes.GETSTATIC, getJavaOwner(), getJavaSafeName(), getJavaSig()));
-        break;
-      default:
-        assert false : "invalid location of variable";
-      }
-      hwm.bump(1);
-      break;
     case rawInt:
       switch (getWhere()) {
       case localVar:
@@ -442,7 +411,6 @@ public class VarInfo implements ISpec, Validate
 
       switch (getKind()) {
       case rawBool:
-      case rawChar:
         ins.add(new VarInsnNode(Opcodes.ISTORE, offset));
         break;
       case rawInt:

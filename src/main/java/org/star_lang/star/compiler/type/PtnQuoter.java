@@ -1,37 +1,9 @@
 package org.star_lang.star.compiler.type;
 
-import static org.star_lang.star.data.type.StandardTypes.astType;
-import static org.star_lang.star.data.type.StandardTypes.booleanType;
-import static org.star_lang.star.data.type.StandardTypes.charType;
-import static org.star_lang.star.data.type.StandardTypes.rawCharType;
-import static org.star_lang.star.data.type.StandardTypes.rawIntegerType;
-
-import java.util.Stack;
-
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
-import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
-import org.star_lang.star.compiler.ast.FloatLiteral;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IAbstractVisitor;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.LongLiteral;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.ast.StringLiteral;
-import org.star_lang.star.compiler.canonical.Application;
-import org.star_lang.star.compiler.canonical.ConstructorPtn;
-import org.star_lang.star.compiler.canonical.ICondition;
-import org.star_lang.star.compiler.canonical.IContentExpression;
-import org.star_lang.star.compiler.canonical.IContentPattern;
-import org.star_lang.star.compiler.canonical.IsTrue;
-import org.star_lang.star.compiler.canonical.Matches;
-import org.star_lang.star.compiler.canonical.Scalar;
-import org.star_lang.star.compiler.canonical.ScalarPtn;
-import org.star_lang.star.compiler.canonical.Variable;
+import org.star_lang.star.compiler.ast.*;
+import org.star_lang.star.compiler.canonical.*;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeChecker.PtnVarHandler;
 import org.star_lang.star.compiler.util.GenSym;
@@ -43,6 +15,10 @@ import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.arrays.runtime.ArrayIndexSlice.ArrayEl;
 import org.star_lang.star.operators.arrays.runtime.ArrayOps.ArrayHasSize;
+
+import java.util.Stack;
+
+import static org.star_lang.star.data.type.StandardTypes.*;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -58,8 +34,7 @@ import org.star_lang.star.operators.arrays.runtime.ArrayOps.ArrayHasSize;
  * permissions and limitations under the License.
  */
 
-public class PtnQuoter implements IAbstractVisitor
-{
+public class PtnQuoter implements IAbstractVisitor {
   private final Stack<IContentPattern> stack = new Stack<>();
   private final Wrapper<ICondition> cond;
   private final Dictionary cxt;
@@ -69,8 +44,7 @@ public class PtnQuoter implements IAbstractVisitor
   private final ErrorReport errors;
 
   public PtnQuoter(Dictionary cxt, Dictionary outer, Wrapper<ICondition> cond, PtnVarHandler varHandler,
-      TypeChecker checker, ErrorReport errors)
-  {
+                   TypeChecker checker, ErrorReport errors) {
     this.cxt = cxt;
     this.outer = outer;
     this.checker = checker;
@@ -79,21 +53,18 @@ public class PtnQuoter implements IAbstractVisitor
     this.errors = errors;
   }
 
-  IContentPattern quoted(IAbstract term)
-  {
+  IContentPattern quoted(IAbstract term) {
     term.accept(this);
     assert stack.size() == 1;
     return stack.pop();
   }
 
-  private PtnQuoter fork(Wrapper<ICondition> cond)
-  {
+  private PtnQuoter fork(Wrapper<ICondition> cond) {
     return new PtnQuoter(cxt, outer, cond, varHandler, checker, errors);
   }
 
   @Override
-  public void visitApply(Apply app)
-  {
+  public void visitApply(Apply app) {
     Location loc = app.getLoc();
     if (CompilerUtils.isUnQuoted(app) || CompilerUtils.isQuestion(app))
       stack.push(checker.typeOfPtn(CompilerUtils.unquotedExp(app), astType, cond, cxt, outer, varHandler));
@@ -121,9 +92,6 @@ public class PtnQuoter implements IAbstractVisitor
               anon), rhs);
         else if (sym.equals(StandardNames.IDENTIFIER))
           matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, Name.name, anon, anon), rhs);
-        else if (sym.equals(StandardTypes.CHAR))
-          matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, CharLiteral.name, anon, anon),
-              rhs);
         else if (sym.equals(StandardTypes.STRING))
           matchTest = Abstract.binary(loc, StandardNames.MATCHING,
               Abstract.binary(loc, StringLiteral.name, anon, anon), rhs);
@@ -133,8 +101,8 @@ public class PtnQuoter implements IAbstractVisitor
           stack.push(checker.typeOfPtn(matchTest, astType, cond, cxt, outer, varHandler));
         else
           stack.push(checker.typeOfPtn(rhs, astType, cond, cxt, outer, varHandler));
-      } else{
-        errors.reportError(StringUtils.msg("expecting an identifier, not: `", lhs,"'"), lhs.getLoc());
+      } else {
+        errors.reportError(StringUtils.msg("expecting an identifier, not: `", lhs, "'"), lhs.getLoc());
         stack.push(checker.typeOfPtn(rhs, astType, cond, cxt, outer, varHandler));
       }
     } else if (Abstract.isBinary(app, StandardNames.MACRO_APPLY)) {
@@ -176,32 +144,19 @@ public class PtnQuoter implements IAbstractVisitor
     }
   }
 
-  private static IContentExpression rawInt(Location loc, int ix)
-  {
+  private static IContentExpression rawInt(Location loc, int ix) {
     return new Scalar(loc, rawIntegerType, ix);
   }
 
   @Override
-  public void visitBooleanLiteral(BooleanLiteral lit)
-  {
+  public void visitBooleanLiteral(BooleanLiteral lit) {
     IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
     IContentPattern bool = new ScalarPtn(lit.getLoc(), booleanType, Factory.newBool(lit.getLit()));
     stack.push(new ConstructorPtn(lit.getLoc(), BooleanLiteral.name, astType, loc, bool));
   }
 
   @Override
-  public void visitCharLiteral(CharLiteral lit)
-  {
-    IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
-    IContentPattern ch = new ConstructorPtn(lit.getLoc(), StandardTypes.CHAR, charType, new ScalarPtn(lit.getLoc(),
-        rawCharType, Factory.newChar(lit.getLit())));
-
-    stack.push(new ConstructorPtn(lit.getLoc(), CharLiteral.name, astType, loc, ch));
-  }
-
-  @Override
-  public void visitStringLiteral(StringLiteral lit)
-  {
+  public void visitStringLiteral(StringLiteral lit) {
     IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
     IContentPattern str = TypeCheckerUtils.stringPtn(lit.getLoc(), lit.getLit());
 
@@ -209,40 +164,35 @@ public class PtnQuoter implements IAbstractVisitor
   }
 
   @Override
-  public void visitFloatLiteral(FloatLiteral lit)
-  {
+  public void visitFloatLiteral(FloatLiteral lit) {
     IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
     IContentPattern flt = TypeCheckerUtils.floatPtn(lit.getLoc(), lit.getLit());
     stack.push(new ConstructorPtn(lit.getLoc(), FloatLiteral.name, astType, loc, flt));
   }
 
   @Override
-  public void visitIntegerLiteral(IntegerLiteral lit)
-  {
+  public void visitIntegerLiteral(IntegerLiteral lit) {
     IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
     IContentPattern ix = TypeCheckerUtils.integerPtn(lit.getLoc(), lit.getLit());
     stack.push(new ConstructorPtn(lit.getLoc(), IntegerLiteral.name, astType, loc, ix));
   }
 
   @Override
-  public void visitLongLiteral(LongLiteral lit)
-  {
+  public void visitLongLiteral(LongLiteral lit) {
     IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
     IContentPattern lx = TypeCheckerUtils.longPtn(lit.getLoc(), lit.getLit());
     stack.push(new ConstructorPtn(lit.getLoc(), LongLiteral.name, astType, loc, lx));
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit)
-  {
+  public void visitBigDecimal(BigDecimalLiteral lit) {
     IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
     IContentPattern big = TypeCheckerUtils.decimalPtn(lit.getLoc(), lit.getLit());
     stack.push(new ConstructorPtn(lit.getLoc(), BigDecimalLiteral.name, astType, loc, big));
   }
 
   @Override
-  public void visitName(Name name)
-  {
+  public void visitName(Name name) {
     IContentPattern loc = Variable.anonymous(name.getLoc(), Location.type);
     IContentPattern str = TypeCheckerUtils.stringPtn(name.getLoc(), name.getId());
     stack.push(new ConstructorPtn(name.getLoc(), Name.name, astType, loc, str));

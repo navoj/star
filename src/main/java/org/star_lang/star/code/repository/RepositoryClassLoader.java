@@ -53,7 +53,7 @@ public class RepositoryClassLoader extends ClassLoader implements RepositoryList
       HasCode code = (HasCode) entry;
       byte[] byteCode = code.getCode();
 
-      // showClassData(name, byteCode);
+      // showClassData(NAME, byteCode);
 
       classesLoaded++;
       return defineClass(name, byteCode, 0, byteCode.length);

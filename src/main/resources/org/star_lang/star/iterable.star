@@ -19,6 +19,7 @@ private import casting;
 private import strings;
 private import sequences;
 private import compute;
+private import arithmetic;
 
 type IterState of t is NoneFound or NoMore(t) or ContinueWith(t) or AbortIter(exception);
 
@@ -55,11 +56,11 @@ fun _project_0_2((L,_)) is L;
 
 -- We have to put this here because we need to import strings
 
-implementation iterable over string determines char is {
+implementation iterable over string determines integer is {
   fun _iterate(M,F,S) is __string_iter(M,F,S)
 }
 
-implementation indexed_iterable over string determines (integer,char) is {
+implementation indexed_iterable over string determines (integer,integer) is {
   fun _ixiterate(string(Str),F,S) is __string_ix_iterate(Str,F,S)
 }
 

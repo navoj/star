@@ -5,17 +5,8 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatAbs;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatCbrt;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatCeil;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatExp;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatFloor;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatLog;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatLog10;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatRandom;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatRound;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatSqrt;
-import org.star_lang.star.operators.arith.runtime.FloatUnary.FloatUMinus;
+import org.star_lang.star.operators.arith.runtime.FloatUnary.*;
+import org.star_lang.star.operators.arith.runtime.LongUnary;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -52,5 +43,6 @@ public abstract class FloatUnary
     cxt.declareBuiltin(new Builtin("__float_log", type, FloatLog.class));
     cxt.declareBuiltin(new Builtin("__float_log10", type, FloatLog10.class));
     cxt.declareBuiltin(new Builtin("__float_exp", type, FloatExp.class));
+    cxt.declareBuiltin(new Builtin(FloatHash.name, FloatHash.type(), FloatHash.class));
   }
 }

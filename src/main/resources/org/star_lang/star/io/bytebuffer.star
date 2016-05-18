@@ -32,8 +32,7 @@ bytebuffer is package {
     var res := nil;
     while (bytebuffer_hasRemaining(ro_bb)) do {
       (_word8(b), _) is bytebuffer_getWord8(ro_bb);
-      c is (b as char);
-      res := cons(c, res);
+      res := cons(b, res);
     }
     valis revImplode(res);
   }

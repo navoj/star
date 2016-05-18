@@ -16,6 +16,7 @@ import task;
 import cml;
 private import strings;
 private import base;
+private import arithmetic;
 private import actors;
 
 -- support the form "wait for <rendezvous>"

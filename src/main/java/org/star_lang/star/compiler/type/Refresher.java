@@ -162,7 +162,7 @@ public class Refresher implements ITypeVisitor<Void>
    * replaced.
    * 
    * This function honors quantified types: if the type contains (even at the top-level) a
-   * quantified type that happens to have the same variable name as one in the {@code binding} map,
+   * quantified type that happens to have the same variable NAME as one in the {@code binding} map,
    * then that variable will not be rewritten.
    * 
    * @param type

@@ -23,7 +23,7 @@ import org.star_lang.star.compiler.util.Writeable;
 public interface CodeTree extends Writeable, PrettyPrintable
 {
   /**
-   * Every code tree has a path. This is essentially equivalent to Java's full class name.
+   * Every code tree has a path. This is essentially equivalent to Java's full class NAME.
    * 
    * @return
    */

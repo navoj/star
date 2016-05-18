@@ -25,6 +25,7 @@ import org.star_lang.star.operators.sets.runtime.SetOps;
 public class SetOpsDecl {
   public static void declare(Intrinsics cxt) {
     cxt.declareBuiltin(new Builtin(SetOps.SetEqual.name, SetOps.SetEqual.type(), SetOps.SetEqual.class));
+    cxt.declareBuiltin(new Builtin(SetOps.SetHash.name, SetOps.SetHash.type(), SetOps.SetHash.class));
     cxt.declareBuiltin(new Builtin(SetOps.SetCreate.name, SetOps.SetCreate.type(), SetOps.SetCreate.class));
     cxt.declareBuiltin(new Builtin(SetOps.SetContains.name, SetOps.SetContains.type(), SetOps.SetContains.class));
     cxt.declareBuiltin(new Builtin(SetOps.SetIntersect.name, SetOps.SetIntersect.type(), SetOps.SetIntersect.class));

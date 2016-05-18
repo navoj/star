@@ -37,12 +37,12 @@ public class URIUtils {
   private static String fileSeparator = File.separator;
 
   /**
-   * Remove clutter from a uri path to obtain the package name.
+   * Remove clutter from a uri path to obtain the package NAME.
    * <p>
    * This is the sequence of letters that is after the last / and before the first following .
    *
    * @param uri
-   * @return the package name extracted from the uri
+   * @return the package NAME extracted from the uri
    */
   public static String getPackageName(ResourceURI uri) {
     String path = uri.getPath();

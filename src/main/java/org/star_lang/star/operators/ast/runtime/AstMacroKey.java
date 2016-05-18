@@ -29,12 +29,11 @@ public class AstMacroKey implements IFunction
 {
   public static final String name = "astMacroKey";
 
-  public static final String decimalKey = "%decimal";
-  public static final String booleanKey = "%bool";
-  public static final String charKey = "%char";
-  public static final String floatKey = "%float";
-  public static final String integerKey = "%integer";
-  public static final String longKey = "%long";
+  private static final String decimalKey = "%decimal";
+  private static final String booleanKey = "%bool";
+  private static final String floatKey = "%float";
+  private static final String integerKey = "%integer";
+  private static final String longKey = "%long";
 
   @CafeEnter
   public static IValue enter(ASyntax term) throws EvaluationException
@@ -94,8 +93,6 @@ public class AstMacroKey implements IFunction
       return ((Name) term).getId();
     else if (term instanceof BooleanLiteral)
       return booleanKey;
-    else if (term instanceof CharLiteral)
-      return charKey;
     else if (term instanceof StringLiteral)
       return ((StringLiteral) term).getLit();
     else if (term instanceof IntegerLiteral)

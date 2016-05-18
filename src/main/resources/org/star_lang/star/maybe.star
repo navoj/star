@@ -16,6 +16,7 @@
 
 private import strings;
 private import base;
+private import arithmetic;
 private import compute;
 
 type maybe of %t is possible(%t) or impossible(exception);

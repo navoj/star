@@ -657,6 +657,8 @@ fun flEqual(fl1, fl2) is valof {
   };
 }
 
+fun flHash(F) is integer(__hashCode(F))
+
 /* replace value at indexed position */
 private flSubstitute has type (FingerList of %a, integer, %a) => FingerList of %a;
 fun flSubstitute(xs, integer(i), a) is flSubstituteElem(xs, i, a);
@@ -710,6 +712,7 @@ implementation pPrint over FingerList of %t where pPrint over %t is {
 
 implementation equality over FingerList of %e where equality over %e is {
   (=) = flEqual;
+  hashCode = flHash;
 };
 
 implementation sequence over FingerList of %e determines %e is {

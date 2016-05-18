@@ -22,10 +22,12 @@ public class StringOps
   public static void declare(Intrinsics cxt)
   {
     cxt.declareBuiltin(new Builtin(StrLength.name, StrLength.type(), StrLength.class));
+    cxt.declareBuiltin(new Builtin(StringHash.NAME, StringHash.type(), StringHash.class));
     cxt.declareBuiltin(new Builtin(StringConcat.name, StringConcat.funType(), StringConcat.class));
     cxt.declareBuiltin(new Builtin(SplitString.name, SplitString.type(), SplitString.class));
     cxt.declareBuiltin(new Builtin(StringExplode.name, StringExplode.type(), StringExplode.class));
     cxt.declareBuiltin(new Builtin(String2Array.name, String2Array.type(), String2Array.class));
+    cxt.declareBuiltin(new Builtin(Array2String.name, Array2String.type(), Array2String.class));
     cxt.declareBuiltin(new Builtin(StringImplode.name, StringImplode.type(), StringImplode.class));
     cxt.declareBuiltin(new Builtin(StringRevImplode.name, StringRevImplode.type(), StringRevImplode.class));
     cxt.declareBuiltin(new Builtin(StringReplace.name, StringReplace.type(), StringReplace.class));
@@ -40,11 +42,11 @@ public class StringOps
     cxt.declareBuiltin(new Builtin(StringFilter.name, StringFilter.type(), StringFilter.class));
     cxt.declareBuiltin(new Builtin(StringIterate.name, StringIterate.type(), StringIterate.class));
     cxt.declareBuiltin(new Builtin(StringIxIterate.name, StringIxIterate.type(), StringIxIterate.class));
-    cxt.declareBuiltin(new Builtin(StringChar.name, StringChar.type(), StringChar.class));
-    cxt.declareBuiltin(new Builtin(SubstituteChar.name, SubstituteChar.type(), SubstituteChar.class));
-    cxt.declareBuiltin(new Builtin(CharPresent.name, CharPresent.type(), CharPresent.class));
+    cxt.declareBuiltin(new Builtin(GetCodePoint.name, GetCodePoint.type(), GetCodePoint.class));
+    cxt.declareBuiltin(new Builtin(SubstituteCodePoint.name, SubstituteCodePoint.type(), SubstituteCodePoint.class));
+    cxt.declareBuiltin(new Builtin(CodePointPresent.name, CodePointPresent.type(), CodePointPresent.class));
     cxt.declareBuiltin(new Builtin(SubString.name, SubString.type(), SubString.class));
-    cxt.declareBuiltin(new Builtin(DeleteChar.name, DeleteChar.programType(), DeleteChar.class));
+    cxt.declareBuiltin(new Builtin(DeleteCodePoint.name, DeleteCodePoint.programType(), DeleteCodePoint.class));
     cxt.declareBuiltin(new Builtin(StringSplice.name, StringSplice.programType(), StringSplice.class));
     cxt.declareBuiltin(new Builtin(StringSlice.name, StringSlice.type(), StringSlice.class));
     cxt.declareBuiltin(new Builtin(StringConcatenate.name, StringConcatenate.funType(), StringConcatenate.class));
@@ -55,6 +57,10 @@ public class StringOps
     cxt.declareBuiltin(new Builtin(GenerateSym.name, GenerateSym.programType(), GenerateSym.class));
     cxt.declareBuiltin(new Builtin(ToUpperCase.name, ToUpperCase.type(), ToUpperCase.class));
     cxt.declareBuiltin(new Builtin(ToLowerCase.name, ToLowerCase.type(), ToLowerCase.class));
-
+    cxt.declareBuiltin(new Builtin(IsLowerCase.name, IsLowerCase.type(), IsLowerCase.class));
+    cxt.declareBuiltin(new Builtin(IsUpperCase.name, IsUpperCase.type(), IsUpperCase.class));
+    cxt.declareBuiltin(new Builtin(IsNumeric.name, IsNumeric.type(), IsNumeric.class));
+    cxt.declareBuiltin(new Builtin(IsIdentifierStart.name, IsIdentifierStart.type(), IsIdentifierStart.class));
+    cxt.declareBuiltin(new Builtin(IsIdentifierChar.name, IsIdentifierChar.type(), IsIdentifierChar.class));
   }
 }

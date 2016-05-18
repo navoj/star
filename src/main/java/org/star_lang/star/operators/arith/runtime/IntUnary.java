@@ -203,6 +203,33 @@ public abstract class IntUnary
     }
   }
 
+  public static class IntHash implements IFunction
+  {
+    public static final String name = "__integer_hash";
+    @CafeEnter
+    public static int enter(int s1)
+    {
+      return s1;
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException
+    {
+      return Factory.newInt(enter(Factory.intValue(args[0])));
+    }
+
+    @Override
+    public IType getType()
+    {
+      return type();
+    }
+
+    public static IType type(){
+      IType intType = StandardTypes.rawIntegerType;
+      return TypeUtils.functionType(intType, intType);
+    }
+  }
+
   public static class IntLog implements IFunction
   {
     @CafeEnter

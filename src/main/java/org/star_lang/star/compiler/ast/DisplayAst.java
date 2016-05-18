@@ -34,87 +34,75 @@ import org.star_lang.star.operators.CafeEnter;
  * permissions and limitations under the License.
  */
 
-public class DisplayAst implements IFunction
-{
+public class DisplayAst implements IFunction {
   private final static Operators operators = Operators.operatorRoot();
 
-  public static void display(PrettyPrintDisplay disp, IAbstract term)
-  {
+  public static void display(PrettyPrintDisplay disp, IAbstract term) {
     display(disp, term, 2000);
   }
 
-  public static String display(IAbstract term)
-  {
+  public static String display(IAbstract term) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
     display(disp, term, 2000);
     return disp.toString();
   }
 
-  protected static void display(PrettyPrintDisplay disp, IAbstract term, int priority)
-  {
+  protected static void display(PrettyPrintDisplay disp, IAbstract term, int priority) {
     switch (term.astType()) {
-    case Apply: {
-      Apply apply = (Apply) term;
-      displayApply(disp, apply, priority);
-      break;
-    }
-    case Bool: {
-      BooleanLiteral lit = (BooleanLiteral) term;
-      if (lit.getLit())
-        disp.appendWord(TrueValue.name);
-      else
-        disp.appendWord(FalseValue.name);
-      break;
-    }
-    case Char: {
-      CharLiteral lit = (CharLiteral) term;
-      disp.append("'");
-      disp.appendChar(lit.getLit());
-      disp.append("'");
-      break;
-    }
-    case Dec: {
-      BigDecimalLiteral lit = (BigDecimalLiteral) term;
-      disp.append(lit.getLit().toString());
-      disp.append("a");
-      break;
-    }
-    case Flt: {
-      FloatLiteral flt = (FloatLiteral) term;
-      disp.append(flt.getLit());
-      break;
-    }
-    case Int: {
-      IntegerLiteral lit = (IntegerLiteral) term;
-      disp.appendWord(lit.getLit());
-      break;
-    }
-    case Long: {
-      LongLiteral lit = (LongLiteral) term;
-      disp.appendWord(lit.getLit());
-      break;
-    }
-    case Name: {
-      String id = ((Name) term).getId();
-      if (id.equals(StandardNames.BRACES) || id.equals(StandardNames.SQUARE) || id.equals(StandardNames.PARENS))
-        disp.append(id);
-      else
-        disp.appendIden(id);
-      break;
-    }
-    case Str: {
-      StringLiteral str = (StringLiteral) term;
-      disp.append(StringUtils.quoteString(str.getLit()));
-      break;
-    }
-    default:
-      assert false : "should not happen";
-      break;
+      case Apply: {
+        Apply apply = (Apply) term;
+        displayApply(disp, apply, priority);
+        break;
+      }
+      case Bool: {
+        BooleanLiteral lit = (BooleanLiteral) term;
+        if (lit.getLit())
+          disp.appendWord(TrueValue.name);
+        else
+          disp.appendWord(FalseValue.name);
+        break;
+      }
+      case Dec: {
+        BigDecimalLiteral lit = (BigDecimalLiteral) term;
+        disp.append(lit.getLit().toString());
+        disp.append("a");
+        break;
+      }
+      case Flt: {
+        FloatLiteral flt = (FloatLiteral) term;
+        disp.append(flt.getLit());
+        break;
+      }
+      case Int: {
+        IntegerLiteral lit = (IntegerLiteral) term;
+        disp.appendWord(lit.getLit());
+        break;
+      }
+      case Long: {
+        LongLiteral lit = (LongLiteral) term;
+        disp.appendWord(lit.getLit());
+        break;
+      }
+      case Name: {
+        String id = ((Name) term).getId();
+        if (id.equals(StandardNames.BRACES) || id.equals(StandardNames.SQUARE) || id.equals(StandardNames.PARENS))
+          disp.append(id);
+        else
+          disp.appendIden(id);
+        break;
+      }
+      case Str: {
+        StringLiteral str = (StringLiteral) term;
+        disp.append(StringUtils.quoteString(str.getLit()));
+        break;
+      }
+      default:
+        assert false : "should not happen";
+        break;
     }
   }
 
-  protected static void displayApply(PrettyPrintDisplay disp, Apply app, int priority)
-  {
+  protected static void displayApply(PrettyPrintDisplay disp, Apply app, int priority) {
     IAbstract operator = app.getOperator();
 
     if (CompilerUtils.isBraceTerm(app)) {
@@ -192,21 +180,18 @@ public class DisplayAst implements IFunction
       display0(disp, app);
   }
 
-  private static void display0(PrettyPrintDisplay disp, Apply app)
-  {
+  private static void display0(PrettyPrintDisplay disp, Apply app) {
     display(disp, app.getOperator(), 0);
     display(disp, app.getArgs(), "(", ", ", ")", 0, 1000);
   }
 
-  private static void paren(PrettyPrintDisplay disp, int priority, int limit, String paren)
-  {
+  private static void paren(PrettyPrintDisplay disp, int priority, int limit, String paren) {
     if (priority > limit)
       disp.append(paren);
   }
 
   protected static void display(PrettyPrintDisplay disp, Iterable<IAbstract> seq, String preamble, String sep,
-      String postamble, int indent, int priority)
-  {
+                                String postamble, int indent, int priority) {
     disp.append(preamble);
     int mark = disp.markIndent(indent);
     String s = "";
@@ -220,8 +205,7 @@ public class DisplayAst implements IFunction
   }
 
   protected static void display(PrettyPrintDisplay disp, IList seq, String preamble, String sep, String postamble,
-      int indent, int priority)
-  {
+                                int indent, int priority) {
     disp.append(preamble);
     int mark = disp.markIndent(indent);
     String s = "";
@@ -237,8 +221,7 @@ public class DisplayAst implements IFunction
   public static final String name = "display_quoted";
 
   @CafeEnter
-  public static StringWrap enter(IValue value) throws EvaluationException
-  {
+  public static StringWrap enter(IValue value) throws EvaluationException {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
 
     display(disp, (IAbstract) value);
@@ -246,19 +229,16 @@ public class DisplayAst implements IFunction
   }
 
   @Override
-  public IValue enter(IValue... args) throws EvaluationException
-  {
+  public IValue enter(IValue... args) throws EvaluationException {
     return enter(args[0]);
   }
 
   @Override
-  public IType getType()
-  {
+  public IType getType() {
     return type();
   }
 
-  public static IType type()
-  {
+  public static IType type() {
     return TypeUtils.functionType(StandardTypes.astType, StandardTypes.stringType);
   }
 }

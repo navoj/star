@@ -13,7 +13,7 @@ import org.star_lang.star.operators.CafeEnter;
 
 public class HashCode implements IFunction
 {
-  public static final String name = "__hashCode";
+  public static final String NAME = "__hashCode";
 
   @CafeEnter
   public static int enter(IValue obj)

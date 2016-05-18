@@ -1,5 +1,25 @@
 package org.star_lang.star.compiler.sources;
 
+import org.star_lang.star.compiler.ErrorReport;
+import org.star_lang.star.compiler.ast.ASyntax;
+import org.star_lang.star.compiler.cafe.compile.Types;
+import org.star_lang.star.compiler.cafe.compile.Utils;
+import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.compiler.type.Freshen;
+import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.compiler.util.Sequencer.SequenceException;
+import org.star_lang.star.compiler.util.StringSequence;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.type.*;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.operators.Builtin;
+import org.star_lang.star.operators.ICafeBuiltin;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.*;
+import org.star_lang.star.operators.string.runtime.StringWrappers.Raw2String;
+import org.star_lang.star.operators.string.runtime.StringWrappers.String2Raw;
+import org.star_lang.star.operators.system.runtime.RawWrappers.UnwrapRaw;
+import org.star_lang.star.operators.system.runtime.RawWrappers.WrapRaw;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -8,50 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.ASyntax;
-import org.star_lang.star.compiler.cafe.compile.Types;
-import org.star_lang.star.compiler.cafe.compile.Utils;
-import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.type.Freshen;
-import org.star_lang.star.compiler.type.TypeUtils;
-import org.star_lang.star.compiler.util.StringSequence;
-import org.star_lang.star.compiler.util.Sequencer.SequenceException;
-import org.star_lang.star.data.IFunction;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeDescription;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.StandardTypes;
-import org.star_lang.star.data.type.TypeConstraintException;
-import org.star_lang.star.data.type.TypeVar;
-import org.star_lang.star.data.value.ResourceURI;
-import org.star_lang.star.operators.Builtin;
-import org.star_lang.star.operators.ICafeBuiltin;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapBool;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapDbl;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapDouble;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapFloat;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapFlt;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapInt;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapInteger;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapLng;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapLong;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapBool;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapDbl;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapDouble;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapFloat;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapFlt;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapInt;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapInteger;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapLng;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapLong;
-import org.star_lang.star.operators.string.runtime.StringWrappers.Raw2String;
-import org.star_lang.star.operators.string.runtime.StringWrappers.String2Raw;
-import org.star_lang.star.operators.string.runtime.StringWrappers.UnwrapChar;
-import org.star_lang.star.operators.string.runtime.StringWrappers.WrapChar;
-import org.star_lang.star.operators.system.runtime.RawWrappers.UnwrapRaw;
-import org.star_lang.star.operators.system.runtime.RawWrappers.WrapRaw;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -187,8 +163,6 @@ public class JavaImport {
     switch (str.next().intValue()) {
       case 'Z':
         return StandardTypes.rawBoolType;
-      case 'C':
-        return StandardTypes.rawCharType;
       case 'I':
         return StandardTypes.rawIntegerType;
       case 'J':
@@ -306,8 +280,6 @@ public class JavaImport {
     switch (javaSig.next().intValue()) {
       case 'Z':
         return unary(loc, StandardTypes.booleanType, WrapBool.WRAP_BOOL, WrapBool.type(), var);
-      case 'C':
-        return unary(loc, StandardTypes.charType, WrapChar.WRAP_CHAR, WrapChar.type(), var);
       case 'I':
         return unary(loc, StandardTypes.integerType, WrapInt.WRAP_INT, WrapInt.type(), var);
       case 'J':
@@ -356,8 +328,6 @@ public class JavaImport {
     switch (javaSig.next().intValue()) {
       case 'Z':
         return unary(loc, StandardTypes.rawBoolType, UnwrapBool.UNWRAP_BOOL, UnwrapBool.type(), var);
-      case 'C':
-        return unary(loc, StandardTypes.rawCharType, UnwrapChar.UNWRAP_CHAR, UnwrapChar.type(), var);
       case 'I':
         return unary(loc, StandardTypes.rawIntegerType, UnwrapInt.UNWRAP_INT, UnwrapInt.type(), var);
       case 'J':

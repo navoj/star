@@ -65,10 +65,13 @@ Prelude is package {
 
   implementation equality over (List of %a where equality over %a) is {
 	(=) = listEq;
+	hashCode = listHash
   } using {
 	fun listEq(Null,Null) is true
 	 |  listEq(Cons(H1,L1),Cons(H2,L2)) where H1=H2 is listEq(L1,L2)
 	 |  listEq(_,_) default is false
+	fun listHash(Null) is hashCode("Null")
+	 |  listHash(Cons(H,T)) is ((hashCode("Cons")*37)+hashCode(H))*37+hashCode(T)
   }
 
   implementation sizeable over (List of %a where equality over %a) is {

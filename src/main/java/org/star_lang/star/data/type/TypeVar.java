@@ -21,7 +21,7 @@ import org.star_lang.star.compiler.util.Pair;
  * type expression has semantics depending on the form of the quantifier: a UniversalType denotes a
  * universally quantified type expression.
  * 
- * Every type variable has a name -- used mostly in displaying the variable -- a list of type
+ * Every type variable has a NAME -- used mostly in displaying the variable -- a list of type
  * contracts that it depends on; and a potential binding for the type variable.
  *
  * Copyright (c) 2015. Francis G. McCabe
@@ -48,11 +48,11 @@ public class TypeVar implements IType, Iterable<ITypeConstraint>
   private final String name;
 
   /**
-   * Construct a type variable with an explicit name, read-only status and list of required type
+   * Construct a type variable with an explicit NAME, read-only status and list of required type
    * contracts.
    * 
    * @param varname
-   *          the name of the variable.
+   *          the NAME of the variable.
    * @param access
    *          if true, then not permitted to bind the variable. Generally set to true only for
    *          variables that are also bound in a quantified type expression.
@@ -74,11 +74,11 @@ public class TypeVar implements IType, Iterable<ITypeConstraint>
   }
 
   /**
-   * Construct a type variable with an explicit name, read-only status and list of required type
+   * Construct a type variable with an explicit NAME, read-only status and list of required type
    * contracts.
    * 
    * @param varname
-   *          the name of the variable.
+   *          the NAME of the variable.
    * @param access
    *          if true, then not permitted to bind the variable. Generally set to true only for
    *          variables that are also bound in a quantified type expression.
@@ -93,7 +93,7 @@ public class TypeVar implements IType, Iterable<ITypeConstraint>
   }
 
   /**
-   * Create a new type variable with an automatically generated name and with no contract
+   * Create a new type variable with an automatically generated NAME and with no contract
    * dependencies.
    */
   public TypeVar()

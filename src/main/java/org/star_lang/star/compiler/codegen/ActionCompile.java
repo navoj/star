@@ -94,8 +94,6 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
     String assignmentEscape;
     if (TypeUtils.isRawBoolType(type))
       assignmentEscape = Assignments.AssignRawBool.name;
-    else if (TypeUtils.isRawCharType(type))
-      assignmentEscape = Assignments.AssignRawChar.name;
     else if (TypeUtils.isRawIntType(type))
       assignmentEscape = Assignments.AssignRawInteger.name;
     else if (TypeUtils.isRawLongType(type))

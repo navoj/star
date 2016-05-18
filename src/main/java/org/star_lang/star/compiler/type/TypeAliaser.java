@@ -92,7 +92,7 @@ public class TypeAliaser implements TypeTransformer<IType, ITypeConstraint, Void
           if (eK == Kind.unknown)
             tV.setConstraint(new HasKind(tV, Kind.kind(tE.typeArity())));
           else if (!eK.check(tE.typeArity())) {
-            errors.reportError(StringUtils.msg("name ", name, " expects ", eK.arity(), " type arguments"), loc);
+            errors.reportError(StringUtils.msg("NAME ", name, " expects ", eK.arity(), " type arguments"), loc);
           }
         } else
           try {

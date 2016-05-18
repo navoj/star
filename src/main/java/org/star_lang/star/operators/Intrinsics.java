@@ -1,12 +1,5 @@
 package org.star_lang.star.operators;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.BuiltinInfo;
@@ -19,46 +12,9 @@ import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.ISet;
 import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeDescription;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.StandardTypes;
-import org.star_lang.star.data.type.TypeAlias;
-import org.star_lang.star.data.type.TypeDescription;
-import org.star_lang.star.data.type.TypeVar;
-import org.star_lang.star.data.value.Array;
-import org.star_lang.star.data.value.BigNumWrap;
-import org.star_lang.star.data.value.BinaryWrap;
-import org.star_lang.star.data.value.BoolWrap;
-import org.star_lang.star.data.value.CharWrap;
-import org.star_lang.star.data.value.Cons;
-import org.star_lang.star.data.value.FloatWrap;
-import org.star_lang.star.data.value.IntWrap;
-import org.star_lang.star.data.value.LongWrap;
-import org.star_lang.star.data.value.NTuple;
-import org.star_lang.star.data.value.Option;
-import org.star_lang.star.data.value.Reason;
-import org.star_lang.star.data.value.ResourceURI;
-import org.star_lang.star.data.value.Result;
-import org.star_lang.star.data.value.StringWrap;
-import org.star_lang.star.data.value.VoidWrap;
-import org.star_lang.star.operators.arith.Arithmetic;
-import org.star_lang.star.operators.arith.BigNumUnary;
-import org.star_lang.star.operators.arith.BoolCompare;
-import org.star_lang.star.operators.arith.FloatBinary;
-import org.star_lang.star.operators.arith.FloatCompare;
-import org.star_lang.star.operators.arith.FloatTrig;
-import org.star_lang.star.operators.arith.FloatUnary;
-import org.star_lang.star.operators.arith.IntBinary;
-import org.star_lang.star.operators.arith.IntCompare;
-import org.star_lang.star.operators.arith.IntUnary;
-import org.star_lang.star.operators.arith.IntegerBitString;
-import org.star_lang.star.operators.arith.LongBinary;
-import org.star_lang.star.operators.arith.LongBitString;
-import org.star_lang.star.operators.arith.LongCompare;
-import org.star_lang.star.operators.arith.LongUnary;
-import org.star_lang.star.operators.arith.Number2Number;
-import org.star_lang.star.operators.arith.NumericWrapper;
+import org.star_lang.star.data.type.*;
+import org.star_lang.star.data.value.*;
+import org.star_lang.star.operators.arith.*;
 import org.star_lang.star.operators.arrays.ArrayOps;
 import org.star_lang.star.operators.assignment.runtime.AtomicCell;
 import org.star_lang.star.operators.assignment.runtime.AtomicInt;
@@ -73,21 +29,19 @@ import org.star_lang.star.operators.misc.MiscOps;
 import org.star_lang.star.operators.resource.ResourceOps;
 import org.star_lang.star.operators.sets.SetOpsDecl;
 import org.star_lang.star.operators.spawn.SpawnOps;
-import org.star_lang.star.operators.string.CharOps;
-import org.star_lang.star.operators.string.DateOps;
-import org.star_lang.star.operators.string.DisplayValue;
-import org.star_lang.star.operators.string.KeyGen;
-import org.star_lang.star.operators.string.Number2String;
-import org.star_lang.star.operators.string.RegexpOps;
-import org.star_lang.star.operators.string.String2Number;
-import org.star_lang.star.operators.string.StringCompare;
-import org.star_lang.star.operators.string.StringOps;
-import org.star_lang.star.operators.string.StringWrappers;
+import org.star_lang.star.operators.string.*;
 import org.star_lang.star.operators.system.BinaryWrappers;
 import org.star_lang.star.operators.system.Clock;
 import org.star_lang.star.operators.system.GStopHere;
 import org.star_lang.star.operators.system.SystemUtils;
 import org.star_lang.star.operators.uri.URIOps;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -111,7 +65,6 @@ public class Intrinsics extends Dict {
 
   static {
     intrinsics.defineType(new TypeDescription(StandardTypes.rawBoolType));
-    intrinsics.defineType(new TypeDescription(StandardTypes.rawCharType));
     intrinsics.defineType(new TypeDescription(StandardTypes.rawIntegerType));
     intrinsics.defineType(new TypeDescription(StandardTypes.rawLongType));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.rawFloatType, Double.class.getCanonicalName()));
@@ -122,14 +75,13 @@ public class Intrinsics extends Dict {
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.voidType, Object.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.anyType, IValue.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils
-            .dictionaryType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
+        .dictionaryType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils.setType(new TypeVar())), ISet.class.getCanonicalName()));
 
     // Define standard types
     VoidWrap.declare(intrinsics);
     EvaluationException.declare(intrinsics);
     BoolWrap.declare(intrinsics);
-    CharWrap.declare(intrinsics);
     StringWrap.declare(intrinsics);
     BinaryWrap.declare(intrinsics);
     Location.declare(intrinsics);
@@ -183,7 +135,6 @@ public class Intrinsics extends Dict {
     AsynchIo.declare();
     SpawnOps.declare(intrinsics);
     BoolCompare.declare(intrinsics);
-    CharOps.declare(intrinsics);
     StringOps.declare(intrinsics);
     String2Number.declare(intrinsics);
     StringCompare.declare(intrinsics);
@@ -200,9 +151,9 @@ public class Intrinsics extends Dict {
 
     Location noWhere = Location.nullLoc;
     intrinsics.defineTypeAlias(noWhere, new TypeAlias(Location.nullLoc, TypeUtils.typeExp(StandardNames.ALIAS,
-            TypeUtils.typeExp("double"), StandardTypes.floatType)));
+        TypeUtils.typeExp("double"), StandardTypes.floatType)));
     intrinsics.defineTypeAlias(noWhere, new TypeAlias(Location.nullLoc, TypeUtils.typeExp(StandardNames.ALIAS,
-            TypeUtils.typeExp("arbitrary"), StandardTypes.decimalType)));
+        TypeUtils.typeExp("arbitrary"), StandardTypes.decimalType)));
   }
 
   private Intrinsics() {
@@ -251,10 +202,10 @@ public class Intrinsics extends Dict {
   }
 
   /**
-   * Retrieve a built-in operator associated with a given name.
+   * Retrieve a built-in operator associated with a given NAME.
    *
    * @param name
-   * @return the built-in function object (if it exists) associated with a given name
+   * @return the built-in function object (if it exists) associated with a given NAME
    */
 
   public ICafeBuiltin getBuiltinOperator(String name) {
@@ -294,6 +245,5 @@ public class Intrinsics extends Dict {
 
     return standards;
   }
-
 
 }

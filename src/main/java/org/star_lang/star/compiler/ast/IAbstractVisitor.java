@@ -21,8 +21,6 @@ public interface IAbstractVisitor
 
   void visitBooleanLiteral(BooleanLiteral lit);
 
-  void visitCharLiteral(CharLiteral lit);
-
   void visitFloatLiteral(FloatLiteral flt);
 
   void visitStringLiteral(StringLiteral str);

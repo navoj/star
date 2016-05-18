@@ -24,6 +24,7 @@ private import option;
 
 implementation equality over (dictionary of (%k,%v) where equality over %k and equality over %v) is {
   fun X=Y is hash_equal(X,Y);
+  fun hashCode(D) is integer(__hashCode(D))
 } using {
   fun hash_equal(X,Y) is __hash_equal(X,Y,(=));
 }

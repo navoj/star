@@ -279,7 +279,6 @@ private import macrosupport;
 # #(?A)#[?E] :: expression :- A::expression :& E::expression;
 
 # number :: expression;
-# char :: expression;
 # string :: expression;
 # identifier :: expression;
 # symbol :: expression;
@@ -374,7 +373,6 @@ private import macrosupport;
 
 -- Simple patterns
 # number :: pattern;
-# char :: pattern;
 # regexp :: pattern;
 # string :: pattern;
 # identifier :: pattern;

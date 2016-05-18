@@ -1,60 +1,23 @@
 package org.star_lang.star.compiler.type;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.canonical.MethodVariable;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.transform.Over;
-import org.star_lang.star.compiler.util.AccessMode;
-import org.star_lang.star.compiler.util.Pair;
-import org.star_lang.star.compiler.util.StringSequence;
-import org.star_lang.star.compiler.util.StringUtils;
-import org.star_lang.star.compiler.util.Wrapper;
-import org.star_lang.star.data.type.ContractConstraint;
-import org.star_lang.star.data.type.ExistentialType;
-import org.star_lang.star.data.type.FieldConstraint;
-import org.star_lang.star.data.type.FieldTypeConstraint;
-import org.star_lang.star.data.type.HasKind;
-import org.star_lang.star.data.type.IAlgebraicType;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeAlias;
-import org.star_lang.star.data.type.ITypeConstraint;
-import org.star_lang.star.data.type.ITypeDescription;
-import org.star_lang.star.data.type.ITypeVisitor;
-import org.star_lang.star.data.type.IValueSpecifier;
-import org.star_lang.star.data.type.Kind;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.QuantifiedType;
-import org.star_lang.star.data.type.Quantifier;
-import org.star_lang.star.data.type.TupleType;
+import org.star_lang.star.compiler.util.*;
+import org.star_lang.star.data.type.*;
 import org.star_lang.star.data.type.Quantifier.Existential;
 import org.star_lang.star.data.type.Quantifier.Universal;
-import org.star_lang.star.data.type.RecordSpecifier;
-import org.star_lang.star.data.type.StandardTypes;
-import org.star_lang.star.data.type.Type;
-import org.star_lang.star.data.type.TypeConstraintException;
-import org.star_lang.star.data.type.TypeContract;
-import org.star_lang.star.data.type.TypeExp;
-import org.star_lang.star.data.type.TypeInterface;
-import org.star_lang.star.data.type.TypeInterfaceType;
-import org.star_lang.star.data.type.TypeVar;
-import org.star_lang.star.data.type.UniversalType;
 import org.star_lang.star.data.value.Array;
 import org.star_lang.star.data.value.Cons;
 import org.star_lang.star.data.value.Option;
 import org.star_lang.star.data.value.Result;
 import org.star_lang.star.operators.Intrinsics;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -453,7 +416,7 @@ public class TypeUtils {
     return ((TypeInterface) type).numOfFields();
   }
 
-  public static IType interfaceOfType(Location loc, IType tipe, Dictionary dict,ErrorReport errors) {
+  public static IType interfaceOfType(Location loc, IType tipe, Dictionary dict, ErrorReport errors) {
     List<Quantifier> quants = new ArrayList<>();
     IType type = unwrap(tipe, quants);
 
@@ -1206,10 +1169,6 @@ public class TypeUtils {
     return isType(type, Names.RAW_BOOL_TYPE);
   }
 
-  public static boolean isRawCharType(IType type) {
-    return isType(type, Names.RAW_CHAR_TYPE);
-  }
-
   public static boolean isRawIntType(IType type) {
     return isType(type, Names.RAW_INT_TYPE);
   }
@@ -1240,10 +1199,6 @@ public class TypeUtils {
 
   public static boolean isRawBoolType(String name) {
     return name.equals(Names.RAW_BOOL_TYPE);
-  }
-
-  public static boolean isRawCharType(String name) {
-    return name.equals(Names.RAW_CHAR_TYPE);
   }
 
   public static boolean isRawIntType(String name) {
@@ -1277,7 +1232,7 @@ public class TypeUtils {
   public static boolean isRawType(IType type) {
     type = deRef(type);
 
-    return type instanceof Type && (isRawBoolType(type) || isRawCharType(type) || isRawIntType(type) || isRawLongType(
+    return type instanceof Type && (isRawBoolType(type) || isRawIntType(type) || isRawLongType(
         type) || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type)
         || isRawBinaryType(type));
   }
@@ -1286,8 +1241,6 @@ public class TypeUtils {
     switch (Types.varType(type)) {
       case rawBool:
         return StandardTypes.booleanType;
-      case rawChar:
-        return StandardTypes.charType;
       case rawInt:
         return StandardTypes.integerType;
       case rawLong:
@@ -1309,8 +1262,6 @@ public class TypeUtils {
     type = deRef(type);
     if (type.equals(StandardTypes.booleanType))
       return StandardTypes.rawBoolType;
-    else if (type.equals(StandardTypes.charType))
-      return StandardTypes.rawCharType;
     else if (type.equals(StandardTypes.integerType))
       return StandardTypes.rawIntegerType;
     else if (type.equals(StandardTypes.longType))
@@ -1332,8 +1283,6 @@ public class TypeUtils {
     rawType = deRef(rawType);
     if (type.equals(StandardTypes.booleanType))
       return StandardTypes.rawBoolType.equals(rawType);
-    else if (type.equals(StandardTypes.charType))
-      return StandardTypes.rawCharType.equals(rawType);
     else if (type.equals(StandardTypes.integerType))
       return StandardTypes.rawIntegerType.equals(rawType);
     else if (type.equals(StandardTypes.longType))

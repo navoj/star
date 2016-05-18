@@ -32,7 +32,7 @@ implementation sizeable over string is {
   fun size(string(S)) is integer(__str_length(S));
 }
  
-implementation sequence over string determines char is {
+implementation sequence over string determines integer is {
   fun _cons(H,T) is __string_cons(H,T);
   fun _apnd(S,C) is __string_apnd(S,C); 
   ptn _empty() from "";
@@ -45,11 +45,11 @@ implementation concatenate over string is {
   fun string(S1)++string(S2) is string(__string_concatenate(S1,S2));
 }
 
-implementation indexable over string determines (integer,char) is {
-  fun _index(string(S),integer(Ix)) where __integer_ge(Ix,0_) and __integer_lt(Ix,__str_length(S)) is some(char(__get_char(S,Ix)))
+implementation indexable over string determines (integer,integer) is {
+  fun _index(string(S),integer(Ix)) where __integer_ge(Ix,0_) and __integer_lt(Ix,__str_length(S)) is some(integer(__get_codepoint(S,Ix)))
    |  _index(_,_) default is none;
-  fun _set_indexed(string(S),integer(Ix),char(C)) is string(__substitute_char(S,Ix,C)); 
-  fun _delete_indexed(string(S),integer(Ix)) is string(__delete_char(S,Ix));
+  fun _set_indexed(string(S),integer(Ix),integer(C)) is string(__substitute_codepoint(S,Ix,C));
+  fun _delete_indexed(string(S),integer(Ix)) is string(__delete_codepoint(S,Ix));
 }
  
 implementation sliceable over string determines integer is {
@@ -62,13 +62,11 @@ fun findstring(string(S),string(T),integer(Ix)) is integer(__string_find(S,T,Ix)
 
 fun isSubstring(string(S),string(T)) is __integer_ge(__string_find(T,S,0_),0_);
 
-fun isIdentifierStart(string(S)) is __isIdentifierStart(__get_char(S,0_));
+fun isIdentifierStart(string(S)) is __isIdentifierStart(__get_codepoint(S,0_));
 
-fun isUnicodeIdentifier(string(S)) is __isUnicodeIdentifier(S);
+fun isUpperCase(integer(C)) is __is_upper_case(C)
 
-fun isUpperCase(char(C)) is __isUpperCase(C)
-
-fun isLowerCase(char(C)) is __isLowerCase(C)
+fun isLowerCase(integer(C)) is __is_lower_case(C)
 
 fun toUpperCase(string(S)) is string(__uppercase(S))
 
@@ -91,6 +89,9 @@ fun display(T) is flattenPP(ppDisp(T));
 fun format(T,S) is flattenPP(_format(T,S));
 
 fun flattenPP(P) is revImplode(fltn(P,0,0,100,nil,nlFun(P,0,100),(Off,Ind,Mx,SoF) => SoF));
+
+private fun revImplode(X) is string(__string_rev_implode(X));
+
 
 -- Private implementation
 
@@ -140,21 +141,23 @@ fun width(ppStr(S)) is size(S)
 
 fun spaces(integer(Ix)) is string(__spaces(Ix));
 
-fun revImplode(X) is string(__string_rev_implode(X));
-
-implementation explosion over (string,cons) determines char is {
+implementation explosion over (string,cons of integer) is {
   fun explode(string(S)) is __string_explode(S);
   
   fun implode(L) is string(__string_implode(L));
 }
 
-implementation explosion over (string,list) determines char is {
+implementation explosion over (string,list of integer) is {
   fun explode(string(S)) is __string_array(S);
-  fun implode(A) is string(__string_implode(A))
+  fun implode(A) is string(__array_string(A))
 }
 
-implementation coercion over (string,list of char) is {
+implementation coercion over (string,list of integer) is {
   fun coerce(string(S)) is __string_array(S);
+}
+
+implementation coercion over (list of integer,string) is {
+  fun coerce(L) is string(__array_string(L));
 }
 
 implementation reversible over string is {
@@ -173,15 +176,12 @@ implementation pPrint over pP is {
 
 implementation equality over pP is {
  fun  L=R is __equal(L,R);
+ fun hashCode(X) is integer(__hashCode(X))
 };
   
 implementation pPrint over boolean is {
   fun ppDisp(true) is ppStr("true")
    |  ppDisp(false) is ppStr("false");
-}
-
-implementation pPrint over char is {
-  fun ppDisp(char(ch)) is ppSequence(0,cons(ppStr("'"),cons(ppStr(string(__char_string(ch))),cons(ppStr("'"),nil))))
 }
 
 implementation pPrint over ((%s,%t)) where pPrint over %s and pPrint over %t is {

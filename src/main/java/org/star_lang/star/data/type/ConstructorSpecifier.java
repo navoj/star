@@ -21,7 +21,7 @@ import org.star_lang.star.data.value.VoidWrap;
  * A {@code ConstructorSpecifier} can be modeled logically as a function, for example in the type:
  * 
  * <pre>
- * type person is noone or someone{name has type string; age has type integer}
+ * type person is noone or someone{NAME has type string; age has type integer}
  * </pre>
  * 
  * there are two constructor functions that relate to creating values of type person: {@code noone}
@@ -214,9 +214,9 @@ public class ConstructorSpecifier implements IValueSpecifier, ICafeConstructorSp
   }
 
   /**
-   * Get the name of this constructor
+   * Get the NAME of this constructor
    * 
-   * @return The constructor name
+   * @return The constructor NAME
    */
   @Override
   public String getLabel()

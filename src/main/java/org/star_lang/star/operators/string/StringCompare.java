@@ -7,12 +7,14 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
+import org.star_lang.star.operators.string.runtime.*;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringEQ;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringGE;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringGT;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringLE;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringLT;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringNE;
+import org.star_lang.star.operators.string.runtime.StringOps;
 
 /*
   * Copyright (c) 2015. Francis G. McCabe
@@ -30,7 +32,6 @@ import org.star_lang.star.operators.string.runtime.StringCompare.StringNE;
 
 public class StringCompare extends Builtin
 {
-  public static final String STRING_EQ = "__string_eq";
 
   private static final IType rawStringStype = StandardTypes.rawStringType;
 
@@ -42,11 +43,11 @@ public class StringCompare extends Builtin
   public static void declare(Intrinsics cxt)
   {
     String equality = StandardNames.EQUALITY;
-    PrimitiveOverloader.declarePrimitiveImplementation(equality, StandardNames.EQUAL, rawStringStype, STRING_EQ);
-    cxt.declareBuiltin(new StringCompare(STRING_EQ, StringEQ.class));
+    PrimitiveOverloader.declarePrimitiveImplementation(equality, StandardNames.EQUAL, rawStringStype, StringEQ.NAME);
+    cxt.declareBuiltin(new StringCompare(StringEQ.NAME, StringEQ.class));
 
-    cxt.declareBuiltin(new StringCompare("__string_ne", StringNE.class));
-    PrimitiveOverloader.declarePrimitiveImplementation(equality, StandardNames.NOT_EQUAL, rawStringStype, "__string_ne");
+    cxt.declareBuiltin(new StringCompare(StringNE.NAME, StringNE.class));
+    PrimitiveOverloader.declarePrimitiveImplementation(equality, StandardNames.NOT_EQUAL, rawStringStype, StringNE.NAME);
 
     cxt.declareBuiltin(new StringCompare("__string_lt", StringLT.class));
     cxt.declareBuiltin(new StringCompare("__string_le", StringLE.class));

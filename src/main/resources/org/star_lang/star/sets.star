@@ -12,6 +12,7 @@
  * permissions and limitations under the License.
  */
 private import base;
+private import arithmetic;
 private import sequences;
 private import strings;
 private import iterable;
@@ -35,6 +36,7 @@ contract sets over t determines e is {
 
 implementation equality over (set of %v where equality over %v) is {
   fun X=Y is __set_equal(X,Y);
+  fun hashCode(S) is __set_hash(S)
 }
 
 implementation sizeable over set of %t is {

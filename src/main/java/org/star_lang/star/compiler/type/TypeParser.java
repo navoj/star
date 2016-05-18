@@ -677,6 +677,8 @@ public class TypeParser {
         for (IType tp : argTypes)
           if (TypeUtils.isTypeVar(tp))
             ((TypeVar) TypeUtils.deRef(tp)).setConstraint(con);
+          else if (TypeUtils.isTypeExp(tp) && TypeUtils.isTypeVar(TypeUtils.getTypeCon(tp)))
+            ((TypeVar) TypeUtils.deRef(TypeUtils.getTypeCon(tp))).setConstraint(con);
       }
     } else if (Abstract.isUnary(cons, StandardNames.TUPLE) && CompilerUtils.isTypeVar(Abstract.unaryArg(cons))) {
 

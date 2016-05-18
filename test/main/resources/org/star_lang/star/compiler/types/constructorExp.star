@@ -33,6 +33,7 @@
     
     implementation equality over el is {
       (=) = (=)
+      hashCode = hashCode
     }
   }
   
@@ -46,6 +47,7 @@
     
     implementation equality over el is {
       (=) = (=)
+      hashCode = hashCode
     }
   }
   

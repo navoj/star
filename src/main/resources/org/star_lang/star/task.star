@@ -18,6 +18,7 @@ private import base;
 private import compute;
 private import sequences;
 private import strings;
+private import arithmetic;
 
 -- private
 type taskEvalState of %a is

@@ -646,7 +646,7 @@ public class Operators implements PrettyPrintable {
     else if (term instanceof StringLiteral)
       return Abstract.getString(term);
     else {
-      errors.reportError("expecting an operator name", term.getLoc());
+      errors.reportError("expecting an operator NAME", term.getLoc());
       return null;
     }
   }

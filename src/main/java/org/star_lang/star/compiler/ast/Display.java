@@ -106,7 +106,6 @@ public class Display implements IAbstractVisitor {
           assert Abstract.isUnary(app);
           Abstract.unaryArg(app).accept(this);
           appendWord(Abstract.getOp(app));
-          return;
       }
     } else {
       app.getOperator().accept(this);
@@ -120,13 +119,6 @@ public class Display implements IAbstractVisitor {
       appendWord(Names.TRUE);
     else
       appendWord(Names.FALSE);
-  }
-
-  @Override
-  public void visitCharLiteral(CharLiteral lit) {
-    disp.append("'");
-    appendChar(lit.getLit());
-    disp.append("'");
   }
 
   @Override
@@ -225,9 +217,5 @@ public class Display implements IAbstractVisitor {
 
   protected void append(String str) {
     disp.append(str);
-  }
-
-  private void appendChar(int ch) {
-    disp.appendChar(ch);
   }
 }

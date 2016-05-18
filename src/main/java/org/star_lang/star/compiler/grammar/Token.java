@@ -57,7 +57,7 @@ public class Token {
   }
 
   public enum TokenType {
-    identifier, integer, longint, decimal, floating, character, string, blob, regexp, terminal
+    identifier, integer, longint, decimal, floating, string, blob, regexp, terminal
   }
 
   public String getImage() {
@@ -108,8 +108,6 @@ public class Token {
         return value.toString();
       case decimal:
         return value.toString() + "a";
-      case character:
-        return "'" + image + "'";
       case string:
         return "\"" + image + "\"";
       case regexp:

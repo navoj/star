@@ -43,7 +43,6 @@ public class IFuncImplementation
       enterSig = Type.getMethodDescriptor(enter);
     } catch (NoSuchMethodException e) {
       e.printStackTrace();
-    } finally {
     }
     IFUNCTION_INVOKE_SIG = enterSig;
   }
@@ -304,11 +303,6 @@ public class IFuncImplementation
         locals.add(new LocalVariableNode(id, argSig, null, first, last, ix));
         ins.add(new VarInsnNode(Opcodes.DLOAD, ix));
         hwm.bump(2);
-        break;
-      case rawChar:
-        locals.add(new LocalVariableNode(id, argSig, null, first, last, ix));
-        ins.add(new VarInsnNode(Opcodes.ILOAD, ix));
-        hwm.bump(1);
         break;
       case rawString:
         locals.add(new LocalVariableNode(id, argSig, null, first, last, ix));

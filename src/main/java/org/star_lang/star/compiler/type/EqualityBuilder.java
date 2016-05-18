@@ -18,10 +18,16 @@ import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.arith.FloatCompare.FltEQ;
 import org.star_lang.star.operators.arith.LongCompare.LngEQ;
+import org.star_lang.star.operators.arith.runtime.BigNumUnary;
 import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumEQ;
+import org.star_lang.star.operators.arith.runtime.FloatUnary;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntEQ;
+import org.star_lang.star.operators.arith.runtime.IntUnary;
+import org.star_lang.star.operators.arith.runtime.LongUnary;
 import org.star_lang.star.operators.general.runtime.GeneralEq;
-import org.star_lang.star.operators.string.StringCompare;
+import org.star_lang.star.operators.misc.runtime.HashCode;
+import org.star_lang.star.operators.string.runtime.StringCompare;
+import org.star_lang.star.operators.string.runtime.StringOps;
 
 /**
  * This class is focused on implementing the equality contract -- if possible -- for a given type
@@ -82,7 +88,8 @@ public class EqualityBuilder {
     IAbstract specs = CompilerUtils.typeDefnConstructors(stmt);
     IAbstract tp = CompilerUtils.typeDefnType(stmt);
     String typeLabel = CompilerUtils.typeLabel(tp);
-    String label = typeLabel + "$equal";
+    String equalLabel = typeLabel + "$equal";
+    String hashLabel = typeLabel + "$hash";
 
     Location loc = tp.getLoc();
     IAbstract equality = Abstract.name(loc, StandardNames.EQUALITY);
@@ -92,6 +99,8 @@ public class EqualityBuilder {
 
     IAbstract eqnType = CompilerUtils.functionType(loc, FixedList.create(tp, tp), Abstract.name(loc,
         StandardTypes.BOOLEAN));
+    IAbstract hashType = CompilerUtils.functionType(loc, FixedList.create(tp), Abstract.name(loc,
+        StandardTypes.INTEGER));
     Function<IAbstract, IAbstract> eqCon = (t) -> Abstract.binary(loc, StandardNames.OVER, equality, t);
 
     List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(typeLabel));
@@ -104,61 +113,27 @@ public class EqualityBuilder {
           requirements));
       eqnType = Abstract.binary(loc, StandardNames.WHERE, eqnType, CompilerUtils.tupleUp(loc, StandardNames.AND,
           requirements));
-    }
-
-    eqnType = CompilerUtils.universalType(loc, tVars, eqnType);
-
-    IAbstract equations = equalityEquations(loc, label, specs, tp, eqnType);
-
-    if (equations != null) {
-      // construct implementation equality of tp is let { <equations> } in
-      // {= = <label>}
-      IAbstract defn = CompilerUtils.letExp(loc, equations, CompilerUtils.blockTerm(loc, Abstract.binary(loc,
-          StandardNames.EQUAL, new Name(loc, StandardNames.EQUAL), new Name(loc, label))));
-      return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
-    }
-    return null;
-  }
-
-  public static IAbstract hashCodeImplementation(IAbstract stmt, Dictionary dict) {
-    assert CompilerUtils.isTypeDefn(stmt);
-
-    IAbstract specs = CompilerUtils.typeDefnConstructors(stmt);
-    IAbstract tp = CompilerUtils.typeDefnType(stmt);
-    String typeLabel = CompilerUtils.typeLabel(tp);
-    String label = typeLabel + "$equal";
-
-    Location loc = tp.getLoc();
-    IAbstract equality = Abstract.name(loc, StandardNames.EQUALITY);
-
-    if (Abstract.isBinary(tp, StandardNames.WHERE))
-      tp = Abstract.binaryLhs(tp);
-
-    IAbstract eqnType = CompilerUtils.functionType(loc, FixedList.create(tp, tp), Abstract.name(loc,
-        StandardTypes.BOOLEAN));
-    Function<IAbstract, IAbstract> eqCon = (t) -> Abstract.binary(loc, StandardNames.OVER, equality, t);
-
-    List<IAbstract> tVars = CompilerUtils.findTypeVarsInType(tp, dict, FixedList.create(typeLabel));
-    List<IAbstract> requirements = setupRequirements(stmt, eqCon, tVars);
-
-    IAbstract implType = eqCon.apply(tp);
-
-    if (!requirements.isEmpty()) {
-      implType = Abstract.binary(loc, StandardNames.WHERE, implType, CompilerUtils.tupleUp(loc, StandardNames.AND,
-          requirements));
-      eqnType = Abstract.binary(loc, StandardNames.WHERE, eqnType, CompilerUtils.tupleUp(loc, StandardNames.AND,
+      hashType = Abstract.binary(loc, StandardNames.WHERE, hashType, CompilerUtils.tupleUp(loc, StandardNames.AND,
           requirements));
     }
 
     eqnType = CompilerUtils.universalType(loc, tVars, eqnType);
+    hashType = CompilerUtils.universalType(loc, tVars, hashType);
 
-    IAbstract equations = equalityEquations(loc, label, specs, tp, eqnType);
+    List<IAbstract> equalityEquations = equalityEquations(loc, equalLabel, specs, tp, eqnType);
+    List<IAbstract> hashEquations = hashEquations(loc, hashLabel, specs, tp, hashType);
 
-    if (equations != null) {
+    List<IAbstract> defs = new ArrayList<>();
+    defs.addAll(equalityEquations);
+    defs.addAll(hashEquations);
+
+    if (!defs.isEmpty()) {
       // construct implementation equality of tp is let { <equations> } in
       // {= = <label>}
-      IAbstract defn = CompilerUtils.letExp(loc, equations, CompilerUtils.blockTerm(loc, Abstract.binary(loc,
-          StandardNames.EQUAL, new Name(loc, StandardNames.EQUAL), new Name(loc, label))));
+      IAbstract eqlDefn = Abstract.binary(loc, StandardNames.EQUAL, new Name(loc, StandardNames.EQUAL), new Name(loc, equalLabel));
+      IAbstract hshDefn = Abstract.binary(loc, StandardNames.EQUAL, new Name(loc, StandardNames.HASHCODE), new Name(loc, hashLabel));
+
+      IAbstract defn = CompilerUtils.letExp(loc, CompilerUtils.blockTerm(loc, defs), CompilerUtils.blockTerm(loc, eqlDefn, hshDefn));
       return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
     }
     return null;
@@ -283,10 +258,11 @@ public class EqualityBuilder {
     return cons;
   }
 
-  private static IAbstract equalityEquations(Location loc, String label, IAbstract term, IAbstract type, IAbstract eqType) {
+  private static List<IAbstract> equalityEquations(Location loc, String label, IAbstract term, IAbstract type, IAbstract eqType) {
     List<IAbstract> eqns = new ArrayList<>();
     if (Abstract.isBinary(term, StandardNames.WHERE))
       term = Abstract.binaryLhs(term);
+
     for (IAbstract el : CompilerUtils.unWrap(term, StandardNames.OR)) {
       IAbstract equalityEqn = equalityEqn(loc, label, el, type);
       if (equalityEqn != null)
@@ -296,8 +272,11 @@ public class EqualityBuilder {
     if (eqns.size() > 1)
       eqns.add(specDeflt(loc, label));
 
-    return CompilerUtils.blockTerm(loc, CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), eqType),
-        CompilerUtils.function(loc, eqns));
+    List<IAbstract> defs = new ArrayList<>();
+    defs.add(CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), eqType));
+    defs.add(CompilerUtils.function(loc, eqns));
+
+    return defs;
   }
 
   private static IAbstract equalityEqn(Location loc, String label, IAbstract term, IAbstract type) {
@@ -309,30 +288,31 @@ public class EqualityBuilder {
       return conEquality(loc, label, term, type);
   }
 
-  private static IAbstract hashEquations(Location loc, String label, IAbstract term, IAbstract type, IAbstract hashType) {
+  private static List<IAbstract> hashEquations(Location loc, String label, IAbstract term, IAbstract type, IAbstract hashType) {
     List<IAbstract> eqns = new ArrayList<>();
     if (Abstract.isBinary(term, StandardNames.WHERE))
       term = Abstract.binaryLhs(term);
+
     for (IAbstract el : CompilerUtils.unWrap(term, StandardNames.OR)) {
       IAbstract equalityEqn = hashEqn(loc, label, el, type);
       if (equalityEqn != null)
         eqns.add(equalityEqn);
     }
 
-    if (eqns.size() > 1)
-      eqns.add(specDeflt(loc, label));
+    List<IAbstract> defs = new ArrayList<>();
+    defs.add(CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), hashType));
+    defs.add(CompilerUtils.function(loc, eqns));
 
-    return CompilerUtils.blockTerm(loc, CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), hashType),
-        CompilerUtils.function(loc, eqns));
+    return defs;
   }
 
   private static IAbstract hashEqn(Location loc, String label, IAbstract term, IAbstract type) {
     if (term instanceof Name)
-      return enumHash(loc, label, (Name)term);
+      return enumHash(loc, label, (Name) term);
     else if (CompilerUtils.isBraceTerm(term))
       return recordHash(loc, type, label, term);
     else
-      return conHash(loc, label, term);
+      return conHash(loc, label, term, type);
   }
 
   private static IAbstract enumHash(Location loc, String label, Name term) {
@@ -341,21 +321,28 @@ public class EqualityBuilder {
     return CompilerUtils.equation(loc, label, args, Abstract.newInteger(loc, term.getLabel().hashCode()));
   }
 
-  private static IAbstract conHash(Location loc, String label, IAbstract term) {
+  private static IAbstract conHash(Location loc, String label, IAbstract term, IAbstract type) {
     assert term instanceof Apply;
     List<IAbstract> lVars = new ArrayList<>();
 
     Apply apply = (Apply) term;
     String conLabel = apply.getOp();
     IAbstract conHash = Abstract.newInteger(loc, conLabel.hashCode());
+
     IAbstract thirtySeven = Abstract.newInteger(loc, 37);
 
     for (int vNo = 0; vNo < Abstract.arity(term); vNo++) {
       Name lV = new Name(loc, "$L" + vNo);
+      IAbstract tp = apply.getArg(vNo);
+
       lVars.add(lV);
 
-      conHash = Abstract.binary(loc, StandardNames.PLUS, Abstract.binary(loc, StandardNames.TIMES, conHash, thirtySeven),
-          Abstract.unary(loc, StandardNames.HASH, lV));
+      if (Abstract.isInt(conHash))
+        conHash = Abstract.newInteger(loc, Abstract.getInt(conHash) * 37);
+      else
+        conHash = Abstract.binary(loc, StandardNames.TIMES, conHash, thirtySeven);
+
+      conHash = Abstract.binary(loc, StandardNames.PLUS, conHash, hash(loc, tp, type, lV, label));
     }
 
     List<IAbstract> args = new ArrayList<>();
@@ -388,12 +375,12 @@ public class EqualityBuilder {
           lArgs = Abstract.binary(loc, StandardNames.TERM, lArgs, lArg);
 
         recordHash = Abstract.binary(loc, StandardNames.PLUS, Abstract.binary(loc, StandardNames.TIMES, recordHash, thirtySeven),
-            Abstract.unary(loc, StandardNames.HASH, lV));
+            hash(loc, tp, type, lV, label));
       }
     }
 
     List<IAbstract> args = new ArrayList<>();
-    if (lArgs != null ) {
+    if (lArgs != null) {
       args.add(CompilerUtils.braceTerm(loc, conLabel, lArgs));
     } else {
       args.add(CompilerUtils.emptyBrace(loc, conLabel));
@@ -541,7 +528,7 @@ public class EqualityBuilder {
     else if (Abstract.isName(attTp, StandardTypes.RAW_DECIMAL))
       return Abstract.binary(loc, BignumEQ.name, lV, rV);
     else if (Abstract.isName(attTp, StandardTypes.RAW_STRING))
-      return Abstract.binary(loc, StringCompare.STRING_EQ, lV, rV);
+      return Abstract.binary(loc, StringCompare.StringEQ.NAME, lV, rV);
     else if (supportsEquality(attTp))
       return CompilerUtils.equals(loc, lV, rV);
     else
@@ -550,5 +537,27 @@ public class EqualityBuilder {
 
   private static boolean supportsEquality(IAbstract type) {
     return !CompilerUtils.isProgramType(type) && !Abstract.isName(type, StandardNames.ANY);
+  }
+
+  private static IAbstract hash(Location loc, IAbstract attTp, IAbstract type, Name lV, String label) {
+    if (CompilerUtils.isReference(attTp))
+      attTp = CompilerUtils.referencedTerm(attTp);
+
+    if (attTp.equals(type))
+      return Abstract.unary(loc, label, lV);
+    else if (Abstract.isName(attTp, StandardTypes.RAW_INTEGER))
+      return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, IntUnary.IntHash.name, lV));
+    else if (Abstract.isName(attTp, StandardTypes.RAW_LONG))
+      return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, LongUnary.LongHash.name, lV));
+    else if (Abstract.isName(attTp, StandardTypes.RAW_FLOAT))
+      return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, FloatUnary.FloatHash.name, lV));
+    else if (Abstract.isName(attTp, StandardTypes.RAW_DECIMAL))
+      return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, BigNumUnary.DecimalHash.name, lV));
+    else if (Abstract.isName(attTp, StandardTypes.RAW_STRING))
+      return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, StringOps.StringHash.NAME, lV));
+    else if (supportsEquality(attTp))
+      return Abstract.unary(loc, StandardNames.HASHCODE, lV);
+    else
+      return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, HashCode.NAME, lV));
   }
 }

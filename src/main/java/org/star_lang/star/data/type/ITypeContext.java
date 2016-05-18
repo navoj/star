@@ -22,10 +22,10 @@ import org.star_lang.star.compiler.util.PrettyPrintable;
 public interface ITypeContext extends PrettyPrintable
 {
   /**
-   * Return a type description associated with a given type name.
+   * Return a type description associated with a given type NAME.
    * 
    * @param name
-   *          the name of the type whose description you are looking for
+   *          the NAME of the type whose description you are looking for
    * @return the {@code ITypeDescription} object. Will be null if the named type is not defined in
    *         the context.
    */
@@ -33,8 +33,8 @@ public interface ITypeContext extends PrettyPrintable
 
   /**
    * Record a new type description. A type context may separate different type descriptions for the
-   * same name, so defining a type is not guaranteed to overwrite any existing definition for the
-   * same type name.
+   * same NAME, so defining a type is not guaranteed to overwrite any existing definition for the
+   * same type NAME.
    * 
    * @param desc
    *          what kind of type is this
@@ -61,24 +61,24 @@ public interface ITypeContext extends PrettyPrintable
    * We have to be able to determine what the constructors are
    * 
    * @param name
-   *          name of the constructor
-   * @return true if name is a constructor
+   *          NAME of the constructor
+   * @return true if NAME is a constructor
    */
   boolean isConstructor(String name);
 
   /**
-   * Get the constructor description associated with name
+   * Get the constructor description associated with NAME
    * 
    * @param name
    *          of the constructor
-   * @return null if name is not the name of a constructor
+   * @return null if NAME is not the NAME of a constructor
    */
   IValueSpecifier getConstructor(String name);
 
   void declareConstructor(ConstructorSpecifier cons);
 
   /**
-   * A Type alias is a way of giving an alternate name to a type. It is convenient to use in cases
+   * A Type alias is a way of giving an alternate NAME to a type. It is convenient to use in cases
    * such as {@code xmlType} which is really a {@code string} but you want to honor the distinction
    * 
    * @param loc
@@ -102,7 +102,7 @@ public interface ITypeContext extends PrettyPrintable
    * 
    * @param name
    *          of the contract
-   * @return the type contract associated with name.
+   * @return the type contract associated with NAME.
    */
   TypeContract getContract(String name);
 

@@ -21,7 +21,6 @@ import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.DisplayAst;
 import org.star_lang.star.compiler.ast.DisplayLocation;
@@ -94,14 +93,14 @@ import org.star_lang.star.resource.catalog.CatalogException;
  * <p/>
  * A macro rule of the form:
  * <p/>
- * 
+ * <p>
  * <pre>
  * # logMsg(?L,?M) ==> logMsg(L, #(#__location__)#,M);
  * </pre>
  * <p/>
  * is transformed to
  * <p/>
- * 
+ * <p>
  * <pre>
  * %_logMsg(astApply(_,astName(_,"logMsg"),cons(L,cons(M,nil))),locVar,Replacer,Outer) is
  *     Replacer(astApply(locVar,astName(locVar,"logMsg"), cons(L, cons(AstString(locVar,__display(locVar),cons(M,
@@ -113,18 +112,18 @@ import org.star_lang.star.resource.catalog.CatalogException;
  * <p/>
  * A macro rule environment looks like:
  * <p/>
- * 
+ * <p>
  * <pre>
  * .. repl ## { Rules }
  * </pre>
  * <p/>
  * which is mapped to:
  * <p/>
- * 
+ * <p>
  * <pre>
  * let {
  *   ... -- compiled rules, as above
- * 
+ *
  *   <local_replace>(Term,Outer) is case astMacroKey(Term) in {
  *     "key1" is <ruleKey1>(Term,__location(Term),<local_replace>,Outer);
  *     ...
@@ -135,28 +134,27 @@ import org.star_lang.star.resource.catalog.CatalogException;
  * The entire macro program becomes a collection of star programs for each macro + a standard entry
  * point. Imported macros are incorporated into the standard replacer.
  * <p/>
- * 
+ * <p>
  * <pre>
  * pkg%macro is package{
  *   import "pkg?%macro";  -- note special uri for imported macros
- * 
+ *
  *   %_logMsg(...) ...
- * 
+ *
  *   -- The main macro entry point for any package
  *   pkg%macro(T) is let{
  *     _replacer(Term,Outer) is case astMacroKey(Term) in {
  *       "logMsg" is %_logMsg(Term,_replacer,Outer);
  *       _ default is Outer(Term)
  *     }
- * 
+ *
  *     pkg%walk(astApply(Op,Args)) is astApply(pkg%macro(Op),Args//pkg%macro);
  *     pkg%walk(X) default is X
  *   } in _replacer(T,pkg%walk)
  * </pre>
  */
 
-public class MacroCompiler
-{
+public class MacroCompiler {
   private static final String PATH_DOT = "_dot";
   public static final String MACRO_QUERY = "%macro";
   public static final String MACRO_WALK = "%walk";
@@ -164,8 +162,7 @@ public class MacroCompiler
   private static final MacroDict intrinsicMacroFuns = intrinsicMap();
 
   private static void compileRule(IAbstract rule, ErrorReport errors, MacroDict dict, Set<String> vars,
-      Map<String, Pair<String, IAbstract>> macros, List<IAbstract> macroRules)
-  {
+                                  Map<String, Pair<String, IAbstract>> macros, List<IAbstract> macroRules) {
     assert CompilerUtils.isMacroDef(rule);
 
     Location loc = rule.getLoc();
@@ -237,9 +234,8 @@ public class MacroCompiler
   }
 
   private static void addRuleEquation(Location loc, String key, IAbstract ptn, Wrapper<IAbstract> cond, IAbstract repl,
-      IAbstract locationVar, IAbstract replaceVar, IAbstract outerVar, Map<String, Pair<String, IAbstract>> macros,
-      List<IAbstract> macroRules)
-  {
+                                      IAbstract locationVar, IAbstract replaceVar, IAbstract outerVar, Map<String, Pair<String, IAbstract>> macros,
+                                      List<IAbstract> macroRules) {
     List<IAbstract> args = stdMacroArgs(ptn, locationVar, replaceVar, outerVar);
 
     Pair<String, IAbstract> ruleset = macros.get(key);
@@ -259,8 +255,7 @@ public class MacroCompiler
   }
 
   private static void compileMacroVar(IAbstract rule, IAbstract replaceVar, IAbstract outerVar, ErrorReport errors,
-      MacroDict dict, Set<String> vars, Map<String, Pair<String, IAbstract>> macros)
-  {
+                                      MacroDict dict, Set<String> vars, Map<String, Pair<String, IAbstract>> macros) {
     assert CompilerUtils.isMacroVar(rule);
 
     int errorState = errors.errorCount();
@@ -300,8 +295,7 @@ public class MacroCompiler
     }
   }
 
-  private static IAbstract defaultRule(Location loc, String key, String ruleName, IAbstract outer, MacroDict dict)
-  {
+  private static IAbstract defaultRule(Location loc, String key, String ruleName, IAbstract outer, MacroDict dict) {
     Name var = new Name(loc, GenSym.genSym("V"));
     MacroDescriptor outerDesc = dict.find(key);
     if (outerDesc != null && outerDesc.getImportVar() != null) {
@@ -328,21 +322,18 @@ public class MacroCompiler
   }
 
   private static IAbstract fallbackRule(Location loc, String key, IAbstract arg, IAbstract locationVar,
-      IAbstract replaceVar, IAbstract outer, IAbstract fallback)
-  {
+                                        IAbstract replaceVar, IAbstract outer, IAbstract fallback) {
     List<IAbstract> args = stdMacroArgs(arg, locationVar, replaceVar, outer);
     return CompilerUtils.equation(loc, key, args, Abstract.apply(loc, fallback, args));
   }
 
   private static List<IAbstract> stdMacroArgs(IAbstract arg, IAbstract locationVar, IAbstract replaceVar,
-      IAbstract outer)
-  {
+                                              IAbstract outer) {
     return FixedList.create(arg, locationVar, replaceVar, outer);
   }
 
   public static IAbstract compileMacroRules(final Location loc, List<IAbstract> macroStmts, final String pkgName,
-      final Catalog catalog, final CodeRepository repository, final ErrorReport errors)
-  {
+                                            final Catalog catalog, final CodeRepository repository, final ErrorReport errors) {
     final MacroDict dict = intrinsicMacroFuns.fork();
     final List<IAbstract> pkgStmts = new ArrayList<>();
     final IAbstract walker = Abstract.name(loc, GenSym.genSym(MACRO_WALK));
@@ -350,8 +341,7 @@ public class MacroCompiler
     MacroRulesHandler pkgMacroHandler = new MacroRulesHandler() {
 
       @Override
-      public void handleImport(IAbstract stmt, MacroDict dict)
-      {
+      public void handleImport(IAbstract stmt, MacroDict dict) {
         IAbstract imported = CompilerUtils.importPkg(stmt);
         try {
           ResourceURI uri = CompileDriver.uriOfPkgRef(imported, catalog);
@@ -399,8 +389,7 @@ public class MacroCompiler
 
       @Override
       public IAbstract generateResult(List<IAbstract> macroRules, List<IAbstract> others, IAbstract replacer,
-          IAbstract replaceVar, MacroDict dict)
-      {
+                                      IAbstract replaceVar, MacroDict dict) {
         IAbstract macroDriver = new Name(loc, pkgName);
         pkgStmts.addAll(macroRules);
 
@@ -428,8 +417,7 @@ public class MacroCompiler
         pkgMacroHandler, true);
   }
 
-  private static List<IAbstract> genWalker(Location loc, IAbstract replacer, IAbstract replaceVar, IAbstract driver)
-  {
+  private static List<IAbstract> genWalker(Location loc, IAbstract replacer, IAbstract replaceVar, IAbstract driver) {
     List<IAbstract> pkgRules = new ArrayList<>();
     pkgRules.add(replacer);
 
@@ -456,8 +444,7 @@ public class MacroCompiler
     return pkgRules;
   }
 
-  private static MacroDict intrinsicMap()
-  {
+  private static MacroDict intrinsicMap() {
     MacroDict map = new MacroDict(null);
 
     for (ICafeBuiltin builtin : Intrinsics.allBuiltins()) {
@@ -473,8 +460,7 @@ public class MacroCompiler
     return map;
   }
 
-  private static boolean isAstFunctionType(IType type)
-  {
+  private static boolean isAstFunctionType(IType type) {
     if (TypeUtils.isFunctionType(type)) {
       for (IType arg : TypeUtils.getFunArgTypes(type))
         if (!arg.equals(ASyntax.type))
@@ -484,21 +470,19 @@ public class MacroCompiler
     return false;
   }
 
-  private interface MacroRulesHandler
-  {
+  private interface MacroRulesHandler {
     IAbstract generateResult(List<IAbstract> macroRules, List<IAbstract> otherRules, IAbstract replacer,
-        IAbstract replaceVar, MacroDict dict);
+                             IAbstract replaceVar, MacroDict dict);
 
     void handleImport(IAbstract stmt, MacroDict dict);
   }
 
   private static IAbstract compileRules(Location loc, Iterable<IAbstract> defs, ErrorReport errors, MacroDict dict,
-      Set<String> vars, Set<String> keyRefs, IAbstract driver, MacroRulesHandler handler, boolean topLevel)
-  {
+                                        Set<String> vars, Set<String> keyRefs, IAbstract driver, MacroRulesHandler handler, boolean topLevel) {
     List<IAbstract> rules = new ArrayList<>();
     List<IAbstract> otherRules = new ArrayList<>();
 
-    // The name of the local macro replacement function
+    // The NAME of the local macro replacement function
     Name replaceVar = new Name(loc, GenSym.genSym("__replace"));
     MacroDict subDict = dict.fork(replaceVar);
 
@@ -565,23 +549,23 @@ public class MacroCompiler
           MacroDescriptor desc = entry.getValue();
 
           switch (desc.type()) {
-          case macroRule: {
-            IAbstract cseBody = Abstract.apply(loc, desc.getInvokeName(loc), termArg, localizer, replaceVar, driver);
-            caseMap.put(desc.getKey(), CompilerUtils.caseRule(loc, new StringLiteral(loc, desc.getKey()), cseBody));
-            break;
-          }
-          case macroVar: {
-            IAbstract macroCall = Abstract.zeroary(loc, desc.getInvokeName(loc));
-            caseMap.put(desc.getKey(), CompilerUtils.caseRule(loc, new StringLiteral(loc, desc.getKey()), macroCall));
-            break;
-          }
-          case quotedFun: {
-            if (desc.getArity() == 1)
-              caseMap.put(desc.getKey(), CompilerUtils.caseRule(loc, new StringLiteral(loc, desc.getKey()), Abstract
-                  .unary(loc, desc.getInvokeName(loc), termArg)));
-            break;
-          }
-          default:
+            case macroRule: {
+              IAbstract cseBody = Abstract.apply(loc, desc.getInvokeName(loc), termArg, localizer, replaceVar, driver);
+              caseMap.put(desc.getKey(), CompilerUtils.caseRule(loc, new StringLiteral(loc, desc.getKey()), cseBody));
+              break;
+            }
+            case macroVar: {
+              IAbstract macroCall = Abstract.zeroary(loc, desc.getInvokeName(loc));
+              caseMap.put(desc.getKey(), CompilerUtils.caseRule(loc, new StringLiteral(loc, desc.getKey()), macroCall));
+              break;
+            }
+            case quotedFun: {
+              if (desc.getArity() == 1)
+                caseMap.put(desc.getKey(), CompilerUtils.caseRule(loc, new StringLiteral(loc, desc.getKey()), Abstract
+                    .unary(loc, desc.getInvokeName(loc), termArg)));
+              break;
+            }
+            default:
           }
         }
         d = (MacroDict) d.getOuter();
@@ -614,11 +598,11 @@ public class MacroCompiler
       IAbstract replacer = CompilerUtils.caseTerm(loc, Abstract.unary(loc, StandardNames.MAC_KEY, termArg), cases);
 
       // if (StarCompiler.TRACEMACRO) {
-      // IAbstract dispTerm = Abstract.binary(loc, StringConcat.name, new StringLiteral(loc,
+      // IAbstract dispTerm = Abstract.binary(loc, StringConcat.NAME, new StringLiteral(loc,
       // "macro replace ("
       // + replaceVar + ")"), Abstract.unary(loc, DisplayValue.displayQuoted, termArg));
       //
-      // IAbstract traceAction = Abstract.unary(loc, SimpleLog.name, dispTerm);
+      // IAbstract traceAction = Abstract.unary(loc, SimpleLog.NAME, dispTerm);
       //
       // replacer = CompilerUtils.valofValis(loc, replacer, traceAction);
       // }
@@ -637,8 +621,7 @@ public class MacroCompiler
     }
   }
 
-  private static String patternKey(IAbstract term, ErrorReport errors)
-  {
+  private static String patternKey(IAbstract term, ErrorReport errors) {
     try {
       return AstMacroKey.astMacroKey(term);
     } catch (EvaluationException e) {
@@ -647,25 +630,21 @@ public class MacroCompiler
     }
   }
 
-  private static String macroRuleName(String key)
-  {
+  private static String macroRuleName(String key) {
     return StandardNames.MAC_KEY_PREFIX + key;
   }
 
-  private static boolean isMacroRuleName(String name)
-  {
+  private static boolean isMacroRuleName(String name) {
     return name.startsWith(StandardNames.MAC_KEY_PREFIX) && name.length() > StandardNames.MAC_KEY_PREFIX.length();
   }
 
-  private static String macroKeyOfRuleName(String name)
-  {
+  private static String macroKeyOfRuleName(String name) {
     assert isMacroRuleName(name);
     return name.substring(StandardNames.MAC_KEY_PREFIX.length());
   }
 
   private static IAbstract compilePtn(IAbstract ptn, Wrapper<IAbstract> cond, ErrorReport errors, Set<String> vars,
-      IAbstract locationVar)
-  {
+                                      IAbstract locationVar) {
     Location loc = ptn.getLoc();
     IAbstract anon = Abstract.anon(loc);
 
@@ -762,8 +741,6 @@ public class MacroCompiler
         return Abstract.binary(loc, BigDecimalLiteral.name, anon, anon);
       else if (sym.equals(StandardNames.IDENTIFIER))
         return Abstract.binary(loc, Name.name, anon, anon);
-      else if (sym.equals(StandardTypes.CHAR))
-        return Abstract.binary(loc, CharLiteral.name, anon, anon);
       else if (sym.equals(StandardTypes.STRING))
         return Abstract.binary(loc, StringLiteral.name, anon, anon);
       else if (sym.equals(StandardNames.TUPLE)) {
@@ -788,8 +765,6 @@ public class MacroCompiler
       return Abstract.binary(loc, BigDecimalLiteral.name, anon, ptn);
     else if (ptn instanceof BooleanLiteral)
       return Abstract.binary(loc, BooleanLiteral.name, anon, ptn);
-    else if (ptn instanceof CharLiteral)
-      return Abstract.binary(loc, CharLiteral.name, anon, ptn);
     else {
       errors.reportError("(internal) cannot handle macro pattern: " + ptn, loc);
       return ptn;
@@ -801,8 +776,7 @@ public class MacroCompiler
   // <ptn>)(Pth,(A,...,A))
 
   private static IAbstract dotSlashPttrn(Location loc, IAbstract ptn, Wrapper<IAbstract> cond, ErrorReport errors,
-      Set<String> vars, IAbstract locationVar)
-  {
+                                         Set<String> vars, IAbstract locationVar) {
     IAbstract lhs = Abstract.binaryLhs(ptn);
     if (Abstract.isUnary(lhs, StandardNames.QUESTION) && Abstract.isIdentifier(Abstract.unaryArg(lhs))) {
       IAbstract ptnVar = Abstract.unaryArg(lhs);
@@ -831,8 +805,7 @@ public class MacroCompiler
   }
 
   private static Pair<IAbstract, IAbstract> genSubPttrn(IAbstract ptn, ErrorReport errors, Set<String> vars,
-      IAbstract locationVar)
-  {
+                                                        IAbstract locationVar) {
     Location loc = ptn.getLoc();
 
     // We build a search 'engine' along the lines of:
@@ -859,9 +832,8 @@ public class MacroCompiler
   }
 
   private static IAbstract compileReplacement(final IAbstract repl, MacroDict dict, final ErrorReport errors,
-      final Set<String> vars, final Wrapper<IAbstract> counterVar, final IAbstract locationVar, IAbstract replaceVar,
-      final IAbstract outerVar)
-  {
+                                              final Set<String> vars, final Wrapper<IAbstract> counterVar, final IAbstract locationVar, IAbstract replaceVar,
+                                              final IAbstract outerVar) {
     final Location loc = repl.getLoc();
 
     if (Abstract.isUnary(repl, StandardNames.QUESTION) && Abstract.isIdentifier(Abstract.unaryArg(repl)))
@@ -948,15 +920,15 @@ public class MacroCompiler
       else if (dict.defines(key)) {
         MacroDescriptor desc = dict.get(key);
         switch (desc.type()) {
-        case macroRule:
-          return new Apply(loc, desc.getInvokeName(loc), stdMacroArgs(astName(loc, locationVar, key), locationVar,
-              replaceVar, outerVar));
-        case macroVar:
-          return Abstract.zeroary(loc, desc.getInvokeName(loc));
-        case quotedFun:
-        case builtin:
-        default:
-          return astName(loc, locationVar, key);
+          case macroRule:
+            return new Apply(loc, desc.getInvokeName(loc), stdMacroArgs(astName(loc, locationVar, key), locationVar,
+                replaceVar, outerVar));
+          case macroVar:
+            return Abstract.zeroary(loc, desc.getInvokeName(loc));
+          case quotedFun:
+          case builtin:
+          default:
+            return astName(loc, locationVar, key);
         }
       } else
         return astName(loc, locationVar, key);
@@ -968,15 +940,13 @@ public class MacroCompiler
 
         MacroRulesHandler handler = new MacroRulesHandler() {
           @Override
-          public void handleImport(IAbstract stmt, MacroDict dict)
-          {
+          public void handleImport(IAbstract stmt, MacroDict dict) {
             errors.reportError(StringUtils.msg("import ", stmt, " not support here"), stmt.getLoc());
           }
 
           @Override
           public IAbstract generateResult(List<IAbstract> macroRules, List<IAbstract> otherRules, IAbstract replacer,
-              IAbstract replaceVar, MacroDict dict)
-          {
+                                          IAbstract replaceVar, MacroDict dict) {
             List<IAbstract> localRules = genWalker(loc, replacer, replaceVar, letDriver);
 
             IAbstract lRepl = genReplace(loc, replaceVar, compileReplacement(Abstract.binaryLhs(repl), dict, errors,
@@ -1012,17 +982,17 @@ public class MacroCompiler
         if (dict.defines(key)) {
           MacroDescriptor desc = dict.find(key);
           switch (desc.type()) {
-          case macroRule:
-            // return localGenReplace(replTerm, replaceVar, loc);
-            return replTerm;
+            case macroRule:
+              // return localGenReplace(replTerm, replaceVar, loc);
+              return replTerm;
             // return genReplace(loc, replaceVar, replTerm, vars, dict);
-          case macroVar:
-            return Abstract.zeroary(loc, opRepl);
-          case quotedFun:
-          case builtin:
-            return new Apply(loc, desc.getInvokeName(loc), replArgs);
-          default:
-            return replTerm;
+            case macroVar:
+              return Abstract.zeroary(loc, opRepl);
+            case quotedFun:
+            case builtin:
+              return new Apply(loc, desc.getInvokeName(loc), replArgs);
+            default:
+              return replTerm;
           }
         } else
           return replTerm;
@@ -1043,30 +1013,25 @@ public class MacroCompiler
       return Abstract.binary(loc, BigDecimalLiteral.name, locationVar, repl);
     else if (repl instanceof BooleanLiteral)
       return Abstract.binary(loc, BooleanLiteral.name, locationVar, repl);
-    else if (repl instanceof CharLiteral)
-      return Abstract.binary(loc, CharLiteral.name, locationVar, repl);
     else {
       errors.reportError("(internal) cannot handle macro replacement term: " + repl, loc);
       return repl;
     }
   }
 
-  private static Set<String> findKeys(IAbstract term, final ErrorReport errors)
-  {
+  private static Set<String> findKeys(IAbstract term, final ErrorReport errors) {
     final Set<String> keys = new HashSet<>();
 
     IAbstractVisitor finder = new DefaultAbstractVisitor() {
 
       @Override
-      public void visitName(Name name)
-      {
+      public void visitName(Name name) {
         if (!keys.contains(name.getId()))
           keys.add(name.getId());
       }
 
       @Override
-      public void visitApply(Apply app)
-      {
+      public void visitApply(Apply app) {
         if (Abstract.isIdentifier(app.getOperator())) {
           String key = patternKey(app, errors);
           keys.add(key);
@@ -1080,8 +1045,7 @@ public class MacroCompiler
     return keys;
   }
 
-  private static IAbstract genReplace(Location loc, IAbstract replVar, IAbstract repl, Set<String> vars, MacroDict dict)
-  {
+  private static IAbstract genReplace(Location loc, IAbstract replVar, IAbstract repl, Set<String> vars, MacroDict dict) {
     while (Abstract.isUnary(repl) && dict.isReplaceVar(Abstract.getOperator(repl))) {
       if (Abstract.isUnary(repl, Abstract.getId(replVar)))
         return repl;
@@ -1092,14 +1056,12 @@ public class MacroCompiler
     return localGenReplace(repl, replVar, loc);
   }
 
-  private static IAbstract localGenReplace(IAbstract repl, IAbstract replVar, Location loc)
-  {
+  private static IAbstract localGenReplace(IAbstract repl, IAbstract replVar, Location loc) {
     return Abstract.unary(loc, replVar, repl);
   }
 
   private static IAbstract dotSlashReplace(Location loc, IAbstract repl, MacroDict dict, ErrorReport errors,
-      Set<String> vars, Wrapper<IAbstract> counterVar, IAbstract locationVar, IAbstract replace, IAbstract outer)
-  {
+                                           Set<String> vars, Wrapper<IAbstract> counterVar, IAbstract locationVar, IAbstract replace, IAbstract outer) {
     assert Abstract.isBinary(repl, StandardNames.DOTSLASH);
     IAbstract lhs = Abstract.binaryLhs(repl);
 
@@ -1131,16 +1093,14 @@ public class MacroCompiler
   }
 
   private static IAbstract compileMsg(IAbstract locVar, IAbstract repl, MacroDict dict, Set<String> vars,
-      ErrorReport errors, Wrapper<IAbstract> counterVar, IAbstract locationVar, IAbstract replace, IAbstract outer)
-  {
+                                      ErrorReport errors, Wrapper<IAbstract> counterVar, IAbstract locationVar, IAbstract replace, IAbstract outer) {
     Location loc = repl.getLoc();
 
     return astString(loc, locVar, compMsg(repl, dict, errors, vars, counterVar, locationVar, replace, outer));
   }
 
   private static IAbstract compMsg(IAbstract repl, MacroDict dict, ErrorReport errors, Set<String> vars,
-      Wrapper<IAbstract> counterVar, IAbstract locationVar, IAbstract replace, IAbstract outer)
-  {
+                                   Wrapper<IAbstract> counterVar, IAbstract locationVar, IAbstract replace, IAbstract outer) {
     Location loc = repl.getLoc();
 
     if (Abstract.isBinary(repl, StandardNames.STRING_CATENATE)) {
@@ -1162,58 +1122,43 @@ public class MacroCompiler
           locationVar, replace, outer));
   }
 
-  public static ResourceURI macroUri(ResourceURI uri)
-  {
+  public static ResourceURI macroUri(ResourceURI uri) {
     return URIUtils.uriWithQuery(uri, MACRO_QUERY);
   }
 
-  public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, IAbstract args)
-  {
+  public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, IAbstract args) {
     return Abstract.ternary(loc, Apply.name, aloc, op, args);
   }
 
-  public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, List<IAbstract> args)
-  {
+  public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, List<IAbstract> args) {
     return astApply(loc, aloc, op, consTerm(loc, args));
   }
 
-  public static IAbstract astName(Location loc, IAbstract aloc, String name)
-  {
+  public static IAbstract astName(Location loc, IAbstract aloc, String name) {
     return Abstract.binary(loc, Name.name, aloc, new StringLiteral(loc, name));
   }
 
-  public static IAbstract astName(Location loc, IAbstract aloc, IAbstract name)
-  {
+  public static IAbstract astName(Location loc, IAbstract aloc, IAbstract name) {
     return Abstract.binary(loc, Name.name, aloc, name);
   }
 
-  public static IAbstract astInteger(Location loc, IAbstract aloc, int ix)
-  {
+  public static IAbstract astInteger(Location loc, IAbstract aloc, int ix) {
     return Abstract.binary(loc, IntegerLiteral.name, aloc, Abstract.newInteger(loc, ix));
   }
 
-  public static IAbstract astLong(Location loc, IAbstract aloc, long ix)
-  {
+  public static IAbstract astLong(Location loc, IAbstract aloc, long ix) {
     return Abstract.binary(loc, LongLiteral.name, aloc, Abstract.newLong(loc, ix));
   }
 
-  public static IAbstract astChar(Location loc, IAbstract aloc, int cx)
-  {
-    return Abstract.binary(loc, CharLiteral.name, aloc, Abstract.newChar(loc, cx));
-  }
-
-  public static IAbstract astString(Location loc, IAbstract aloc, IAbstract str)
-  {
+  public static IAbstract astString(Location loc, IAbstract aloc, IAbstract str) {
     return Abstract.binary(loc, StringLiteral.name, aloc, str);
   }
 
-  public static IAbstract consTerm(Location loc, List<IAbstract> args)
-  {
+  public static IAbstract consTerm(Location loc, List<IAbstract> args) {
     return partitionArgs(loc, args, 0, args.size());
   }
 
-  private static IAbstract partitionArgs(Location loc, List<IAbstract> args, int from, int to)
-  {
+  private static IAbstract partitionArgs(Location loc, List<IAbstract> args, int from, int to) {
     assert to >= from;
 
     if (to == from)

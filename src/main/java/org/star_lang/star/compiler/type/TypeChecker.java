@@ -318,10 +318,6 @@ public class TypeChecker {
       final IContentExpression scalar = TypeCheckerUtils.decimalLiteral(loc, ((BigDecimalLiteral) term).getLit());
 
       return verifyType(decimalType, expectedType, loc, scalar, dict, errors);
-    } else if (term instanceof CharLiteral) {
-      final IContentExpression scalar = TypeCheckerUtils.charLiteral(loc, ((CharLiteral) term).getLit());
-
-      return verifyType(charType, expectedType, loc, scalar, dict, errors);
     } else if (term instanceof StringLiteral) {
       IContentExpression scalar = CompilerUtils.stringLiteral(loc, ((StringLiteral) term).getLit());
 
@@ -340,8 +336,6 @@ public class TypeChecker {
         raw = new Scalar(loc, rawDecimalType, ((BigDecimalLiteral) arg).getLit());
       else if (arg instanceof StringLiteral)
         raw = new Scalar(loc, rawStringType, ((StringLiteral) arg).getLit());
-      else if (arg instanceof CharLiteral)
-        raw = new Scalar(loc, rawCharType, ((CharLiteral) arg).getLit());
       else {
         errors.reportError(StringUtils.msg("not expecting ", term), loc);
         return new VoidExp(loc);
@@ -385,7 +379,7 @@ public class TypeChecker {
               memberTypes.put(member, memType);
               els.put(member, value);
             } else
-              errors.reportError(StringUtils.msg("invalid field name: ", Abstract.binaryLhs(el)), el.getLoc());
+              errors.reportError(StringUtils.msg("invalid field NAME: ", Abstract.binaryLhs(el)), el.getLoc());
           } else if (CompilerUtils.isAssignment(el)) {
             if (CompilerUtils.isIdentifier(Abstract.binaryLhs(el))) {
               String member = Abstract.getId(Abstract.binaryLhs(el));
@@ -395,7 +389,7 @@ public class TypeChecker {
               memberTypes.put(member, refType);
               els.put(member, new ConstructorTerm(loc, RefCell.cellLabel(refType), refType, value));
             } else
-              errors.reportError(StringUtils.msg("invalid field name: ", Abstract.binaryLhs(el)), el.getLoc());
+              errors.reportError(StringUtils.msg("invalid field NAME: ", Abstract.binaryLhs(el)), el.getLoc());
           } else
             errors.reportError(StringUtils.msg("invalid member of aggregate value: ", el), el.getLoc());
         }
@@ -439,7 +433,7 @@ public class TypeChecker {
               memberTypes.put(member, refType);
               els.put(member, new ConstructorTerm(loc, RefCell.cellLabel(refType), refType, value));
             } else
-              errors.reportError(StringUtils.msg("invalid field name: ", Abstract.binaryLhs(el)), el.getLoc());
+              errors.reportError(StringUtils.msg("invalid field NAME: ", Abstract.binaryLhs(el)), el.getLoc());
           } else if (CompilerUtils.isTypeEquality(el)) {
             String name = Abstract.getId(CompilerUtils.typeEqualField(el));
             IType type = TypeParser.parseType(CompilerUtils.typeEqualType(el), dict, errors, readWrite);
@@ -1023,7 +1017,7 @@ public class TypeChecker {
             Variable el = Variable.create(loc, supplied.getType(), name);
             body.add(new VarDeclaration(supplied.getLoc(), el, readOnly, supplied));
             if (supplied instanceof Variable)
-              defEls.put(name, supplied); // We build up name=name
+              defEls.put(name, supplied); // We build up NAME=NAME
             else
               defEls.put(name, el);
           }
@@ -2948,9 +2942,9 @@ public class TypeChecker {
    * <p>
    * <pre>
    * type Person is someone{
-   *   name has type string;
+   *   NAME has type string;
    *   age has type integer;
-   *   age default is anyof A where (name,A) in ages
+   *   age default is anyof A where (NAME,A) in ages
    * }
    * </pre>
    * <p>
@@ -2959,7 +2953,7 @@ public class TypeChecker {
    * <p>
    * <p>
    * <pre>
-   * john is someone{name is "peter"}
+   * john is someone{NAME is "peter"}
    * </pre>
    * <p>
    * is compiled into the equivalent of:
@@ -2968,7 +2962,7 @@ public class TypeChecker {
    * <p>
    * <pre>
    * john is valof{
-   *   var J := someone{name is "peter"}
+   *   var J := someone{NAME is "peter"}
    *   J.age := someone#age(J)
    *   valis J
    * }
@@ -2979,11 +2973,11 @@ public class TypeChecker {
    * <p>
    * <p>
    * <pre>
-   * someone#age(S) is anyof A where (A,S.name) in ages
+   * someone#age(S) is anyof A where (A,S.NAME) in ages
    * </pre>
    *
    * @param member within the constructor
-   * @return data about the default function. The {@code VarInfo} record simply returns the name of
+   * @return data about the default function. The {@code VarInfo} record simply returns the NAME of
    * the function to use in computing the default value. If there is no default for the
    * field, then {@code null} is returned.
    */
@@ -3275,10 +3269,6 @@ public class TypeChecker {
       IContentPattern scalar = TypeCheckerUtils.decimalPtn(loc, ((BigDecimalLiteral) ptn).getLit());
       verifyType(expectedType, loc, scalar, cxt, errors);
       return scalar;
-    } else if (ptn instanceof CharLiteral) {
-      IContentPattern scalar = TypeCheckerUtils.charPtn(loc, ((CharLiteral) ptn).getLit());
-      verifyType(expectedType, loc, scalar, cxt, errors);
-      return scalar;
     } else if (ptn instanceof StringLiteral) {
       IContentPattern scalar = TypeCheckerUtils.stringPtn(loc, ((StringLiteral) ptn).getLit());
       verifyType(expectedType, loc, scalar, cxt, errors);
@@ -3294,8 +3284,6 @@ public class TypeChecker {
         raw = new ScalarPtn(loc, rawFloatType, Factory.newFloat(((FloatLiteral) ptn).getLit()));
       else if (ptn instanceof BigDecimalLiteral)
         raw = new ScalarPtn(loc, rawDecimalType, Factory.newDecimal(((BigDecimalLiteral) ptn).getLit()));
-      else if (ptn instanceof CharLiteral)
-        raw = new ScalarPtn(loc, rawCharType, Factory.newChar(((CharLiteral) ptn).getLit()));
       else if (ptn instanceof StringLiteral)
         raw = new ScalarPtn(loc, rawStringType, Factory.newString(((StringLiteral) ptn).getLit()));
       else {
@@ -3904,7 +3892,7 @@ public class TypeChecker {
           subVars.set(vNo, typeOfPtn(new Name(varLoc, var.toString()), stringType, condition, cxt, cxt, varHandler));
           blder.appendCodePoint(ch);
           if (ch != ')')
-            errors.reportError(StringUtils.msg("expecting a ')' in regular expression after variable name: ", var), loc);
+            errors.reportError(StringUtils.msg("expecting a ')' in regular expression after variable NAME: ", var), loc);
           return;
         }
 
@@ -5233,7 +5221,7 @@ public class TypeChecker {
       } else if (CompilerUtils.isTypeWitness(tpStmt)) {
         IAbstract wit = CompilerUtils.witnessedType(tpStmt);
         if (!Abstract.isIdentifier(wit))
-          errors.reportError(StringUtils.msg("expecting a type name, not ", wit), loc);
+          errors.reportError(StringUtils.msg("expecting a type NAME, not ", wit), loc);
         else {
           String id = Abstract.getId(wit);
           assert dict.typeExists(id) && dict.getTypeDescription(id) instanceof TypeExists;
@@ -5492,7 +5480,6 @@ public class TypeChecker {
           LayeredMap<String, TypeVar> typeVars = new LayeredHash<>();
 
           if (CompilerUtils.isTypeAnnotation(typeAnnotation)) {
-
             IType parsedType = TypeParser.parseType(CompilerUtils.typeAnnotation(typeAnnotation), typeVars, thetaCxt
                 .fork(), errors, readOnly);
             if (!TypeUtils.isReferenceType(parsedType))

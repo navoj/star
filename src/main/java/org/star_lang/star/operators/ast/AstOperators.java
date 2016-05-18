@@ -7,7 +7,6 @@ import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.CharLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.LongLiteral;
@@ -52,7 +51,6 @@ public class AstOperators {
     List<IValueSpecifier> specs = new ArrayList<>();
     specs.add(Name.spec());
     specs.add(BooleanLiteral.spec());
-    specs.add(CharLiteral.spec());
     specs.add(StringLiteral.spec());
     specs.add(IntegerLiteral.spec());
     specs.add(LongLiteral.spec());

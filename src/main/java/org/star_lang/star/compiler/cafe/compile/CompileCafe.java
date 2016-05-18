@@ -60,7 +60,7 @@ import org.star_lang.star.resource.URIUtils;
  * permissions and limitations under the License.
  */
 public class CompileCafe {
-  public static final boolean CHECK_BYTECODE = ApplicationProperties.getProperty("CHECK_BYTECODE", false);
+  static final boolean CHECK_BYTECODE = ApplicationProperties.getProperty("CHECK_BYTECODE", false);
 
   /**
    * Compile Cafe content as presented in a list of abstract syntax terms.
@@ -71,7 +71,7 @@ public class CompileCafe {
    * @param src        the uri of the source that results in this content
    * @param repository code repository
    * @param path       munge prefix
-   * @param pkgFunName the name of the package function to construct the package
+   * @param pkgFunName the NAME of the package function to construct the package
    * @param loc        The master location for this package
    * @param defs       A list of definitions of types and functions that make up the content
    * @param bldCat     The generated code is put into a build catalog
@@ -133,8 +133,8 @@ public class CompileCafe {
     private final CafeDictionary dict;
     private final Location loc;
 
-    public BuildProgram(String owner, CafeDictionary dict, ClassNode program, MethodNode mtd, HWM stackHWM,
-                        CafeManifest manifest, Location loc) {
+    BuildProgram(String owner, CafeDictionary dict, ClassNode program, MethodNode mtd, HWM stackHWM,
+                 CafeManifest manifest, Location loc) {
       this.owner = owner;
       this.dict = dict;
       this.program = program;
@@ -233,16 +233,6 @@ public class CompileCafe {
               "(Ljava/lang/String;)Z"));
           hwm.bump(1);
           break;
-        case rawChar: // generate equivalent of
-          // "arg is Character.codePointAt(arg,0)"
-          main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-          main.instructions.add(new LdcInsnNode(ix + 1));
-          main.instructions.add(new InsnNode(Opcodes.AALOAD));
-          main.instructions.add(new InsnNode(Opcodes.ICONST_0));
-          main.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Character", "codePointAt",
-              "(Ljava/lang/CharSequence;I)I"));
-          hwm.bump(1);
-          break;
         case rawInt: // Generate equivalent of "arg is Long.parseInt(arg)"
           main.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
           main.instructions.add(new LdcInsnNode(ix + 1));
@@ -291,7 +281,7 @@ public class CompileCafe {
     main.instructions.add(mainEndLabel);
   }
 
-  public static void pkgImport(CodeRepository repository, IAbstract def, CafeDictionary dict, ErrorReport errors) {
+  static void pkgImport(CodeRepository repository, IAbstract def, CafeDictionary dict, ErrorReport errors) {
     if (CafeSyntax.isImport(def)) {
       String pkgRef = CafeSyntax.importImport(def);
       Location loc = def.getLoc();
@@ -384,11 +374,11 @@ public class CompileCafe {
   }
 
   // Add an entry to the code catalog.
-  public static void addCatalogEntry(CodeCatalog cat, String name, CodeTree code) throws RepositoryException {
+  static void addCatalogEntry(CodeCatalog cat, String name, CodeTree code) throws RepositoryException {
     cat.addCodeEntry(name, code);
   }
 
-  public static String extendPath(String path, String member) {
+  static String extendPath(String path, String member) {
     return path + "/" + member;
   }
 }

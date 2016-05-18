@@ -23,249 +23,227 @@ import org.star_lang.star.operators.CafeEnter;
  * permissions and limitations under the License.
  */
 
-public abstract class LongUnary
-{
+public abstract class LongUnary {
 
-  public static class LongAbs implements IFunction
-  {
+  public static class LongAbs implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return Math.abs(s1);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongUMinus implements IFunction
-  {
+  public static class LongUMinus implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return -s1;
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongRandom implements IFunction
-  {
+  public static class LongRandom implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       double random = Math.random();
       return new Double(random * s1).longValue();
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongSqrt implements IFunction
-  {
+  public static class LongSqrt implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return (long) Math.sqrt(s1);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongCbrt implements IFunction
-  {
+  public static class LongCbrt implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return (long) Math.cbrt(s1);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongCeil implements IFunction
-  {
+  public static class LongCeil implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return s1;
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongFloor implements IFunction
-  {
+  public static class LongFloor implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return s1;
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongRound implements IFunction
-  {
+  public static class LongRound implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return s1;
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongLog implements IFunction
-  {
+  public static class LongLog implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return (long) Math.log(s1);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongLog10 implements IFunction
-  {
+  public static class LongLog10 implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return (long) Math.log10(s1);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
     }
   }
 
-  public static class LongExp implements IFunction
-  {
+  public static class LongExp implements IFunction {
     @CafeEnter
-    public static long enter(long s1)
-    {
+    public static long enter(long s1) {
       return (long) Math.exp(s1);
     }
 
     @Override
-    public IType getType()
-    {
+    public IType getType() {
       IType longType = StandardTypes.rawLongType;
       return TypeUtils.functionType(longType, longType);
     }
 
     @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
+    public IValue enter(IValue... args) throws EvaluationException {
       return Factory.newLng(enter(Factory.lngValue(args[0])));
+    }
+  }
+
+  public static class LongHash implements IFunction {
+    public static final String name = "__long_hash";
+
+    @CafeEnter
+    public static int enter(long s1) {
+      return (int) s1;
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException {
+      return Factory.newInt(enter(Factory.longValue(args[0])));
+    }
+
+    @Override
+    public IType getType() {
+      return type();
+    }
+
+    public static IType type(){
+      return TypeUtils.functionType(StandardTypes.rawLongType, StandardTypes.rawIntegerType);
     }
   }
 }

@@ -51,8 +51,6 @@ public class SrcSpec implements ISpec
       Types.IVALUE_SIG, null, null);
   public static final ISpec rawBoolSrc = new SrcSpec(StandardTypes.rawBoolType, Location.nullLoc, "bool", "Z", null,
       null);
-  public static final ISpec rawCharSrc = new SrcSpec(StandardTypes.rawCharType, Location.nullLoc, "int", "I", null,
-      null);
   public static final ISpec rawIntSrc = new SrcSpec(StandardTypes.rawIntegerType, Location.nullLoc, "int", "I", null,
       null);
   public static final ISpec rawIntegerSrc = new SrcSpec(StandardTypes.rawIntegerType, Location.nullLoc,
@@ -183,8 +181,6 @@ public class SrcSpec implements ISpec
     switch (str.next().intValue()) {
     case 'Z':
       return rawBoolSrc;
-    case 'C':
-      return rawCharSrc;
     case 'I':
       return rawIntSrc;
     case 'J':

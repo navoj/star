@@ -28,11 +28,14 @@ person is package{
     fun person_ge(X,Y) is person_le(Y,X)
   }
   
-  implementation equality over person is {
-    (=) = person_eq;
-  } using {
-    fun person_eq(someone{name=N1},someone{name=N2}) is N1=N2
-     |  person_eq(noone,noone) is true
-     |  person_eq(_,_) default is false
-  }
+ implementation equality over person is {
+     (=) = person_eq;
+     hashCode = personHash
+   } using {
+     fun person_eq(someone{name=N1},someone{name=N2}) is N1=N2
+      |  person_eq(noone,noone) is true
+      |  person_eq(_,_) default is false;
+     fun personHash(noone) is hashCode("none")
+      |  personHash(someone{name=N}) is hashCode("someone")*37+hashCode(N)
+   }
 }

@@ -56,11 +56,9 @@ public final class CastConverter implements IContinuation
     
     switch (Types.varType(castType)) {
     case rawBool:
-    case rawChar:
     case rawInt:
       switch (Types.varType(src.getType())) {
       case rawBool:
-      case rawChar:
       case rawInt:
         return castSpec;
       case rawLong:
@@ -79,7 +77,6 @@ public final class CastConverter implements IContinuation
     case rawLong:
       switch (Types.varType(src.getType())) {
       case rawBool:
-      case rawChar:
       case rawInt:
         ins.add(new InsnNode(Opcodes.I2L));
         stackHWM.bump(1);
@@ -96,7 +93,6 @@ public final class CastConverter implements IContinuation
     case rawFloat:
       switch (Types.varType(src.getType())) {
       case rawBool:
-      case rawChar:
       case rawInt:
         ins.add(new InsnNode(Opcodes.I2D));
         stackHWM.bump(1);

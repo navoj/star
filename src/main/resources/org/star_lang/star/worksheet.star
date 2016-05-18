@@ -15,6 +15,7 @@
  */
 private import macrosupport;
 private import base;
+private import arithmetic;
 private import arrays;
 private import strings;
 private import sequences;

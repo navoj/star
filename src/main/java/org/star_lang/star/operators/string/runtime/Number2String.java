@@ -1,7 +1,5 @@
 package org.star_lang.star.operators.string.runtime;
 
-import java.math.BigDecimal;
-
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
@@ -13,10 +11,11 @@ import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.CafeEnter;
 
+import java.math.BigDecimal;
+
 public abstract class Number2String
 {
   private static final String FORMAT_ERROR = "*Error*";
-  private static final IType rawCharType = StandardTypes.rawCharType;
   private static final IType rawIntType = StandardTypes.rawIntegerType;
   private static final IType rawLongType = StandardTypes.rawLongType;
   private static final IType rawFloatType = StandardTypes.rawFloatType;
@@ -53,12 +52,12 @@ public abstract class Number2String
     }
   }
 
-  public static class Char2String implements IFunction
+  public static class CodePoint2String implements IFunction
   {
-    public static final String name = "__char_string";
+    public static final String name = "__cp_string";
 
     @CafeEnter
-    public static String __char_string(int ch) throws EvaluationException
+    public static String __cp_string(int ch) throws EvaluationException
     {
       PrettyPrintDisplay disp = new PrettyPrintDisplay();
       disp.appendChar(ch);
@@ -68,7 +67,7 @@ public abstract class Number2String
     @Override
     public IValue enter(IValue... args) throws EvaluationException
     {
-      return Factory.newString(__char_string(Factory.charValue(args[0])));
+      return Factory.newString(__cp_string(Factory.intValue(args[0])));
     }
 
     @Override
@@ -79,7 +78,7 @@ public abstract class Number2String
 
     public static IType type()
     {
-      return TypeUtils.functionType(rawCharType, rawStringType);
+      return TypeUtils.functionType(rawIntType, rawStringType);
     }
   }
 

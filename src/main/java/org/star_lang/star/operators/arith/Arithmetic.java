@@ -2,20 +2,9 @@ package org.star_lang.star.operators.arith;
 
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumDivide;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumMax;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumMin;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumMinus;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumPlus;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumPwr;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumRemainder;
-import org.star_lang.star.operators.arith.runtime.BignumBinary.BigNumTimes;
-import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumEQ;
-import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumGE;
-import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumGT;
-import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumLE;
-import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumLT;
-import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumNE;
+import org.star_lang.star.operators.arith.runtime.BigNumUnary.DecimalHash;
+import org.star_lang.star.operators.arith.runtime.BignumBinary.*;
+import org.star_lang.star.operators.arith.runtime.BignumCompare.*;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -31,11 +20,8 @@ import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumNE;
  * permissions and limitations under the License.
  */
 
-
-public class Arithmetic
-{
-  public static void declare()
-  {
+public class Arithmetic {
+  public static void declare() {
     Intrinsics.declare(new Builtin("__decimal_plus", BigNumPlus.type(), BigNumPlus.class));
     Intrinsics.declare(new Builtin("__decimal_minus", BigNumMinus.type(), BigNumMinus.class));
     Intrinsics.declare(new Builtin("__decimal_times", BigNumTimes.type(), BigNumTimes.class));
@@ -44,7 +30,8 @@ public class Arithmetic
     Intrinsics.declare(new Builtin("__decimal_min", BigNumMin.type(), BigNumMin.class));
     Intrinsics.declare(new Builtin("__decimal_max", BigNumMax.type(), BigNumMax.class));
     Intrinsics.declare(new Builtin("__decimal_power", BigNumPwr.type(), BigNumPwr.class));
-    
+    Intrinsics.declare(new Builtin(DecimalHash.name, DecimalHash.type(), DecimalHash.class));
+
     Intrinsics.declare(new Builtin(BignumEQ.name, BignumEQ.type(), BignumEQ.class));
     Intrinsics.declare(new Builtin(BignumNE.name, BignumNE.type(), BignumNE.class));
     Intrinsics.declare(new Builtin(BignumLE.name, BignumLE.type(), BignumLE.class));

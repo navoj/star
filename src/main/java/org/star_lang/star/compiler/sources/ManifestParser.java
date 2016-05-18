@@ -53,7 +53,7 @@ public class ManifestParser implements CodeParser {
    * parse a manifest source file which looks like:
    * <p>
    * <pre>
-   * name is manifest{
+   * NAME is manifest{
    *   type foo is ....
    *   type bar is alias of ...
    *   contract con over .... is ...
@@ -87,7 +87,7 @@ public class ManifestParser implements CodeParser {
 
     IAbstract term = parser.parse(uri, rdr, null);
 
-    // Check for name is manifest...
+    // Check for NAME is manifest...
     if (term != null && CompilerUtils.isIsForm(term)
             && CompilerUtils.isPackageIdentifier(CompilerUtils.isFormPattern(term))
             && CompilerUtils.isBraceTerm(CompilerUtils.isFormValue(term), MANIFEST)) {

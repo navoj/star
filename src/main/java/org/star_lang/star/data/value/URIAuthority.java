@@ -16,7 +16,7 @@ import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.type.TypeInterfaceType;
 
 /**
- * A Resource URI identifies a resource by name. The URIAuthority encapsulates the authority part of
+ * A Resource URI identifies a resource by NAME. The URIAuthority encapsulates the authority part of
  * the uri
  * 
  * Follows the Star type definitions:

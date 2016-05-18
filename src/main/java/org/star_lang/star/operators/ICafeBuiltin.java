@@ -20,7 +20,7 @@ import org.star_lang.star.data.type.IType;
 public interface ICafeBuiltin
 {
   /**
-   * The name of the built-in function
+   * The NAME of the built-in function
    * 
    * @return
    */
@@ -34,7 +34,7 @@ public interface ICafeBuiltin
   IType getType();
 
   /**
-   * The java name of the built-in. This name must obey the Java rules for identifiers.
+   * The java NAME of the built-in. This NAME must obey the Java rules for identifiers.
    */
   String getJavaName();
 
@@ -49,7 +49,7 @@ public interface ICafeBuiltin
   String getJavaSig();
 
   /**
-   * The name of the Java method to invoke
+   * The NAME of the Java method to invoke
    * 
    * @return
    */
@@ -69,7 +69,7 @@ public interface ICafeBuiltin
   boolean isStatic();
 
   /**
-   * Return the class name that implements this built-in function
+   * Return the class NAME that implements this built-in function
    * 
    * @return the implementation class for this builtin
    */

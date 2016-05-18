@@ -50,7 +50,7 @@ public class CafeTypeDescription extends TypeDescription implements ICafeTypeDes
    *          the type being defined. Should be a quantified type expression in the case that the
    *          type is generic.
    * @param javaName
-   *          the name of the java type that models this type.
+   *          the NAME of the java type that models this type.
    * @param constructors
    *          the list of constructors for the type.
    */

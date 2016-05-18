@@ -38,7 +38,7 @@ public class AnonRecord implements IRecord, PrettyPrintable
   private final int size;
   private Map<String, Integer> index;
 
-  public static final String ELS = "els"; // IMPORTANT: the value of this field must equal the name
+  public static final String ELS = "els"; // IMPORTANT: the value of this field must equal the NAME
                                           // of the element array els
 
   protected AnonRecord(String label, String[] fields, IValue[] els)

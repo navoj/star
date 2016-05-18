@@ -25,11 +25,6 @@ public class Scalar extends BaseExpression
     this(loc, value.getType(), value);
   }
 
-  public Scalar(Location loc, IType type, char ch)
-  {
-    this(loc, type, Factory.newChar(ch));
-  }
-
   public Scalar(Location loc, IType type, int value)
   {
     this(loc, type, Factory.newInt(value));

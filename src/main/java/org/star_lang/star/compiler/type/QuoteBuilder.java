@@ -215,7 +215,7 @@ public class QuoteBuilder
    * @param loc
    *          where is the type definition
    * @param label
-   *          what is the name of the dequoting function
+   *          what is the NAME of the dequoting function
    * @param term
    *          type specification term
    * @param type
@@ -411,7 +411,7 @@ public class QuoteBuilder
    * @param loc
    *          where is the type definition
    * @param label
-   *          what is the name of the quoting function
+   *          what is the NAME of the quoting function
    * @param term
    *          type specification term
    * @param type

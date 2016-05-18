@@ -2,14 +2,7 @@ package org.star_lang.star.operators.string;
 
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.string.runtime.String2Number.Hex2Integer;
-import org.star_lang.star.operators.string.runtime.String2Number.Hex2Long;
-import org.star_lang.star.operators.string.runtime.String2Number.String2Boolean;
-import org.star_lang.star.operators.string.runtime.String2Number.String2Char;
-import org.star_lang.star.operators.string.runtime.String2Number.String2Decimal;
-import org.star_lang.star.operators.string.runtime.String2Number.String2Float;
-import org.star_lang.star.operators.string.runtime.String2Number.String2Integer;
-import org.star_lang.star.operators.string.runtime.String2Number.String2Long;
+import org.star_lang.star.operators.string.runtime.String2Number.*;
 
 /*
  * The String2Number functions parse strings into different kinds of numbers.
@@ -35,7 +28,6 @@ public abstract class String2Number
   public static void declare(Intrinsics cxt)
   {
     cxt.declareBuiltin(new Builtin(String2Boolean.name, String2Boolean.type(), String2Boolean.class));
-    cxt.declareBuiltin(new Builtin(String2Char.name, String2Char.type(), String2Char.class));
     cxt.declareBuiltin(new Builtin(String2Integer.name, String2Integer.type(), String2Integer.class));
     cxt.declareBuiltin(new Builtin(String2Long.name, String2Long.type(), String2Long.class));
     cxt.declareBuiltin(new Builtin(Hex2Integer.name, Hex2Integer.type(), Hex2Integer.class));

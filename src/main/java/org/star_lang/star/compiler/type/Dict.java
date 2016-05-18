@@ -260,7 +260,7 @@ public class Dict implements Dictionary
       info = outer.varReference(name);
 
       if (info != null) {
-        declareVar(name, info); // may not be the same name as the original
+        declareVar(name, info); // may not be the same NAME as the original
         freeVars.add(info.getVariable());
         return info;
       }

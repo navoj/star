@@ -26,7 +26,7 @@ prc closeFile(IO) do __closeIO(IO);
 
 fun readLn(IO) is string(__readLn(IO)) default nonString;
 
-fun readCh(IO) is char(__readChar(IO)) default nonChar;
+fun readCh(IO) is integer(__readChar(IO));
 
 fun readAll(string(F)) is valof{
   def IO is __openInFile(F);

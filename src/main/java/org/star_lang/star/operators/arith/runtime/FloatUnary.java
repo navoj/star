@@ -269,4 +269,31 @@ public abstract class FloatUnary
       return TypeUtils.functionType(floatType, floatType);
     }
   }
+
+  public static class FloatHash implements IFunction
+  {
+    public static final String name = "__float_hash";
+    @CafeEnter
+    public static int enter(double s1)
+    {
+      return Double.hashCode(s1);
+    }
+
+    @Override
+    public IValue enter(IValue... args) throws EvaluationException
+    {
+      return Factory.newInt(enter(Factory.fltValue(args[0])));
+    }
+
+    @Override
+    public IType getType()
+    {
+      return type();
+    }
+
+    public static IType type(){
+      return TypeUtils.functionType(StandardTypes.rawFloatType, StandardTypes.rawIntegerType);
+    }
+  }
+
 }

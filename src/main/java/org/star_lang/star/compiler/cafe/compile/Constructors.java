@@ -61,19 +61,19 @@ import org.star_lang.star.data.value.NTuple.NTpl;
 
 /**
  * Handle the compilation of constructors
- *
+ * <p>
  * Copyright (c) 2015. Francis G. McCabe
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
-  */
+ */
 public class Constructors {
   public static final String SET_MEMBER_SIG = "(" + Types.JAVA_STRING_SIG + Types.IVALUE_SIG + ")V";
   public static final String SET_MEMBER = "setMember";
@@ -84,18 +84,18 @@ public class Constructors {
   public static final String GET_CELL = "getCell";
   private static final String JAVA_STRING_VOID_SIG = "(" + Types.JAVA_STRING_SIG + ")V";
   private static final String ILLEGAL_ARGUMENT_EXCEPTION = Type.getInternalName(IllegalArgumentException.class);
-  // Constructor index method name
-  public static final String CONIX = "conIx";
-  public static final String ICONSTRUCTOR = Utils.javaInternalClassName(IConstructor.class);
+  // Constructor index method NAME
+  static final String CONIX = "conIx";
+  static final String ICONSTRUCTOR = Utils.javaInternalClassName(IConstructor.class);
   private static final String STRINGBUILDER = Utils.javaInternalClassName(StringBuilder.class);
   private static final String STRINGBUILDER_APPEND_SIG = "(" + Types.JAVA_STRING_SIG + ")L" + STRINGBUILDER + ";";
   private static final String TOSTRING_SIG = "()" + Types.JAVA_STRING_SIG;
   private static final String GET_LABEL = "getLabel";
   private static final String EQUALS = "equals";
-  public static final String VERIFY = "verify";
+  static final String VERIFY = "verify";
 
-  public static CafeTypeDescription compileTypeDef(IAbstract def, CafeDictionary dict, ErrorReport errors,
-                                                   CodeContext ccxt) {
+  static CafeTypeDescription compileTypeDef(IAbstract def, CafeDictionary dict, ErrorReport errors,
+                                            CodeContext ccxt) {
     assert CafeSyntax.isTypeDef(def);
     CodeCatalog bldCat = ccxt.getBldCat();
     Location loc = def.getLoc();
@@ -1150,7 +1150,6 @@ public class Constructors {
               ins.add(new InsnNode(Opcodes.ARETURN));
               break;
             case rawBool:
-            case rawChar:
             case rawInt:
               ins.add(new InsnNode(Opcodes.IRETURN));
               break;
@@ -1195,7 +1194,6 @@ public class Constructors {
             ins.add(new InsnNode(Opcodes.ARETURN));
             break;
           case rawBool:
-          case rawChar:
           case rawInt:
             ins.add(new InsnNode(Opcodes.IRETURN));
             break;
@@ -1259,7 +1257,6 @@ public class Constructors {
         ins.add(new InsnNode(Opcodes.ARETURN));
         break;
       case rawBool:
-      case rawChar:
       case rawInt:
         ins.add(new InsnNode(Opcodes.IRETURN));
         break;
@@ -1325,7 +1322,7 @@ public class Constructors {
                                CafeDictionary dict, Location loc) {
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, GET_CELL, "(I)" + Types.IVALUE_SIG, null, new String[]{});
 
-    // Build the hash table for switching on member name
+    // Build the hash table for switching on member NAME
     int keys[] = new int[index.size()];
     LabelNode labels[] = new LabelNode[index.size()];
 
@@ -1383,7 +1380,7 @@ public class Constructors {
                                        CafeDictionary dict, CodeCatalog bldCat, ErrorReport errors, Location loc) {
     MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, SET_CELL, "(I" + Types.IVALUE_SIG + ")V", null, new String[]{});
 
-    // Build the hash table for switching on member name
+    // Build the hash table for switching on member NAME
     int keys[] = new int[index.size()];
     LabelNode labels[] = new LabelNode[index.size()];
 
@@ -1726,7 +1723,6 @@ public class Constructors {
         VarInfo field = entry.getValue();
         switch (field.getKind()) {
           case rawBool:
-          case rawChar:
           case rawInt:
             hwm.probe(4);
             ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
@@ -1816,7 +1812,6 @@ public class Constructors {
         VarInfo field = entry.getValue();
         switch (field.getKind()) {
           case rawBool:
-          case rawChar:
           case rawInt:
             hwm.probe(2);
             ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
@@ -2163,7 +2158,6 @@ public class Constructors {
               hwm.bump(1);
               break;
             case rawBool:
-            case rawChar:
             case rawInt:
               ins.add(new VarInsnNode(Opcodes.ILOAD, 1));
               hwm.bump(1);
@@ -2216,7 +2210,6 @@ public class Constructors {
             hwm.bump(1);
             break;
           case rawBool:
-          case rawChar:
           case rawInt:
             ins.add(new VarInsnNode(Opcodes.ILOAD, 1));
             hwm.bump(1);

@@ -35,25 +35,21 @@ import org.star_lang.star.operators.CafeEnter;
  * permissions and limitations under the License.
  */
 
-public class DisplayQuoted implements IAbstractVisitor, IFunction
-{
+public class DisplayQuoted implements IAbstractVisitor, IFunction {
   protected PrettyPrintDisplay disp;
   private int priority = Operators.STATEMENT_PRIORITY;
   private final Operators operators = Operators.operatorRoot();
 
-  protected DisplayQuoted(PrettyPrintDisplay disp)
-  {
+  private DisplayQuoted(PrettyPrintDisplay disp) {
     this.disp = disp;
   }
 
-  public static void display(PrettyPrintDisplay disp, IAbstract term)
-  {
+  public static void display(PrettyPrintDisplay disp, IAbstract term) {
     DisplayQuoted display = new DisplayQuoted(disp);
     term.accept(display);
   }
 
-  public static String display(IAbstract term)
-  {
+  public static String display(IAbstract term) {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
     DisplayQuoted display = new DisplayQuoted(disp);
     while (Abstract.isBinary(term, StandardNames.TERM)) {
@@ -65,8 +61,7 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
     return disp.toString();
   }
 
-  public static void display(PrettyPrintDisplay disp, List<IAbstract> terms, String sep)
-  {
+  public static void display(PrettyPrintDisplay disp, List<IAbstract> terms, String sep) {
     DisplayQuoted display = new DisplayQuoted(disp);
     String sp = "";
     for (IAbstract term : terms) {
@@ -77,14 +72,12 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return disp.toString();
   }
 
   @Override
-  public void visitApply(Apply app)
-  {
+  public void visitApply(Apply app) {
     if (CompilerUtils.isBraceTerm(app)) {
       CompilerUtils.braceLabel(app).accept(this);
       display(CompilerUtils.unWrap(CompilerUtils.braceArg(app), StandardNames.TERM), "{ ", ";\n", "\n}", 2,
@@ -172,21 +165,18 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
       displayApp(app);
   }
 
-  private void paren(int priority, String paren)
-  {
+  private void paren(int priority, String paren) {
     if (priority > this.priority)
       disp.append(paren);
   }
 
-  private void displayApp(Apply app)
-  {
+  private void displayApp(Apply app) {
     app.getOperator().accept(this);
     display(app.getArgs(), "(", ", ", ")");
   }
 
   @Override
-  public void visitBooleanLiteral(BooleanLiteral lit)
-  {
+  public void visitBooleanLiteral(BooleanLiteral lit) {
     if (lit.getLit())
       appendWord(TrueValue.name);
     else
@@ -194,53 +184,38 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
   }
 
   @Override
-  public void visitCharLiteral(CharLiteral lit)
-  {
-    disp.append("'");
-    appendChar(lit.getLit());
-    disp.append("'");
-  }
-
-  @Override
-  public void visitFloatLiteral(FloatLiteral flt)
-  {
+  public void visitFloatLiteral(FloatLiteral flt) {
     disp.append(flt.getLit());
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit)
-  {
+  public void visitBigDecimal(BigDecimalLiteral lit) {
     disp.append(lit.getLit().toString());
     disp.append("a");
   }
 
   @Override
-  public void visitIntegerLiteral(IntegerLiteral lit)
-  {
+  public void visitIntegerLiteral(IntegerLiteral lit) {
     disp.appendWord(lit.getLit());
   }
 
   @Override
-  public void visitLongLiteral(LongLiteral lit)
-  {
+  public void visitLongLiteral(LongLiteral lit) {
     disp.appendWord(lit.getLit());
   }
 
   @Override
-  public void visitName(Name name)
-  {
+  public void visitName(Name name) {
     appendName(name.getId());
   }
 
   @Override
-  public void visitStringLiteral(StringLiteral str)
-  {
+  public void visitStringLiteral(StringLiteral str) {
     disp.append(StringUtils.quoteString(str.getLit()));
   }
 
   @CafeEnter
-  public static StringWrap enter(IValue value) throws EvaluationException
-  {
+  public static StringWrap enter(IValue value) throws EvaluationException {
     PrettyPrintDisplay disp = new PrettyPrintDisplay();
 
     display(disp, (IAbstract) value);
@@ -248,19 +223,16 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
   }
 
   @Override
-  public IValue enter(IValue... args) throws EvaluationException
-  {
+  public IValue enter(IValue... args) throws EvaluationException {
     return enter(args[0]);
   }
 
   @Override
-  public IType getType()
-  {
+  public IType getType() {
     return TypeUtils.functionType(StandardTypes.astType, StandardTypes.stringType);
   }
 
-  protected void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble)
-  {
+  protected void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble) {
     int priority = this.priority;
     this.priority = Operators.EXPRESSION_PRIORITY - 1;
     disp.append(preamble);
@@ -274,8 +246,7 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
     this.priority = priority;
   }
 
-  private void display(IList seq, String preamble, String sep, String postamble)
-  {
+  private void display(IList seq, String preamble, String sep, String postamble) {
     int priority = this.priority;
     this.priority = Operators.EXPRESSION_PRIORITY - 1;
     disp.append(preamble);
@@ -289,8 +260,7 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
     this.priority = priority;
   }
 
-  private void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble, int indent, int priority)
-  {
+  private void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble, int indent, int priority) {
     int currPriority = this.priority;
     this.priority = priority;
     disp.append(preamble);
@@ -306,13 +276,11 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
     this.priority = currPriority;
   }
 
-  protected void appendWord(String str)
-  {
+  protected void appendWord(String str) {
     disp.appendWord(str);
   }
 
-  protected void appendName(String str)
-  {
+  private void appendName(String str) {
     if (/* StandardNames.isKeyword(str) || */operators.isOperator(str, priority)) {
       disp.append("(");
       disp.appendWord(str);
@@ -321,13 +289,7 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction
       appendWord(str);
   }
 
-  protected void append(String str)
-  {
+  protected void append(String str) {
     disp.append(str);
-  }
-
-  private void appendChar(int ch)
-  {
-    disp.appendChar(ch);
   }
 }

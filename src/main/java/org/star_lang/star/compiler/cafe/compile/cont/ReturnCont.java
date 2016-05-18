@@ -4,14 +4,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.star_lang.star.code.repository.CodeCatalog;
-import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
-import org.star_lang.star.compiler.cafe.compile.CodeContext;
-import org.star_lang.star.compiler.cafe.compile.Expressions;
-import org.star_lang.star.compiler.cafe.compile.HWM;
-import org.star_lang.star.compiler.cafe.compile.ISpec;
-import org.star_lang.star.compiler.cafe.compile.SrcSpec;
-import org.star_lang.star.compiler.cafe.compile.Types;
+import org.star_lang.star.compiler.cafe.compile.*;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
@@ -33,15 +26,13 @@ public class ReturnCont implements IContinuation
   {
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
-    
+
     InsnList ins = mtd.instructions;
 
     Expressions.checkType(src, spec, mtd, dict, hwm);
 
     switch (Types.varType(tipe)) {
     case rawBool:
-    case rawChar:
       ins.add(new InsnNode(Opcodes.IRETURN));
       break;
     case rawInt:

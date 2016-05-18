@@ -5,17 +5,7 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongAbs;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongCbrt;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongCeil;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongExp;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongFloor;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongLog;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongLog10;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongRandom;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongRound;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongSqrt;
-import org.star_lang.star.operators.arith.runtime.LongUnary.LongUMinus;
+import org.star_lang.star.operators.arith.runtime.LongUnary.*;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -53,5 +43,6 @@ public abstract class LongUnary
     cxt.declareBuiltin(new Builtin("__long_log", type, LongLog.class));
     cxt.declareBuiltin(new Builtin("__long_log10", type, LongLog10.class));
     cxt.declareBuiltin(new Builtin("__long_exp", type, LongExp.class));
+    cxt.declareBuiltin(new Builtin(LongHash.name, LongHash.type(), LongHash.class));
   }
 }

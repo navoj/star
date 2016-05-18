@@ -160,10 +160,12 @@ private
 
 implementation equality over cons of %e where equality over %e is {
   (=) = consEq;
+  hashCode = consHash
 } using {
   fun consEq(nil,nil) is true
    |  consEq(cons(H1,T1),cons(H2,T2)) where H1=H2 is consEq(T1,T2)
    |  consEq(_,_) default is false
+  fun consHash(X) is integer(__hashCode(X))
 }
 
 implementation iterable over cons of %e determines %e is {

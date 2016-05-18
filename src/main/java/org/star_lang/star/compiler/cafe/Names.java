@@ -80,7 +80,6 @@ public class Names
   public static final String FALSE = keyword("false");
 
   public static final String RAW_BOOL_TYPE = keyword("_bool");
-  public static final String RAW_CHAR_TYPE = keyword("char_");
   public static final String RAW_INT_TYPE = keyword("integer_");
   public static final String RAW_LONG_TYPE = keyword("long_");
   public static final String RAW_FLOAT_TYPE = keyword("float_");

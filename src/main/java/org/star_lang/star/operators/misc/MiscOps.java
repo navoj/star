@@ -18,7 +18,7 @@ public class MiscOps
 {
   public static void declare(Intrinsics cxt)
   {
-    cxt.declareBuiltin(new Builtin(HashCode.name, HashCode.type(), HashCode.class));
+    cxt.declareBuiltin(new Builtin(HashCode.NAME, HashCode.type(), HashCode.class));
     cxt.declareBuiltin(new IsNil());
     cxt.declareBuiltin(new Builtin(Id.name, Id.funType(), Id.class));
   }
