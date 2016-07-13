@@ -83,7 +83,6 @@ public class Names
   public static final String RAW_INT_TYPE = keyword("integer_");
   public static final String RAW_LONG_TYPE = keyword("long_");
   public static final String RAW_FLOAT_TYPE = keyword("float_");
-  public static final String RAW_DECIMAL_TYPE = keyword("decimal_");
   public static final String RAW_BINARY_TYPE = keyword("binary_");
   public static final String RAW_STRING_TYPE = keyword("string_");
   public static final String RAW_FILE_TYPE = keyword("file_");

@@ -371,8 +371,11 @@ public class CompileDriver {
                 macroStmts, pkgContent, imports, visibility);
         normalStmts.add(CompilerUtils.packageStmt(stmt.getLoc(), CompilerUtils.packageName(stmt), pkgContent));
       } else if (CompilerUtils.isPrivate(stmt))
-        findMetaRules(repository, CompilerUtils.privateTerm(stmt), errors, operators, wffRules, fmtRules, catalog,
-                macroStmts, normalStmts, imports, Visibility.priVate);
+        findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, fmtRules, catalog,
+            macroStmts, normalStmts, imports, Visibility.priVate);
+      else if (CompilerUtils.isPublic(stmt))
+        findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, fmtRules, catalog,
+                macroStmts, normalStmts, imports, Visibility.pUblic);
       else if (CompilerUtils.isImport(stmt)) {
         if (visibility == Visibility.priVate) {
           IAbstract prStmt = CompilerUtils.privateStmt(stmt.getLoc(), stmt);
@@ -407,6 +410,9 @@ public class CompileDriver {
           operators.declareOperator(errors, rl);
       } else if (visibility == Visibility.priVate)
         normalStmts.add(CompilerUtils.privateStmt(stmt.getLoc(), stmt));
+      else if (visibility == Visibility.pUblic)
+        normalStmts.add(stmt);
+//      normalStmts.add(CompilerUtils.publicStmt(stmt.getLoc(), stmt));
       else if (CompilerUtils.isBraceTerm(stmt)) { // A special hack to allow for imports
         for (IAbstract el : CompilerUtils.unWrap(CompilerUtils.braceArg(stmt))) {
           if (CompilerUtils.isPrivate(el))

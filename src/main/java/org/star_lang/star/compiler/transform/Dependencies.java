@@ -413,7 +413,11 @@ public class Dependencies
 
       if (CompilerUtils.isPrivate(term)) {
         visibility = Visibility.priVate;
-        term = CompilerUtils.privateTerm(term);
+        term = CompilerUtils.stripVisibility(term);
+      }
+      if (CompilerUtils.isPublic(term)) {
+        visibility = Visibility.pUblic;
+        term = CompilerUtils.stripVisibility(term);
       }
 
       if (CompilerUtils.isImplementationStmt(term)) {

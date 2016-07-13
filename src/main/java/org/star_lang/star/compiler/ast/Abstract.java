@@ -1,12 +1,11 @@
 package org.star_lang.star.compiler.ast;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.IList;
 import org.star_lang.star.data.type.Location;
+
+import java.util.List;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -89,7 +88,7 @@ public abstract class Abstract {
     return ((StringLiteral) term).getLit();
   }
 
-  public static boolean isInt(IAbstract term){
+  public static boolean isInt(IAbstract term) {
     return term instanceof IntegerLiteral;
   }
 
@@ -127,10 +126,6 @@ public abstract class Abstract {
 
   public static LongLiteral newLong(Location loc, long l) {
     return new LongLiteral(loc, l);
-  }
-
-  public static BigDecimalLiteral newBigdecimal(Location loc, BigDecimal bg) {
-    return new BigDecimalLiteral(loc, bg);
   }
 
   public static StringLiteral newString(Location loc, String s) {

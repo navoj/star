@@ -15,7 +15,6 @@ import org.star_lang.star.data.value.ResourceURI;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -151,7 +150,6 @@ public class OpGrammar implements PrettyPrintable {
       case integer:
       case longint:
       case floating:
-      case decimal:
         return term0();
       case identifier: {
         if (operators.isRightBracket(hed.getImage()))
@@ -196,10 +194,6 @@ public class OpGrammar implements PrettyPrintable {
                   FloatLiteral fltArg = (FloatLiteral) arg;
                   termStack.pop();
                   termStack.push(rawWrap(new FloatLiteral(arg.getLoc(), -fltArg.getLit()), isRaw));
-                } else if (arg instanceof BigDecimalLiteral) {
-                  BigDecimalLiteral decArg = (BigDecimalLiteral) arg;
-                  termStack.pop();
-                  termStack.push(rawWrap(new BigDecimalLiteral(arg.getLoc(), decArg.getLit().negate()), isRaw));
                 }
               }
             }
@@ -254,7 +248,6 @@ public class OpGrammar implements PrettyPrintable {
               case integer:
               case longint:
               case floating:
-              case decimal:
               case string:
               case regexp:
               case blob:
@@ -343,7 +336,6 @@ public class OpGrammar implements PrettyPrintable {
       case integer:
       case longint:
       case floating:
-      case decimal:
       case string:
       case regexp:
       case blob:
@@ -387,10 +379,6 @@ public class OpGrammar implements PrettyPrintable {
       case floating:
         tokenizer.commitToken();
         termStack.push(rawWrap(Abstract.newFloat(loc, hed.getFloatingValue()), hed.isRaw()));
-        return MIN_PRIORITY;
-      case decimal:
-        tokenizer.commitToken();
-        termStack.push(rawWrap(Abstract.newBigdecimal(loc, (BigDecimal) hed.getValue()), hed.isRaw()));
         return MIN_PRIORITY;
       default: {
         return termArgs(term00());

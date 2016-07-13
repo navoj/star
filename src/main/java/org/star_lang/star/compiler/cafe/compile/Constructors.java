@@ -1145,7 +1145,6 @@ public class Constructors {
             case constructor:
             case rawBinary:
             case rawString:
-            case rawDecimal:
               genNullTest(desc.getLoc(), hwm, getter);
               ins.add(new InsnNode(Opcodes.ARETURN));
               break;
@@ -1189,7 +1188,6 @@ public class Constructors {
           case constructor:
           case rawBinary:
           case rawString:
-          case rawDecimal:
             genNullTest(desc.getLoc(), hwm, getter);
             ins.add(new InsnNode(Opcodes.ARETURN));
             break;
@@ -1253,7 +1251,6 @@ public class Constructors {
       case constructor:
       case rawBinary:
       case rawString:
-      case rawDecimal:
         ins.add(new InsnNode(Opcodes.ARETURN));
         break;
       case rawBool:
@@ -1754,7 +1751,6 @@ public class Constructors {
             break;
           case rawBinary:
           case rawString:
-          case rawDecimal:
           case general:
             hwm.probe(4);
             ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
@@ -1844,7 +1840,6 @@ public class Constructors {
             break;
           case rawBinary:
           case rawString:
-          case rawDecimal:
           case general:
             hwm.probe(4);
             ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
@@ -2153,7 +2148,6 @@ public class Constructors {
             case constructor:
             case rawBinary:
             case rawString:
-            case rawDecimal:
               ins.add(new VarInsnNode(Opcodes.ALOAD, 1));
               hwm.bump(1);
               break;
@@ -2204,7 +2198,6 @@ public class Constructors {
           case constructor:
           case rawBinary:
           case rawString:
-          case rawDecimal:
             ins.add(new VarInsnNode(Opcodes.ALOAD, 1));
             ins.add(new TypeInsnNode(Opcodes.CHECKCAST, var.getJavaType()));
             hwm.bump(1);

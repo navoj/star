@@ -19,7 +19,6 @@ import org.star_lang.star.data.value.NTuple.NTpl;
 import org.star_lang.star.operators.string.runtime.ValueDisplay;
 
 import java.io.PrintStream;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -65,8 +64,6 @@ public class Types {
   public static final String JAVA_DOUBLE_SIG = "L" + JAVA_DOUBLE_TYPE + ";";
   public static final String JAVA_FILE_TYPE = Utils.javaInternalClassName(PrintStream.class);
   public static final String JAVA_FILE_SIG = "L" + JAVA_FILE_TYPE + ";";
-  public static final String JAVA_DECIMAL_TYPE = Utils.javaInternalClassName(BigDecimal.class);
-  public static final String JAVA_DECIMAL_SIG = "L" + JAVA_DECIMAL_TYPE + ";";
   public static final String JAVA_OBJECT_TYPE = Utils.javaInternalClassName(Object.class);
   public static final String JAVA_OBJECT_SIG = "L" + JAVA_OBJECT_TYPE + ";";
   public static final String BOOLEAN_TYPE = Utils.javaInternalClassName(BoolWrap.class);
@@ -77,8 +74,6 @@ public class Types {
   public static final String LONG_SIG = "L" + LONG_TYPE + ";";
   public static final String FLOAT_TYPE = Utils.javaInternalClassName(FloatWrap.class);
   public static final String FLOAT_SIG = "L" + FLOAT_TYPE + ";";
-  public static final String DECIMAL_TYPE = Utils.javaInternalClassName(BigNumWrap.class);
-  public static final String DECIMAL_SIG = "L" + DECIMAL_TYPE + ";";
   public static final String STRING_TYPE = Utils.javaInternalClassName(StringWrap.class);
   public static final String STRING_SIG = "L" + STRING_TYPE + ";";
   public static final String IVALUE = Utils.javaInternalClassName(IValue.class);
@@ -174,8 +169,6 @@ public class Types {
         blder.append(JAVA_STRING_SIG);
       else if (TypeUtils.isRawFileType(label))
         blder.append(JAVA_FILE_SIG);
-      else if (TypeUtils.isRawDecimalType(label))
-        blder.append(JAVA_DECIMAL_SIG);
       else {
         CafeTypeDescription desc = (CafeTypeDescription) dict.getTypeDescription(label);
         if (desc != null) {
@@ -203,8 +196,6 @@ public class Types {
         blder.append(JAVA_STRING_SIG);
       else if (TypeUtils.isRawFileType(type))
         blder.append(JAVA_FILE_SIG);
-      else if (TypeUtils.isRawDecimalType(type))
-        blder.append(JAVA_DECIMAL_SIG);
       else {
         CafeTypeDescription desc = (CafeTypeDescription) dict.getTypeDescription(type.typeLabel());
         if (desc != null) {
@@ -298,8 +289,6 @@ public class Types {
         blder.append(JAVA_STRING_SIG);
       else if (TypeUtils.isRawFileType(label))
         blder.append(JAVA_FILE_SIG);
-      else if (TypeUtils.isRawDecimalType(label))
-        blder.append(JAVA_DECIMAL_SIG);
       else
         blder.append(IVALUE_SIG);
     }
@@ -347,8 +336,6 @@ public class Types {
         blder.append(JAVA_STRING_SIG);
       else if (TypeUtils.isRawFileType(type))
         blder.append(JAVA_FILE_SIG);
-      else if (TypeUtils.isRawDecimalType(type))
-        blder.append(JAVA_DECIMAL_SIG);
       else
         blder.append(IVALUE_SIG);
     }
@@ -441,8 +428,6 @@ public class Types {
       return JAVA_STRING_SIG;
     else if (TypeUtils.isRawFileType(type))
       return JAVA_FILE_SIG;
-    else if (TypeUtils.isRawDecimalType(type))
-      return JAVA_DECIMAL_SIG;
     else
       return "L" + javaType(type, dict, bldCat, errors, loc) + ";";
   }
@@ -482,8 +467,6 @@ public class Types {
       return JAVA_STRING_SIG;
     else if (TypeUtils.isRawFileType(type))
       return JAVA_FILE_SIG;
-    else if (TypeUtils.isRawDecimalType(type))
-      return JAVA_DECIMAL_SIG;
     else
       return IVALUE_SIG;
   }
@@ -514,8 +497,6 @@ public class Types {
         blder.append(JAVA_OBJECT_SIG);
       else if (TypeUtils.isRawStringType(type))
         blder.append(JAVA_STRING_TYPE);
-      else if (TypeUtils.isRawDecimalType(type))
-        blder.append(JAVA_DECIMAL_TYPE);
       else if (TypeUtils.isRawFileType(type))
         blder.append(JAVA_FILE_TYPE);
       else if (TypeUtils.isTupleType(type))
@@ -555,8 +536,6 @@ public class Types {
         blder.append("double");
       else if (TypeUtils.isRawStringType(label))
         blder.append(JAVA_STRING_TYPE);
-      else if (TypeUtils.isRawDecimalType(label))
-        blder.append(JAVA_DECIMAL_TYPE);
       else if (TypeUtils.isRawFileType(label))
         blder.append(JAVA_FILE_TYPE);
       else if (TypeUtils.isRawBinaryType(label))
@@ -845,8 +824,6 @@ public class Types {
       return JavaKind.rawLong;
     else if (TypeUtils.isRawFloatType(type))
       return JavaKind.rawFloat;
-    else if (TypeUtils.isRawDecimalType(type))
-      return JavaKind.rawDecimal;
     else if (TypeUtils.isRawStringType(type))
       return JavaKind.rawString;
     else if (TypeUtils.isRawBinaryType(type))
@@ -862,7 +839,6 @@ public class Types {
       case general:
       case rawBinary:
       case rawString:
-      case rawDecimal:
       default:
         return 1;
       case rawLong:

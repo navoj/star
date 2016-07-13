@@ -1181,10 +1181,6 @@ public class TypeUtils {
     return isType(type, Names.RAW_FLOAT_TYPE);
   }
 
-  public static boolean isRawDecimalType(IType type) {
-    return isType(type, Names.RAW_DECIMAL_TYPE);
-  }
-
   public static boolean isRawBinaryType(IType type) {
     return isType(type, Names.RAW_BINARY_TYPE);
   }
@@ -1213,10 +1209,6 @@ public class TypeUtils {
     return name.equals(Names.RAW_FLOAT_TYPE);
   }
 
-  public static boolean isRawDecimalType(String name) {
-    return name.equals(Names.RAW_DECIMAL_TYPE);
-  }
-
   public static boolean isRawBinaryType(String name) {
     return name.equals(Names.RAW_BINARY_TYPE);
   }
@@ -1233,7 +1225,7 @@ public class TypeUtils {
     type = deRef(type);
 
     return type instanceof Type && (isRawBoolType(type) || isRawIntType(type) || isRawLongType(
-        type) || isRawFloatType(type) || isRawDecimalType(type) || isRawStringType(type) || isRawFileType(type)
+        type) || isRawFloatType(type) || isRawStringType(type) || isRawFileType(type)
         || isRawBinaryType(type));
   }
 
@@ -1247,8 +1239,6 @@ public class TypeUtils {
         return StandardTypes.longType;
       case rawFloat:
         return StandardTypes.floatType;
-      case rawDecimal:
-        return StandardTypes.decimalType;
       case rawString:
         return StandardTypes.stringType;
       case rawBinary:
@@ -1268,8 +1258,6 @@ public class TypeUtils {
       return StandardTypes.rawLongType;
     else if (type.equals(StandardTypes.floatType))
       return StandardTypes.rawFloatType;
-    else if (type.equals(StandardTypes.decimalType))
-      return StandardTypes.rawDecimalType;
     else if (type.equals(StandardTypes.stringType))
       return StandardTypes.rawStringType;
     else if (type.equals(StandardTypes.binaryType))
@@ -1289,8 +1277,6 @@ public class TypeUtils {
       return StandardTypes.rawLongType.equals(rawType);
     else if (type.equals(StandardTypes.floatType))
       return StandardTypes.rawFloatType.equals(rawType);
-    else if (type.equals(StandardTypes.decimalType))
-      return StandardTypes.rawDecimalType.equals(rawType);
     else if (type.equals(StandardTypes.stringType))
       return StandardTypes.rawStringType.equals(rawType);
     else if (type.equals(StandardTypes.binaryType))

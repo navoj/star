@@ -210,12 +210,6 @@ public class TypeTests extends SRTest
   }
 
   @Test
-  public void testDoubleAlias()
-  {
-    runStar("doubleAlias.star");
-  }
-
-  @Test
   public void testAliasTypeValue()
   {
     runStar("weights.star");

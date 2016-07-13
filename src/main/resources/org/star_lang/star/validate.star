@@ -27,6 +27,8 @@ private import macrosupport;
 
 # private #( ?S )# :: statement :- S :: statement;
 
+# public #( ?S )# :: statement :- S :: statement;
+
 -- import statement
 # import ?Pkg :: statement :- Pkg::packageName;
 # identifier is import ?Pkg :: statement :- Pkg::packageName;

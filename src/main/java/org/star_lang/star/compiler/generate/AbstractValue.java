@@ -8,7 +8,6 @@ import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -54,8 +53,6 @@ public class AbstractValue implements IValueVisitor
       return Abstract.newLong(loc, (Long) val);
     else if (val instanceof Boolean)
       return Abstract.newBoolean(loc, (Boolean) val);
-    else if (val instanceof BigDecimal)
-      return Abstract.newBigdecimal(loc, (BigDecimal) val);
     else if (val instanceof IScalar<?>)
       return abstractValue(loc, ((IScalar<?>) val).getValue(), type);
     else

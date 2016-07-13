@@ -33,6 +33,5 @@ public abstract class String2Number
     cxt.declareBuiltin(new Builtin(Hex2Integer.name, Hex2Integer.type(), Hex2Integer.class));
     cxt.declareBuiltin(new Builtin(Hex2Long.name, Hex2Long.type(), Hex2Long.class));
     cxt.declareBuiltin(new Builtin(String2Float.name, String2Float.type(), String2Float.class));
-    cxt.declareBuiltin(new Builtin(String2Decimal.name, String2Decimal.type(), String2Decimal.class));
   }
 }

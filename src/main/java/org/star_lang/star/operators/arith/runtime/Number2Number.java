@@ -1,7 +1,5 @@
 package org.star_lang.star.operators.arith.runtime;
 
-import java.math.BigDecimal;
-
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IFunction;
@@ -26,7 +24,6 @@ import org.star_lang.star.operators.CafeEnter;
  */
 public abstract class Number2Number
 {
-
   public static class Integer2Integer implements IFunction
   {
     @CafeEnter
@@ -90,27 +87,6 @@ public abstract class Number2Number
     }
   }
 
-  public static class Decimal2Integer implements IFunction
-  {
-    @CafeEnter
-    public static int enter(BigDecimal d)
-    {
-      return d.intValue();
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return Factory.newInt(enter(Factory.decimalValue(args[0])));
-    }
-
-    @Override
-    public IType getType()
-    {
-      return TypeUtils.functionType(StandardTypes.rawDecimalType, StandardTypes.rawIntegerType);
-    }
-  }
-
   public static class Integer2Long implements IFunction
   {
     @CafeEnter
@@ -153,27 +129,6 @@ public abstract class Number2Number
     }
   }
 
-  public static class Decimal2Long implements IFunction
-  {
-    @CafeEnter
-    public static long enter(BigDecimal d)
-    {
-      return d.longValue();
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return Factory.newLng(enter(Factory.decimalValue(args[0])));
-    }
-
-    @Override
-    public IType getType()
-    {
-      return TypeUtils.functionType(StandardTypes.rawDecimalType, StandardTypes.rawLongType);
-    }
-  }
-
   public static class Integer2Float implements IFunction
   {
     @CafeEnter
@@ -213,90 +168,6 @@ public abstract class Number2Number
     public IType getType()
     {
       return TypeUtils.functionType(StandardTypes.rawLongType, StandardTypes.rawFloatType);
-    }
-  }
-
-  public static class Decimal2Float implements IFunction
-  {
-    @CafeEnter
-    public static double enter(BigDecimal d)
-    {
-      return d.doubleValue();
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return Factory.newFlt(enter(Factory.decimalValue(args[0])));
-    }
-
-    @Override
-    public IType getType()
-    {
-      return TypeUtils.functionType(StandardTypes.rawDecimalType, StandardTypes.rawFloatType);
-    }
-  }
-
-  public static class Integer2Decimal implements IFunction
-  {
-    @CafeEnter
-    public static BigDecimal enter(int d)
-    {
-      return new BigDecimal(d);
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return Factory.newDecimal(enter(Factory.intValue(args[0])));
-    }
-
-    @Override
-    public IType getType()
-    {
-      return TypeUtils.functionType(StandardTypes.rawIntegerType, StandardTypes.rawDecimalType);
-    }
-  }
-
-  public static class Long2Decimal implements IFunction
-  {
-    @CafeEnter
-    public static BigDecimal enter(long d)
-    {
-      return new BigDecimal(d);
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return Factory.newDecimal(enter(Factory.lngValue(args[0])));
-    }
-
-    @Override
-    public IType getType()
-    {
-      return TypeUtils.functionType(StandardTypes.rawLongType, StandardTypes.rawDecimalType);
-    }
-  }
-
-  public static class Float2Decimal implements IFunction
-  {
-    @CafeEnter
-    public static BigDecimal enter(double d)
-    {
-      return new BigDecimal(d);
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return Factory.newDecimal(enter(Factory.fltValue(args[0])));
-    }
-
-    @Override
-    public IType getType()
-    {
-      return TypeUtils.functionType(StandardTypes.rawFloatType, StandardTypes.rawDecimalType);
     }
   }
 }

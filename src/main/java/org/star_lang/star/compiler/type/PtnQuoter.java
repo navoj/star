@@ -87,9 +87,6 @@ public class PtnQuoter implements IAbstractVisitor {
         else if (sym.equals(StandardTypes.FLOAT))
           matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, FloatLiteral.name, anon, anon),
               rhs);
-        else if (sym.equals(StandardTypes.DECIMAL))
-          matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, BigDecimalLiteral.name, anon,
-              anon), rhs);
         else if (sym.equals(StandardNames.IDENTIFIER))
           matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, Name.name, anon, anon), rhs);
         else if (sym.equals(StandardTypes.STRING))
@@ -182,13 +179,6 @@ public class PtnQuoter implements IAbstractVisitor {
     IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
     IContentPattern lx = TypeCheckerUtils.longPtn(lit.getLoc(), lit.getLit());
     stack.push(new ConstructorPtn(lit.getLoc(), LongLiteral.name, astType, loc, lx));
-  }
-
-  @Override
-  public void visitBigDecimal(BigDecimalLiteral lit) {
-    IContentPattern loc = Variable.anonymous(lit.getLoc(), Location.type);
-    IContentPattern big = TypeCheckerUtils.decimalPtn(lit.getLoc(), lit.getLit());
-    stack.push(new ConstructorPtn(lit.getLoc(), BigDecimalLiteral.name, astType, loc, big));
   }
 
   @Override

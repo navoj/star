@@ -29,7 +29,6 @@ public class AstMacroKey implements IFunction
 {
   public static final String name = "astMacroKey";
 
-  private static final String decimalKey = "%decimal";
   private static final String booleanKey = "%bool";
   private static final String floatKey = "%float";
   private static final String integerKey = "%integer";
@@ -101,8 +100,6 @@ public class AstMacroKey implements IFunction
       return longKey;
     else if (term instanceof FloatLiteral)
       return floatKey;
-    else if (term instanceof BigDecimalLiteral)
-      return decimalKey;
     else
       throw new EvaluationException("cannot determine macro key of " + term);
   }

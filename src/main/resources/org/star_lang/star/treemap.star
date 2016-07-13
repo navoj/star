@@ -121,12 +121,6 @@ fun commonMask(M1,ML) is valof{
 } 
 
 private
-fun truncatedMask(M,L) is valof{
-  def Ln is __integer_minus(ThirtyTwo,L);
-  valis __integer_bit_shl(__integer_bit_shr(mOne,Ln),Ln);
-}
-
-private
 fun hex(I) is string(__integer_hex(I));
 
 private
@@ -217,7 +211,7 @@ fun mergeNodes(T1 matching trLeaf(_,_),T2 matching trLeaf(_,_)) is mergeLeafs(T1
 
 private
 fun remve(_,_,trEmpty) is trEmpty
- |  remve(H,K,L matching trLeaf(H1,Els)) is __integer_eq(H,H1) ? removeLeaf(H1,_delete_indexed(Els,K)):L
+ |  remve(H,K,L matching trLeaf(H1,Els)) is __integer_eq(H,H1) ? removeLeaf(H1,_delete_indexed(Els,K)) : L
  |  remve(H,K,T matching trNode{mask=M;maskLen=Ln;left=L;right=R}) is valof{
       def CM is commonMask(H,Ln);
   

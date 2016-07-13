@@ -40,10 +40,6 @@ implementation coercion over (string,float) is {
   fun coerce(string(X)) is __string_float(X);
 }
 
-implementation coercion over (string,decimal) is {
-  fun coerce(string(X)) is __string_decimal(X);
-}
-
 implementation coercion over (string,binary) is {
   fun coerce(S) is __string_binary(S);
 }
@@ -76,10 +72,6 @@ implementation coercion over (float,long) is {
   fun coerce(float(F)) is long(__float_long(F))
 }
 
-implementation coercion over (float,decimal) is {
-  fun coerce(float(F)) is decimal(__float_decimal(F))
-}
-
 implementation coercion over (float, float) is {
   fun coerce(X) is X
 }
@@ -87,10 +79,6 @@ implementation coercion over (float, float) is {
 implementation coercion over (float,string) is {
   fun coerce(float(F)) is string(__float_string(F))
    |  coerce(nonFLoat) is "nonFloat"
-}
-
-implementation coercion over (decimal,string) is {
-  fun coerce(decimal(D)) is string(__decimal_string(D));
 }
 
 implementation coercion over (integer, integer) is {
@@ -105,10 +93,6 @@ implementation coercion over (integer,float) is {
   fun coerce(integer(X)) is float(__integer_float(X));
 }
 
-implementation coercion over (integer,decimal) is {
-  fun coerce(integer(X)) is decimal(__integer_decimal(X));
-}
-
 implementation coercion over (long,integer) is {
   fun coerce(long(X)) is integer(__long_integer(X));
 }
@@ -121,10 +105,6 @@ implementation coercion over (long,float) is {
   fun coerce(long(X)) is float(__long_float(X));
 }
 
- implementation coercion over (long,decimal) is {
-  fun coerce(long(X)) is decimal(__long_decimal(X))
-}
- 
 implementation coercion over (string,uri) is {
   fun coerce(string(S)) is __string2uri(S)
 }

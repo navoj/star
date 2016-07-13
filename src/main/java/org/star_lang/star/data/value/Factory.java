@@ -2,8 +2,6 @@ package org.star_lang.star.data.value;
 
 import org.star_lang.star.data.*;
 import org.star_lang.star.data.type.*;
-import org.star_lang.star.data.value.BigNumWrap.BigNumWrapper;
-import org.star_lang.star.data.value.BigNumWrap.NonDecimalWrapper;
 import org.star_lang.star.data.value.BinaryWrap.BinaryWrapper;
 import org.star_lang.star.data.value.FloatWrap.FloatWrapper;
 import org.star_lang.star.data.value.IntWrap.IntWrapper;
@@ -11,7 +9,6 @@ import org.star_lang.star.data.value.LongWrap.LongWrapper;
 import org.star_lang.star.data.value.StringWrap.NonStringWrapper;
 import org.star_lang.star.data.value.StringWrap.StringWrapper;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -193,19 +190,6 @@ public class Factory {
     } catch (Exception e) {
       throw new EvaluationException("not a float scalar");
     }
-  }
-
-  public static BigDecimal decimalValue(IValue scalar) throws EvaluationException {
-    if (scalar instanceof BigNumWrapper)
-      return ((BigNumWrapper) scalar).getValue();
-    else if (scalar instanceof NonDecimalWrapper)
-      return null;
-    else
-      throw new EvaluationException("not a decimal");
-  }
-
-  public static BigNumWrap newDecimal(BigDecimal d) {
-    return new BigNumWrapper(d);
   }
 
   /**

@@ -3,7 +3,6 @@ tokens is package{
              or integerTok(integer,astLocation)
              or longTok(long,astLocation)
              or floatTok(float,astLocation)
-             or decimalTok(decimal,astLocation)
              or stringTok(string,astLocation)
              or terminal;
 
@@ -39,9 +38,7 @@ tokens is package{
 	fun reportLong(Ln,Cnt,L,Lc) is  (longTok(Ln as long,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
 
 	fun reportFloat(F,Cnt,L,Lc) is  (floatTok(F as float,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
-	
-	fun reportDecimal(F,Cnt,L,Lc) is  (decimalTok(F as decimal,locOf(Lc,Cnt)),L,nxtLoc(Lc,Cnt));
-	
+
 	fun reportTerminal(Lc) is (terminal,"",Lc);
 	
     fun skipComments([' ',..L], Lc) is skipComments(L,nxtLoc(Lc,1))
@@ -100,7 +97,6 @@ tokens is package{
       case `0c(.:C)(.*:L)` is reportChrInteger(C,3,L,Lc);
       case `([0-9]+:N)(.*:L)` is reportInteger(N,size(N),L,Lc);
       case `([0-9]+[lL]:N)(.*:L)` is reportLong(N,size(N),L,Lc);
-      case `([0-9]*\.[0-9]+[aA]:N)(.*:L)` is reportDecimal(N,size(N),L,Lc);
       case `([0-9]*\.[0-9]+[eE][0-9]+:N)(.*:L)` is reportFloat(N,size(N),L,Lc);
 	  case `([A-Za-z_][A-Za-z0-9_]*:I)(.*:L)` is reportId(I,size(I),L,Lc);
 	  case `(.:O)(.*:L)` is valof{
@@ -120,7 +116,6 @@ tokens is package{
   /* Punctuation: */()[]{}#()###=>==>$=>$,..;+*
   /* Identifiers: */ alpha _omega _0345 one_two 
   /* Integers */12 0c0 0x56
-  /* Decimal: */123.45a
   /* Floats: */123.45 12.34e10 345.12e-10
   /* Longs: */123l 23L 0x45l
   /* Characters: */'a' 'b' '\n' '@' '\u34;' 

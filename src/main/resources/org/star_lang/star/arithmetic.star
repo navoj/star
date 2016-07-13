@@ -64,18 +64,6 @@ implementation arithmetic over float is{
   def one is 1.0;
 };
 
-implementation arithmetic over decimal is{
-  fun decimal(X)+decimal(Y) is decimal(__decimal_plus(X,Y));
-  fun decimal(X)-decimal(Y) is decimal(__decimal_minus(X,Y));
-  fun decimal(X)*decimal(Y) is decimal(__decimal_times(X,Y));
-  fun decimal(X)/decimal(Y) is decimal(__decimal_divide(X,Y));
-  fun decimal(X)%decimal(Y) is decimal(__decimal_rem(X,Y));
-  fun __uminus(decimal(X)) is decimal(__decimal_uminus(X));
-  fun abs(decimal(X)) is decimal(__decimal_abs(X));
-  def zero is 0a;
-  def one is 1a;
-};
-
 implementation largeSmall over integer is {
   def largest is integer(0x7fffffff_);
   def smallest is integer(0x80000000_);

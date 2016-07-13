@@ -1,9 +1,5 @@
 largenumbers is package{
-  plus has type (decimal,long) =>decimal
-  fun plus(X,Y) is X+(Y as decimal)
-  
-  def A is 1a;
-  
+
   sL has type long;
   def sL is smallest;
   
@@ -21,8 +17,6 @@ largenumbers is package{
   
   main has type action();
   prc main() do {
-    logMsg(info,"a large now $(plus(A,long(_now())))");
-    
     logMsg(info, "smallest long $sL");
     logMsg(info, "largest long $lL");
     

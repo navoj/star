@@ -1,7 +1,6 @@
 package org.star_lang.star.operators;
 
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
-import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.BuiltinInfo;
 import org.star_lang.star.compiler.type.Dict;
 import org.star_lang.star.compiler.type.Freshen;
@@ -37,7 +36,6 @@ import org.star_lang.star.operators.system.SystemUtils;
 import org.star_lang.star.operators.uri.URIOps;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,7 +67,6 @@ public class Intrinsics extends Dict {
     intrinsics.defineType(new TypeDescription(StandardTypes.rawLongType));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.rawFloatType, Double.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.rawStringType, String.class.getCanonicalName()));
-    intrinsics.defineType(new CafeTypeDescription(StandardTypes.rawDecimalType, BigDecimal.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.fileType, File.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.voidType, IValue.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.voidType, Object.class.getCanonicalName()));
@@ -99,7 +96,6 @@ public class Intrinsics extends Dict {
     IntWrap.declare(intrinsics);
     LongWrap.declare(intrinsics);
     FloatWrap.declare(intrinsics);
-    BigNumWrap.declare(intrinsics);
 
     NumericWrapper.declare(intrinsics);
     StringWrappers.declare(intrinsics);
@@ -108,8 +104,6 @@ public class Intrinsics extends Dict {
     LongBitString.declare(intrinsics);
     IntegerBitString.declare(intrinsics);
 
-    Arithmetic.declare();
-    BigNumUnary.declare(intrinsics);
     SystemUtils.declare(intrinsics);
     Clock.declare(intrinsics);
     DisplayValue.declare(intrinsics);
@@ -150,10 +144,6 @@ public class Intrinsics extends Dict {
     GStopHere.declare(intrinsics);
 
     Location noWhere = Location.nullLoc;
-    intrinsics.defineTypeAlias(noWhere, new TypeAlias(Location.nullLoc, TypeUtils.typeExp(StandardNames.ALIAS,
-        TypeUtils.typeExp("double"), StandardTypes.floatType)));
-    intrinsics.defineTypeAlias(noWhere, new TypeAlias(Location.nullLoc, TypeUtils.typeExp(StandardNames.ALIAS,
-        TypeUtils.typeExp("arbitrary"), StandardTypes.decimalType)));
   }
 
   private Intrinsics() {

@@ -212,10 +212,6 @@ implementation pPrint over float is {
   fun ppDisp(float(F)) is ppStr(string(__float_string(F)));
 }
 
-implementation pPrint over decimal is {
-  fun ppDisp(decimal(D)) is ppStr(string(__decimal_string(D)));
-}
-
 implementation pPrint over string is {
   fun ppDisp(string(S)) is ppStr(string(__string_quote(S)))
 }

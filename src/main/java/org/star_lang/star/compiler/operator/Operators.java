@@ -90,6 +90,7 @@ public class Operators implements PrettyPrintable {
     defineInfix(StandardNames.WFF_DEFINES, 1341);
 
     definePrefixAssoc(StandardNames.PRIVATE, 1320);
+    definePrefixAssoc(StandardNames.PUBLIC, 1320);
 
     definePrefix(StandardNames.TYPE, 1250, 1201); // type is not an operator when expected priority
     // is 1200 or less

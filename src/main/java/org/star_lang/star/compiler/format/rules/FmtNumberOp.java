@@ -1,6 +1,5 @@
 package org.star_lang.star.compiler.format.rules;
 
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
@@ -16,8 +15,7 @@ public class FmtNumberOp implements FmtPtnOp
   @Override
   public formatCode apply(IAbstract term, IAbstract env[], Location loc)
   {
-    if (term instanceof IntegerLiteral || term instanceof FloatLiteral || term instanceof LongLiteral
-        || term instanceof BigDecimalLiteral)
+    if (term instanceof IntegerLiteral || term instanceof FloatLiteral || term instanceof LongLiteral)
       return formatCode.applies;
     else
       return formatCode.notApply;

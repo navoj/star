@@ -1,7 +1,5 @@
 package org.star_lang.star.data.value;
 
-import java.math.BigDecimal;
-
 import org.star_lang.star.data.IScalar;
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -25,8 +23,6 @@ public abstract class NumberWrap<T> implements IScalar<T>
   public abstract long longValue();
 
   public abstract double floatValue();
-
-  public abstract BigDecimal bigNumValue();
 
   @Override
   public boolean equals(Object obj)

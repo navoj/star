@@ -10,7 +10,6 @@ import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
 import org.star_lang.star.operators.CafeEnter;
 
-import java.math.BigDecimal;
 import java.util.Stack;
 
 /*
@@ -78,8 +77,6 @@ public class AstQuoter implements IFunction {
         return Abstract.newLong(loc, (Long) val);
       else if (val instanceof Boolean)
         return Abstract.newBoolean(loc, (Boolean) val);
-      else if (val instanceof BigDecimal)
-        return Abstract.newBigdecimal(loc, (BigDecimal) val);
       else if (val instanceof IScalar<?>)
         return abstractValue(loc, ((IScalar<?>) val).getValue(), type);
       else

@@ -11,8 +11,6 @@ import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.Factory;
 import org.star_lang.star.operators.CafeEnter;
 
-import java.math.BigDecimal;
-
 public abstract class Number2String
 {
   private static final String FORMAT_ERROR = "*Error*";
@@ -547,34 +545,6 @@ public abstract class Number2String
     public static IType type()
     {
       return TypeUtils.functionType(StandardTypes.rawFloatType, rawStringType);
-    }
-  }
-
-  public static class Decimal2String implements IFunction
-  {
-    public static final String name = "__decimal_string";
-
-    @CafeEnter
-    public static String __decimal_string(BigDecimal bg) throws EvaluationException
-    {
-      return bg.toString();
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException
-    {
-      return Factory.newString(__decimal_string(Factory.decimalValue(args[0])));
-    }
-
-    @Override
-    public IType getType()
-    {
-      return type();
-    }
-
-    public static IType type()
-    {
-      return TypeUtils.functionType(StandardTypes.rawDecimalType, rawStringType);
     }
   }
 }

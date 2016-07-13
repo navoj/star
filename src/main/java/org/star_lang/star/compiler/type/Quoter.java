@@ -196,13 +196,6 @@ public class Quoter implements IAbstractVisitor {
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit) {
-    IContentExpression locExp = genLocation(lit.getLoc());
-    IContentExpression big = TypeCheckerUtils.decimalLiteral(lit.getLoc(), lit.getLit());
-    stack.push(new ConstructorTerm(lit.getLoc(), BigDecimalLiteral.name, astType, locExp, big));
-  }
-
-  @Override
   public void visitName(Name name) {
     IContentExpression locExp = genLocation(name.getLoc());
     IContentExpression str = TypeCheckerUtils.stringLiteral(name.getLoc(), name.getId());

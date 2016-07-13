@@ -1,18 +1,7 @@
 package org.star_lang.star.compiler.type;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import org.star_lang.star.compiler.CompilerUtils;
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.ast.StringLiteral;
+import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.ComboIterable;
 import org.star_lang.star.compiler.util.FixedList;
@@ -21,10 +10,15 @@ import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.string.runtime.DisplayTerm;
-import org.star_lang.star.operators.string.runtime.Number2String.Decimal2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Float2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Integer2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Long2String;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * This class is focused on implementing the pp contract -- if possible -- for a given type
@@ -67,8 +61,8 @@ public class DisplayBuilder
   {
     Map<String, IAbstract> printers = new HashMap<>();
     for (IAbstract stmt : theta) {
-      Visibility visibility = CompilerUtils.privacy(stmt);
-      stmt = CompilerUtils.dePrivatize(stmt);
+      Visibility visibility = CompilerUtils.visibility(stmt);
+      stmt = CompilerUtils.stripVisibility(stmt);
 
       if (CompilerUtils.isTypeAlias(stmt))
         lookForAnonTypes(CompilerUtils.typeAliasAlias(stmt), dict, theta, printers);
@@ -555,9 +549,6 @@ public class DisplayBuilder
     else if (Abstract.isName(attTp, StandardTypes.RAW_FLOAT))
       return Abstract.unary(loc, StandardNames.PPSTRING, Abstract.unary(loc, StandardTypes.STRING, Abstract.unary(loc,
           Float2String.name, lV)));
-    else if (Abstract.isName(attTp, StandardTypes.RAW_DECIMAL))
-      return Abstract.unary(loc, StandardNames.PPSTRING, Abstract.unary(loc, StandardTypes.STRING, Abstract.unary(loc,
-          Decimal2String.name, lV)));
     else if (Abstract.isName(attTp, StandardTypes.RAW_STRING))
       return Abstract.unary(loc, StandardNames.PPSTRING, Abstract.unary(loc, StandardTypes.STRING, lV));
     else if (supportsDisplay(attTp))

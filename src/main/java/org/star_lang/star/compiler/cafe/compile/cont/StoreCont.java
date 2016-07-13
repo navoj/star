@@ -63,7 +63,6 @@ public class StoreCont implements IContinuation
         break;
       case rawBinary:
       case rawString:
-      case rawDecimal:
       case general:
         ins.add(new VarInsnNode(Opcodes.ASTORE, offset));
         break;

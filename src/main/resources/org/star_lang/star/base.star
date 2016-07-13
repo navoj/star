@@ -50,12 +50,6 @@ implementation equality over float is {
   fun hashCode(X) is integer(__hashCode(X))
 };
 
-implementation equality over decimal is {
-  fun decimal(X) = decimal(Y) is __decimal_eq(X,Y)
-   |  _ = _ default is false
-  fun hashCode(X) is integer(__hashCode(X))
-};
-
 implementation equality over string is {
   fun string(X) = string(Y) is __string_eq(X,Y) 
    | _ = _ default is false
@@ -114,13 +108,6 @@ implementation comparable over float is{
   fun float(X)>float(Y) is __float_gt(X,Y)
    |  _ > _ default is false;
   fun float(X)>=float(Y) is __float_ge(X,Y);
-}
-
-implementation comparable over decimal is{
-  fun decimal(X)<decimal(Y) is __decimal_lt(X,Y);
-  fun decimal(X)=<decimal(Y) is __decimal_le(X,Y);
-  fun decimal(X)>decimal(Y) is __decimal_gt(X,Y);
-  fun decimal(X)>=decimal(Y) is __decimal_ge(X,Y);
 }
 
 implementation comparable over string is{

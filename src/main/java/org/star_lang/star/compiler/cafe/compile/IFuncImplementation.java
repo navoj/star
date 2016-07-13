@@ -309,11 +309,6 @@ public class IFuncImplementation
         ins.add(new VarInsnNode(Opcodes.ALOAD, ix));
         hwm.bump(1);
         break;
-      case rawDecimal:
-        locals.add(new LocalVariableNode(id, argSig, null, first, last, ix));
-        ins.add(new VarInsnNode(Opcodes.ALOAD, ix));
-        hwm.bump(1);
-        break;
       case rawBinary:
         locals.add(new LocalVariableNode(id, Types.OBJECT_SIG, null, first, last, ix));
         ins.add(new VarInsnNode(Opcodes.ALOAD, ix));

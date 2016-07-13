@@ -48,8 +48,8 @@ public class QuoteBuilder
   {
     List<IAbstract> equations = new ArrayList<>();
     for (IAbstract stmt : CompilerUtils.unWrap(theta)) {
-      Visibility visibility = CompilerUtils.privacy(stmt);
-      stmt = CompilerUtils.dePrivatize(stmt);
+      Visibility visibility = CompilerUtils.visibility(stmt);
+      stmt = CompilerUtils.stripVisibility(stmt);
       if (CompilerUtils.isTypeDefn(stmt) && !CompilerUtils.isTypeAlias(stmt)) {
         String tpLabel = CompilerUtils.typeDefnName(stmt);
         if (tpLabel != null && supportsQuote(stmt)) {

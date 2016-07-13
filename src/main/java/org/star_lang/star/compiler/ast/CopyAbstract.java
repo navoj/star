@@ -22,24 +22,20 @@ import org.star_lang.star.data.type.Location;
  * permissions and limitations under the License.
  */
 
-public class CopyAbstract implements IAbstractVisitor
-{
+public class CopyAbstract implements IAbstractVisitor {
   private final Stack<IAbstract> stack = new Stack<>();
 
-  public IAbstract copy(IAbstract term)
-  {
+  public IAbstract copy(IAbstract term) {
     term.accept(this);
     return stack.pop();
   }
 
-  protected Location getLocation(IAbstract term)
-  {
+  protected Location getLocation(IAbstract term) {
     return term.getLoc();
   }
 
   @Override
-  public void visitApply(Apply app)
-  {
+  public void visitApply(Apply app) {
     IAbstract nOp = copy(app.getOperator());
     List<IAbstract> nArgs = new ArrayList<>();
     for (IValue arg : app.getArgs()) {
@@ -49,44 +45,32 @@ public class CopyAbstract implements IAbstractVisitor
   }
 
   @Override
-  public void visitBooleanLiteral(BooleanLiteral lit)
-  {
+  public void visitBooleanLiteral(BooleanLiteral lit) {
     stack.push(new BooleanLiteral(getLocation(lit), lit.getLit()));
   }
 
   @Override
-  public void visitFloatLiteral(FloatLiteral flt)
-  {
+  public void visitFloatLiteral(FloatLiteral flt) {
     stack.push(new FloatLiteral(getLocation(flt), flt.getLit()));
   }
 
   @Override
-  public void visitStringLiteral(StringLiteral str)
-  {
+  public void visitStringLiteral(StringLiteral str) {
     stack.push(new StringLiteral(getLocation(str), str.getLit()));
   }
 
   @Override
-  public void visitIntegerLiteral(IntegerLiteral lit)
-  {
+  public void visitIntegerLiteral(IntegerLiteral lit) {
     stack.push(new IntegerLiteral(getLocation(lit), lit.getLit()));
   }
 
   @Override
-  public void visitLongLiteral(LongLiteral lit)
-  {
+  public void visitLongLiteral(LongLiteral lit) {
     stack.push(new LongLiteral(getLocation(lit), lit.getLit()));
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit)
-  {
-    stack.push(new BigDecimalLiteral(getLocation(lit), lit.getLit()));
-  }
-
-  @Override
-  public void visitName(Name name)
-  {
+  public void visitName(Name name) {
     stack.push(new Name(getLocation(name), name.getId()));
   }
 }

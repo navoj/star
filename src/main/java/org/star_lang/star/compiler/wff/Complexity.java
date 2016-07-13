@@ -57,11 +57,6 @@ public class Complexity implements IAbstractVisitor {
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit) {
-    count++;
-  }
-
-  @Override
   public void visitName(Name name) {
     count++;
   }

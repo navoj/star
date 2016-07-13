@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
@@ -55,7 +54,6 @@ public class AstOperators {
     specs.add(IntegerLiteral.spec());
     specs.add(LongLiteral.spec());
     specs.add(FloatLiteral.spec());
-    specs.add(BigDecimalLiteral.spec());
     specs.add(Apply.spec());
 
     ITypeDescription locDesc = new CafeTypeDescription(Location.nullLoc, ASyntax.type, ASyntax.class.getName(), specs);

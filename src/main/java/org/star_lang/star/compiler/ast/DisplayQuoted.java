@@ -189,12 +189,6 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction {
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit) {
-    disp.append(lit.getLit().toString());
-    disp.append("a");
-  }
-
-  @Override
   public void visitIntegerLiteral(IntegerLiteral lit) {
     disp.appendWord(lit.getLit());
   }

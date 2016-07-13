@@ -182,8 +182,6 @@ public class JavaImport {
           return StandardTypes.rawIntegerType;
         else if (buffContent.equals(Types.JAVA_LONG_TYPE))
           return StandardTypes.rawLongType;
-        else if (buffContent.equals(Types.JAVA_DECIMAL_TYPE))
-          return StandardTypes.rawDecimalType;
         else if (buffContent.equals(Types.IVALUE))
           return new TypeVar();
         else if (buffContent.equals(Types.URI))

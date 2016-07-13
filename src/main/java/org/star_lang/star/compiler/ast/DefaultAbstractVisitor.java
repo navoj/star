@@ -47,10 +47,6 @@ public class DefaultAbstractVisitor implements IAbstractVisitor {
   }
 
   @Override
-  public void visitBigDecimal(BigDecimalLiteral lit) {
-  }
-
-  @Override
   public void visitName(Name name) {
   }
 

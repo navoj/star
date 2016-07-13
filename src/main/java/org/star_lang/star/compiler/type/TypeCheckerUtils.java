@@ -1,14 +1,13 @@
 package org.star_lang.star.compiler.type;
 
-import java.math.BigDecimal;
+import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.data.type.*;
+import org.star_lang.star.data.value.Factory;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.data.type.*;
-import org.star_lang.star.data.value.Factory;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -64,16 +63,6 @@ public class TypeCheckerUtils {
   public static IContentPattern stringPtn(Location loc, String str) {
     return new ConstructorPtn(loc, StandardTypes.STRING, StandardTypes.stringType, new ScalarPtn(loc,
         StandardTypes.rawStringType, Factory.newString(str)));
-  }
-
-  public static IContentExpression decimalLiteral(Location loc, BigDecimal ax) {
-    return new ConstructorTerm(loc, StandardTypes.DECIMAL, StandardTypes.decimalType, new Scalar(loc,
-        StandardTypes.decimalType, Factory.newDecimal(ax)));
-  }
-
-  public static IContentPattern decimalPtn(Location loc, BigDecimal ax) {
-    return new ConstructorPtn(loc, StandardTypes.DECIMAL, StandardTypes.decimalType, new ScalarPtn(loc,
-        StandardTypes.rawDecimalType, Factory.newDecimal(ax)));
   }
 
   public static Collection<ContractConstraint> findAllContracts(Map<String, IType> types) {

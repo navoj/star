@@ -1,34 +1,10 @@
 package org.star_lang.star.compiler.cafe.compile;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 import org.star_lang.star.code.repository.CodeCatalog;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
-import org.star_lang.star.compiler.ast.FloatLiteral;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.LongLiteral;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.ast.StringLiteral;
+import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
@@ -41,18 +17,14 @@ import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.IList;
-import org.star_lang.star.data.type.ConstructorSpecifier;
-import org.star_lang.star.data.type.IAlgebraicType;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeDescription;
-import org.star_lang.star.data.type.IValueSpecifier;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.StandardTypes;
-import org.star_lang.star.data.type.TypeDescription;
+import org.star_lang.star.data.type.*;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.string.RegexpOps;
 import org.star_lang.star.operators.string.runtime.Regexp;
+
+import java.util.ArrayList;
+import java.util.List;
 /*
   * Copyright (c) 2015. Francis G. McCabe
   *
@@ -104,8 +76,6 @@ public class Patterns {
       handleLong(termSpec, (LongLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof FloatLiteral)
       handleFloat(termSpec, (FloatLiteral) ptn, dict, succ, fail, ccxt);
-    else if (ptn instanceof BigDecimalLiteral)
-      handleBignum(termSpec, (BigDecimalLiteral) ptn, dict, succ, fail, ccxt);
     else if (ptn instanceof StringLiteral)
       handleStringLiteral(termSpec, (StringLiteral) ptn, dict, succ, fail, ccxt);
     else if (CafeSyntax.isTuple(ptn))
@@ -549,31 +519,6 @@ public class Patterns {
     hwm.reset(mark);
   }
 
-  private static void handleBignum(ISpec termSpec, BigDecimalLiteral lit, CafeDictionary dict,
-                                   IContinuation succ, IContinuation fail, CodeContext ccxt) {
-    Location loc = lit.getLoc();
-    MethodNode mtd = ccxt.getMtd();
-    HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
-
-    Expressions.checkType(termSpec, SrcSpec.rawDecimalSrc, mtd, dict, hwm);
-
-    int mark = hwm.getDepth();
-    InsnList ins = mtd.instructions;
-    BigDecimal big = lit.getLit();
-
-    Expressions.genDecimalConst(ins, hwm, big);
-
-    ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.OBJECT, Expressions.EQUALS, Expressions.EQUAL_SIG));
-
-    LabelNode okLabel = new LabelNode();
-    ins.add(new JumpInsnNode(Opcodes.IFEQ, okLabel));
-    fail.cont(SrcSpec.prcSrc, dict, loc, ccxt);
-    ins.add(okLabel);
-    succ.cont(SrcSpec.prcSrc, dict, loc, ccxt);
-    hwm.reset(mark);
-  }
-
   private static void handleStringLiteral(ISpec termSpec, StringLiteral lit, CafeDictionary dict,
                                           IContinuation succ, IContinuation fail, CodeContext ccxt) {
     Location loc = lit.getLoc();
@@ -752,7 +697,6 @@ public class Patterns {
         case rawBinary:
         case rawString:
         case general:
-        case rawDecimal:
           var.loadValue(mtd, hwm, dict);
           ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "equals", Types.EQUALS_SIG));
           ins.add(new JumpInsnNode(Opcodes.IFNE, okLabel));

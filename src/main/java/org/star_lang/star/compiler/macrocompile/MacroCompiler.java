@@ -19,7 +19,6 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.DisplayAst;
@@ -737,8 +736,7 @@ public class MacroCompiler {
         Name nvar = new Name(loc, GenSym.genSym(sym));
         CompilerUtils.extendCondition(cond, Abstract.unary(loc, "__macro_isNumber", nvar));
         return nvar;
-      } else if (sym.equals(StandardTypes.DECIMAL))
-        return Abstract.binary(loc, BigDecimalLiteral.name, anon, anon);
+      }
       else if (sym.equals(StandardNames.IDENTIFIER))
         return Abstract.binary(loc, Name.name, anon, anon);
       else if (sym.equals(StandardTypes.STRING))
@@ -761,8 +759,6 @@ public class MacroCompiler {
       return Abstract.binary(loc, LongLiteral.name, anon, ptn);
     else if (ptn instanceof FloatLiteral)
       return Abstract.binary(loc, FloatLiteral.name, anon, ptn);
-    else if (ptn instanceof BigDecimalLiteral)
-      return Abstract.binary(loc, BigDecimalLiteral.name, anon, ptn);
     else if (ptn instanceof BooleanLiteral)
       return Abstract.binary(loc, BooleanLiteral.name, anon, ptn);
     else {
@@ -1009,8 +1005,6 @@ public class MacroCompiler {
       return Abstract.binary(loc, LongLiteral.name, locationVar, repl);
     else if (repl instanceof FloatLiteral)
       return Abstract.binary(loc, FloatLiteral.name, locationVar, repl);
-    else if (repl instanceof BigDecimalLiteral)
-      return Abstract.binary(loc, BigDecimalLiteral.name, locationVar, repl);
     else if (repl instanceof BooleanLiteral)
       return Abstract.binary(loc, BooleanLiteral.name, locationVar, repl);
     else {

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IAbstract;
@@ -75,10 +74,5 @@ final class FormatVisitor implements IAbstractVisitor {
             rule.applyRule(term, formats);
       }
     }
-  }
-
-  @Override
-  public void visitBigDecimal(BigDecimalLiteral lit) {
-    visit(lit);
   }
 }

@@ -29,7 +29,5 @@ public interface IAbstractVisitor
 
   void visitLongLiteral(LongLiteral lit);
 
-  void visitBigDecimal(BigDecimalLiteral lit);
-
   void visitName(Name name);
 }

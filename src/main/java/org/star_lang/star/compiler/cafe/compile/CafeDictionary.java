@@ -168,7 +168,6 @@ public class CafeDictionary implements ITypeContext {
           case general:
           case rawBinary:
           case rawString:
-          case rawDecimal:
             offset = localAvail.reserve(1);
             break;
           case rawLong:
@@ -187,7 +186,6 @@ public class CafeDictionary implements ITypeContext {
           case general:
           case rawBinary:
           case rawString:
-          case rawDecimal:
             offset = freeOffset++;
             break;
           case rawLong:

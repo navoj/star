@@ -1163,7 +1163,6 @@ public class Theta {
             break;
           case rawBinary:
           case rawString:
-          case rawDecimal:
           case general:
             hwm.probe(4);
             ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));

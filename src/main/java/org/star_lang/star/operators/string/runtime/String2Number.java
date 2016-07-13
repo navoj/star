@@ -10,8 +10,6 @@ import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.data.value.*;
 import org.star_lang.star.operators.CafeEnter;
 
-import java.math.BigDecimal;
-
 /*
  * Runtime parts of the String2Number functions that parse strings into different kinds of numbers
  * 
@@ -196,37 +194,6 @@ public abstract class String2Number {
 
     public static IType type() {
       return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.floatType);
-    }
-  }
-
-  public static class String2Decimal implements IFunction {
-    public static final String name = "__string_decimal";
-
-    @CafeEnter
-    public static BigNumWrap __string_decimal(String txt) throws EvaluationException {
-      try {
-        if (txt.endsWith("a"))
-          txt = txt.substring(0, txt.indexOf('a'));
-        else if (txt.endsWith("A"))
-          txt = txt.substring(0, txt.indexOf('A'));
-        return Factory.newDecimal(new BigDecimal(txt));
-      } catch (NumberFormatException e) {
-        throw new EvaluationException("invalid decimal number");
-      }
-    }
-
-    @Override
-    public IValue enter(IValue... args) throws EvaluationException {
-      return String2Decimal.__string_decimal(Factory.stringValue(args[0]));
-    }
-
-    @Override
-    public IType getType() {
-      return type();
-    }
-
-    public static IType type() {
-      return TypeUtils.functionType(StandardTypes.rawStringType, StandardTypes.decimalType);
     }
   }
 }

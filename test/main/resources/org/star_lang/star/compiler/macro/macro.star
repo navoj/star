@@ -15,7 +15,6 @@ macro is package{
    |  macroKey(integerAst(_,_)) is "%integer"
    |  macroKey(longAst(_,_)) is "%long"
    |  macroKey(floatAst(_,_)) is "%float"
-   |  macroKey(decimalAst(_,_)) is "%decimal"
    |  macroKey(stringAst(_,_)) is "%string"
    |  macroKey(applyAst(_,nameAst(_,N),A)) is "#N%$(size(A))"
    |  macroKey(applyAst(_,O,A)) is "$(macroKey(O))%$(size(A))"

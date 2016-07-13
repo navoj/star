@@ -18,8 +18,6 @@ import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.arith.FloatCompare.FltEQ;
 import org.star_lang.star.operators.arith.LongCompare.LngEQ;
-import org.star_lang.star.operators.arith.runtime.BigNumUnary;
-import org.star_lang.star.operators.arith.runtime.BignumCompare.BignumEQ;
 import org.star_lang.star.operators.arith.runtime.FloatUnary;
 import org.star_lang.star.operators.arith.runtime.IntCompare.IntEQ;
 import org.star_lang.star.operators.arith.runtime.IntUnary;
@@ -63,8 +61,8 @@ public class EqualityBuilder {
   public static Iterable<IAbstract> checkForEqualities(Iterable<IAbstract> theta, Dictionary dict) {
     List<IAbstract> equalities = new ArrayList<>();
     for (IAbstract stmt : theta) {
-      Visibility visibility = CompilerUtils.privacy(stmt);
-      stmt = CompilerUtils.dePrivatize(stmt);
+      Visibility visibility = CompilerUtils.visibility(stmt);
+      stmt = CompilerUtils.stripVisibility(stmt);
       if (CompilerUtils.isTypeDefn(stmt) && !CompilerUtils.isTypeAlias(stmt)) {
         String tpLabel = CompilerUtils.typeDefnName(stmt);
         if (tpLabel != null && !checkThetaForEquality(tpLabel, theta) && !checkExistentials(stmt)) {
@@ -525,8 +523,6 @@ public class EqualityBuilder {
       return Abstract.binary(loc, LngEQ.name, lV, rV);
     else if (Abstract.isName(attTp, StandardTypes.RAW_FLOAT))
       return Abstract.binary(loc, FltEQ.name, lV, rV);
-    else if (Abstract.isName(attTp, StandardTypes.RAW_DECIMAL))
-      return Abstract.binary(loc, BignumEQ.name, lV, rV);
     else if (Abstract.isName(attTp, StandardTypes.RAW_STRING))
       return Abstract.binary(loc, StringCompare.StringEQ.NAME, lV, rV);
     else if (supportsEquality(attTp))
@@ -551,8 +547,6 @@ public class EqualityBuilder {
       return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, LongUnary.LongHash.name, lV));
     else if (Abstract.isName(attTp, StandardTypes.RAW_FLOAT))
       return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, FloatUnary.FloatHash.name, lV));
-    else if (Abstract.isName(attTp, StandardTypes.RAW_DECIMAL))
-      return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, BigNumUnary.DecimalHash.name, lV));
     else if (Abstract.isName(attTp, StandardTypes.RAW_STRING))
       return Abstract.unary(loc,StandardTypes.INTEGER,Abstract.unary(loc, StringOps.StringHash.NAME, lV));
     else if (supportsEquality(attTp))

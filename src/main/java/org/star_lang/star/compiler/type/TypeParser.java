@@ -73,7 +73,6 @@ import org.star_lang.star.operators.assignment.runtime.RefCell.Cell;
  * permissions and limitations under the License.
  */
 
-
 public class TypeParser {
   public static IAlgebraicType parseTypeDefinition(IAbstract stmt, Map<String, Pair<IAbstract, IType>> defaults,
                                                    Map<String, IAbstract> integrity, Dictionary dict, Dictionary outer, ErrorReport errors, boolean suppress) {
@@ -340,7 +339,7 @@ public class TypeParser {
 
         if (!tyCon.kind().check(argTypes.size())) {
           errors.reportError(StringUtils.msg(con, " expects ", tyCon.kind().arity(), " type arguments, got ", argTypes
-                  .size()), loc);
+              .size()), loc);
           return new TypeVar();
         }
 
@@ -361,7 +360,7 @@ public class TypeParser {
 
       if (TypeUtils.isReferenceType(boundType)) {
         IType replace = TypeUtils.referenceType(UniversalType.universal(bndTypes.values(), TypeUtils
-                .referencedType(boundType)));
+            .referencedType(boundType)));
         errors.reportError(StringUtils.msg("may not quantify ", boundType, "\nshould be replaced with ", replace), loc);
         return replace;
       }
@@ -377,7 +376,7 @@ public class TypeParser {
 
       if (TypeUtils.isReferenceType(boundType)) {
         IType replace = TypeUtils.referenceType(ExistentialType.exist(bndTypes.values(), TypeUtils
-                .referencedType(boundType)));
+            .referencedType(boundType)));
         errors.reportError(StringUtils.msg("may not quantify ", boundType, "\nshould be replaced with ", replace), loc);
         return replace;
       }
@@ -409,7 +408,7 @@ public class TypeParser {
 
       return TypeUtils.constructorType(argsType, resltType);
     } else if (CompilerUtils.isFieldAccess(tp) && Abstract.isIdentifier(CompilerUtils.fieldRecord(tp))
-            && Abstract.isIdentifier(CompilerUtils.fieldField(tp))) {
+        && Abstract.isIdentifier(CompilerUtils.fieldField(tp))) {
       String record = Abstract.getId(CompilerUtils.fieldRecord(tp));
       String field = Abstract.getId(CompilerUtils.fieldField(tp));
 
@@ -443,13 +442,13 @@ public class TypeParser {
       return TypeUtils.tupleType(elTypes);
     } else if (CompilerUtils.isInterfaceType(tp))
       return parseInterfaceType(loc, CompilerUtils.interfaceTypeElements(tp), errors, dict, varHandler,
-              new NullCollector());
+          new NullCollector());
     else if (Abstract.isBinary(tp, StandardNames.DETERMINES)) {
       IAbstract lhs = Abstract.binaryLhs(tp);
       if (Abstract.isBinary(lhs, StandardNames.OF) && Abstract.isIdentifier(Abstract.binaryLhs(lhs))) {
         List<IType> argTypes = parseArgTypes(Abstract.binaryRhs(lhs), dict, errors, varHandler);
         IType detType = TypeUtils.typeExp(StandardNames.DETERMINES, parseArgTypes(Abstract.binaryRhs(tp), dict, errors,
-                varHandler));
+            varHandler));
         argTypes.add(detType);
 
         IType tyCon = parseType(Abstract.binaryLhs(lhs), dict, errors, varHandler);
@@ -479,7 +478,7 @@ public class TypeParser {
         desc.verifyType(type, loc, dict);
       } catch (TypeConstraintException e) {
         errors.reportError(StringUtils.msg("parsed type ", type, " not consistent with declared type ", desc.getType(),
-                "\nbecause ", e.getWords()), loc);
+            "\nbecause ", e.getWords()), loc);
       }
     }
     return type;
@@ -556,8 +555,8 @@ public class TypeParser {
       parseConstraints(Abstract.binaryLhs(cons), cxt, errors, varHandler);
       parseConstraints(Abstract.binaryRhs(cons), cxt, errors, varHandler);
     } else if (Abstract.isBinary(cons, StandardNames.IMPLEMENTS)
-            && (CompilerUtils.isTypeVar(Abstract.binaryLhs(cons)) || Abstract.isIdentifier(Abstract.binaryLhs(cons)))
-            && CompilerUtils.isInterfaceType(Abstract.binaryRhs(cons))) {
+        && (CompilerUtils.isTypeVar(Abstract.binaryLhs(cons)) || Abstract.isIdentifier(Abstract.binaryLhs(cons)))
+        && CompilerUtils.isInterfaceType(Abstract.binaryRhs(cons))) {
       IType constrainedType = parseType(Abstract.binaryLhs(cons), cxt, errors, varHandler);
 
       if (constrainedType instanceof TypeVar) {
@@ -570,7 +569,7 @@ public class TypeParser {
               TypeUtils.addFieldConstraint(tVar, loc, name, type, cxt, true);
             } catch (TypeConstraintException e) {
               errors.reportError(StringUtils.msg("could not add constraint ", name, " has type ", type, "\nbecause ", e
-                      .getWords()), Location.merge(loc, e.getLocs()));
+                  .getWords()), Location.merge(loc, e.getLocs()));
             }
           }
 
@@ -580,7 +579,7 @@ public class TypeParser {
               TypeUtils.addTypeConstraint(tVar, loc, name, type, cxt, true);
             } catch (TypeConstraintException e) {
               errors.reportError(StringUtils.msg("could not add constraint ", name, " has kind ", type.kind(),
-                      "\nbecause ", e.getWords()), Location.merge(loc, e.getLocs()));
+                  "\nbecause ", e.getWords()), Location.merge(loc, e.getLocs()));
             }
           }
 
@@ -589,10 +588,10 @@ public class TypeParser {
           }
         };
         findMemberTypes(loc, CompilerUtils.interfaceTypeElements(Abstract.binaryRhs(cons)), hndlr, cxt, errors,
-                varHandler);
+            varHandler);
       } else {
         errors.reportError(StringUtils.msg(constrainedType, " cannot have constraint ", Abstract.binaryRhs(cons),
-                " because it is not a type variable"), loc);
+            " because it is not a type variable"), loc);
       }
     } else if (CompilerUtils.isKindAnnotation(cons)) {
       IType bndType = parseType(CompilerUtils.kindAnnotatedTerm(cons), cxt, errors, varHandler);
@@ -630,7 +629,7 @@ public class TypeParser {
         var.addConstraint(con, loc, cxt);
       } catch (TypeConstraintException e) {
         errors.reportError("could not add constraint " + cons + "\nbecause " + e.getMessage(), Location.merge(loc, e
-                .getLocs()));
+            .getLocs()));
       }
     } else if (Abstract.isBinary(cons, StandardNames.OVER)) {
       IAbstract conTp = Abstract.binaryRhs(cons);
@@ -651,7 +650,7 @@ public class TypeParser {
             Subsume.subsume(contractType, Freshen.freshenForUse(contract.getContractType().getType()), loc, cxt, true);
           } catch (TypeConstraintException e) {
             errors.reportError(StringUtils.msg("contract constraint ", cons, " not consistent with contract ",
-                    contractName, "\nbecause ", e.getWords()), loc);
+                contractName, "\nbecause ", e.getWords()), loc);
           }
 
         ITypeConstraint con = new ContractConstraint(contractType);
@@ -670,7 +669,7 @@ public class TypeParser {
             Subsume.subsume(Freshen.freshenForUse(contract.getContractType().getType()), contractType, loc, cxt, true);
           } catch (TypeConstraintException e) {
             errors.reportError(StringUtils.msg("contract constraint ", cons, " not consistent with contract ",
-                    contractName, "\nbecause ", e.getWords()), loc);
+                contractName, "\nbecause ", e.getWords()), loc);
           }
         ITypeConstraint con = new ContractConstraint(contractType);
 
@@ -715,7 +714,7 @@ public class TypeParser {
                                             boolean isFallback) {
     Dictionary dict = cxt.fork();
     TypeNameHandler varHandler = new RegularTypeName(dict, new HashMap<>(), AccessMode.readOnly,
-            suppress, errors);
+        suppress, errors);
     return parseContractImplType(tp, dict, varHandler, isFallback, errors);
   }
 
@@ -735,11 +734,11 @@ public class TypeParser {
       parseConstraints(Abstract.binaryRhs(tp), cxt, errors, varHandler);
       return type;
     } else if (Abstract.isBinary(tp, StandardNames.OVER)
-            && Abstract.isBinary(Abstract.binaryRhs(tp), StandardNames.DETERMINES)) {
+        && Abstract.isBinary(Abstract.binaryRhs(tp), StandardNames.DETERMINES)) {
       IAbstract implType = Abstract.binaryLhs(Abstract.binaryRhs(tp));
       List<IType> argTypes = parseArgTypes(implType, cxt, errors, varHandler);
       IType dependent = TypeUtils.typeExp(StandardNames.DETERMINES, parseArgTypes(Abstract.binaryRhs(Abstract
-              .binaryRhs(tp)), cxt, errors, varHandler));
+          .binaryRhs(tp)), cxt, errors, varHandler));
 
       if (isFallback) {
         for (IType argType : argTypes)
@@ -757,7 +756,7 @@ public class TypeParser {
       if (isFallback) {
         for (IType argType : argTypes)
           if (!TypeUtils.isTypeVar(argType)
-                  && (!(argType instanceof TypeExp) || TypeUtils.isTypeVar(((TypeExp) argType).getTypeCon()))) {
+              && (!(argType instanceof TypeExp) || TypeUtils.isTypeVar(((TypeExp) argType).getTypeCon()))) {
             errors.reportWarning("default implementation should be generic", tp.getLoc());
             break;
           }
@@ -772,9 +771,7 @@ public class TypeParser {
   private static void parseAlgebraicConstructors(IAbstract tp, IType type, IAlgebraicType desc, Dictionary cxt,
                                                  Dictionary outer, ErrorReport errors, Map<String, TypeVar> typeVars) {
     for (IAbstract con : CompilerUtils.unWrap(tp, StandardNames.OR)) {
-      if (CompilerUtils.isPrivate(con)) {
-        con = CompilerUtils.privateTerm(con);
-      }
+      con = CompilerUtils.stripVisibility(con);
       if (CompilerUtils.isBraceTerm(con))
         parseRecordConstructor(con, type, desc, cxt, errors, typeVars);
       else if (con instanceof Name)
@@ -804,8 +801,8 @@ public class TypeParser {
     if (dict.isDefinedVar(conName)) {
       DictInfo info = dict.getVar(conName);
       errors.reportError(StringUtils
-              .msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()), Location.merge(loc,
-              info.getLoc()));
+          .msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()), Location.merge(loc,
+          info.getLoc()));
     }
 
     specs.add(cons);
@@ -833,8 +830,8 @@ public class TypeParser {
     if (dict.isDefinedVar(conName)) {
       DictInfo info = dict.getVar(conName);
       errors.reportError(StringUtils
-              .msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()), Location.merge(loc,
-              info.getLoc()));
+          .msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()), Location.merge(loc,
+          info.getLoc()));
     }
 
     HashMap<String, TypeVar> localVars = new HashMap<>(typeVars);
@@ -855,7 +852,7 @@ public class TypeParser {
             Subsume.same(allTypes.get(name), type, loc, conDict);
           } catch (TypeConstraintException e) {
             errors.reportError(StringUtils.msg("type of ", name, ":", type, " not consistent with existing type ",
-                    allTypes.get(name)), loc);
+                allTypes.get(name)), loc);
           }
         } else
           allTypes.put(name, type);
@@ -887,7 +884,7 @@ public class TypeParser {
         extra.add(entry.getKey());
     if (!extra.isEmpty())
       errors.reportError(StringUtils.msg("type variable", (extra.size() > 1 ? "s " : " "), StringUtils.interleave(
-              ",  ", extra), " must be explicitly quantified"), loc);
+          ",  ", extra), " must be explicitly quantified"), loc);
   }
 
   private static IType parseInterfaceType(Location loc, IAbstract tps, ErrorReport errors, final Dictionary dict,
@@ -995,11 +992,11 @@ public class TypeParser {
 
       Location loc = con.getLoc();
       RecordSpecifier contractRecord = new RecordSpecifier(loc, contractName, null, 0, Freshen.generalizeType(TypeUtils
-              .constructorType(face, conImplType)));
+          .constructorType(face, conImplType)));
       TypeDescription contractType = new TypeDescription(loc, Freshen.generalizeType(conImplType), contractRecord);
 
       parseDefaults(CompilerUtils.braceTerm(loc, new Name(loc, contractImplName), specTerm), conImplType, dict,
-              contractType, defaultFuns, integrity, errors);
+          contractType, defaultFuns, integrity, errors);
 
       return new TypeContract(loc, contractName, contractType);
     }
@@ -1031,12 +1028,12 @@ public class TypeParser {
       checkForExtraTypeVars(localTVars, tVars, loc, errors);
 
       RecordSpecifier contractRecord = new RecordSpecifier(loc, contractName, null, 0, Freshen.generalizeType(TypeUtils
-              .constructorType(face, conImplType)));
+          .constructorType(face, conImplType)));
       TypeDescription contractType = (TypeDescription) contract.getContractType();
       contractType.defineValueSpecifier(contractImplName, contractRecord);
 
       parseDefaults(CompilerUtils.braceTerm(loc, new Name(loc, contractImplName), specTerm), conImplType, dict,
-              contractType, defaultFuns, integrity, errors);
+          contractType, defaultFuns, integrity, errors);
     }
   }
 
@@ -1062,7 +1059,7 @@ public class TypeParser {
 
     IType replacement = parseType(CompilerUtils.typeAliasAlias(stmt), tmpCxt, errors, varHandler);
     return new TypeAlias(stmt.getLoc(), Freshen.generalizeType(TypeUtils.typeExp(StandardNames.ALIAS, thisType,
-            replacement), cxt));
+        replacement), cxt));
   }
 
   public static void parseDefaults(IAbstract spec, IType thisType, Dictionary cxt, IAlgebraicType desc,
@@ -1085,7 +1082,7 @@ public class TypeParser {
 
         locateDefaults(CompilerUtils.braceArg(con), memberIndex.keySet(), defaults, errors);
         locateIntegrityFuns(CompilerUtils.braceArg(con), memberIndex, integrity, CompilerUtils.integrityLabel(
-                typeLabel, conName), TypeUtils.getConstructorArgType(conType));
+            typeLabel, conName), TypeUtils.getConstructorArgType(conType));
 
         // Each default becomes a function from the non-default values to the
         // default value
@@ -1112,12 +1109,12 @@ public class TypeParser {
           IAbstract args[] = new IAbstract[argPtns.length];
           for (int ix = 0; ix < args.length; ix++)
             args[ix] = DefFinder.isFound(nonDefaults, entry.getValue()) ? CompilerUtils.varPtn(new Name(loc,
-                    argPtns[ix])) : CafeSyntax.anonymous(loc);
+                argPtns[ix])) : CafeSyntax.anonymous(loc);
 
           // (F1,..,Fn) => <deflt>
           IAbstract defFun = CompilerUtils.lambda(loc, Abstract.tupleTerm(loc, args), entry.getValue());
           defaultFuns.put(defName, Pair.pair(defFun, Freshen.generalizeType(TypeUtils.functionType(argTypes, conFace
-                  .getFieldType(member)))));
+              .getFieldType(member)))));
         }
       }
     }

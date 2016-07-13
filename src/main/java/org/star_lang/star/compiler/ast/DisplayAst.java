@@ -62,12 +62,6 @@ public class DisplayAst implements IFunction {
           disp.appendWord(FalseValue.name);
         break;
       }
-      case Dec: {
-        BigDecimalLiteral lit = (BigDecimalLiteral) term;
-        disp.append(lit.getLit().toString());
-        disp.append("a");
-        break;
-      }
       case Flt: {
         FloatLiteral flt = (FloatLiteral) term;
         disp.append(flt.getLit());

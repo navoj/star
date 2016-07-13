@@ -618,37 +618,6 @@ serialization is package {
       valis (a,b,c);
     }
   };
-/* serialize decimal by serializing its sting representation */
-/* A more compact alternative is to serialize in blocks of 4 digits
- * (which fit into a word32) plus the decimal point position, or
- * in blocks of 18 or 19 digits (which fit into a word64; using 19
- * digits requires special handling of intermediate word64 values which
- * are negative longs). */
-  implementation serializable over decimal is {
-    shove(d) is shoveDecimal(d);
-    yank is yankDecimal;
-  } using {
-    shoveDecimal(nonDecimal) is shoveWord8(word8(0));
-    shoveDecimal(d) is shoverM computation {
-      perform shoveWord8(word8(1));
-      valis valof shoveDecimal0(d);
-    }
-
-    shoveDecimal0 has type (decimal) => shover;
-    shoveDecimal0(d) is let {
-      s is (d as string);
-    } in shove(s);
-
-    yankDecimal is yanker computation {
-      w is valof yankWord8;
-      valis valof yankDecimal0(w);
-    }
-    yankDecimal0(_word8(0)) is yanker computation { valis nonDecimal };
-    yankDecimal0(_word8(1)) is yanker computation {
-      s is valof yank;
-      valis ((s has type string) as decimal);
-    }
-  }
 
 /* serialize floats as word64 plus a suffix tag byte for nonFloat and NaN */
   implementation serializable over float is {

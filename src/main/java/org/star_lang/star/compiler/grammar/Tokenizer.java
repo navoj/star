@@ -11,7 +11,6 @@ import org.star_lang.star.data.value.ResourceURI;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -434,10 +433,6 @@ public class Tokenizer {
           case 'D':
             nextChar();
             return new Token(floating, Double.parseDouble(image.toString()), getLocation(), isRaw());
-          case 'a':
-          case 'A':
-            nextChar();
-            return new Token(decimal, new BigDecimal(image.toString()), getLocation(), isRaw());
         }
       } else {
         unChar('.');
@@ -458,10 +453,6 @@ public class Tokenizer {
     }
 
     switch (hedChar()) {
-      case 'a':
-      case 'A':
-        nextChar(); // consume the decimal number marker
-        return new Token(decimal, new BigDecimal(image.toString()), getLocation(), isRaw());
       case 'l':
       case 'L':
         nextChar(); // explicit long value

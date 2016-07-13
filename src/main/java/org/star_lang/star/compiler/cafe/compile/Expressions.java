@@ -1,52 +1,17 @@
 package org.star_lang.star.compiler.cafe.compile;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 import org.star_lang.star.code.repository.CodeCatalog;
 import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
-import org.star_lang.star.compiler.ast.BooleanLiteral;
-import org.star_lang.star.compiler.ast.FloatLiteral;
-import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.ast.IntegerLiteral;
-import org.star_lang.star.compiler.ast.Literal;
-import org.star_lang.star.compiler.ast.LongLiteral;
-import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.ast.StringLiteral;
+import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.CaseCompile.ICaseCompile;
 import org.star_lang.star.compiler.cafe.compile.Theta.IThetaBody;
-import org.star_lang.star.compiler.cafe.compile.cont.CastConverter;
-import org.star_lang.star.compiler.cafe.compile.cont.CheckCont;
-import org.star_lang.star.compiler.cafe.compile.cont.ComboCont;
-import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
-import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
-import org.star_lang.star.compiler.cafe.compile.cont.NonNullCont;
-import org.star_lang.star.compiler.cafe.compile.cont.NullCont;
-import org.star_lang.star.compiler.cafe.compile.cont.ReconcileCont;
+import org.star_lang.star.compiler.cafe.compile.cont.*;
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.type.Freshen;
 import org.star_lang.star.compiler.type.TypeUtils;
@@ -55,13 +20,14 @@ import org.star_lang.star.compiler.util.Wrapper;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.type.StandardTypes;
-import org.star_lang.star.data.type.TypeExp;
-import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.type.*;
 import org.star_lang.star.operators.ICafeBuiltin;
 import org.star_lang.star.operators.Intrinsics;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -164,10 +130,6 @@ public class Expressions {
 
       genFloatConst(ins, hwm, d);
       return cont.cont(SrcSpec.rawDblSrc, dict, loc, ccxt);
-    } else if (exp instanceof BigDecimalLiteral) {
-      BigDecimal big = ((BigDecimalLiteral) exp).getLit();
-      genDecimalConst(ins, hwm, big);
-      return cont.cont(SrcSpec.rawDecimalSrc, dict, loc, ccxt);
     } else if (exp instanceof StringLiteral) {
       ins.add(new LdcInsnNode(((Literal) exp).getLit()));
 
@@ -229,35 +191,6 @@ public class Expressions {
       ins.add(new LdcInsnNode(dx));
 
     hwm.bump(2);
-  }
-
-  // We have to build a BigDecimal in small pieces
-  public static void genDecimalConst(InsnList ins, HWM hwm, BigDecimal bx) {
-    BigInteger bix = bx.unscaledValue();
-    int scale = bx.scale();
-    byte[] ixData = bix.toByteArray();
-    int mark = hwm.bump(4);
-    ins.add(new TypeInsnNode(Opcodes.NEW, Type.getInternalName(BigDecimal.class)));
-    ins.add(new InsnNode(Opcodes.DUP));
-    ins.add(new TypeInsnNode(Opcodes.NEW, Type.getInternalName(BigInteger.class)));
-    ins.add(new InsnNode(Opcodes.DUP));
-    genIntConst(ins, hwm, ixData.length);
-    hwm.bump(1);
-    ins.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_BYTE));
-    for (int ix = 0; ix < ixData.length; ix++) {
-      int markb = hwm.bump(1);
-      ins.add(new InsnNode(Opcodes.DUP));
-      genIntConst(ins, hwm, ix);
-      genIntConst(ins, hwm, ixData[ix]);
-      ins.add(new InsnNode(Opcodes.BASTORE));
-      hwm.reset(markb);
-    }
-    ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, Type.getInternalName(BigInteger.class), Types.INIT, "([B)V"));
-    genIntConst(ins, hwm, scale);
-    ins.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, Type.getInternalName(BigDecimal.class), Types.INIT, "("
-        + Type.getDescriptor(BigInteger.class) + "I)V"));
-    hwm.reset(mark);
-    hwm.bump(1);
   }
 
   // An escape call looks like

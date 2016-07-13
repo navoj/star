@@ -39,9 +39,6 @@ public class StandardTypes
   public static final String FLOAT = "float";
   public static final String RAW_FLOAT = "float_";
   public static final String NON_FLOAT = "nonFloat";
-  public static final String DECIMAL = "decimal";
-  public static final String RAW_DECIMAL = "decimal_";
-  public static final String NON_DECIMAL = "nonDecimal";
   public static final String BOOLEAN = "boolean";
   public static final String RAW_BOOLEAN = "_bool";
   public static final String RAW_FILE_TYPE = "file_";
@@ -56,7 +53,6 @@ public class StandardTypes
   public static final IType longType = TypeUtils.typeExp(LONG);
   public static final IType floatType = TypeUtils.typeExp(FLOAT);
   public static final IType integerType = TypeUtils.typeExp(INTEGER);
-  public static final IType decimalType = TypeUtils.typeExp(DECIMAL);
   public static final IType stringType = TypeUtils.typeExp(STRING);
   public static final IType fileType = TypeUtils.typeExp(RAW_FILE_TYPE);
   public static final IType binaryType = TypeUtils.typeExp(BINARY);
@@ -66,7 +62,6 @@ public class StandardTypes
   public static final IType rawFloatType = TypeUtils.typeExp(RAW_FLOAT);
   public static final IType rawIntegerType = TypeUtils.typeExp(RAW_INTEGER);
   public static final IType rawStringType = TypeUtils.typeExp(RAW_STRING);
-  public static final IType rawDecimalType = TypeUtils.typeExp(RAW_DECIMAL);
   public static final IType rawBinaryType = TypeUtils.typeExp(RAW_BINARY);
 
   public static final IType astType = TypeUtils.typeExp(QUOTED);

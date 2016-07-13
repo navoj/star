@@ -321,7 +321,7 @@ public class CompilerUtils {
   }
 
   public static boolean isJavaStmt(IAbstract stmt) {
-    return Abstract.isUnary(dePrivatize(stmt), StandardNames.JAVA);
+    return Abstract.isUnary(stripVisibility(stmt), StandardNames.JAVA);
   }
 
   public static String findJavaClassName(IAbstract el) {
@@ -425,8 +425,8 @@ public class CompilerUtils {
   }
 
   public static boolean isImport(IAbstract stmt) {
-    if (isPrivate(stmt))
-      stmt = privateTerm(stmt);
+    stmt = stripVisibility(stmt);
+
     if (Abstract.isUnary(stmt, StandardNames.IMPORT)) {
       IAbstract pkg = Abstract.deParen(Abstract.unaryArg(stmt));
       return pkg instanceof Name || pkg instanceof StringLiteral;
@@ -435,23 +435,23 @@ public class CompilerUtils {
   }
 
   public static boolean isNamedImport(IAbstract stmt) {
-    if (isPrivate(stmt))
-      stmt = privateTerm(stmt);
+    stmt = stripVisibility(stmt);
+
     return Abstract.isBinary(stmt, StandardNames.IS) && isIdentifier(Abstract.binaryLhs(stmt)) && isImport(Abstract
         .binaryRhs(stmt));
   }
 
   public static IAbstract namedImportName(IAbstract stmt) {
     assert isNamedImport(stmt);
-    if (isPrivate(stmt))
-      stmt = privateTerm(stmt);
+    stmt = stripVisibility(stmt);
+
     return Abstract.binaryLhs(stmt);
   }
 
   public static IAbstract namedImportPkg(IAbstract stmt) {
     assert isNamedImport(stmt);
-    if (isPrivate(stmt))
-      stmt = privateTerm(stmt);
+    stmt = stripVisibility(stmt);
+
     return Abstract.deParen(Abstract.unaryArg(Abstract.binaryRhs(stmt)));
   }
 
@@ -464,23 +464,23 @@ public class CompilerUtils {
   }
 
   public static IAbstract importPkg(IAbstract stmt) {
-    if (isPrivate(stmt))
-      stmt = privateTerm(stmt);
+    stmt = stripVisibility(stmt);
+
     assert isImport(stmt);
 
     return Abstract.deParen(Abstract.unaryArg(stmt));
   }
 
   public static boolean isOpen(IAbstract stmt) {
-    if (isPrivate(stmt))
-      stmt = privateTerm(stmt);
+    stmt = stripVisibility(stmt);
+
     return Abstract.isUnary(stmt, StandardNames.OPEN);
   }
 
   public static IAbstract openedRecord(IAbstract stmt) {
     assert isOpen(stmt);
-    if (isPrivate(stmt))
-      stmt = privateTerm(stmt);
+    stmt = stripVisibility(stmt);
+
     return Abstract.unaryArg(stmt);
   }
 
@@ -492,11 +492,21 @@ public class CompilerUtils {
     return Abstract.isUnary(def, StandardNames.PRIVATE);
   }
 
-  public static Visibility privacy(IAbstract def) {
+  public static boolean isPublic(IAbstract def) {
+    return Abstract.isUnary(def, StandardNames.PUBLIC);
+  }
+
+  public static Visibility visibility(IAbstract def) {
     if (Abstract.isUnary(def, StandardNames.PRIVATE))
       return Visibility.priVate;
     else
       return Visibility.pUblic;
+  }
+
+  public static IAbstract stripVisibility(IAbstract def) {
+    while (Abstract.isUnary(def, StandardNames.PRIVATE) || Abstract.isUnary(def, StandardNames.PUBLIC))
+      def = Abstract.unaryArg(def);
+    return def;
   }
 
   public static IAbstract privateTerm(IAbstract def) {
@@ -517,11 +527,8 @@ public class CompilerUtils {
     return Abstract.unary(loc, StandardNames.PRIVATE, term);
   }
 
-  public static IAbstract dePrivatize(IAbstract def) {
-    if (Abstract.isUnary(def, StandardNames.PRIVATE))
-      return dePrivatize(Abstract.unaryArg(def));
-    else
-      return def;
+  public static IAbstract publicStmt(Location loc, IAbstract term) {
+    return Abstract.unary(loc, StandardNames.PUBLIC, term);
   }
 
   public static boolean isRegexp(IAbstract term) {
@@ -896,8 +903,8 @@ public class CompilerUtils {
   public static boolean isRecordLiteral(IAbstract term) {
     if (isBraceTerm(term)) {
       for (IAbstract el : unWrap(braceArg(term), StandardNames.TERM)) {
-        if (isPrivate(el))
-          el = privateTerm(el);
+        el = stripVisibility(el);
+
         if (!(isProgramStmt(el) || isTypeStmt(el) || isTypeAnnotation(el) || isBlockTerm(el) || isImplementationStmt(
             el)))
           return false;
@@ -1518,47 +1525,44 @@ public class CompilerUtils {
   }
 
   public static boolean isProgramStmt(IAbstract stmt) {
-    if (isPrivate(stmt))
-      return isProgramStmt(privateTerm(stmt));
-    else
-      return isFunctionStatement(stmt) || isProcedureStatement(stmt) || isPatternStatement(stmt) || isVarDeclaration(
-          stmt) || isIsStatement(stmt) || isOpen(stmt);
+    stmt = stripVisibility(stmt);
+
+    return isFunctionStatement(stmt) || isProcedureStatement(stmt) || isPatternStatement(stmt) || isVarDeclaration(
+        stmt) || isIsStatement(stmt) || isOpen(stmt);
   }
 
   public static boolean isVarDeclaration(IAbstract term) {
-    if (isPrivate(term))
-      return isVarDeclaration(privateTerm(term));
-    else
-      return Abstract.isUnary(term, StandardNames.VAR) && Abstract.isBinary(Abstract.unaryArg(term),
-          StandardNames.ASSIGN);
+    term = stripVisibility(term);
+
+    return Abstract.isUnary(term, StandardNames.VAR) && Abstract.isBinary(Abstract.unaryArg(term),
+        StandardNames.ASSIGN);
   }
 
-  public static IAbstract varDeclarationPattern(IAbstract term) {
-    assert isVarDeclaration(term);
+  public static IAbstract varDeclarationPattern(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+    assert isVarDeclaration(stmt);
 
-    if (isPrivate(term))
-      return varDeclarationPattern(privateTerm(term));
-    else if ((Abstract.isUnary(term, StandardNames.VAR)) && Abstract.isBinary(Abstract.unaryArg(term),
+    if ((Abstract.isUnary(stmt, StandardNames.VAR)) && Abstract.isBinary(Abstract.unaryArg(stmt),
         StandardNames.ASSIGN))
-      return Abstract.unary(term.getLoc(), StandardNames.VAR, Abstract.binaryLhs(Abstract.unaryArg(term)));
+      return Abstract.unary(stmt.getLoc(), StandardNames.VAR, Abstract.binaryLhs(Abstract.unaryArg(stmt)));
     else
       return null;
   }
 
-  public static IAbstract varDeclarationExpression(IAbstract term) {
-    assert isVarDeclaration(term);
+  public static IAbstract varDeclarationExpression(IAbstract stmt) {
+    assert isVarDeclaration(stmt);
 
-    if (isPrivate(term))
-      return varDeclarationExpression(privateTerm(term));
-    else if ((Abstract.isUnary(term, StandardNames.VAR)) && Abstract.isBinary(Abstract.unaryArg(term),
+    stmt = stripVisibility(stmt);
+
+    if ((Abstract.isUnary(stmt, StandardNames.VAR)) && Abstract.isBinary(Abstract.unaryArg(stmt),
         StandardNames.ASSIGN))
-      return Abstract.binaryRhs(Abstract.unaryArg(term));
+      return Abstract.binaryRhs(Abstract.unaryArg(stmt));
     else
       return null;
   }
 
   public static boolean isContractSpec(IAbstract term) {
-    term = unwrapQuants(term);
+    term = unwrapQuants(stripVisibility(term));
     if (Abstract.isBinary(term, StandardNames.WHERE))
       return isContractSpec(Abstract.binaryLhs(term));
     else if (Abstract.isParenTerm(term))
@@ -1567,17 +1571,18 @@ public class CompilerUtils {
       return Abstract.isBinary(term, StandardNames.OVER) && Abstract.isIdentifier(Abstract.binaryLhs(term));
   }
 
-  public static IAbstract contractSpecName(IAbstract term) {
-    assert isContractSpec(term);
+  public static IAbstract contractSpecName(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+    assert isContractSpec(stmt);
 
-    term = unwrapQuants(term);
+    stmt = unwrapQuants(stmt);
 
-    if (Abstract.isBinary(term, StandardNames.WHERE))
-      return contractSpecName(Abstract.binaryLhs(term));
-    else if (Abstract.isParenTerm(term))
-      return contractSpecName(Abstract.deParen(term));
-    else if (Abstract.isBinary(term, StandardNames.OVER) && Abstract.isIdentifier(Abstract.binaryLhs(term)))
-      return Abstract.binaryLhs(term);
+    if (Abstract.isBinary(stmt, StandardNames.WHERE))
+      return contractSpecName(Abstract.binaryLhs(stmt));
+    else if (Abstract.isParenTerm(stmt))
+      return contractSpecName(Abstract.deParen(stmt));
+    else if (Abstract.isBinary(stmt, StandardNames.OVER) && Abstract.isIdentifier(Abstract.binaryLhs(stmt)))
+      return Abstract.binaryLhs(stmt);
     else
       return null;
   }
@@ -1597,19 +1602,22 @@ public class CompilerUtils {
       return null;
   }
 
-  public static boolean isContractStmt(IAbstract exp) {
-    if (Abstract.isUnary(exp, StandardNames.CONTRACT)) {
-      IAbstract conForm = Abstract.unaryArg(exp);
+  public static boolean isContractStmt(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+
+    if (Abstract.isUnary(stmt, StandardNames.CONTRACT)) {
+      IAbstract conForm = Abstract.unaryArg(stmt);
       if (Abstract.isBinary(conForm, StandardNames.IS))
         return isContractSpec(Abstract.binaryLhs(conForm));
     }
     return false;
   }
 
-  public static IAbstract contractForm(IAbstract trm) {
-    assert isContractStmt(trm);
+  public static IAbstract contractForm(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+    assert isContractStmt(stmt);
 
-    return Abstract.deParen(Abstract.binaryLhs(Abstract.unaryArg(trm)));
+    return Abstract.deParen(Abstract.binaryLhs(Abstract.unaryArg(stmt)));
   }
 
   public static IAbstract contractName(IAbstract stmt) {
@@ -1618,24 +1626,27 @@ public class CompilerUtils {
     return contractSpecName(contractForm(stmt));
   }
 
-  public static IAbstract contractSpec(IAbstract trm) {
-    assert isContractStmt(trm);
+  public static IAbstract contractSpec(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+    assert isContractStmt(stmt);
 
-    return blockContent(Abstract.binaryRhs(Abstract.unaryArg(trm)));
+    return blockContent(Abstract.binaryRhs(Abstract.unaryArg(stmt)));
   }
 
-  public static boolean isFallbackImplementationStmt(IAbstract term) {
-    if (Abstract.isUnary(term, StandardNames.IMPLEMENTATION)) {
-      IAbstract t = Abstract.unaryArg(term);
+  public static boolean isFallbackImplementationStmt(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+    if (Abstract.isUnary(stmt, StandardNames.IMPLEMENTATION)) {
+      IAbstract t = Abstract.unaryArg(stmt);
       return Abstract.isBinary(t, StandardNames.IS) && Abstract.isUnary(Abstract.binaryLhs(t), StandardNames.DEFAULT);
     }
     return false;
   }
 
-  public static boolean isImplementationStmt(IAbstract term) {
-    if (Abstract.isUnary(term, StandardNames.IMPLEMENTATION) && Abstract.isBinary(Abstract.unaryArg(term),
+  public static boolean isImplementationStmt(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+    if (Abstract.isUnary(stmt, StandardNames.IMPLEMENTATION) && Abstract.isBinary(Abstract.unaryArg(stmt),
         StandardNames.IS)) {
-      IAbstract lhs = Abstract.binaryLhs(Abstract.unaryArg(term));
+      IAbstract lhs = Abstract.binaryLhs(Abstract.unaryArg(stmt));
       if (Abstract.isUnary(lhs, StandardNames.DEFAULT))
         lhs = Abstract.unaryArg(lhs);
       return isContractSpec(lhs);
@@ -1650,21 +1661,25 @@ public class CompilerUtils {
     return Abstract.unary(loc, StandardNames.IMPLEMENTATION, Abstract.binary(loc, StandardNames.IS, con, def));
   }
 
-  public static IAbstract implementedContractSpec(IAbstract term) {
-    assert isImplementationStmt(term);
-    assert Abstract.isUnary(term, StandardNames.IMPLEMENTATION);
-    term = Abstract.unaryArg(term);
-    assert Abstract.isBinary(term, StandardNames.IS);
-    term = Abstract.binaryLhs(term);
-    if (Abstract.isUnary(term, StandardNames.DEFAULT))
-      return Abstract.unaryArg(term);
+  public static IAbstract implementedContractSpec(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+
+    assert isImplementationStmt(stmt);
+    assert Abstract.isUnary(stmt, StandardNames.IMPLEMENTATION);
+    stmt = Abstract.unaryArg(stmt);
+    assert Abstract.isBinary(stmt, StandardNames.IS);
+    stmt = Abstract.binaryLhs(stmt);
+    if (Abstract.isUnary(stmt, StandardNames.DEFAULT))
+      return Abstract.unaryArg(stmt);
     else
-      return term;
+      return stmt;
   }
 
-  public static IAbstract implementedContract(IAbstract term) {
-    assert isImplementationStmt(term);
-    IAbstract spec = unwrapQuants(implementedContractSpec(term));
+  public static IAbstract implementedContract(IAbstract stmt) {
+    assert isImplementationStmt(stmt);
+    stmt = stripVisibility(stmt);
+
+    IAbstract spec = unwrapQuants(implementedContractSpec(stmt));
 
     while (Abstract.isBinary(spec, StandardNames.WHERE))
       spec = Abstract.binaryLhs(spec);
@@ -1750,30 +1765,28 @@ public class CompilerUtils {
     return Abstract.unary(loc, StandardNames.DEF, Abstract.binary(loc, StandardNames.IS, lhs, rhs));
   }
 
-  public static boolean isIsStatement(IAbstract term) {
-    if (isPrivate(term))
-      return isIsStatement(privateTerm(term));
-    else
-      return Abstract.isUnary(term, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS);
+  public static boolean isIsStatement(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+
+    return Abstract.isUnary(stmt, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.IS);
   }
 
-  public static IAbstract isStmtPattern(IAbstract term) {
-    assert isIsStatement(term);
+  public static IAbstract isStmtPattern(IAbstract stmt) {
+    assert isIsStatement(stmt);
+    stmt = stripVisibility(stmt);
 
-    if (isPrivate(term))
-      return isStmtPattern(privateTerm(term));
-    else if (Abstract.isUnary(term, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS))
-      return Abstract.binaryLhs(Abstract.unaryArg(term));
+    if (Abstract.isUnary(stmt, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.IS))
+      return Abstract.binaryLhs(Abstract.unaryArg(stmt));
     else
       return null;
   }
 
-  public static IAbstract isStmtValue(IAbstract term) {
-    assert isIsStatement(term);
-    if (isPrivate(term))
-      return isStmtValue(privateTerm(term));
-    else if (Abstract.isUnary(term, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(term), StandardNames.IS))
-      return Abstract.binaryRhs(Abstract.unaryArg(term));
+  public static IAbstract isStmtValue(IAbstract stmt) {
+    assert isIsStatement(stmt);
+    stmt = stripVisibility(stmt);
+
+    if (Abstract.isUnary(stmt, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.IS))
+      return Abstract.binaryRhs(Abstract.unaryArg(stmt));
     else
       return null;
   }
@@ -1835,20 +1848,17 @@ public class CompilerUtils {
       return test.test(trm);
   }
 
-  public static boolean isFunctionStatement(IAbstract trm) {
-    if (isPrivate(trm))
-      trm = privateTerm(trm);
+  public static boolean isFunctionStatement(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
 
-    return Abstract.isUnary(trm, StandardNames.FUN) && testPipe(Abstract.unaryArg(trm), CompilerUtils::isEquation);
+    return Abstract.isUnary(stmt, StandardNames.FUN) && testPipe(Abstract.unaryArg(stmt), CompilerUtils::isEquation);
   }
 
-  public static IAbstract functionRules(IAbstract trm) {
-    assert isFunctionStatement(trm);
+  public static IAbstract functionRules(IAbstract stmt) {
+    assert isFunctionStatement(stmt);
+    stmt = stripVisibility(stmt);
 
-    if (isPrivate(trm))
-      trm = privateTerm(trm);
-
-    return Abstract.unaryArg(trm);
+    return Abstract.unaryArg(stmt);
   }
 
   public static IAbstract firstRule(IAbstract trm) {
@@ -1933,20 +1943,17 @@ public class CompilerUtils {
   }
 
   public static boolean isProcedureStatement(IAbstract stmt) {
-    if (isPrivate(stmt))
-      return isProcedureStatement(privateTerm(stmt));
-    else
-      return Abstract.isUnary(stmt, StandardNames.PRC) && testPipe(Abstract.unaryArg(stmt),
-          CompilerUtils::isActionRule);
+    stmt = stripVisibility(stmt);
+
+    return Abstract.isUnary(stmt, StandardNames.PRC) && testPipe(Abstract.unaryArg(stmt),
+        CompilerUtils::isActionRule);
   }
 
   public static IAbstract procedureRules(IAbstract stmt) {
     assert isProcedureStatement(stmt);
+    stmt = stripVisibility(stmt);
 
-    if (isPrivate(stmt))
-      return procedureRules(privateTerm(stmt));
-    else
-      return Abstract.unaryArg(stmt);
+    return Abstract.unaryArg(stmt);
   }
 
   public static IAbstract procedure(Location loc, IAbstract... equations) {
@@ -2022,11 +2029,9 @@ public class CompilerUtils {
 
   public static IAbstract patternRules(IAbstract stmt) {
     assert isPatternStatement(stmt);
+    stmt = stripVisibility(stmt);
 
-    if (isPrivate(stmt))
-      return patternRules(privateTerm(stmt));
-    else
-      return Abstract.unaryArg(stmt);
+    return Abstract.unaryArg(stmt);
   }
 
   public static IAbstract pattern(Location loc, IAbstract... equations) {
@@ -2214,17 +2219,17 @@ public class CompilerUtils {
   }
 
   public static boolean isTypeAnnotation(IAbstract stmt) {
-    if (isPrivate(stmt))
-      return isTypeAnnotation(privateTerm(stmt));
-    else
-      return Abstract.isBinary(stmt, StandardNames.HAS_TYPE);
+    stmt = CompilerUtils.stripVisibility(stmt);
+
+    return Abstract.isBinary(stmt, StandardNames.HAS_TYPE);
   }
 
   public static IAbstract typeAnnotation(IAbstract stmt) {
     assert isTypeAnnotation(stmt);
-    if (isPrivate(stmt))
-      return typeAnnotation(privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.HAS_TYPE))
+
+    stmt = CompilerUtils.stripVisibility(stmt);
+
+    if (Abstract.isBinary(stmt, StandardNames.HAS_TYPE))
       return Abstract.binaryRhs(stmt);
     else
       return Abstract.unaryArg(Abstract.binaryRhs(stmt));
@@ -2240,18 +2245,17 @@ public class CompilerUtils {
   }
 
   public static boolean isKindAnnotation(IAbstract stmt) {
-    if (isPrivate(stmt))
-      return isKindAnnotation(privateTerm(stmt));
-    else
-      return Abstract.isBinary(stmt, StandardNames.HAS_KIND) && Abstract.isIdentifier(Abstract.binaryLhs(stmt))
-          || Abstract.isBinary(stmt, StandardNames.WHERE) && isKindAnnotation(Abstract.binaryLhs(stmt));
+    stmt = stripVisibility(stmt);
+
+    return Abstract.isBinary(stmt, StandardNames.HAS_KIND) && Abstract.isIdentifier(Abstract.binaryLhs(stmt))
+        || Abstract.isBinary(stmt, StandardNames.WHERE) && isKindAnnotation(Abstract.binaryLhs(stmt));
   }
 
   public static IAbstract kindAnnotation(IAbstract stmt) {
     assert isKindAnnotation(stmt);
-    if (isPrivate(stmt))
-      return kindAnnotation(privateTerm(stmt));
-    else if (Abstract.isBinary(stmt, StandardNames.WHERE))
+    stmt = stripVisibility(stmt);
+
+    if (Abstract.isBinary(stmt, StandardNames.WHERE))
       return kindAnnotation(Abstract.binaryLhs(stmt));
     else
       return Abstract.binaryRhs(stmt);
@@ -2410,9 +2414,9 @@ public class CompilerUtils {
   }
 
   public static IAbstract nameOfPattern(IAbstract stmt) {
-    if (isPrivate(stmt))
-      return nameOfPattern(privateTerm(stmt));
-    else if (Abstract.isUnary(stmt, StandardNames.PTN))
+    stmt = stripVisibility(stmt);
+
+    if (Abstract.isUnary(stmt, StandardNames.PTN))
       return nameOfPattern(Abstract.unaryArg(stmt));
     else if (Abstract.isBinary(stmt, StandardNames.PIPE))
       return nameOfPattern(Abstract.getArg(stmt, 0));
@@ -2439,17 +2443,17 @@ public class CompilerUtils {
           .isKeyword(Abstract.getOperator(term)) && Abstract.isIdentifier(Abstract.getOperator(term));
   }
 
-  public static IAbstract nameOfFunction(IAbstract def) {
-    if (isPrivate(def))
-      return nameOfFunction(privateTerm(def));
-    else if (Abstract.isUnary(def, StandardNames.FUN))
-      return nameOfFunction(Abstract.unaryArg(def));
-    else if (Abstract.isBinary(def, StandardNames.PIPE))
-      return nameOfFunction(Abstract.getArg(def, 0));
-    else {
-      assert Abstract.isBinary(def, StandardNames.IS);
+  public static IAbstract nameOfFunction(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
 
-      IAbstract lhs = Abstract.getArg(def, 0);
+    if (Abstract.isUnary(stmt, StandardNames.FUN))
+      return nameOfFunction(Abstract.unaryArg(stmt));
+    else if (Abstract.isBinary(stmt, StandardNames.PIPE))
+      return nameOfFunction(Abstract.getArg(stmt, 0));
+    else {
+      assert Abstract.isBinary(stmt, StandardNames.IS);
+
+      IAbstract lhs = Abstract.getArg(stmt, 0);
 
       if (Abstract.isBinary(lhs, StandardNames.WHERE) || Abstract.isUnary(lhs, StandardNames.DEFAULT))
         lhs = Abstract.getArg(lhs, 0);
@@ -2460,17 +2464,17 @@ public class CompilerUtils {
     }
   }
 
-  public static IAbstract functionHead(IAbstract def) {
-    if (isPrivate(def))
-      return functionHead(privateTerm(def));
-    else if (Abstract.isUnary(def, StandardNames.FUN))
-      return functionHead(Abstract.unaryArg(def));
-    else if (Abstract.isBinary(def, StandardNames.PIPE))
-      return functionHead(Abstract.binaryLhs(def));
-    else {
-      assert Abstract.isBinary(def, StandardNames.IS);
+  public static IAbstract functionHead(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
 
-      IAbstract lhs = Abstract.binaryLhs(def);
+    if (Abstract.isUnary(stmt, StandardNames.FUN))
+      return functionHead(Abstract.unaryArg(stmt));
+    else if (Abstract.isBinary(stmt, StandardNames.PIPE))
+      return functionHead(Abstract.binaryLhs(stmt));
+    else {
+      assert Abstract.isBinary(stmt, StandardNames.IS);
+
+      IAbstract lhs = Abstract.binaryLhs(stmt);
 
       if (Abstract.isBinary(lhs, StandardNames.WHERE) || Abstract.isUnary(lhs, StandardNames.DEFAULT))
         lhs = Abstract.getArg(lhs, 0);
@@ -2486,6 +2490,8 @@ public class CompilerUtils {
   }
 
   public static boolean isTypeAlias(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+
     if (Abstract.isUnary(stmt, AbstractType.TYPE)) {
       stmt = Abstract.unaryArg(stmt);
       if (Abstract.isBinary(stmt, StandardNames.IS)) {
@@ -2504,12 +2510,14 @@ public class CompilerUtils {
   }
 
   public static IAbstract typeAliasType(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     assert isTypeAlias(stmt);
 
     return Abstract.binaryLhs(Abstract.unaryArg(stmt));
   }
 
   public static IAbstract typeAliasAlias(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     assert isTypeAlias(stmt);
 
     stmt = Abstract.unaryArg(stmt);
@@ -2519,13 +2527,15 @@ public class CompilerUtils {
       return null;
   }
 
-  private static IAbstract typeAliasExtract(IAbstract term) {
-    if (Abstract.isBinary(term, StandardNames.OF) && Abstract.isName(Abstract.binaryLhs(term), StandardNames.ALIAS))
-      return Abstract.binaryRhs(term);
-    else if (Abstract.isBinary(term)) {
-      IAbstract ptn = typeAliasExtract(Abstract.binaryLhs(term));
+  private static IAbstract typeAliasExtract(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
+
+    if (Abstract.isBinary(stmt, StandardNames.OF) && Abstract.isName(Abstract.binaryLhs(stmt), StandardNames.ALIAS))
+      return Abstract.binaryRhs(stmt);
+    else if (Abstract.isBinary(stmt)) {
+      IAbstract ptn = typeAliasExtract(Abstract.binaryLhs(stmt));
       if (ptn != null)
-        return Abstract.binary(term.getLoc(), ((Apply) term).getOperator(), ptn, Abstract.binaryRhs(term));
+        return Abstract.binary(stmt.getLoc(), ((Apply) stmt).getOperator(), ptn, Abstract.binaryRhs(stmt));
       else
         return null;
     } else
@@ -2571,20 +2581,24 @@ public class CompilerUtils {
   }
 
   public static boolean isTypeWitness(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     return Abstract.isUnary(stmt, AbstractType.TYPE) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.COUNTS_AS);
   }
 
   public static IAbstract typeWitness(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     assert isTypeWitness(stmt);
     return Abstract.binaryLhs(Abstract.unaryArg(stmt));
   }
 
   public static IAbstract witnessedType(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     assert isTypeWitness(stmt);
     return Abstract.binaryRhs(Abstract.unaryArg(stmt));
   }
 
   public static boolean isTypeEquality(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     if (Abstract.isUnary(stmt, AbstractType.TYPE)) {
       IAbstract typeForm = Abstract.unaryArg(stmt);
       if (Abstract.isBinary(typeForm, StandardNames.EQUAL))
@@ -2596,6 +2610,7 @@ public class CompilerUtils {
   }
 
   public static IAbstract typeEqualField(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     assert isTypeEquality(stmt);
     IAbstract typeForm = Abstract.unaryArg(stmt);
     if (Abstract.isBinary(typeForm, StandardNames.EQUAL))
@@ -2605,6 +2620,7 @@ public class CompilerUtils {
   }
 
   public static IAbstract typeEqualType(IAbstract stmt) {
+    stmt = stripVisibility(stmt);
     assert isTypeEquality(stmt);
     IAbstract typeForm = Abstract.unaryArg(stmt);
     if (Abstract.isBinary(typeForm, StandardNames.EQUAL))
@@ -2615,9 +2631,9 @@ public class CompilerUtils {
   }
 
   public static IAbstract nameOfProcedure(IAbstract stmt) {
-    if (isPrivate(stmt))
-      return nameOfProcedure(privateTerm(stmt));
-    else if (Abstract.isUnary(stmt, StandardNames.PRC))
+    stmt = stripVisibility(stmt);
+
+    if (Abstract.isUnary(stmt, StandardNames.PRC))
       return nameOfProcedure(Abstract.unaryArg(stmt));
     else if (Abstract.isBinary(stmt, StandardNames.PIPE))
       return nameOfProcedure(Abstract.getArg(stmt, 0));

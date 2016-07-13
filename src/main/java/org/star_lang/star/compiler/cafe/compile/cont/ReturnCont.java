@@ -46,7 +46,6 @@ public class ReturnCont implements IContinuation
       break;
     case rawBinary:
     case rawString:
-    case rawDecimal:
     case general:
       ins.add(new InsnNode(Opcodes.ARETURN));
       break;

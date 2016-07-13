@@ -314,10 +314,6 @@ public class TypeChecker {
       final IContentExpression scalar = TypeCheckerUtils.floatLiteral(loc, ((FloatLiteral) term).getLit());
 
       return verifyType(floatType, expectedType, loc, scalar, dict, errors);
-    } else if (term instanceof BigDecimalLiteral) {
-      final IContentExpression scalar = TypeCheckerUtils.decimalLiteral(loc, ((BigDecimalLiteral) term).getLit());
-
-      return verifyType(decimalType, expectedType, loc, scalar, dict, errors);
     } else if (term instanceof StringLiteral) {
       IContentExpression scalar = CompilerUtils.stringLiteral(loc, ((StringLiteral) term).getLit());
 
@@ -332,8 +328,6 @@ public class TypeChecker {
         raw = new Scalar(loc, rawLongType, ((LongLiteral) arg).getLit());
       else if (arg instanceof FloatLiteral)
         raw = new Scalar(loc, rawFloatType, ((FloatLiteral) arg).getLit());
-      else if (arg instanceof BigDecimalLiteral)
-        raw = new Scalar(loc, rawDecimalType, ((BigDecimalLiteral) arg).getLit());
       else if (arg instanceof StringLiteral)
         raw = new Scalar(loc, rawStringType, ((StringLiteral) arg).getLit());
       else {
@@ -3265,10 +3259,6 @@ public class TypeChecker {
       IContentPattern scalar = TypeCheckerUtils.floatPtn(loc, ((FloatLiteral) ptn).getLit());
       verifyType(expectedType, loc, scalar, cxt, errors);
       return scalar;
-    } else if (ptn instanceof BigDecimalLiteral) {
-      IContentPattern scalar = TypeCheckerUtils.decimalPtn(loc, ((BigDecimalLiteral) ptn).getLit());
-      verifyType(expectedType, loc, scalar, cxt, errors);
-      return scalar;
     } else if (ptn instanceof StringLiteral) {
       IContentPattern scalar = TypeCheckerUtils.stringPtn(loc, ((StringLiteral) ptn).getLit());
       verifyType(expectedType, loc, scalar, cxt, errors);
@@ -3282,8 +3272,6 @@ public class TypeChecker {
         raw = new ScalarPtn(loc, rawLongType, Factory.newLong(((LongLiteral) ptn).getLit()));
       else if (ptn instanceof FloatLiteral)
         raw = new ScalarPtn(loc, rawFloatType, Factory.newFloat(((FloatLiteral) ptn).getLit()));
-      else if (ptn instanceof BigDecimalLiteral)
-        raw = new ScalarPtn(loc, rawDecimalType, Factory.newDecimal(((BigDecimalLiteral) ptn).getLit()));
       else if (ptn instanceof StringLiteral)
         raw = new ScalarPtn(loc, rawStringType, Factory.newString(((StringLiteral) ptn).getLit()));
       else {
@@ -3293,7 +3281,7 @@ public class TypeChecker {
       return verifyType(expectedType, loc, raw, cxt, errors);
     } else if (CompilerUtils.isExpressionPtn(ptn)) {
       IContentExpression exp = typeOfExp(CompilerUtils.expressionPtn(ptn), expectedType, cxt, outer);
-      return new ValuePtn(loc,exp);
+      return new ValuePtn(loc, exp);
     } else if (CompilerUtils.isVarPtn(ptn)) {
       IAbstract v = CompilerUtils.varPtnVar(ptn);
       return varHandler.typeOfVariable(v, expectedType, condition, Permission.allowed, cxt);
@@ -4854,6 +4842,8 @@ public class TypeChecker {
   private void namedImportPkg(IAbstract stmt, Dictionary cxt, List<IStatement> definitions, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
       namedImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.priVate);
+    else if (CompilerUtils.isPublic(stmt))
+      namedImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.pUblic);
     else {
       final Location loc = stmt.getLoc();
 
@@ -4912,6 +4902,8 @@ public class TypeChecker {
   private void openImportPkg(IAbstract stmt, Dictionary cxt, List<IStatement> definitions, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
       openImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.priVate);
+    else if (CompilerUtils.isPublic(stmt))
+      openImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.pUblic);
     else {
       final Location loc = stmt.getLoc();
 
@@ -5034,6 +5026,8 @@ public class TypeChecker {
   private void importJava(IAbstract stmt, Dictionary dict, List<IStatement> stmts, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
       importJava(CompilerUtils.privateTerm(stmt), dict, stmts, Visibility.priVate);
+    else if (CompilerUtils.isPublic(stmt))
+      importJava(CompilerUtils.stripVisibility(stmt), dict, stmts, Visibility.pUblic);
     else {
       assert CompilerUtils.isJavaStmt(stmt);
 
@@ -5079,6 +5073,8 @@ public class TypeChecker {
   private void openRecord(IAbstract stmt, Dictionary dict, List<IStatement> definitions, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
       openRecord(CompilerUtils.privateTerm(stmt), dict, definitions, Visibility.priVate);
+    else  if (CompilerUtils.isPublic(stmt))
+      openRecord(CompilerUtils.privateTerm(stmt), dict, definitions, Visibility.pUblic);
     else {
       final Location loc = stmt.getLoc();
 
@@ -5649,7 +5645,9 @@ public class TypeChecker {
             visibility));
       }
     } else if (CompilerUtils.isPrivate(stmt))
-      checkDefinition(CompilerUtils.privateTerm(stmt), defPtn, access, cxt, outer, visibility, defs);
+      checkDefinition(CompilerUtils.privateTerm(stmt), defPtn, access, cxt, outer, Visibility.priVate, defs);
+    else if (CompilerUtils.isPublic(stmt))
+      checkDefinition(CompilerUtils.privateTerm(stmt), defPtn, access, cxt, outer, Visibility.pUblic, defs);
     else if (CompilerUtils.isIsStatement(stmt)) {
       IContentExpression val = typeOfExp(CompilerUtils.isStmtValue(stmt), defPtn.getType(), cxt.fork(), outer);
 
@@ -5835,6 +5833,8 @@ public class TypeChecker {
       accessMode = accessPolicy(loc, readWrite, accessMode);
     } else if (CompilerUtils.isPrivate(stmt))
       return variablePolicy(CompilerUtils.privateTerm(stmt), accessMode);
+    else if (CompilerUtils.isPublic(stmt))
+      return variablePolicy(CompilerUtils.stripVisibility(stmt), accessMode);
     else
       errors.reportError(StringUtils.msg("cannot understand program statement: ", stmt), loc);
 

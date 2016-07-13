@@ -347,7 +347,6 @@ public class VarInfo implements ISpec, Validate
       break;
     case rawBinary:
     case rawString:
-    case rawDecimal:
     case general:
       switch (getWhere()) {
       case localVar:
@@ -424,7 +423,6 @@ public class VarInfo implements ISpec, Validate
         break;
       case rawBinary:
       case rawString:
-      case rawDecimal:
       case general:
         ins.add(new VarInsnNode(Opcodes.ASTORE, offset));
         break;

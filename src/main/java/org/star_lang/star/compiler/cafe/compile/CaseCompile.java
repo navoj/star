@@ -56,7 +56,6 @@ public class CaseCompile {
       case rawFloat:
       case rawBinary:
       case rawString:
-      case rawDecimal:
         return scalarCases(loc, var, rules, deflt, handler, cont, ccxt);
       case general:
         if (TypeUtils.isRawStringType(var.getType()))

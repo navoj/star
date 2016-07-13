@@ -52,6 +52,7 @@ public class StandardNames
   public static final String DETERMINES = keyword(AbstractType.DETERMINES);
 
   public static final String PRIVATE = keyword("private");
+  public static final String PUBLIC = keyword("public");
 
   public static final String ASSERT = keyword("assert");
   public static final String IGNORE = keyword("ignore");

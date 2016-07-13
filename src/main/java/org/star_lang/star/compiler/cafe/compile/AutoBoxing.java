@@ -48,11 +48,6 @@ public class AutoBoxing {
         ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "fltValue", "(" + isvSig + ")D"));
         hwm.bump(1);
         break;
-      case rawDecimal:
-        ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "decimalValue", "(" + isvSig + ")"
-            + Types.JAVA_DECIMAL_SIG));
-        hwm.bump(1);
-        break;
       case rawBinary:
         ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "binaryValue", "(" + isvSig + ")"
             + Types.JAVA_OBJECT_SIG));
@@ -95,10 +90,6 @@ public class AutoBoxing {
         ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "newFlt", Utils.javaInvokeSig(Factory.class,
             "newFlt")));
         return new SrcSpec(StandardTypes.floatType, loc, Types.FLOAT_TYPE, Types.FLOAT_SIG, null, null);
-      case rawDecimal:
-        ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "newDecimal", Utils.javaInvokeSig(Factory.class,
-            "newDecimal")));
-        return new SrcSpec(StandardTypes.decimalType, loc, Types.DECIMAL_TYPE, Types.DECIMAL_SIG, null, null);
       case rawString:
         ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, dataFactory, "newString", Utils.javaInvokeSig(Factory.class,
             "newString")));

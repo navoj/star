@@ -67,8 +67,6 @@ public class SrcSpec implements ISpec
       null);
   public static final ISpec rawDoubleSrc = new SrcSpec(StandardTypes.rawFloatType, Location.nullLoc,
       Types.JAVA_DOUBLE_TYPE, Types.JAVA_DOUBLE_SIG, null, null);
-  public static final ISpec rawDecimalSrc = new SrcSpec(StandardTypes.rawDecimalType, Location.nullLoc,
-      Types.JAVA_DECIMAL_TYPE, Types.JAVA_DECIMAL_SIG, null, null);
   public static final ISpec rawStringSrc = new SrcSpec(StandardTypes.rawStringType, Location.nullLoc,
       Types.JAVA_STRING_TYPE, Types.JAVA_STRING_SIG, null, null);
   public static final ISpec rawBinarySrc = new SrcSpec(StandardTypes.rawBinaryType, Location.nullLoc,
@@ -204,8 +202,6 @@ public class SrcSpec implements ISpec
         return rawIntegerSrc;
       else if (buffContent.equals(Types.JAVA_LONG_TYPE))
         return rawLongSrc;
-      else if (buffContent.equals(Types.JAVA_DECIMAL_TYPE))
-        return rawDecimalSrc;
       else if (buffContent.equals(Types.JAVA_OBJECT_TYPE))
         return rawBinarySrc;
       else

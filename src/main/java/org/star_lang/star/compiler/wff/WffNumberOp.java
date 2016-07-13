@@ -1,6 +1,5 @@
 package org.star_lang.star.compiler.wff;
 
-import org.star_lang.star.compiler.ast.BigDecimalLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
@@ -29,8 +28,7 @@ public class WffNumberOp implements WffOp
   @Override
   public applyMode apply(IAbstract term, IAbstract env[], Location loc, WffEngine engine)
   {
-    if (term instanceof IntegerLiteral || term instanceof FloatLiteral || term instanceof LongLiteral
-        || term instanceof BigDecimalLiteral)
+    if (term instanceof IntegerLiteral || term instanceof FloatLiteral || term instanceof LongLiteral)
       return applyMode.validates;
     else
       return applyMode.notValidates;

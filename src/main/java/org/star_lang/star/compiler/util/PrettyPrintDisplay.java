@@ -15,18 +15,6 @@ package org.star_lang.star.compiler.util;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-import java.util.regex.Pattern;
-
 import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.BindingLocations;
@@ -34,6 +22,11 @@ import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Pretty printer implementation support
@@ -106,10 +99,6 @@ public class PrettyPrintDisplay {
     append(Double.toString(d));
   }
 
-  public void append(BigDecimal a) {
-    append(a.toString());
-  }
-
   public void appendWord(long i) {
     if (!isWordBoundarySafe())
       space();
@@ -125,10 +114,6 @@ public class PrettyPrintDisplay {
 
   public void appendWord(double d) {
     appendWord(Double.toString(d));
-  }
-
-  public void appendWord(BigDecimal a) {
-    appendWord(a.toString());
   }
 
   public void append(String[] words) {
