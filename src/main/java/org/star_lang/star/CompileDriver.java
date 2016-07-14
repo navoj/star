@@ -128,19 +128,21 @@ public class CompileDriver {
 
       errors.startTimer("find meta");
       findMetaRules(repository, term, errors, pkgOps, pkgWff, pkgFmt, catalog, macroStmts, normalStmts, imports,
-              Visibility.pUblic);
+          Visibility.pUblic);
       errors.recordTime("find meta");
 
       if (!isPreamble) {
         IAbstract starImport = CompilerUtils.privateStmt(loc, CompilerUtils.importStmt(loc, new StringLiteral(loc,
-                StarCompiler.starRulesURI.toString())));
+            StarCompiler.starRulesURI.toString())));
         normalStmts.add(0, starImport);
         macroStmts.add(0, starImport);
       }
+
+      IAbstract normalTerm;
       if (!normalStmts.isEmpty())
-        term = CompilerUtils.tupleUp(loc, StandardNames.TERM, normalStmts);
+        normalTerm = CompilerUtils.tupleUp(loc, StandardNames.TERM, normalStmts);
       else
-        term = Abstract.name(loc, StandardNames.BRACES);
+        normalTerm = Abstract.name(loc, StandardNames.BRACES);
 
       final String macrolabel = pkgName + MacroCompiler.MACRO_QUERY;
 
@@ -148,7 +150,7 @@ public class CompileDriver {
       errors.startTimer("generate macro");
       ResourceURI macroUri = MacroCompiler.macroUri(uri);
       IAbstract macro = MacroCompiler.compileMacroRules(loc, macroStmts, pkgName + MacroCompiler.MACRO_QUERY, catalog,
-              repository, errors);
+          repository, errors);
       errors.recordTime("generate macro");
 
       if (errors.noNewErrors(mark) && macro != null) {
@@ -177,7 +179,7 @@ public class CompileDriver {
           errors.startTimer("macro code gen");
           CodeCatalog macroCatalog = new CodeMemory(macrolabel);
           CompileCafe.compileContent(macroUri, repository, URIUtils.rootPath(macroUri), macroPkg.getPkgName(), macro
-                  .getLoc(), macroContent, macroCatalog, errors);
+              .getLoc(), macroContent, macroCatalog, errors);
           errors.recordTime("macro code gen");
 
           try {
@@ -195,7 +197,7 @@ public class CompileDriver {
               contracts.put(contract.getName(), contract);
 
             macroCatalog.addCodeEntry(StandardNames.MANIFEST, new Manifest(macroUri, macrolabel, hash, types, aliases,
-                    contracts,macroPkg.getImports(), macroPkg.getPkgType(), macroPkg.getPkgName()));
+                contracts, macroPkg.getImports(), macroPkg.getPkgType(), macroPkg.getPkgName()));
 
             if (errors.isErrorFree()) {
               errors.startTimer("macro repository");
@@ -210,7 +212,7 @@ public class CompileDriver {
 
       try {
         bldCatalog.addCodeEntry(StandardNames.METAENTRY, new MetaRules(uri, pkgName, imports, pkgOps, macrolabel,
-                pkgWff, pkgFmt));
+            pkgWff, pkgFmt));
       } catch (RepositoryException e) {
         errors.reportError(e.getMessage(), loc);
       }
@@ -219,15 +221,16 @@ public class CompileDriver {
       fmtRules.importRules(pkgFmt);
 
       if (!isPreamble) {
-        validator.validate(term, StandardNames.WFF_STATEMENT);
+        validator.validate(normalTerm, StandardNames.WFF_STATEMENT);
         errors.recordTime("validation");
       }
+
       if (errors.isErrorFree()) {
         try {
           // This is a slight cheat, because the walker is the default replacer. But, the
           // top-level of a package is always 'interesting'
           errors.startTimer("run macros");
-          term = (IAbstract) StarMain.invoke(repository, macroUri, macrolabel, new IValue[]{term}, errors);
+          term = (IAbstract) StarMain.invoke(repository, macroUri, macrolabel, new IValue[]{normalTerm}, errors);
           errors.recordTime("run macros");
           if (StarCompiler.TRACEMACRO)
             System.out.println("Macro replacement is " + term);
@@ -266,7 +269,7 @@ public class CompileDriver {
         if (errors.isErrorFree()) {
           String rootPath = URIUtils.rootPath(uri);
           CompileCafe.compileContent(uri, repository, rootPath, pkgTerm.getPkgName(), pkgTerm.getLoc(), content,
-                  bldCatalog, errors);
+              bldCatalog, errors);
 
           errors.recordTime("compile");
 
@@ -284,7 +287,7 @@ public class CompileDriver {
             contracts.put(contract.getName(), contract);
 
           bldCatalog.addCodeEntry(StandardNames.MANIFEST, new Manifest(uri, pkgTerm.getName(), hash, types, aliases,
-                  contracts, pkgTerm.getImports(), pkgTerm.getPkgType(), pkgTerm.getPkgName()));
+              contracts, pkgTerm.getImports(), pkgTerm.getPkgType(), pkgTerm.getPkgName()));
 
           if (errors.isErrorFree()) {
             try {
@@ -333,7 +336,7 @@ public class CompileDriver {
             errors.reportWarning("cannot process import of " + pkgRef, term.getLoc());
         } catch (IllegalArgumentException e) {
           errors.reportError("cannot process import of " + pkgRef + "\nsince '" + pkgRef
-                  + "' is not a valid identifier for import.", loc);
+              + "' is not a valid identifier for import.", loc);
         } catch (Exception e) {
           errors.reportWarning("cannot process import of " + pkgRef + "\nbecause " + e.getMessage(), term.getLoc());
         }
@@ -363,19 +366,19 @@ public class CompileDriver {
   private static void findMetaRules(CodeRepository repository, IAbstract term, ErrorReport errors, Operators operators,
                                     WffProgram wffRules, FmtProgram fmtRules, Catalog catalog, List<IAbstract> macroStmts,
                                     List<IAbstract> normalStmts, List<ResourceURI> imports, Visibility visibility) throws CatalogException,
-          ResourceException {
+      ResourceException {
     for (IAbstract stmt : CompilerUtils.unWrap(term)) {
       if (CompilerUtils.isPackageStmt(stmt) && CompilerUtils.packageContents(stmt) != null) {
         List<IAbstract> pkgContent = new ArrayList<>();
         findMetaRules(repository, CompilerUtils.packageContents(stmt), errors, operators, wffRules, fmtRules, catalog,
-                macroStmts, pkgContent, imports, visibility);
+            macroStmts, pkgContent, imports, visibility);
         normalStmts.add(CompilerUtils.packageStmt(stmt.getLoc(), CompilerUtils.packageName(stmt), pkgContent));
       } else if (CompilerUtils.isPrivate(stmt))
         findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, fmtRules, catalog,
             macroStmts, normalStmts, imports, Visibility.priVate);
       else if (CompilerUtils.isPublic(stmt))
         findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, fmtRules, catalog,
-                macroStmts, normalStmts, imports, Visibility.pUblic);
+            macroStmts, normalStmts, imports, Visibility.pUblic);
       else if (CompilerUtils.isImport(stmt)) {
         if (visibility == Visibility.priVate) {
           IAbstract prStmt = CompilerUtils.privateStmt(stmt.getLoc(), stmt);
@@ -408,15 +411,9 @@ public class CompileDriver {
           fmtRules.defineFormattingRule(FmtCompile.compileRule(rl, fmtRules, errors));
         else
           operators.declareOperator(errors, rl);
-      } else if (visibility == Visibility.priVate)
-        normalStmts.add(CompilerUtils.privateStmt(stmt.getLoc(), stmt));
-      else if (visibility == Visibility.pUblic)
-        normalStmts.add(stmt);
-//      normalStmts.add(CompilerUtils.publicStmt(stmt.getLoc(), stmt));
-      else if (CompilerUtils.isBraceTerm(stmt)) { // A special hack to allow for imports
+      } else if (CompilerUtils.isBraceTerm(stmt)) { // A special hack to allow for imports
         for (IAbstract el : CompilerUtils.unWrap(CompilerUtils.braceArg(stmt))) {
-          if (CompilerUtils.isPrivate(el))
-            el = CompilerUtils.privateTerm(el);
+          el = CompilerUtils.stripVisibility(el);
           if (CompilerUtils.isImport(el)) {
             IAbstract pkgName = CompilerUtils.importPkg(el);
             ResourceURI pkgUri = uriOfPkgRef(pkgName, catalog);
@@ -425,7 +422,11 @@ public class CompileDriver {
           }
         }
         normalStmts.add(stmt);
-      } else
+      } else if (visibility == Visibility.priVate)
+        normalStmts.add(CompilerUtils.privateStmt(stmt.getLoc(), stmt));
+      else if (visibility == Visibility.pUblic)
+        normalStmts.add(CompilerUtils.publicStmt(stmt.getLoc(), stmt));
+      else
         normalStmts.add(stmt);
     }
   }

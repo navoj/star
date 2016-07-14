@@ -115,6 +115,18 @@ fun quoteSeq(S) is valof{
 	#generate(identifier?Id) ==> #(implement_#+Id)#(Ptn,Algebraic)
 }
 
+# private type ?Ptn is ?Algebraic implementing ?Specs ==> #(private type Ptn is Algebraic; #*generate(Specs) )# ## {
+	#generate(?L and ?R) ==> #(generate(L) ; generate(R) )#;
+	#generate((?Id)) ==> generateSpecs(Id);
+	#generate(identifier?Id) ==> #(implement_#+Id)#(Ptn,Algebraic)
+}
+
+# public type ?Ptn is ?Algebraic implementing ?Specs ==> #(public type Ptn is Algebraic; #*generate(Specs) )# ## {
+	#generate(?L and ?R) ==> #(generate(L) ; generate(R) )#;
+	#generate((?Id)) ==> generateSpecs(Id);
+	#generate(identifier?Id) ==> #(implement_#+Id)#(Ptn,Algebraic)
+}
+
 #implement_quotable(?Ptn,?Spec) ==> #(
  implementation #*dequoteTemplate(Ptn) is {
    fun coerce(X) is dequote(X)

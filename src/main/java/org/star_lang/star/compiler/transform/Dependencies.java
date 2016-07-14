@@ -26,22 +26,21 @@ import org.star_lang.star.data.type.Location;
 /**
  * Dependency analysis module. Sort out functions and other kinds of rules into groups of mutually
  * recursive groups.
- *
+ * <p>
  * Copyright (c) 2015. Francis G. McCabe
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
-public class Dependencies
-{
+public class Dependencies {
   private final Map<String, IAbstract> typeAnnotations = new HashMap<>();
   private final Map<DefinitionKind, Set<String>> privateNames = new HashMap<>();
   private final List<IAbstract> others = new ArrayList<>();
@@ -52,13 +51,11 @@ public class Dependencies
   private final List<List<Definition>> groups = new ArrayList<>();
   private final Stack<StackEntry> stack = new Stack<>();
 
-  private Dependencies(ErrorReport errors)
-  {
+  private Dependencies(ErrorReport errors) {
     this.errors = errors;
   }
 
-  public static DependencyResults dependencies(ErrorReport errors, List<IAbstract> defs)
-  {
+  public static DependencyResults dependencies(ErrorReport errors, List<IAbstract> defs) {
     Dependencies deps = new Dependencies(errors);
     deps.thDepend(defs);
 
@@ -69,45 +66,38 @@ public class Dependencies
     return new DependencyResults(deps.groups, deps.getTypes(), deps.getOthers(), deps.getLocalActions());
   }
 
-  public static class DependencyResults
-  {
+  public static class DependencyResults {
     private final List<List<Definition>> groups;
     private final Map<String, IAbstract> types;
     private final List<IAbstract> others;
     private final List<IAbstract> localActions;
 
     public DependencyResults(List<List<Definition>> groups, Map<String, IAbstract> types, List<IAbstract> others,
-        List<IAbstract> localActions)
-    {
+                             List<IAbstract> localActions) {
       this.groups = groups;
       this.types = types;
       this.others = others;
       this.localActions = localActions;
     }
 
-    public List<List<Definition>> getDefinitions()
-    {
+    public List<List<Definition>> getDefinitions() {
       return groups;
     }
 
-    public Map<String, IAbstract> getTypeAnnotations()
-    {
+    public Map<String, IAbstract> getTypeAnnotations() {
       return types;
     }
 
-    public List<IAbstract> getOthers()
-    {
+    public List<IAbstract> getOthers() {
       return others;
     }
 
-    public List<IAbstract> getLocalActions()
-    {
+    public List<IAbstract> getLocalActions() {
       return localActions;
     }
   }
 
-  private int analyseDef(Definition def)
-  {
+  private int analyseDef(Definition def) {
     int low = stack.size();
     int point = low;
     Stack<String> exclusion = new Stack<>();
@@ -147,8 +137,7 @@ public class Dependencies
     return point;
   }
 
-  private int analyse(IAbstract term, DefinitionKind kind, int low, Stack<String> exclusion)
-  {
+  private int analyse(IAbstract term, DefinitionKind kind, int low, Stack<String> exclusion) {
     if (term instanceof Name && !StandardNames.isKeyword(term)) {
       String name = ((Name) term).getId();
       if (exclusion.contains(name))
@@ -188,94 +177,94 @@ public class Dependencies
     else {
       // Try special rules for the different kinds of definition
       switch (kind) {
-      case variable:
-        if (Abstract.isBinary(term, StandardNames.CAST))
-          return minPoint(analyse(Abstract.binaryLhs(term), kind, low, exclusion), analyse(Abstract.binaryRhs(term),
-              DefinitionKind.type, low, exclusion));
-        else if (CompilerUtils.isTypeAlias(term))
-          return analyse(CompilerUtils.typeAliasAlias(term), DefinitionKind.type, low, exclusion);
-        else if (CompilerUtils.isTypeDefn(term)) {
-          for (IAbstract con : CompilerUtils.unWrap(CompilerUtils.typeDefnConstructors(term), StandardNames.OR)) {
-            low = minPoint(analyseConstructor(con, low, exclusion), low);
-          }
-          return low;
-        } else if (CompilerUtils.isTypeWitness(term))
-          return analyse(CompilerUtils.typeWitness(term), DefinitionKind.type, low, exclusion);
-        else if (Abstract.isBinary(term, StandardNames.IS)
-            && Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.DEFAULT))
-          return analyse(Abstract.binaryRhs(term), DefinitionKind.variable, low, exclusion);
-        else if (Abstract.isUnary(term, StandardNames.ASSERT))
-          return analyse(Abstract.unaryArg(term), DefinitionKind.variable, low, exclusion);
-        else if (CompilerUtils.isTypeVar(term))
-          return low;
-        else
-          break;
-      case type:
-        if (Abstract.isBinary(term, StandardNames.WHERE))
-          return minPoint(analyse(Abstract.binaryLhs(term), kind, low, exclusion), analyse(Abstract.binaryRhs(term),
-              DefinitionKind.contract, low, exclusion));
-        else if (CompilerUtils.isTypeAlias(term))
-          return analyse(CompilerUtils.typeAliasAlias(term), DefinitionKind.type, low, exclusion);
-        else if (CompilerUtils.isTypeDefn(term)) {
-          low = analyse(CompilerUtils.typeDefnType(term), DefinitionKind.type, low, exclusion);
-          for (IAbstract con : CompilerUtils.unWrap(CompilerUtils.typeDefnConstructors(term), StandardNames.OR)) {
-            low = minPoint(analyseConstructor(con, low, exclusion), low);
-          }
-          return low;
-        } else if (CompilerUtils.isTypeWitness(term))
-          return analyse(CompilerUtils.typeWitness(term), DefinitionKind.type, low, exclusion);
-        else if (Abstract.isBinary(term, StandardNames.IS)
-            && Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.DEFAULT))
-          return analyse(Abstract.binaryRhs(term), DefinitionKind.variable, low, exclusion);
-        else if (Abstract.isUnary(term, StandardNames.ASSERT))
-          return analyse(Abstract.unaryArg(term), DefinitionKind.variable, low, exclusion);
-        else if (CompilerUtils.isTypeVar(term))
-          return low;
-        else
-          break;
-      case contract:
-        if (CompilerUtils.isContractStmt(term))
-          return minPoint(analyse(CompilerUtils.contractForm(term), DefinitionKind.contract, low, exclusion), analyse(
-              CompilerUtils.contractSpec(term), DefinitionKind.type, low, exclusion));
-        else if (Abstract.isBinary(term, StandardNames.IMPLEMENTS))
-          return minPoint(analyse(Abstract.binaryLhs(term), DefinitionKind.type, low, exclusion), analyse(Abstract
-              .binaryRhs(term), DefinitionKind.type, low, exclusion));
-        else
-          break;
-      case implementation:
-        if (CompilerUtils.isImplementationStmt(term))
-          return minPoint(analyse(CompilerUtils.implementationBody(term), DefinitionKind.variable, low, exclusion),
-              minPoint(analyse(CompilerUtils.implementationContractType(term), DefinitionKind.type, low, exclusion),
-                  minPoint(analyse(CompilerUtils.implementedContract(term), DefinitionKind.contract, low, exclusion),
-                      analyse(CompilerUtils.implementationBody(term), DefinitionKind.type, low, exclusion))));
-        else
-          break;
-      case imports:
-        if (CompilerUtils.isImport(term)) {
-          IAbstract imported = Abstract.unaryArg(term);
+        case variable:
+          if (Abstract.isBinary(term, StandardNames.CAST))
+            return minPoint(analyse(Abstract.binaryLhs(term), kind, low, exclusion), analyse(Abstract.binaryRhs(term),
+                DefinitionKind.type, low, exclusion));
+          else if (CompilerUtils.isTypeAlias(term))
+            return analyse(CompilerUtils.typeAliasAlias(term), DefinitionKind.type, low, exclusion);
+          else if (CompilerUtils.isTypeDefn(term)) {
+            for (IAbstract con : CompilerUtils.unWrap(CompilerUtils.typeDefnConstructors(term), StandardNames.OR)) {
+              low = minPoint(analyseConstructor(con, low, exclusion), low);
+            }
+            return low;
+          } else if (CompilerUtils.isTypeWitness(term))
+            return analyse(CompilerUtils.typeWitness(term), DefinitionKind.type, low, exclusion);
+          else if (Abstract.isBinary(term, StandardNames.IS)
+              && Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.DEFAULT))
+            return analyse(Abstract.binaryRhs(term), DefinitionKind.variable, low, exclusion);
+          else if (Abstract.isUnary(term, StandardNames.ASSERT))
+            return analyse(Abstract.unaryArg(term), DefinitionKind.variable, low, exclusion);
+          else if (CompilerUtils.isTypeVar(term))
+            return low;
+          else
+            break;
+        case type:
+          if (Abstract.isBinary(term, StandardNames.WHERE))
+            return minPoint(analyse(Abstract.binaryLhs(term), kind, low, exclusion), analyse(Abstract.binaryRhs(term),
+                DefinitionKind.contract, low, exclusion));
+          else if (CompilerUtils.isTypeAlias(term))
+            return analyse(CompilerUtils.typeAliasAlias(term), DefinitionKind.type, low, exclusion);
+          else if (CompilerUtils.isTypeDefn(term)) {
+            low = analyse(CompilerUtils.typeDefnType(term), DefinitionKind.type, low, exclusion);
+            for (IAbstract con : CompilerUtils.unWrap(CompilerUtils.typeDefnConstructors(term), StandardNames.OR)) {
+              low = minPoint(analyseConstructor(con, low, exclusion), low);
+            }
+            return low;
+          } else if (CompilerUtils.isTypeWitness(term))
+            return analyse(CompilerUtils.typeWitness(term), DefinitionKind.type, low, exclusion);
+          else if (Abstract.isBinary(term, StandardNames.IS)
+              && Abstract.isUnary(Abstract.binaryLhs(term), StandardNames.DEFAULT))
+            return analyse(Abstract.binaryRhs(term), DefinitionKind.variable, low, exclusion);
+          else if (Abstract.isUnary(term, StandardNames.ASSERT))
+            return analyse(Abstract.unaryArg(term), DefinitionKind.variable, low, exclusion);
+          else if (CompilerUtils.isTypeVar(term))
+            return low;
+          else
+            break;
+        case contract:
+          if (CompilerUtils.isContractStmt(term))
+            return minPoint(analyse(CompilerUtils.contractForm(term), DefinitionKind.contract, low, exclusion), analyse(
+                CompilerUtils.contractSpec(term), DefinitionKind.type, low, exclusion));
+          else if (Abstract.isBinary(term, StandardNames.IMPLEMENTS))
+            return minPoint(analyse(Abstract.binaryLhs(term), DefinitionKind.type, low, exclusion), analyse(Abstract
+                .binaryRhs(term), DefinitionKind.type, low, exclusion));
+          else
+            break;
+        case implementation:
+          if (CompilerUtils.isImplementationStmt(term))
+            return minPoint(analyse(CompilerUtils.implementationBody(term), DefinitionKind.variable, low, exclusion),
+                minPoint(analyse(CompilerUtils.implementationContractType(term), DefinitionKind.type, low, exclusion),
+                    minPoint(analyse(CompilerUtils.implementedContract(term), DefinitionKind.contract, low, exclusion),
+                        analyse(CompilerUtils.implementationBody(term), DefinitionKind.type, low, exclusion))));
+          else
+            break;
+        case imports:
+          if (CompilerUtils.isImport(term)) {
+            IAbstract imported = Abstract.unaryArg(term);
 
-          if (imported instanceof Apply) {
-            Apply apply = (Apply) imported;
-            for (IValue arg : apply.getArgs()) {
-              low = minPoint(analyse((IAbstract) arg, DefinitionKind.variable, low, exclusion), low);
+            if (imported instanceof Apply) {
+              Apply apply = (Apply) imported;
+              for (IValue arg : apply.getArgs()) {
+                low = minPoint(analyse((IAbstract) arg, DefinitionKind.variable, low, exclusion), low);
+              }
+              return low;
+            }
+            return low;
+          } else if (CompilerUtils.isOpen(term)) {
+            IAbstract opened = CompilerUtils.openedRecord(term);
+            if (opened instanceof Apply) {
+              Apply apply = (Apply) opened;
+              for (IValue arg : apply.getArgs()) {
+                low = minPoint(analyse((IAbstract) arg, DefinitionKind.variable, low, exclusion), low);
+              }
             }
             return low;
           }
-          return low;
-        } else if (CompilerUtils.isOpen(term)) {
-          IAbstract opened = CompilerUtils.openedRecord(term);
-          if (opened instanceof Apply) {
-            Apply apply = (Apply) opened;
-            for (IValue arg : apply.getArgs()) {
-              low = minPoint(analyse((IAbstract) arg, DefinitionKind.variable, low, exclusion), low);
-            }
-          }
-          return low;
-        }
-      case java:
-      case unknown:
-      case constructor:
-        break;
+        case java:
+        case unknown:
+        case constructor:
+          break;
       }
       if (term instanceof Apply) {
         Apply apply = (Apply) term;
@@ -290,8 +279,7 @@ public class Dependencies
     }
   }
 
-  private int analyseConstructor(IAbstract con, int low, Stack<String> exclusion)
-  {
+  private int analyseConstructor(IAbstract con, int low, Stack<String> exclusion) {
     if (con instanceof Name)
       return low;
     else if (CompilerUtils.isBraceTerm(con)) {
@@ -312,8 +300,7 @@ public class Dependencies
       return low;
   }
 
-  private static void addToExclusions(IAbstract term, Stack<String> exclusion)
-  {
+  private static void addToExclusions(IAbstract term, Stack<String> exclusion) {
     if (term != null) {
       for (IAbstract el : CompilerUtils.unWrap(term)) {
         if (CompilerUtils.isFunctionStatement(el)) {
@@ -333,8 +320,7 @@ public class Dependencies
     }
   }
 
-  private static void addPatternToExclusions(IAbstract term, Stack<String> exclusion)
-  {
+  private static void addPatternToExclusions(IAbstract term, Stack<String> exclusion) {
     if (Abstract.isIdentifier(term))
       exclusion.push(Abstract.getId(term));
     else if (Abstract.isBinary(term, StandardNames.WHERE))
@@ -349,40 +335,34 @@ public class Dependencies
     }
   }
 
-  private static void addPatternToExclusions(IList roundTermArgs, Stack<String> exclusion)
-  {
+  private static void addPatternToExclusions(IList roundTermArgs, Stack<String> exclusion) {
     for (IValue term : roundTermArgs)
       addPatternToExclusions((IAbstract) term, exclusion);
   }
 
-  private static class StackEntry
-  {
+  private static class StackEntry {
     final int depth;
     final Definition def;
 
-    StackEntry(int depth, Definition def)
-    {
+    StackEntry(int depth, Definition def) {
       this.depth = depth;
       this.def = def;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
       return def.toString();
     }
   }
 
-  private static int minPoint(int X, int Y)
-  {
+  private static int minPoint(int X, int Y) {
     if (X <= Y)
       return X;
     else
       return Y;
   }
 
-  private Definition findDefn(String name, DefinitionKind kind)
-  {
+  private Definition findDefn(String name, DefinitionKind kind) {
     for (Definition def : definitions)
       if (def.defines(name, kind))
         return def;
@@ -393,126 +373,125 @@ public class Dependencies
       return null;
   }
 
-  private Definition findLocalDefn(String name, DefinitionKind kind)
-  {
+  private Definition findLocalDefn(String name, DefinitionKind kind) {
     for (Definition def : definitions)
       if (def.defines(name, kind) && (kind == DefinitionKind.imports || !def.isKind(DefinitionKind.imports)))
         return def;
     return null;
   }
 
-  private void thDepend(List<IAbstract> theta)
-  {
-    for (IAbstract stmt : theta) {
-      IAbstract term = stmt;
-      Visibility visibility = Visibility.pUblic;
-      Location loc = term.getLoc();
+  private void thDepend(IAbstract stmt, Visibility visibility) {
+    Location loc = stmt.getLoc();
 
-      if (Abstract.isParenTerm(term))
-        term = Abstract.deParen(term);
+    if (Abstract.isParenTerm(stmt))
+      stmt = Abstract.deParen(stmt);
 
-      if (CompilerUtils.isPrivate(term)) {
-        visibility = Visibility.priVate;
-        term = CompilerUtils.stripVisibility(term);
+    if (CompilerUtils.isPrivate(stmt))
+      thDepend(CompilerUtils.stripVisibility(stmt), Visibility.priVate);
+    else if (CompilerUtils.isPublic(stmt))
+      thDepend(CompilerUtils.stripVisibility(stmt), Visibility.pUblic);
+    else if (CompilerUtils.isImplementationStmt(stmt)) {
+      IAbstract conSpec = CompilerUtils.implementedContractSpec(stmt);
+      String implName = Over.instanceFunName(conSpec);
+
+      if (implName != null) {
+        Definition def = new Definition(loc, stmt, implName, DefinitionKind.implementation, visibility);
+        definitions.add(def);
       }
-      if (CompilerUtils.isPublic(term)) {
-        visibility = Visibility.pUblic;
-        term = CompilerUtils.stripVisibility(term);
-      }
+    } else if (CompilerUtils.isContractStmt(stmt)) {
+      IAbstract content = CompilerUtils.contractSpec(stmt);
 
-      if (CompilerUtils.isImplementationStmt(term)) {
-        IAbstract conSpec = CompilerUtils.implementedContractSpec(term);
-        String implName = Over.instanceFunName(conSpec);
+      IAbstract contractName = CompilerUtils.contractName(stmt);
 
-        if (implName != null) {
-          Definition def = new Definition(loc, term, implName, DefinitionKind.implementation, visibility);
-          definitions.add(def);
-        }
-      } else if (CompilerUtils.isContractStmt(term)) {
-        IAbstract content = CompilerUtils.contractSpec(term);
-
-        IAbstract contractName = CompilerUtils.contractName(term);
-
-        if (Abstract.isIdentifier(contractName)) {
-          String contractId = Abstract.getId(contractName);
-          Definition conDef = findDefn(contractId, DefinitionKind.contract);
-          if (conDef == null) {
-            List<String> defines = findContractDefinitions(content);
-
-            Map<DefinitionKind, String[]> kindMap = new HashMap<>();
-            kindMap.put(DefinitionKind.contract, new String[] { contractId });
-            kindMap.put(DefinitionKind.variable, defines.toArray(new String[defines.size()]));
-            conDef = new Definition(loc, term, kindMap, visibility);
-
-            definitions.add(conDef);
-          } else
-            errors.reportError("multiple definitions for " + contractName + " defined, earlier definition at "
-                + conDef.getLoc(), loc, conDef.getLoc());
-        } else
-          errors.reportError("invalid contract spec: " + term, loc);
-      } else if (CompilerUtils.isTypeAnnotation(term)) {
-        IAbstract lhs = CompilerUtils.typeAnnotatedTerm(term);
-
-        if (Abstract.isIdentifier(lhs))
-          typeAnnotations.put(Abstract.getId(lhs), stmt);
-        else
-          errors.reportError("type annotations apply to identifiers", term.getLoc());
-
-        if (visibility == Visibility.priVate)
-          markPrivate(Abstract.getId(lhs), DefinitionKind.variable);
-      } else if (CompilerUtils.isVarDeclaration(term))
-        extractDefines(CompilerUtils.varPtnVar(CompilerUtils.varDeclarationPattern(term)), term, visibility);
-      else if (CompilerUtils.isIsStatement(term))
-        extractDefines(CompilerUtils.isStmtPattern(term), term, visibility);
-      else if (CompilerUtils.isFunctionStatement(term))
-        addDefinition(loc, Abstract.getId(CompilerUtils.functionName(term)), term, visibility, DefinitionKind.variable);
-      else if (CompilerUtils.isProcedureStatement(term))
-        addDefinition(loc, Abstract.getId(CompilerUtils.procedureName(term)), term, visibility, DefinitionKind.variable);
-      else if (CompilerUtils.isPatternStatement(term))
-        addDefinition(loc, Abstract.getId(CompilerUtils.patternName(term)), term, visibility, DefinitionKind.variable);
-      else if (CompilerUtils.isOpen(term))
-        definitions.add(new Definition(loc, term, new String[] {}, DefinitionKind.imports, visibility));
-      else if (CompilerUtils.isTypeAlias(term)) {
-        IAbstract definedType = CompilerUtils.typeAliasType(term);
-        String tpName = CompilerUtils.typeLabel(definedType);
-
-        makeDefinition(loc, tpName, term, visibility, DefinitionKind.type);
-      } else if (CompilerUtils.isTypeDefn(term)) {
-        IAbstract definedType = CompilerUtils.typeDefnType(term);
-        IAbstract spec = CompilerUtils.typeDefnConstructors(term);
-        String tpName = CompilerUtils.typeLabel(definedType);
-
-        Definition tpDef = findDefn(tpName, DefinitionKind.type);
-        if (tpDef == null) {
-          final ArrayList<String> definedNames = new ArrayList<>();
-
-          pickupDefinedConstructors(spec, definedNames);
+      if (Abstract.isIdentifier(contractName)) {
+        String contractId = Abstract.getId(contractName);
+        Definition conDef = findDefn(contractId, DefinitionKind.contract);
+        if (conDef == null) {
+          List<String> defines = findContractDefinitions(content);
 
           Map<DefinitionKind, String[]> kindMap = new HashMap<>();
-          kindMap.put(DefinitionKind.type, new String[] { tpName });
-          kindMap.put(DefinitionKind.constructor, definedNames.toArray(new String[definedNames.size()]));
-          tpDef = new Definition(loc, term, kindMap, visibility);
+          kindMap.put(DefinitionKind.contract, new String[]{contractId});
+          kindMap.put(DefinitionKind.variable, defines.toArray(new String[defines.size()]));
+          conDef = new Definition(loc, stmt, kindMap, visibility);
 
-          definitions.add(tpDef);
+          definitions.add(conDef);
         } else
-          errors.reportError("multiple definitions of type: " + tpName + " earlier definition at " + tpDef.getLoc(),
-              loc, tpDef.getLoc());
-      } else if (CompilerUtils.isTypeWitness(term)) {
-        String tpName = CompilerUtils.typeLabel(CompilerUtils.witnessedType(term));
-        makeDefinition(loc, tpName, term, visibility, DefinitionKind.type);
-      } else if (CompilerUtils.isEmptyBlock(term))
-        ;
-      else if (CompilerUtils.isBlockTerm(term))
-        localActions.add(Abstract.getArg(term, 0));
-      else if (Abstract.isUnary(term, StandardNames.ASSERT))
-        localActions.add(term);
+          errors.reportError("multiple definitions for " + contractName + " defined, earlier definition at "
+              + conDef.getLoc(), loc, conDef.getLoc());
+      } else
+        errors.reportError("invalid contract spec: " + stmt, loc);
+    } else if (CompilerUtils.isTypeAnnotation(stmt)) {
+      IAbstract lhs = CompilerUtils.typeAnnotatedTerm(stmt);
+
+      if (Abstract.isIdentifier(lhs))
+        typeAnnotations.put(Abstract.getId(lhs), stmt);
       else
-        others.add(term);
+        errors.reportError("type annotations apply to identifiers", stmt.getLoc());
+
+      if (visibility == Visibility.priVate)
+        markPrivate(Abstract.getId(lhs), DefinitionKind.variable);
+    } else if (CompilerUtils.isVarDeclaration(stmt))
+      extractDefines(CompilerUtils.varPtnVar(CompilerUtils.varDeclarationPattern(stmt)), stmt, visibility);
+    else if (CompilerUtils.isIsStatement(stmt))
+      extractDefines(CompilerUtils.isStmtPattern(stmt), stmt, visibility);
+    else if (CompilerUtils.isFunctionStatement(stmt))
+      addDefinition(loc, Abstract.getId(CompilerUtils.functionName(stmt)), stmt, visibility, DefinitionKind.variable);
+    else if (CompilerUtils.isProcedureStatement(stmt))
+      addDefinition(loc, Abstract.getId(CompilerUtils.procedureName(stmt)), stmt, visibility, DefinitionKind.variable);
+    else if (CompilerUtils.isPatternStatement(stmt))
+      addDefinition(loc, Abstract.getId(CompilerUtils.patternName(stmt)), stmt, visibility, DefinitionKind.variable);
+    else if (CompilerUtils.isOpen(stmt))
+      definitions.add(new Definition(loc, stmt, new String[]{}, DefinitionKind.imports, visibility));
+    else if (CompilerUtils.isTypeAlias(stmt)) {
+      IAbstract definedType = CompilerUtils.typeAliasType(stmt);
+      String tpName = CompilerUtils.typeLabel(definedType);
+
+      makeDefinition(loc, tpName, stmt, visibility, DefinitionKind.type);
+    } else if (CompilerUtils.isTypeDefn(stmt)) {
+      IAbstract definedType = CompilerUtils.typeDefnType(stmt);
+      IAbstract spec = CompilerUtils.typeDefnConstructors(stmt);
+      String tpName = CompilerUtils.typeLabel(definedType);
+
+      Definition tpDef = findDefn(tpName, DefinitionKind.type);
+      if (tpDef == null) {
+        final ArrayList<String> definedNames = new ArrayList<>();
+
+        pickupDefinedConstructors(spec, definedNames);
+
+        Map<DefinitionKind, String[]> kindMap = new HashMap<>();
+        kindMap.put(DefinitionKind.type, new String[]{tpName});
+        kindMap.put(DefinitionKind.constructor, definedNames.toArray(new String[definedNames.size()]));
+        tpDef = new Definition(loc, stmt, kindMap, visibility);
+
+        definitions.add(tpDef);
+      } else
+        errors.reportError("multiple definitions of type: " + tpName + " earlier definition at " + tpDef.getLoc(),
+            loc, tpDef.getLoc());
+    } else if (CompilerUtils.isTypeWitness(stmt)) {
+      String tpName = CompilerUtils.typeLabel(CompilerUtils.witnessedType(stmt));
+      makeDefinition(loc, tpName, stmt, visibility, DefinitionKind.type);
+    } else if (CompilerUtils.isEmptyBlock(stmt))
+      ;
+    else if (Abstract.isBinary(stmt, StandardNames.TERM)) {
+      thDepend(Abstract.binaryLhs(stmt), visibility);
+      thDepend(Abstract.binaryRhs(stmt), visibility);
+    } else if (Abstract.isUnary(stmt, StandardNames.TERM)) {
+      thDepend(Abstract.unaryArg(stmt), visibility);
+    } else if (CompilerUtils.isBlockTerm(stmt))
+      localActions.add(Abstract.getArg(stmt, 0));
+    else if (Abstract.isUnary(stmt, StandardNames.ASSERT))
+      localActions.add(stmt);
+    else
+      others.add(stmt);
+  }
+
+  private void thDepend(Iterable<IAbstract> theta) {
+    for (IAbstract stmt : theta) {
+      thDepend(stmt, Visibility.pUblic);
     }
   }
 
-  private void markPrivate(String name, DefinitionKind kind)
-  {
+  private void markPrivate(String name, DefinitionKind kind) {
     Definition defs = findLocalDefn(name, kind);
 
     if (defs != null)
@@ -527,8 +506,7 @@ public class Dependencies
     }
   }
 
-  private Visibility visibility(String name, Visibility deflt, DefinitionKind kind)
-  {
+  private Visibility visibility(String name, Visibility deflt, DefinitionKind kind) {
     Set<String> names = privateNames.get(kind);
     if (names != null && names.contains(name))
       return Visibility.priVate;
@@ -536,8 +514,7 @@ public class Dependencies
       return deflt;
   }
 
-  private Visibility visibility(Collection<String> names, Visibility deflt, DefinitionKind kind)
-  {
+  private Visibility visibility(Collection<String> names, Visibility deflt, DefinitionKind kind) {
     for (String name : names) {
       Set<String> prNames = privateNames.get(kind);
       if (prNames != null && prNames.contains(name))
@@ -546,8 +523,7 @@ public class Dependencies
     return deflt;
   }
 
-  private void makeDefinition(Location loc, String name, IAbstract stmt, Visibility visibility, DefinitionKind kind)
-  {
+  private void makeDefinition(Location loc, String name, IAbstract stmt, Visibility visibility, DefinitionKind kind) {
     Definition defs = findLocalDefn(name, kind);
 
     visibility = visibility(name, visibility, kind);
@@ -566,8 +542,7 @@ public class Dependencies
           + defs.get().getLoc(), loc, defs.get().getLoc());
   }
 
-  private void addDefinition(Location loc, String name, IAbstract stmt, Visibility visibility, DefinitionKind kind)
-  {
+  private void addDefinition(Location loc, String name, IAbstract stmt, Visibility visibility, DefinitionKind kind) {
     Definition defs = findLocalDefn(name, kind);
     visibility = visibility(name, visibility, kind);
 
@@ -584,8 +559,7 @@ public class Dependencies
       errors.reportError(StringUtils.msg(name, " already defined at ", defs.getLoc()), loc);
   }
 
-  private void extractDefines(IAbstract lhs, IAbstract term, Visibility visibility)
-  {
+  private void extractDefines(IAbstract lhs, IAbstract term, Visibility visibility) {
     Location loc = lhs.getLoc();
     List<String> defined = findDefinedNames(lhs, new ArrayList<>());
     if (!defined.isEmpty()) {
@@ -596,8 +570,7 @@ public class Dependencies
     }
   }
 
-  private List<String> findDefinedNames(IAbstract lhs, List<String> names)
-  {
+  private List<String> findDefinedNames(IAbstract lhs, List<String> names) {
     Location loc = lhs.getLoc();
     if (lhs instanceof Name) {
       String name = ((Name) lhs).getId();
@@ -616,8 +589,7 @@ public class Dependencies
     return names;
   }
 
-  private List<String> findContractDefinitions(IAbstract arg)
-  {
+  private List<String> findContractDefinitions(IAbstract arg) {
     List<String> definedByContract = new ArrayList<>();
 
     for (IAbstract el : CompilerUtils.unWrap(arg)) {
@@ -631,8 +603,7 @@ public class Dependencies
     return definedByContract;
   }
 
-  private void pickupDefinedConstructors(IAbstract arg, ArrayList<String> definedNames)
-  {
+  private void pickupDefinedConstructors(IAbstract arg, ArrayList<String> definedNames) {
     if (Abstract.isBinary(arg, StandardNames.OR)) {
       pickupDefinedConstructors(Abstract.getArg(arg, 0), definedNames);
       pickupDefinedConstructors(Abstract.getArg(arg, 1), definedNames);
@@ -646,8 +617,7 @@ public class Dependencies
       definedNames.add(((Name) ((Apply) arg).getOperator()).getId());
   }
 
-  private DefinitionKind kindOfStmt(IAbstract stmt)
-  {
+  private DefinitionKind kindOfStmt(IAbstract stmt) {
     if (CompilerUtils.isTypeAlias(stmt))
       return DefinitionKind.type;
     else if (CompilerUtils.isTypeDefn(stmt))
@@ -666,18 +636,15 @@ public class Dependencies
       return DefinitionKind.variable;
   }
 
-  public Map<String, IAbstract> getTypes()
-  {
+  public Map<String, IAbstract> getTypes() {
     return typeAnnotations;
   }
 
-  public List<IAbstract> getOthers()
-  {
+  public List<IAbstract> getOthers() {
     return others;
   }
 
-  public List<IAbstract> getLocalActions()
-  {
+  public List<IAbstract> getLocalActions() {
     return localActions;
   }
 }

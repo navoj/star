@@ -4841,9 +4841,9 @@ public class TypeChecker {
 
   private void namedImportPkg(IAbstract stmt, Dictionary cxt, List<IStatement> definitions, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
-      namedImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.priVate);
+      namedImportPkg(CompilerUtils.stripVisibility(stmt), cxt, definitions, Visibility.priVate);
     else if (CompilerUtils.isPublic(stmt))
-      namedImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.pUblic);
+      namedImportPkg(CompilerUtils.stripVisibility(stmt), cxt, definitions, Visibility.pUblic);
     else {
       final Location loc = stmt.getLoc();
 
