@@ -142,8 +142,6 @@ public class Intrinsics extends Dict {
     NTuple.declare(intrinsics);
 
     GStopHere.declare(intrinsics);
-
-    Location noWhere = Location.nullLoc;
   }
 
   private Intrinsics() {

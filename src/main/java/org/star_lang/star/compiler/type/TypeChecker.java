@@ -4705,7 +4705,6 @@ public class TypeChecker {
 
       addTypeEntry(contract.getName(), new Type(contract.getName(), Kind.kind(contractType
           .typeArity())));
-      Location loc = contract.getLoc();
 
       for (IValueSpecifier spec : contractType.getValueSpecifiers())
         addFieldEntry(spec.getLabel(), spec.getConType());
@@ -4719,7 +4718,6 @@ public class TypeChecker {
     public void visitImportEntry(ImportEntry entry) {
       TypeInterfaceType imported = (TypeInterfaceType) TypeUtils.interfaceOfType(entry.getLoc(), entry.getPkgType(),
           dict, errors);
-      Location loc = entry.getLoc();
       for (Entry<String, IType> field : imported.getAllFields().entrySet())
         addFieldEntry(field.getKey(), field.getValue());
       for (Entry<String, IType> type : imported.getAllTypes().entrySet())
@@ -4733,7 +4731,6 @@ public class TypeChecker {
     @Override
     public void visitTypeEntry(TypeDefinition type) {
       if (!type.isFromContract()) {
-        Location loc = type.getLoc();
 
         IAlgebraicType def = type.getTypeDescription();
         addTypeEntry(type.getName(), new Type(def.getName(), Kind.kind(def.typeArity())));
@@ -4790,7 +4787,6 @@ public class TypeChecker {
       IType recordF = TypeUtils.interfaceOfType(open.getLoc(), record.getType(), dict, errors);
 
       if (TypeUtils.isTypeInterface(recordF)) {
-        Location loc = open.getLoc();
         TypeInterfaceType recordFace = (TypeInterfaceType) TypeUtils.unwrap(recordF);
         for (Entry<String, IType> fEntry : recordFace.getAllFields().entrySet())
           addFieldEntry(fEntry.getKey(), fEntry.getValue());
@@ -4901,9 +4897,9 @@ public class TypeChecker {
   // import package and open it
   private void openImportPkg(IAbstract stmt, Dictionary cxt, List<IStatement> definitions, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
-      openImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.priVate);
+      openImportPkg(CompilerUtils.stripVisibility(stmt), cxt, definitions, Visibility.priVate);
     else if (CompilerUtils.isPublic(stmt))
-      openImportPkg(CompilerUtils.privateTerm(stmt), cxt, definitions, Visibility.pUblic);
+      openImportPkg(CompilerUtils.stripVisibility(stmt), cxt, definitions, Visibility.pUblic);
     else {
       final Location loc = stmt.getLoc();
 
@@ -5025,7 +5021,7 @@ public class TypeChecker {
 
   private void importJava(IAbstract stmt, Dictionary dict, List<IStatement> stmts, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
-      importJava(CompilerUtils.privateTerm(stmt), dict, stmts, Visibility.priVate);
+      importJava(CompilerUtils.stripVisibility(stmt), dict, stmts, Visibility.priVate);
     else if (CompilerUtils.isPublic(stmt))
       importJava(CompilerUtils.stripVisibility(stmt), dict, stmts, Visibility.pUblic);
     else {
@@ -5072,9 +5068,9 @@ public class TypeChecker {
   // import package and open it
   private void openRecord(IAbstract stmt, Dictionary dict, List<IStatement> definitions, Visibility visibility) {
     if (CompilerUtils.isPrivate(stmt))
-      openRecord(CompilerUtils.privateTerm(stmt), dict, definitions, Visibility.priVate);
+      openRecord(CompilerUtils.stripVisibility(stmt), dict, definitions, Visibility.priVate);
     else  if (CompilerUtils.isPublic(stmt))
-      openRecord(CompilerUtils.privateTerm(stmt), dict, definitions, Visibility.pUblic);
+      openRecord(CompilerUtils.stripVisibility(stmt), dict, definitions, Visibility.pUblic);
     else {
       final Location loc = stmt.getLoc();
 
@@ -5485,6 +5481,8 @@ public class TypeChecker {
             errors.reportError("invalid type annotation", typeAnnotation.getLoc());
           }
         }
+//        else if(!declaredTypes.containsKey(name))
+//          errors.reportWarning(StringUtils.msg(name," not declared, consider giving an explicit type annotation"),def.getLoc());
       }
     }
 
@@ -5647,7 +5645,7 @@ public class TypeChecker {
     } else if (CompilerUtils.isPrivate(stmt))
       checkDefinition(CompilerUtils.privateTerm(stmt), defPtn, access, cxt, outer, Visibility.priVate, defs);
     else if (CompilerUtils.isPublic(stmt))
-      checkDefinition(CompilerUtils.privateTerm(stmt), defPtn, access, cxt, outer, Visibility.pUblic, defs);
+      checkDefinition(CompilerUtils.publicTerm(stmt), defPtn, access, cxt, outer, Visibility.pUblic, defs);
     else if (CompilerUtils.isIsStatement(stmt)) {
       IContentExpression val = typeOfExp(CompilerUtils.isStmtValue(stmt), defPtn.getType(), cxt.fork(), outer);
 
@@ -5832,7 +5830,7 @@ public class TypeChecker {
     } else if (CompilerUtils.isVarDeclaration(stmt)) {
       accessMode = accessPolicy(loc, readWrite, accessMode);
     } else if (CompilerUtils.isPrivate(stmt))
-      return variablePolicy(CompilerUtils.privateTerm(stmt), accessMode);
+      return variablePolicy(CompilerUtils.stripVisibility(stmt), accessMode);
     else if (CompilerUtils.isPublic(stmt))
       return variablePolicy(CompilerUtils.stripVisibility(stmt), accessMode);
     else

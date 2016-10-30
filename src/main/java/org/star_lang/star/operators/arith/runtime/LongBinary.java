@@ -202,7 +202,6 @@ public abstract class LongBinary
     }
   }
 
-  @SuppressWarnings("RedundantCast")
   public static class LongLeft implements IFunction
   {
     @CafeEnter
@@ -225,7 +224,6 @@ public abstract class LongBinary
     }
   }
 
-  @SuppressWarnings("RedundantCast")
   public static class LongRight implements IFunction
   {
     @CafeEnter

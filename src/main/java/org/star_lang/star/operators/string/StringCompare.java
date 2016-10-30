@@ -7,14 +7,12 @@ import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.StandardTypes;
 import org.star_lang.star.operators.Builtin;
 import org.star_lang.star.operators.Intrinsics;
-import org.star_lang.star.operators.string.runtime.*;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringEQ;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringGE;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringGT;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringLE;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringLT;
 import org.star_lang.star.operators.string.runtime.StringCompare.StringNE;
-import org.star_lang.star.operators.string.runtime.StringOps;
 
 /*
   * Copyright (c) 2015. Francis G. McCabe

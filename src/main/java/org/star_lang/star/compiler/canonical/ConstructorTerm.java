@@ -80,6 +80,7 @@ public class ConstructorTerm extends BaseExpression {
     return transform.transformConstructor(this, context);
   }
 
+  @SuppressWarnings("unused")
   private static IType makeType(IContentExpression args[]) {
     IType aTypes[] = new IType[args.length];
     for (int ix = 0; ix < args.length; ix++)
@@ -87,6 +88,7 @@ public class ConstructorTerm extends BaseExpression {
     return TypeUtils.tupleType(aTypes);
   }
 
+  @SuppressWarnings("unused")
   private static IType makeType(List<IContentExpression> args) {
     IType aTypes[] = new IType[args.size()];
     for (int ix = 0; ix < args.size(); ix++)

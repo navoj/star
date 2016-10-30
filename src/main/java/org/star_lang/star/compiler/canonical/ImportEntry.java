@@ -27,6 +27,7 @@ import java.util.Collection;
 /**
  * Created by fgm on 9/14/15.
  */
+@SuppressWarnings("serial")
 public class ImportEntry extends EnvironmentEntry {
   private final String pkgName;
   private final IType pkgType;

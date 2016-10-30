@@ -451,7 +451,6 @@ public class Patterns {
 
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     Expressions.checkType(termSpec, SrcSpec.rawIntSrc, mtd, dict, hwm);
 
@@ -473,7 +472,6 @@ public class Patterns {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     Expressions.checkType(termSpec, SrcSpec.rawLngSrc, mtd, dict, hwm);
 
@@ -495,7 +493,6 @@ public class Patterns {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     Expressions.checkType(termSpec, SrcSpec.rawDblSrc, mtd, dict, hwm);
 
@@ -524,7 +521,6 @@ public class Patterns {
     Location loc = lit.getLoc();
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     Expressions.checkType(termSpec, SrcSpec.rawStringSrc, mtd, dict, hwm);
 
@@ -549,7 +545,6 @@ public class Patterns {
     assert CafeSyntax.isRegexp(regexp);
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     Expressions.checkType(termSpec, SrcSpec.rawStringSrc, mtd, dict, hwm);
 
@@ -635,7 +630,6 @@ public class Patterns {
     VarInfo var = dict.find(name);
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
-    CodeCatalog bldCat = ccxt.getBldCat();
 
     InsnList ins = mtd.instructions;
     LabelNode okLabel = new LabelNode();

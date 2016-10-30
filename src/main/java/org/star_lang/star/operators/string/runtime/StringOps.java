@@ -1272,7 +1272,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(rawIntType, rawBoolType);
+      return TypeUtils.functionType(rawIntType, booleanType);
     }
   }
 
@@ -1295,7 +1295,7 @@ public class StringOps {
     }
 
     public static IType type() {
-      return TypeUtils.functionType(rawIntType, rawBoolType);
+      return TypeUtils.functionType(rawIntType, booleanType);
     }
   }
 

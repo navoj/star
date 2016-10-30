@@ -21,7 +21,8 @@ binaryTrees is package{
     logMsg(info,X);
     valis Y
   };
-  
+
+  main has type ()=>()
   prc main() do
   {
     def N is 16;

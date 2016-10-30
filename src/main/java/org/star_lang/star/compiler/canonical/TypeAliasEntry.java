@@ -25,6 +25,7 @@ import java.util.Collection;
 /**
  * Created by fgm on 9/14/15.
  */
+@SuppressWarnings("serial")
 public class TypeAliasEntry extends EnvironmentEntry {
   final private ITypeAlias typeAlias;
   final private String name;

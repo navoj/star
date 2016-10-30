@@ -25,6 +25,7 @@ import java.util.Collection;
 /**
  * Created by fgm on 9/14/15.
  */
+@SuppressWarnings("serial")
 public class ContractEntry extends EnvironmentEntry {
   private final TypeContract contract;
   private final String name;

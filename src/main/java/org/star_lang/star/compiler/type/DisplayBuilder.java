@@ -1,7 +1,18 @@
 package org.star_lang.star.compiler.type;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.star_lang.star.compiler.CompilerUtils;
-import org.star_lang.star.compiler.ast.*;
+import org.star_lang.star.compiler.ast.Abstract;
+import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.IAbstract;
+import org.star_lang.star.compiler.ast.IntegerLiteral;
+import org.star_lang.star.compiler.ast.Name;
+import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.ComboIterable;
 import org.star_lang.star.compiler.util.FixedList;
@@ -14,34 +25,26 @@ import org.star_lang.star.operators.string.runtime.Number2String.Float2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Integer2String;
 import org.star_lang.star.operators.string.runtime.Number2String.Long2String;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 /**
  * This class is focused on implementing the pp contract -- if possible -- for a given type
  * description
- *
+ * <p>
  * Copyright (c) 2015. Francis G. McCabe
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
-public class DisplayBuilder
-{
+public class DisplayBuilder {
   private static boolean checkThetaForImplementation(String tpLabel, String contract, Iterable<IAbstract> theta,
-      Dictionary dict)
-  {
+                                                     Dictionary dict) {
     if (TypeUtils.implementsContract(tpLabel, contract, dict))
       return true;
     else
@@ -57,8 +60,7 @@ public class DisplayBuilder
     return false;
   }
 
-  public static Iterable<IAbstract> checkForDisplay(Iterable<IAbstract> theta, Dictionary dict)
-  {
+  public static Iterable<IAbstract> checkForDisplay(Iterable<IAbstract> theta, Dictionary dict) {
     Map<String, IAbstract> printers = new HashMap<>();
     for (IAbstract stmt : theta) {
       Visibility visibility = CompilerUtils.visibility(stmt);
@@ -106,8 +108,7 @@ public class DisplayBuilder
   }
 
   private static void lookForAnonTypes(IAbstract tp, Dictionary dict, Iterable<IAbstract> theta,
-      Map<String, IAbstract> printers)
-  {
+                                       Map<String, IAbstract> printers) {
     if (Abstract.isBinary(tp, StandardNames.OF)) {
       IAbstract tpArgs = Abstract.binaryRhs(tp);
 
@@ -157,8 +158,7 @@ public class DisplayBuilder
     }
   }
 
-  private static void buildRecordDisplay(IAbstract tp, Map<String, IAbstract> printers)
-  {
+  private static void buildRecordDisplay(IAbstract tp, Map<String, IAbstract> printers) {
     assert CompilerUtils.isAnonAggConLiteral(tp);
 
     Location loc = tp.getLoc();
@@ -197,8 +197,7 @@ public class DisplayBuilder
     }
   }
 
-  private static void buildTupleDisplay(IAbstract tp, Map<String, IAbstract> printers)
-  {
+  private static void buildTupleDisplay(IAbstract tp, Map<String, IAbstract> printers) {
     assert Abstract.isTupleTerm(tp);
 
     Location loc = tp.getLoc();
@@ -225,6 +224,7 @@ public class DisplayBuilder
       implType = Abstract.binary(loc, StandardNames.WHERE, implType, constraint);
 
     if (eqn != null) {
+      IAbstract annot = CompilerUtils.typeAnnotationStmt(loc, new Name(loc, label), CompilerUtils.functionType(loc, fieldTypes, new Name(loc, StandardNames.PP)));
       IAbstract defn = CompilerUtils.letExp(loc, CompilerUtils.blockTerm(loc, eqn), CompilerUtils.blockTerm(loc,
           Abstract.binary(loc, StandardNames.EQUAL, new Name(loc, StandardNames.PPDISP), new Name(loc, label))));
       printers.put(CompilerUtils.typeLabel(tp), CompilerUtils.privateStmt(loc, CompilerUtils.implementationStmt(loc,
@@ -234,8 +234,7 @@ public class DisplayBuilder
   }
 
   private static void checkTypeAnnotations(Iterable<IAbstract> env, Dictionary dict, Map<String, IAbstract> printers,
-      Iterable<IAbstract> theta)
-  {
+                                           Iterable<IAbstract> theta) {
     for (IAbstract stmt : env) {
       if (CompilerUtils.isTypeAnnotation(stmt)) {
         IAbstract type = CompilerUtils.typeAnnotation(stmt);
@@ -245,8 +244,7 @@ public class DisplayBuilder
     }
   }
 
-  private static boolean checkExistentials(IAbstract stmt)
-  {
+  private static boolean checkExistentials(IAbstract stmt) {
     IAbstract specs = CompilerUtils.typeDefnConstructors(stmt);
 
     if (Abstract.isBinary(specs, StandardNames.WHERE))
@@ -266,8 +264,7 @@ public class DisplayBuilder
     return false;
   }
 
-  private static boolean checkConstraint(IAbstract cons, String lbl)
-  {
+  private static boolean checkConstraint(IAbstract cons, String lbl) {
     for (IAbstract con : CompilerUtils.unWrap(cons, StandardNames.AND)) {
       if (CompilerUtils.isContractSpec(con)) {
         IAbstract c = CompilerUtils.contractSpecName(con);
@@ -279,8 +276,7 @@ public class DisplayBuilder
     return false;
   }
 
-  private static IAbstract ppImplementation(IAbstract stmt, Dictionary dict)
-  {
+  private static IAbstract ppImplementation(IAbstract stmt, Dictionary dict) {
     assert CompilerUtils.isTypeDefn(stmt);
 
     IAbstract specs = CompilerUtils.typeDefnConstructors(stmt);
@@ -321,8 +317,7 @@ public class DisplayBuilder
     return null;
   }
 
-  private static IAbstract seqPPimplementation(IAbstract stmt, Dictionary dict)
-  {
+  private static IAbstract seqPPimplementation(IAbstract stmt, Dictionary dict) {
     assert CompilerUtils.isTypeDefn(stmt);
 
     Location loc = stmt.getLoc();
@@ -352,8 +347,7 @@ public class DisplayBuilder
     return CompilerUtils.implementationStmt(loc, CompilerUtils.universalType(loc, tVars, implType), defn);
   }
 
-  private static IAbstract specFunctions(Location loc, String label, IAbstract term, IAbstract type, IAbstract prtType)
-  {
+  private static IAbstract specFunctions(Location loc, String label, IAbstract term, IAbstract type, IAbstract prtType) {
     List<IAbstract> eqns = new ArrayList<>();
 
     for (IAbstract el : CompilerUtils.unWrap(term, StandardNames.OR)) {
@@ -366,8 +360,7 @@ public class DisplayBuilder
         CompilerUtils.function(loc, eqns));
   }
 
-  private static IAbstract specDisplay(Location loc, String label, IAbstract term, IAbstract type)
-  {
+  private static IAbstract specDisplay(Location loc, String label, IAbstract term, IAbstract type) {
     if (Abstract.isBinary(term, StandardNames.WHERE))
       return specDisplay(loc, label, Abstract.binaryLhs(term), type);
     else if (term instanceof Name)
@@ -380,13 +373,12 @@ public class DisplayBuilder
 
   /**
    * Construct
-   * 
+   * <p>
    * <pre>
    * <label>(<enum>) is ppStr("<enum>");
    * </pre>
    */
-  private static IAbstract enumDisplay(Location loc, String label, IAbstract term)
-  {
+  private static IAbstract enumDisplay(Location loc, String label, IAbstract term) {
     assert term instanceof Name;
     List<IAbstract> args = new ArrayList<>();
     args.add(term);
@@ -395,15 +387,13 @@ public class DisplayBuilder
 
   /**
    * Construct display for a constructor
-   * 
+   * <p>
    * <pre>
-   * <label>(<con>(L1,..,Ln)) is ppSequence(2,Cons of { 
+   * <label>(<con>(L1,..,Ln)) is ppSequence(2,Cons of {
    *   ppStr("<con>(");ppDisp(L1); ppStr(",");...;ppStr(",");ppDisp(Ln);ppStr(")")})
    * </pre>
-   * 
    */
-  private static IAbstract displayConstructor(Location loc, String label, IAbstract term, IAbstract type)
-  {
+  private static IAbstract displayConstructor(Location loc, String label, IAbstract term, IAbstract type) {
     assert term instanceof Apply;
     List<IAbstract> lVars = new ArrayList<>();
 
@@ -419,8 +409,7 @@ public class DisplayBuilder
   }
 
   private static IAbstract argSeq(Apply term, int ix, int arity, List<IAbstract> lVars, IAbstract type, String label,
-      IAbstract tail)
-  {
+                                  IAbstract tail) {
     Location loc = term.getLoc();
     if (ix == arity)
       return tail;
@@ -437,46 +426,39 @@ public class DisplayBuilder
     }
   }
 
-  private static IAbstract cons(Location loc, IAbstract lhs, IAbstract rhs)
-  {
+  private static IAbstract cons(Location loc, IAbstract lhs, IAbstract rhs) {
     return Abstract.binary(loc, "cons", lhs, rhs);
   }
 
-  private static IAbstract nil(Location loc)
-  {
+  private static IAbstract nil(Location loc) {
     return Abstract.zeroary(loc, "nil");
   }
 
-  private static IAbstract str(Location loc, String str)
-  {
+  private static IAbstract str(Location loc, String str) {
     return Abstract.unary(loc, "ppStr", Abstract.newString(loc, str));
   }
 
-  private static IAbstract str(Location loc, IAbstract str)
-  {
+  private static IAbstract str(Location loc, IAbstract str) {
     return Abstract.unary(loc, "ppStr", str);
   }
 
-  private static IAbstract seq(Location loc, int indent, IAbstract str)
-  {
+  private static IAbstract seq(Location loc, int indent, IAbstract str) {
     return Abstract.binary(loc, "ppSequence", new IntegerLiteral(loc, indent), str);
   }
 
-  private static IAbstract nl(Location loc)
-  {
+  private static IAbstract nl(Location loc) {
     return Abstract.name(loc, "ppNl");
   }
 
   /**
    * Construct
-   * 
+   * <p>
    * <pre>
    * <label>(<con>{F1=L1;...;Fn=Ln}) is "<con>{"++"F1"=L1++";"++...++";"++"Fn="++Ln++"}"
    * </pre>
    */
 
-  private static IAbstract displayRecord(Location loc, String label, IAbstract term, IAbstract type)
-  {
+  private static IAbstract displayRecord(Location loc, String label, IAbstract term, IAbstract type) {
     assert CompilerUtils.isBraceTerm(term) && Abstract.isName(CompilerUtils.braceLabel(term));
 
     String conLbl = Abstract.getId(CompilerUtils.braceLabel(term));
@@ -486,8 +468,7 @@ public class DisplayBuilder
   }
 
   public static IAbstract displayRecordContents(Location loc, String label, IAbstract type, String conLabel,
-      IAbstract content)
-  {
+                                                IAbstract content) {
     IAbstract dispLbl = Abstract.newString(loc, conLabel + "{");
     IAbstract suffix = Abstract.newString(loc, "}");
     IAbstract sep = str(loc, Abstract.newString(loc, "; "));
@@ -536,8 +517,7 @@ public class DisplayBuilder
     return CompilerUtils.equation(loc, label, args, dispSequence);
   }
 
-  private static IAbstract display(Location loc, IAbstract attTp, IAbstract labelType, Name lV, String label)
-  {
+  private static IAbstract display(Location loc, IAbstract attTp, IAbstract labelType, Name lV, String label) {
     if (attTp.equals(labelType))
       return Abstract.unary(loc, label, lV);
     else if (Abstract.isName(attTp, StandardTypes.RAW_INTEGER))
@@ -557,8 +537,7 @@ public class DisplayBuilder
       return str(loc, Abstract.unary(loc, DisplayTerm.name, lV));
   }
 
-  private static boolean supportsDisplay(IAbstract type)
-  {
+  private static boolean supportsDisplay(IAbstract type) {
     return !CompilerUtils.isProgramType(type) && !Abstract.isName(type, StandardNames.ANY);
   }
 

@@ -65,7 +65,6 @@ public class ArraySet<E> implements Set<E>, PrettyPrintable
     return els.toArray();
   }
 
-  @SuppressWarnings("SuspiciousToArrayCall")
   @Override
   public <T> T[] toArray(T[] a)
   {

@@ -134,7 +134,10 @@ implementation equality over ((%l,%r) where equality over %l and equality over %
   (=) = pairEq;
   hashCode = pairHash
 } using {
-  fun pairEq((L1,R1),(L2,R2)) is L1=L2 and R1=R2;
+  -- pairEq has type ((%l,%r),(%l,%r)) => boolean
+  fun pairEq((L1,R1),(L2,R2)) is L1=L2 and R1=R2
+
+  -- pairHash has type ((%l,%r))=>integer
   fun pairHash(L) is integer(__hashCode(L))
 }
 

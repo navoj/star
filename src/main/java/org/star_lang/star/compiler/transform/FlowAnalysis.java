@@ -281,7 +281,7 @@ public class FlowAnalysis
           IContentPattern ptn = extractPtn(pred.getPtn(), extra);
           VarAnalysis.findDefinedVars(ptn, newlyDefined);
 
-          searchLoop: for (int jx = 0; jx < conjuncts.size();) {
+          for (int jx = 0; jx < conjuncts.size();) {
             ICondition test = conjuncts.get(jx);
             if (CompilerUtils.isEquality(test)) {
               if (!VarAnalysis.allDefined(CompilerUtils.equalityLhs(test), newlyDefined)) {

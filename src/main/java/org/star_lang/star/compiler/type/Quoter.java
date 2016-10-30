@@ -38,7 +38,6 @@ import static org.star_lang.star.data.type.StandardTypes.booleanType;
 
 public class Quoter implements IAbstractVisitor {
   private final Stack<IContentExpression> stack = new Stack<>();
-  @SuppressWarnings("FieldCanBeLocal")
   private final Map<Location, Variable> locations = new HashMap<>();
   private final List<IContentAction> locDefs = new ArrayList<>();
   private final Dictionary cxt;

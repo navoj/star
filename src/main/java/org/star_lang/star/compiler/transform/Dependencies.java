@@ -172,8 +172,10 @@ public class Dependencies {
       while (exclusion.size() > mark)
         exclusion.pop();
       return low;
-    } else if (Abstract.isUnary(term, StandardNames.PRIVATE))
-      return analyse(Abstract.unaryArg(term), kind, low, exclusion);
+    } else if (CompilerUtils.isPrivate(term))
+      return analyse(CompilerUtils.privateTerm(term), kind, low, exclusion);
+    else if (CompilerUtils.isPublic(term))
+      return analyse(CompilerUtils.publicTerm(term), kind, low, exclusion);
     else {
       // Try special rules for the different kinds of definition
       switch (kind) {

@@ -17,6 +17,7 @@ import java.io.InputStream;
  *
  * Created by fgm on 7/13/15.
  */
+@SuppressWarnings("serial")
 public class InChnl implements IScalar<InChnl>, PrettyPrintable {
   public static final String typeLabel = "__inputStream";
   public static final IType type = new Type(typeLabel);

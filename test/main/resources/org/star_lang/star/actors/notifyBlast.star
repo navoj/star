@@ -4,7 +4,7 @@ notifyBlast is package{
   -- Test sending many notifies
   type pingType is alias of actor of {ping has type action(integer); count has type ref integer};
   
-  pinger has type ()=> pingType;
+  pinger has type () => pingType;
   fun pinger() is actor{
     var count := 0;
     on X on ping do {
@@ -23,6 +23,7 @@ notifyBlast is package{
     valis query A's count with count;
   }
 
+  main has type ()=>()
   prc main() do {
     def Pi is pinger();
     

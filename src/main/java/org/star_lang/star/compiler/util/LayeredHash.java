@@ -149,7 +149,6 @@ public class LayeredHash<K, V> implements LayeredMap<K, V>
     map.putAll(t);
   }
 
-  @SuppressWarnings("SuspiciousMethodCalls")
   @Override
   public V remove(Object key)
   {

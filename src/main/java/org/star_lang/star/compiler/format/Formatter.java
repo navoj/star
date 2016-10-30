@@ -284,6 +284,8 @@ public class Formatter
         findMetaRules(CompilerUtils.packageContents(stmt), catalog, repository, errors, wffRules, fmtRules, imports);
       } else if (CompilerUtils.isPrivate(stmt))
         findMetaRules(CompilerUtils.privateTerm(stmt), catalog, repository, errors, wffRules, fmtRules, imports);
+      else if (CompilerUtils.isPublic(stmt))
+        findMetaRules(CompilerUtils.publicTerm(stmt), catalog, repository, errors, wffRules, fmtRules, imports);
       else if (CompilerUtils.isImport(stmt)) {
         IAbstract pkgName = CompilerUtils.importPkg(stmt);
         ResourceURI pkgUri = CompileDriver.uriOfPkgRef(pkgName, catalog);

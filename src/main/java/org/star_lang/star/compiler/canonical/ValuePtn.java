@@ -16,12 +16,12 @@ package org.star_lang.star.compiler.canonical;
 
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
-import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 
 /**
  * Created by fgm on 4/14/16.
  */
+@SuppressWarnings("serial")
 public class ValuePtn extends ContentPattern {
   private final IContentExpression value;
 

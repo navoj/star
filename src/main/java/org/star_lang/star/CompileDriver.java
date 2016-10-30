@@ -128,7 +128,7 @@ public class CompileDriver {
 
       errors.startTimer("find meta");
       findMetaRules(repository, term, errors, pkgOps, pkgWff, pkgFmt, catalog, macroStmts, normalStmts, imports,
-          Visibility.pUblic);
+          Visibility.priVate);
       errors.recordTime("find meta");
 
       if (!isPreamble) {
@@ -323,6 +323,8 @@ public class CompileDriver {
     public void processTerm(IAbstract term) {
       if (CompilerUtils.isPrivate(term))
         processTerm(CompilerUtils.privateTerm(term));
+      else if (CompilerUtils.isPublic(term))
+        processTerm(CompilerUtils.publicTerm(term));
       else if (CompilerUtils.isImport(term)) {
         IAbstract pkgRef = CompilerUtils.importPkg(term);
         Location loc = term.getLoc();

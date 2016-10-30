@@ -1,19 +1,22 @@
 package org.star_lang.star.data.value;
 
+import java.util.Iterator;
+
 import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
-import org.star_lang.star.data.*;
+import org.star_lang.star.data.EvaluationException;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.IPattern;
+import org.star_lang.star.data.ISet;
+import org.star_lang.star.data.IValue;
+import org.star_lang.star.data.IValueVisitor;
 import org.star_lang.star.data.indextree.Fold;
 import org.star_lang.star.data.indextree.IndexSet;
-import org.star_lang.star.data.indextree.IndexTree;
 import org.star_lang.star.data.indextree.Sets;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.TypeVar;
-
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

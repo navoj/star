@@ -18,9 +18,19 @@ import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
 import org.star_lang.star.compiler.cafe.compile.VarPattern;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
-import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.util.AccessMode;
-import org.star_lang.star.data.value.Cons;
+import org.star_lang.star.compiler.canonical.CastPtn;
+import org.star_lang.star.compiler.canonical.ConstructorPtn;
+import org.star_lang.star.compiler.canonical.IContentPattern;
+import org.star_lang.star.compiler.canonical.MatchingPattern;
+import org.star_lang.star.compiler.canonical.PatternApplication;
+import org.star_lang.star.compiler.canonical.RecordPtn;
+import org.star_lang.star.compiler.canonical.RegExpPattern;
+import org.star_lang.star.compiler.canonical.ScalarPtn;
+import org.star_lang.star.compiler.canonical.TransformPattern;
+import org.star_lang.star.compiler.canonical.TuplePtn;
+import org.star_lang.star.compiler.canonical.ValuePtn;
+import org.star_lang.star.compiler.canonical.Variable;
+import org.star_lang.star.compiler.canonical.WherePattern;
 
 /**
  * Created by fgm on 9/8/15.

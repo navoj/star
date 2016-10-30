@@ -13,7 +13,6 @@ import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.IValueVisitor;
 import org.star_lang.star.data.type.ConstructorSpecifier;
 import org.star_lang.star.data.type.IType;
-import org.star_lang.star.data.type.ITypeContext;
 import org.star_lang.star.data.type.ITypeDescription;
 import org.star_lang.star.data.type.IValueSpecifier;
 import org.star_lang.star.data.type.Location;

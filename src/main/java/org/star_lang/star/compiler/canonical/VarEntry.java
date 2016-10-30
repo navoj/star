@@ -117,8 +117,7 @@ public class VarEntry extends EnvironmentEntry {
 
   @Override
   public void prettyPrint(PrettyPrintDisplay disp) {
-    if (getVisibility() == Visibility.priVate)
-      disp.appendWord(StandardNames.PRIVATE);
+    getVisibility().display(disp);
     varPattern.prettyPrint(disp);
     disp.append(" has type ");
     DisplayType.display(disp, getType());

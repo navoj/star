@@ -1,5 +1,8 @@
 package org.star_lang.star.compiler.type;
 
+import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -28,5 +31,16 @@ public enum Visibility {
   /**
    * Private - not accessable externally.
    */
-  priVate
+  priVate;
+
+  public void display(PrettyPrintDisplay disp) {
+    switch (this) {
+    case pUblic:
+      disp.appendWord(StandardNames.PUBLIC);
+      return;
+    case priVate:
+      disp.appendWord(StandardNames.PRIVATE);
+      return;
+    }
+  }
 }

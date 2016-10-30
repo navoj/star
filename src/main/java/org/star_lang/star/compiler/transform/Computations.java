@@ -28,8 +28,7 @@ import java.util.Map.Entry;
  * permissions and limitations under the License.
  */
 
-public class Computations
-    implements
+public class Computations implements
     TransformAction<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
     TransformExpression<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
     TransformPattern<IContentExpression, IContentExpression, IContentPattern, ICondition, IStatement, ComputationContext>,
@@ -43,14 +42,15 @@ public class Computations
 
   public static final String COMPUTATION = "computation"; // the monad contract
   public static final String EXECUTION = "execution"; // the execution contract
-  public static final String INJECTION = "injection"; // the monad injection contract
+  public static final String INJECTION = "injection"; // the monad injection
+                                                      // contract
 
   public static final String INJECT = "_inject";
 
   public static final IType unitType = StandardTypes.unitType;
 
-  public static IContentExpression monasticate(IContentAction act, IType mType, IType eType, ErrorReport errors, Dictionary dict,
-                                               Dictionary outer) {
+  public static IContentExpression monasticate(IContentAction act, IType mType, IType eType, ErrorReport errors,
+      Dictionary dict, Dictionary outer) {
     ComputationContext cxt = new ComputationContext(mType, eType, dict, outer, errors);
     Computations trans = new Computations();
     IContentExpression res = delay(act.getLoc(), collectBindings(act.transform(trans, cxt), cxt), cxt);
@@ -206,15 +206,17 @@ public class Computations
 
     IType loopResultType = TypeUtils.typeExp(iterMtype, resType);
 
-//    IContentExpression cont = cxt.getExp();
+    // IContentExpression cont = cxt.getExp();
 
-//    ComputationContext bdyCxt = cxt.fork(cont);
-//    IContentExpression bodyExp = collectBindings(loop.getBody().transform(this, bdyCxt), bdyCxt);
+    // ComputationContext bdyCxt = cxt.fork(cont);
+    // IContentExpression bodyExp =
+    // collectBindings(loop.getBody().transform(this, bdyCxt), bdyCxt);
 
-    // return collectBindings(new ConditionalExp(loc, thn.getType(), test, thn, els), condCxt);
+    // return collectBindings(new ConditionalExp(loc, thn.getType(), test, thn,
+    // els), condCxt);
 
-    IContentExpression loopExp = QueryPlanner.transformForLoop(loc, loop.getDefined(), loop.getControl(), body,
-        resType, resType, dict, outer, errors);
+    IContentExpression loopExp = QueryPlanner.transformForLoop(loc, loop.getDefined(), loop.getControl(), body, resType,
+        resType, dict, outer, errors);
 
     // build the check function, which we will bind by hand...
 
@@ -222,20 +224,22 @@ public class Computations
 
     List<Triple<IContentPattern[], ICondition, IContentExpression>> eqns = new ArrayList<>();
 
-    Triple<IContentPattern[], ICondition, IContentExpression> eq1 = Triple.create(new IContentPattern[]{CompilerUtils
-        .noneFoundPtn(loc, resType)}, CompilerUtils.truth, cxt.getExp() != null ? cxt.getExp() : encapsulate(loc,
-        new VoidExp(loc, resType), cxt));
+    Triple<IContentPattern[], ICondition, IContentExpression> eq1 = Triple.create(
+        new IContentPattern[] { CompilerUtils.noneFoundPtn(loc, resType) }, CompilerUtils.truth,
+        cxt.getExp() != null ? cxt.getExp() : encapsulate(loc, new VoidExp(loc, resType), cxt));
     eqns.add(eq1);
 
     // If there was a valis, we take the result as our computation
     Variable resVar = new Variable(loc, resType, GenSym.genSym("__res"));
-    Triple<IContentPattern[], ICondition, IContentExpression> eq2 = Triple.create(new IContentPattern[]{CompilerUtils
-        .noMorePtn(loc, resVar)}, CompilerUtils.truth, encapsulate(loc, resVar, cxt));
+    Triple<IContentPattern[], ICondition, IContentExpression> eq2 = Triple.create(
+        new IContentPattern[] { CompilerUtils.noMorePtn(loc, resVar) }, CompilerUtils.truth,
+        encapsulate(loc, resVar, cxt));
     eqns.add(eq2);
 
     Variable exVar = new Variable(loc, StandardTypes.exceptionType, GenSym.genSym("__ex"));
-    Triple<IContentPattern[], ICondition, IContentExpression> eq3 = Triple.create(new IContentPattern[]{CompilerUtils
-        .abortIterPtn(loc, resType, exVar)}, CompilerUtils.truth, abort(loc, exVar, cxt));
+    Triple<IContentPattern[], ICondition, IContentExpression> eq3 = Triple.create(
+        new IContentPattern[] { CompilerUtils.abortIterPtn(loc, resType, exVar) }, CompilerUtils.truth,
+        abort(loc, exVar, cxt));
     eqns.add(eq3);
 
     IType checkType = Freshen.generalizeType(TypeUtils.functionType(loopResultType, taskType));
@@ -340,13 +344,14 @@ public class Computations
     Variable[] freeVars = free.toArray(new Variable[free.size()]);
 
     List<Triple<IContentPattern[], ICondition, IContentExpression>> eqns = new ArrayList<>();
-    IContentPattern[] loopArgs = new IContentPattern[]{anon};
+    IContentPattern[] loopArgs = new IContentPattern[] { anon };
 
-    IContentExpression lpBody = CompilerUtils.isTrivial(loopGuard) ? loopBody : new ConditionalExp(loc, loopTaskType,
-        loopGuard, loopBody, bind(loc, anon, encapsulate(loc, new VoidExp(loc), context), context));
+    IContentExpression lpBody = CompilerUtils.isTrivial(loopGuard) ? loopBody
+        : new ConditionalExp(loc, loopTaskType, loopGuard, loopBody,
+            bind(loc, anon, encapsulate(loc, new VoidExp(loc), context), context));
     lpBody = collectBindings(lpBody, gdCxt);
-    Triple<IContentPattern[], ICondition, IContentExpression> eqn = Triple
-        .create(loopArgs, CompilerUtils.truth, lpBody);
+    Triple<IContentPattern[], ICondition, IContentExpression> eqn = Triple.create(loopArgs, CompilerUtils.truth,
+        lpBody);
     FunctionLiteral loopFun = MatchCompiler.generateFunction(eqns, eqn, loopFunType, freeVars, loopVar.getName(), loc,
         context.getDict(), context.getOuter(), context.getErrors());
     return new LetTerm(loc, loopCall, new VarEntry(loc, loopVar, loopFun, AccessMode.readOnly, Visibility.priVate));
@@ -368,13 +373,6 @@ public class Computations
 
     Location loc = call.getLoc();
     return valofValis(loc, new VoidExp(loc), new ProcedureCallAction(loc, trOp, trArgs));
-  }
-
-  private IContentExpression[] transform(IContentExpression[] els, ComputationContext cxt) {
-    IContentExpression out[] = new IContentExpression[els.length];
-    for (int ix = 0; ix < els.length; ix++)
-      out[ix] = els[ix].transform(this, cxt);
-    return out;
   }
 
   @Override
@@ -428,8 +426,8 @@ public class Computations
       IContentExpression handler = exp2fun(loc, ex, abort, context);
 
       IContentExpression performed = performedTask(inner, context.getmType());
-      return handle(loc, performed, handler, context.getmType(), performed.getType(), context.getDict(), context
-          .getOuter(), context.getErrors());
+      return handle(loc, performed, handler, context.getmType(), performed.getType(), context.getDict(),
+          context.getOuter(), context.getErrors());
     } else if (isInjection(inner))
       return inject(loc, context.getmType(), injectedValue(inner), context.getDict(), context.getErrors());
     else
@@ -576,7 +574,9 @@ public class Computations
       final List<IStatement> env = let.getEnvironment();
       for (Pair<Variable, IContentExpression> e : bndCxt.getTempVars()) {
         final IContentExpression performed = e.right();
-        env.add(new VarEntry(loc, e.left(), perform(loc, bndCxt.getmType(), performed, context.getDict(), context.getErrors()), AccessMode.readOnly, Visibility.priVate));
+        env.add(new VarEntry(loc, e.left(),
+            perform(loc, bndCxt.getmType(), performed, context.getDict(), context.getErrors()), AccessMode.readOnly,
+            Visibility.priVate));
       }
       return new LetTerm(loc, trBound, env);
     }
@@ -918,14 +918,14 @@ public class Computations
   }
 
   public static IContentExpression exp2fun(Location loc, IContentPattern ptn, IContentExpression exp,
-                                           ComputationContext context) {
+      ComputationContext context) {
     return exp2fun(loc, ptn, exp, context.getDict(), context.getOuter(), context.getErrors());
   }
 
   public static IContentExpression exp2fun(Location loc, IContentPattern ptn, IContentExpression exp, Dictionary dict,
-                                           Dictionary outer, ErrorReport errors) {
+      Dictionary outer, ErrorReport errors) {
     IType funType = TypeUtils.functionType(ptn.getType(), exp.getType());
-    IContentPattern[] args = new IContentPattern[]{ptn};
+    IContentPattern[] args = new IContentPattern[] { ptn };
     Variable[] free = FreeVariables.freeFreeVars(args, exp, dict);
 
     return MatchCompiler.generateFunction(null, Triple.create(args, CompilerUtils.truth, exp), funType, free,
@@ -934,7 +934,7 @@ public class Computations
 
   private static IContentExpression exp2fun(Location loc, IContentExpression exp, ComputationContext context) {
     IType funType = TypeUtils.functionType(exp.getType());
-    IContentPattern[] args = new IContentPattern[]{};
+    IContentPattern[] args = new IContentPattern[] {};
     Variable[] free = FreeVariables.freeFreeVars(args, exp, context.getDict());
 
     return MatchCompiler.generateFunction(null, Triple.create(args, CompilerUtils.truth, exp), funType, free,
@@ -945,13 +945,13 @@ public class Computations
   // for all %a, %b, %%M st (%%M of %a,(%a)=>%%M of %b)=>%%M of %b
 
   private static IContentExpression bind(Location loc, IContentPattern ptn, IContentExpression exp,
-                                         ComputationContext context) {
-    return bind(loc, context.getExp(), ptn, exp, context.getmType(), context.getDict(), context.getOuter(), context
-        .getErrors());
+      ComputationContext context) {
+    return bind(loc, context.getExp(), ptn, exp, context.getmType(), context.getDict(), context.getOuter(),
+        context.getErrors());
   }
 
   public static IContentExpression bind(Location loc, IContentExpression cont, IContentPattern ptn,
-                                        IContentExpression exp, IType mType, Dictionary dict, Dictionary outer, ErrorReport errors) {
+      IContentExpression exp, IType mType, Dictionary dict, Dictionary outer, ErrorReport errors) {
     assert TypeUtils.isType(exp.getType(), mType, 1, dict);
 
     if (cont == null)
@@ -991,8 +991,7 @@ public class Computations
   }
 
   public static IContentExpression handle(Location loc, IContentExpression body, IContentExpression handler,
-                                          IType mType, IType bMonad, Dictionary dict,
-                                          Dictionary outer, ErrorReport errors) {
+      IType mType, IType bMonad, Dictionary dict, Dictionary outer, ErrorReport errors) {
     IType exType = new TypeVar();
     IType handleType = TypeUtils.functionType(bMonad, TypeUtils.functionType(exType, bMonad), bMonad);
 
@@ -1001,8 +1000,8 @@ public class Computations
     return Application.apply(loc, bMonad, handle, body, handler);
   }
 
-  private static IContentExpression combine(Location loc, IContentExpression val, IContentExpression cont,
-                                            IType aMonad, IType bMonad, Dictionary dict, ErrorReport errors) {
+  private static IContentExpression combine(Location loc, IContentExpression val, IContentExpression cont, IType aMonad,
+      IType bMonad, Dictionary dict, ErrorReport errors) {
     IType bindType = TypeUtils.functionType(aMonad, cont.getType(), bMonad);
 
     IContentExpression combine = TypeChecker.typeOfName(loc, COMBINE, bindType, dict, errors);
@@ -1016,8 +1015,8 @@ public class Computations
     TypeExp aMonad = new TypeExp(mType, aType);
     IType encapType = TypeUtils.functionType(aType, aMonad);
 
-    IContentExpression encapsulate = TypeChecker.typeOfName(loc, ENCAPSULATE, encapType, context.getDict(), context
-        .getErrors());
+    IContentExpression encapsulate = TypeChecker.typeOfName(loc, ENCAPSULATE, encapType, context.getDict(),
+        context.getErrors());
 
     return Application.apply(loc, aMonad, encapsulate, exp);
   }
@@ -1033,7 +1032,8 @@ public class Computations
     return Application.apply(loc, aMonad, abort, exp);
   }
 
-  // construct an outer 'delay' to prevent the task being performed until valof performed
+  // construct an outer 'delay' to prevent the task being performed until valof
+  // performed
   private static IContentExpression delay(Location loc, IContentExpression cont, ComputationContext context) {
     IContentExpression delayFun = exp2fun(loc, cont, context);
 
@@ -1045,8 +1045,8 @@ public class Computations
     return Application.apply(loc, aMonad, delay, delayFun);
   }
 
-  public static IContentExpression perform(Location loc, IType mType, IContentExpression exp,
-                                           Dictionary dict, ErrorReport errors) {
+  public static IContentExpression perform(Location loc, IType mType, IContentExpression exp, Dictionary dict,
+      ErrorReport errors) {
     IType aMonad = exp.getType();
     IType aType = TypeUtils.isType(aMonad, mType, 1, dict) ? TypeUtils.getTypeArg(aMonad, 0) : new TypeVar();
     IType performType = TypeUtils.functionType(aMonad, aType);
@@ -1108,14 +1108,18 @@ public class Computations
    * Construct a call to the injection contract
    *
    * @param loc
-   * @param nType  destination monad
-   * @param exp    expression to inject
-   * @param dict   dictionary to access contracts etc.
-   * @param errors error reporter
+   * @param nType
+   *          destination monad
+   * @param exp
+   *          expression to inject
+   * @param dict
+   *          dictionary to access contracts etc.
+   * @param errors
+   *          error reporter
    * @return
    */
   public static IContentExpression inject(Location loc, IType nType, IContentExpression exp, Dictionary dict,
-                                          ErrorReport errors) {
+      ErrorReport errors) {
     IType srcType = exp.getType();
     IType aType = TypeUtils.getTypeArg(srcType, 0);
     IType retType = TypeUtils.typeExp(nType, aType);

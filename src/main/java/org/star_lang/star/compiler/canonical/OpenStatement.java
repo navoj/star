@@ -49,8 +49,7 @@ public class OpenStatement implements IStatement
   @Override
   public void prettyPrint(PrettyPrintDisplay disp)
   {
-    if (visibility == Visibility.priVate)
-      disp.appendWord(StandardNames.PRIVATE);
+    visibility.display(disp);
     disp.appendWord(StandardNames.OPEN);
     record.prettyPrint(disp);
   }

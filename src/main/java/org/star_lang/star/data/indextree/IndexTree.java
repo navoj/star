@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import java.util.Stack;
 
 import org.star_lang.star.compiler.util.NullIterator;
-import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 
 /*

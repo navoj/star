@@ -241,7 +241,6 @@ public class TypeAnalyser
 
   // An algebraic type looks like:
   // type <type> is <cases>
-  @SuppressWarnings("UnnecessaryLocalVariable")
   public static CafeTypeDescription parseAlgebraicDefn(IAbstract tp, ITypeContext cxt, ErrorReport errors)
   {
     assert CafeSyntax.isTypeDef(tp);

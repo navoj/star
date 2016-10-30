@@ -132,7 +132,7 @@ public class CompositeRepositoryTest extends SRTest
       File zipTestFile = ZipCodeRepository.createZarFromDir(zipTestDir);
       CodeRepository newRepository = new ZipCodeRepository(zipTestFile, loader, errors);
       StarMain.run(newRepository, srcURI, new IValue[] {});
-      assertTrue(errors.isWarningAndErrorFree());
+      assertTrue(errors.isErrorFree());
     } catch (CatalogException e) {
       fail();
     } catch (RepositoryException e) {
@@ -168,7 +168,7 @@ public class CompositeRepositoryTest extends SRTest
       ResourceURI newUri = URIUtils.createFileURI(newFile);
       StarCompiler.compile(newUri, catalog, newRepository);
       StarMain.run(newRepository, newUri, new IValue[] {});
-      assertTrue(errors.isWarningAndErrorFree());
+      assertTrue(errors.isErrorFree());
     } catch (CatalogException e) {
       fail();
     } catch (RepositoryException e) {
@@ -205,7 +205,7 @@ public class CompositeRepositoryTest extends SRTest
       ResourceURI newUri = URIUtils.createFileURI(newFile);
       StarCompiler.compile(newUri, catalog, newRepository);
       StarMain.run(newRepository, newUri, new IValue[] {});
-      assertTrue(errors.isWarningAndErrorFree());
+      assertTrue(errors.isErrorFree());
     } catch (CatalogException e) {
       fail();
     } catch (RepositoryException e) {
@@ -247,7 +247,7 @@ public class CompositeRepositoryTest extends SRTest
       ResourceURI newUri = URIUtils.createFileURI(newFile);
       StarCompiler.compile(newUri, catalog, newRepository);
       StarMain.run(newRepository, newUri, new IValue[] {});
-      assertTrue(errors.isWarningAndErrorFree());
+      assertTrue(errors.isErrorFree());
     } catch (CatalogException e) {
       fail();
     } catch (RepositoryException e) {
@@ -282,7 +282,7 @@ public class CompositeRepositoryTest extends SRTest
       ResourceURI newUri = URIUtils.createFileURI(newFile);
       StarCompiler.compile(newUri, catalog, newRepository);
       StarMain.run(newRepository, newUri, new IValue[] {});
-      assertTrue(errors.isWarningAndErrorFree());
+      assertTrue(errors.isErrorFree());
       boolean seenTransformer = false;
       for (RepositoryNode node : newRepository) {
         if (node.getUri().equals(srcURI))

@@ -79,8 +79,7 @@ public class TypeWitness extends EnvironmentEntry
   @Override
   public void prettyPrint(PrettyPrintDisplay disp)
   {
-    if (getVisibility() == Visibility.priVate)
-      disp.appendWord(StandardNames.PRIVATE);
+    getVisibility().display(disp);
     disp.appendWord(StandardNames.TYPE);
     DisplayType tpDisp = new DisplayType(disp);
     witness.accept(tpDisp, null);
