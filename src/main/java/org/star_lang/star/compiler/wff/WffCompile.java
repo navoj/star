@@ -3,7 +3,7 @@ package org.star_lang.star.compiler.wff;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
@@ -43,14 +43,14 @@ public class WffCompile {
     if (Abstract.isUnary(rule, StandardNames.META_HASH))
       return compileRule(Abstract.getArg(rule, 0), ruleSet, errors);
     if (Abstract.isBinary(rule, StandardNames.WFF_RULE)) {
-      Apply rl = ((Apply) rule);
+      AApply rl = ((AApply) rule);
 
       dict.clear();
 
       final IAbstract ptnArg = Abstract.getArg(rl, 0);
 
       if (Abstract.isBinary(ptnArg, StandardNames.WFF_DEFINES)) {
-        Apply head = (Apply) ptnArg;
+        AApply head = (AApply) ptnArg;
         String category = identifierOf(Abstract.getArg(head, 1));
         if (category == null) {
           errors.reportError("missing category", head.getLoc());
@@ -66,7 +66,7 @@ public class WffCompile {
         return null;
       }
     } else if (Abstract.isBinary(rule, StandardNames.WFF_DEFINES)) {
-      Apply rl = ((Apply) rule);
+      AApply rl = ((AApply) rule);
 
       dict.clear();
 
@@ -87,8 +87,8 @@ public class WffCompile {
   }
 
   private WffOp compilePattern(IAbstract ptn, ErrorReport errors) {
-    if (ptn instanceof Apply) {
-      Apply app = (Apply) ptn;
+    if (ptn instanceof AApply) {
+      AApply app = (AApply) ptn;
 
       if (Abstract.isUnary(app, StandardNames.QUESTION)) {
         String var = identifierOf(Abstract.getArg(app, 0));
@@ -166,8 +166,8 @@ public class WffCompile {
   }
 
   private WffCond compileBody(IAbstract bdy, WffProgram ruleSet, ErrorReport errors) {
-    if (bdy instanceof Apply) {
-      Apply body = ((Apply) bdy);
+    if (bdy instanceof AApply) {
+      AApply body = ((AApply) bdy);
 
       if (Abstract.isBinary(body, StandardNames.WFF_DEFINES)) {
         IAbstract category = Abstract.binaryRhs(body);
@@ -210,7 +210,7 @@ public class WffCompile {
         IAbstract category = Abstract.getArg(body, 1);
         IAbstract ptn = Abstract.getArg(body, 0);
         if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
-          String var = identifierOf(((Apply) ptn).getArg(0));
+          String var = identifierOf(((AApply) ptn).getArg(0));
           if (var == null)
             errors.reportError("missing variable NAME", bdy.getLoc());
           else {
@@ -236,7 +236,7 @@ public class WffCompile {
         IAbstract category = Abstract.getArg(body, 1);
         IAbstract ptn = Abstract.getArg(body, 0);
         if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
-          String var = identifierOf(((Apply) ptn).getArg(0));
+          String var = identifierOf(((AApply) ptn).getArg(0));
           if (var == null)
             errors.reportError("missing variable NAME", bdy.getLoc());
           else {
@@ -262,7 +262,7 @@ public class WffCompile {
         IAbstract category = Abstract.getArg(body, 1);
         IAbstract ptn = Abstract.getArg(body, 0);
         if (Abstract.isUnary(ptn, StandardNames.QUESTION)) {
-          String var = identifierOf(((Apply) ptn).getArg(0));
+          String var = identifierOf(((AApply) ptn).getArg(0));
           if (var == null)
             errors.reportError("missing variable NAME", bdy.getLoc());
           else {
@@ -327,7 +327,7 @@ public class WffCompile {
     Location loc = term.getLoc();
 
     if (Abstract.isUnary(term, StandardNames.QUESTION)) {
-      String var = identifierOf(((Apply) term).getArg(0));
+      String var = identifierOf(((AApply) term).getArg(0));
       if (var == null) {
         errors.reportError("missing variable NAME", loc);
         return new WffLiteral(term);
@@ -362,8 +362,8 @@ public class WffCompile {
     } else if (Abstract.isBinary(term, StandardNames.MACRO_APPLY)) {
       return new WffApplyApply(compileBuilder(Abstract.getArg(term, 0), errors), compileBuilder(Abstract
           .getArg(term, 1), errors));
-    } else if (term instanceof Apply) {
-      Apply apply = (Apply) term;
+    } else if (term instanceof AApply) {
+      AApply apply = (AApply) term;
       IList tpl = apply.getArgs();
       WffBuildOp tplOps[] = new WffBuildOp[tpl.size()];
       for (int ix = 0; ix < tpl.size(); ix++)

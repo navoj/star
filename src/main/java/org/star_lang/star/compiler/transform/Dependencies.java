@@ -12,7 +12,7 @@ import java.util.Stack;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
@@ -245,8 +245,8 @@ public class Dependencies {
           if (CompilerUtils.isImport(term)) {
             IAbstract imported = Abstract.unaryArg(term);
 
-            if (imported instanceof Apply) {
-              Apply apply = (Apply) imported;
+            if (imported instanceof AApply) {
+              AApply apply = (AApply) imported;
               for (IValue arg : apply.getArgs()) {
                 low = minPoint(analyse((IAbstract) arg, DefinitionKind.variable, low, exclusion), low);
               }
@@ -255,8 +255,8 @@ public class Dependencies {
             return low;
           } else if (CompilerUtils.isOpen(term)) {
             IAbstract opened = CompilerUtils.openedRecord(term);
-            if (opened instanceof Apply) {
-              Apply apply = (Apply) opened;
+            if (opened instanceof AApply) {
+              AApply apply = (AApply) opened;
               for (IValue arg : apply.getArgs()) {
                 low = minPoint(analyse((IAbstract) arg, DefinitionKind.variable, low, exclusion), low);
               }
@@ -268,8 +268,8 @@ public class Dependencies {
         case constructor:
           break;
       }
-      if (term instanceof Apply) {
-        Apply apply = (Apply) term;
+      if (term instanceof AApply) {
+        AApply apply = (AApply) term;
         low = minPoint(low, analyse(apply.getOperator(), kind, low, exclusion));
 
         for (IValue arg : apply.getArgs()) {
@@ -615,8 +615,8 @@ public class Dependencies {
       definedNames.add(((Name) arg).getId());
     else if (Abstract.isBinary(arg, StandardNames.AGGREGATE) && Abstract.getArg(arg, 0) instanceof Name)
       definedNames.add(((Name) Abstract.getArg(arg, 0)).getId());
-    else if (arg instanceof Apply && !(StandardNames.isKeyword(((Apply) arg).getOperator())))
-      definedNames.add(((Name) ((Apply) arg).getOperator()).getId());
+    else if (arg instanceof AApply && !(StandardNames.isKeyword(((AApply) arg).getOperator())))
+      definedNames.add(((Name) ((AApply) arg).getOperator()).getId());
   }
 
   private DefinitionKind kindOfStmt(IAbstract stmt) {

@@ -14,7 +14,7 @@ import java.util.TreeSet;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
@@ -75,7 +75,7 @@ import org.star_lang.star.operators.assignment.runtime.RefCell.Cell;
 
 public class TypeParser {
   public static IAlgebraicType parseTypeDefinition(IAbstract stmt, Map<String, Pair<IAbstract, IType>> defaults,
-                                                   Map<String, IAbstract> integrity, Dictionary dict, Dictionary outer, ErrorReport errors, boolean suppress) {
+      Map<String, IAbstract> integrity, Dictionary dict, Dictionary outer, ErrorReport errors, boolean suppress) {
     LayeredMap<String, TypeVar> typeVars = new LayeredHash<>();
     Dictionary tmpCxt = dict.fork();
     Location loc = stmt.getLoc();
@@ -118,8 +118,8 @@ public class TypeParser {
     return parseType(tp, cxt, errors, varHandler);
   }
 
-  public static IType parseType(IAbstract tp, LayeredMap<String, TypeVar> typeVars, Dictionary dict,
-                                ErrorReport errors, AccessMode access) {
+  public static IType parseType(IAbstract tp, LayeredMap<String, TypeVar> typeVars, Dictionary dict, ErrorReport errors,
+      AccessMode access) {
     TypeNameHandler varHandler = new RegularTypeName(dict, typeVars, access, false, errors);
     return parseType(tp, dict, errors, varHandler);
   }
@@ -132,7 +132,7 @@ public class TypeParser {
     private final ErrorReport errors;
 
     public RegularTypeName(Dictionary dict, Map<String, TypeVar> typeVars, AccessMode access, boolean supress,
-                           ErrorReport errors) {
+        ErrorReport errors) {
       this.dict = dict;
       this.typeVars = typeVars;
       this.access = access;
@@ -338,8 +338,8 @@ public class TypeParser {
       try {
 
         if (!tyCon.kind().check(argTypes.size())) {
-          errors.reportError(StringUtils.msg(con, " expects ", tyCon.kind().arity(), " type arguments, got ", argTypes
-              .size()), loc);
+          errors.reportError(
+              StringUtils.msg(con, " expects ", tyCon.kind().arity(), " type arguments, got ", argTypes.size()), loc);
           return new TypeVar();
         }
 
@@ -350,17 +350,17 @@ public class TypeParser {
         errors.reportError(e.getMessage(), Location.merge(loc, e.getLocs()));
         return new TypeVar();
       }
-    } else if (Abstract.isBinary(tp, StandardNames.OF)) {
-      IAbstract con = Abstract.binaryLhs(tp);
-      List<IType> argTypes = parseArgTypes(Abstract.binaryRhs(tp), dict, errors, varHandler);
+    } else if (CompilerUtils.isSquareTerm(tp)) {
+      IAbstract con = CompilerUtils.squareLabel(tp);
+      List<IType> argTypes = parseArgTypes(CompilerUtils.squareArg(tp), dict, errors, varHandler);
 
       IType tyCon = parseType(con, dict, errors, varHandler);
 
       try {
 
         if (!tyCon.kind().check(argTypes.size())) {
-          errors.reportError(StringUtils.msg(con, " expects ", tyCon.kind().arity(), " type arguments, got ", argTypes
-              .size()), loc);
+          errors.reportError(
+              StringUtils.msg(con, " expects ", tyCon.kind().arity(), " type arguments, got ", argTypes.size()), loc);
           return new TypeVar();
         }
 
@@ -380,8 +380,8 @@ public class TypeParser {
       varHandler.removeEntries(bndTypes);
 
       if (TypeUtils.isReferenceType(boundType)) {
-        IType replace = TypeUtils.referenceType(UniversalType.universal(bndTypes.values(), TypeUtils
-            .referencedType(boundType)));
+        IType replace = TypeUtils
+            .referenceType(UniversalType.universal(bndTypes.values(), TypeUtils.referencedType(boundType)));
         errors.reportError(StringUtils.msg("may not quantify ", boundType, "\nshould be replaced with ", replace), loc);
         return replace;
       }
@@ -396,8 +396,8 @@ public class TypeParser {
       varHandler.removeEntries(bndTypes);
 
       if (TypeUtils.isReferenceType(boundType)) {
-        IType replace = TypeUtils.referenceType(ExistentialType.exist(bndTypes.values(), TypeUtils
-            .referencedType(boundType)));
+        IType replace = TypeUtils
+            .referenceType(ExistentialType.exist(bndTypes.values(), TypeUtils.referencedType(boundType)));
         errors.reportError(StringUtils.msg("may not quantify ", boundType, "\nshould be replaced with ", replace), loc);
         return replace;
       }
@@ -433,7 +433,8 @@ public class TypeParser {
       String record = Abstract.getId(CompilerUtils.fieldRecord(tp));
       String field = Abstract.getId(CompilerUtils.fieldField(tp));
 
-      // We need to handle this carefully because we would like to avoid unnecessary skolemization
+      // We need to handle this carefully because we would like to avoid
+      // unnecessary skolemization
 
       DictInfo info = dict.getVar(record);
 
@@ -468,8 +469,8 @@ public class TypeParser {
       IAbstract lhs = Abstract.binaryLhs(tp);
       if (Abstract.isBinary(lhs, StandardNames.OF) && Abstract.isIdentifier(Abstract.binaryLhs(lhs))) {
         List<IType> argTypes = parseArgTypes(Abstract.binaryRhs(lhs), dict, errors, varHandler);
-        IType detType = TypeUtils.typeExp(StandardNames.DETERMINES, parseArgTypes(Abstract.binaryRhs(tp), dict, errors,
-            varHandler));
+        IType detType = TypeUtils.typeExp(StandardNames.DETERMINES,
+            parseArgTypes(Abstract.binaryRhs(tp), dict, errors, varHandler));
         argTypes.add(detType);
 
         IType tyCon = parseType(Abstract.binaryLhs(lhs), dict, errors, varHandler);
@@ -505,13 +506,15 @@ public class TypeParser {
     return type;
   }
 
-  private static Map<String, TypeVar> parseQuantifiers(IAbstract tp, ErrorReport errors, Dictionary dict, TypeNameHandler varHandler) {
+  private static Map<String, TypeVar> parseQuantifiers(IAbstract tp, ErrorReport errors, Dictionary dict,
+      TypeNameHandler varHandler) {
     Map<String, TypeVar> bndTypes = new HashMap<>();
     parseQuants(tp, errors, dict, bndTypes, varHandler);
     return bndTypes;
   }
 
-  private static void parseQuants(IAbstract tp, ErrorReport errors, Dictionary dict, Map<String, TypeVar> vars, TypeNameHandler varHandler) {
+  private static void parseQuants(IAbstract tp, ErrorReport errors, Dictionary dict, Map<String, TypeVar> vars,
+      TypeNameHandler varHandler) {
     if (Abstract.isBinary(tp, StandardNames.WHERE)) {
       parseQuants(Abstract.binaryLhs(tp), errors, dict, vars, varHandler);
       parseConstraints(Abstract.binaryRhs(tp), dict, errors, varHandler);
@@ -564,10 +567,11 @@ public class TypeParser {
    * <p>
    * constraint and constraint
    *
-   * @param varHandler callback to handle occurrences of names
+   * @param varHandler
+   *          callback to handle occurrences of names
    */
   private static void parseConstraints(IAbstract cons, final Dictionary cxt, final ErrorReport errors,
-                                       TypeNameHandler varHandler) {
+      TypeNameHandler varHandler) {
     final Location loc = cons.getLoc();
 
     if (Abstract.isParenTerm(cons))
@@ -589,8 +593,9 @@ public class TypeParser {
             try {
               TypeUtils.addFieldConstraint(tVar, loc, name, type, cxt, true);
             } catch (TypeConstraintException e) {
-              errors.reportError(StringUtils.msg("could not add constraint ", name, " has type ", type, "\nbecause ", e
-                  .getWords()), Location.merge(loc, e.getLocs()));
+              errors.reportError(
+                  StringUtils.msg("could not add constraint ", name, " has type ", type, "\nbecause ", e.getWords()),
+                  Location.merge(loc, e.getLocs()));
             }
           }
 
@@ -641,7 +646,8 @@ public class TypeParser {
           parseConstraints(CompilerUtils.kindAnnotatedConstraint(cons), cxt, errors, varHandler);
       } else
         errors.reportError(StringUtils.msg("invalid kind specification: ", cons), loc);
-    } else if (Abstract.isBinary(cons, StandardNames.INSTANCE_OF) && CompilerUtils.isTypeVar(Abstract.binaryLhs(cons))) {
+    } else if (Abstract.isBinary(cons, StandardNames.INSTANCE_OF)
+        && CompilerUtils.isTypeVar(Abstract.binaryLhs(cons))) {
       final TypeVar var = (TypeVar) parseType(Abstract.binaryLhs(cons), cxt, errors, varHandler);
 
       IType general = parseType(Abstract.binaryRhs(cons), cxt, errors, varHandler);
@@ -649,8 +655,8 @@ public class TypeParser {
       try {
         var.addConstraint(con, loc, cxt);
       } catch (TypeConstraintException e) {
-        errors.reportError("could not add constraint " + cons + "\nbecause " + e.getMessage(), Location.merge(loc, e
-            .getLocs()));
+        errors.reportError("could not add constraint " + cons + "\nbecause " + e.getMessage(),
+            Location.merge(loc, e.getLocs()));
       }
     } else if (Abstract.isBinary(cons, StandardNames.OVER)) {
       IAbstract conTp = Abstract.binaryRhs(cons);
@@ -709,7 +715,8 @@ public class TypeParser {
       errors.reportError("not a valid type constraint: " + cons, loc);
   }
 
-  public static TypeExp parseContractType(IAbstract tp, Dictionary cxt, ErrorReport errors, TypeNameHandler varHandler) {
+  public static TypeExp parseContractType(IAbstract tp, Dictionary cxt, ErrorReport errors,
+      TypeNameHandler varHandler) {
     if (Abstract.isBinary(tp, StandardNames.WHERE)) {
       TypeExp type = parseContractType(Abstract.binaryLhs(tp), cxt, errors, varHandler);
       parseConstraints(Abstract.binaryRhs(tp), cxt, errors, varHandler);
@@ -732,15 +739,14 @@ public class TypeParser {
   }
 
   public static IType parseContractImplType(IAbstract tp, Dictionary cxt, ErrorReport errors, boolean suppress,
-                                            boolean isFallback) {
+      boolean isFallback) {
     Dictionary dict = cxt.fork();
-    TypeNameHandler varHandler = new RegularTypeName(dict, new HashMap<>(), AccessMode.readOnly,
-        suppress, errors);
+    TypeNameHandler varHandler = new RegularTypeName(dict, new HashMap<>(), AccessMode.readOnly, suppress, errors);
     return parseContractImplType(tp, dict, varHandler, isFallback, errors);
   }
 
   private static IType parseContractImplType(IAbstract tp, Dictionary cxt, TypeNameHandler varHandler,
-                                             boolean isFallback, ErrorReport errors) {
+      boolean isFallback, ErrorReport errors) {
     if (CompilerUtils.isUniversalType(tp)) {
       IAbstract tArg = CompilerUtils.universalTypeVars(tp);
       tp = CompilerUtils.universalBoundType(tp);
@@ -758,8 +764,8 @@ public class TypeParser {
         && Abstract.isBinary(Abstract.binaryRhs(tp), StandardNames.DETERMINES)) {
       IAbstract implType = Abstract.binaryLhs(Abstract.binaryRhs(tp));
       List<IType> argTypes = parseArgTypes(implType, cxt, errors, varHandler);
-      IType dependent = TypeUtils.typeExp(StandardNames.DETERMINES, parseArgTypes(Abstract.binaryRhs(Abstract
-          .binaryRhs(tp)), cxt, errors, varHandler));
+      IType dependent = TypeUtils.typeExp(StandardNames.DETERMINES,
+          parseArgTypes(Abstract.binaryRhs(Abstract.binaryRhs(tp)), cxt, errors, varHandler));
 
       if (isFallback) {
         for (IType argType : argTypes)
@@ -790,14 +796,14 @@ public class TypeParser {
   }
 
   private static void parseAlgebraicConstructors(IAbstract tp, IType type, IAlgebraicType desc, Dictionary cxt,
-                                                 Dictionary outer, ErrorReport errors, Map<String, TypeVar> typeVars) {
+      Dictionary outer, ErrorReport errors, Map<String, TypeVar> typeVars) {
     for (IAbstract con : CompilerUtils.unWrap(tp, StandardNames.OR)) {
       con = CompilerUtils.stripVisibility(con);
       if (CompilerUtils.isBraceTerm(con))
         parseRecordConstructor(con, type, desc, cxt, errors, typeVars);
       else if (con instanceof Name)
         parsePositional0(con, type, desc, cxt, errors);
-      else if (con instanceof Apply && ((Apply) con).getOperator() instanceof Name)
+      else if (con instanceof AApply && ((AApply) con).getOperator() instanceof Name)
         parsePositional(con, type, desc, cxt, outer, errors, typeVars);
       else
         errors.reportError("invalid element of algebraic type definition: " + con, con.getLoc());
@@ -805,8 +811,8 @@ public class TypeParser {
   }
 
   private static void parsePositional(IAbstract tp, IType type, IAlgebraicType desc, Dictionary dict, Dictionary outer,
-                                      ErrorReport errors, Map<String, TypeVar> typeVars) {
-    Apply apply = (Apply) tp;
+      ErrorReport errors, Map<String, TypeVar> typeVars) {
+    AApply apply = (AApply) tp;
     String conName = apply.getOp();
 
     Dictionary conDict = dict.fork();
@@ -821,15 +827,16 @@ public class TypeParser {
 
     if (dict.isDefinedVar(conName)) {
       DictInfo info = dict.getVar(conName);
-      errors.reportError(StringUtils
-          .msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()), Location.merge(loc,
-          info.getLoc()));
+      errors.reportError(
+          StringUtils.msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()),
+          Location.merge(loc, info.getLoc()));
     }
 
     specs.add(cons);
   }
 
-  private static void parsePositional0(IAbstract tp, IType type, IAlgebraicType desc, Dictionary cxt, ErrorReport errors) {
+  private static void parsePositional0(IAbstract tp, IType type, IAlgebraicType desc, Dictionary cxt,
+      ErrorReport errors) {
     String label = ((Name) tp).getId();
     IType conType = Freshen.generalizeType(TypeUtils.constructorType(type));
 
@@ -842,17 +849,17 @@ public class TypeParser {
       errors.reportError("'" + label + "' already defined at " + cxt.getVar(label).getLoc(), tp.getLoc());
   }
 
-  private static void parseRecordConstructor(IAbstract tp, IType type, final IAlgebraicType desc,
-                                             final Dictionary dict, final ErrorReport errors, Map<String, TypeVar> typeVars) {
+  private static void parseRecordConstructor(IAbstract tp, IType type, final IAlgebraicType desc, final Dictionary dict,
+      final ErrorReport errors, Map<String, TypeVar> typeVars) {
     final String conName = Abstract.getId(CompilerUtils.braceLabel(tp));
     final Dictionary conDict = dict.fork();
     Location loc = tp.getLoc();
 
     if (dict.isDefinedVar(conName)) {
       DictInfo info = dict.getVar(conName);
-      errors.reportError(StringUtils
-          .msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()), Location.merge(loc,
-          info.getLoc()));
+      errors.reportError(
+          StringUtils.msg(conName, " already defined with type, ", info.getType(), " at ", info.getLoc()),
+          Location.merge(loc, info.getLoc()));
     }
 
     HashMap<String, TypeVar> localVars = new HashMap<>(typeVars);
@@ -872,8 +879,9 @@ public class TypeParser {
           try {
             Subsume.same(allTypes.get(name), type, loc, conDict);
           } catch (TypeConstraintException e) {
-            errors.reportError(StringUtils.msg("type of ", name, ":", type, " not consistent with existing type ",
-                allTypes.get(name)), loc);
+            errors.reportError(
+                StringUtils.msg("type of ", name, ":", type, " not consistent with existing type ", allTypes.get(name)),
+                loc);
           }
         } else
           allTypes.put(name, type);
@@ -897,19 +905,19 @@ public class TypeParser {
     valueSpecifiers.add(cons);
   }
 
-  private static void checkForExtraTypeVars(Map<String, TypeVar> localVars, Map<String, TypeVar> typeVars,
-                                            Location loc, ErrorReport errors) {
+  private static void checkForExtraTypeVars(Map<String, TypeVar> localVars, Map<String, TypeVar> typeVars, Location loc,
+      ErrorReport errors) {
     SortedSet<String> extra = new TreeSet<>();
     for (Entry<String, TypeVar> entry : localVars.entrySet())
       if (!typeVars.containsKey(entry.getKey()))
         extra.add(entry.getKey());
     if (!extra.isEmpty())
-      errors.reportError(StringUtils.msg("type variable", (extra.size() > 1 ? "s " : " "), StringUtils.interleave(
-          ",  ", extra), " must be explicitly quantified"), loc);
+      errors.reportError(StringUtils.msg("type variable", (extra.size() > 1 ? "s " : " "),
+          StringUtils.interleave(",  ", extra), " must be explicitly quantified"), loc);
   }
 
   private static IType parseInterfaceType(Location loc, IAbstract tps, ErrorReport errors, final Dictionary dict,
-                                          TypeNameHandler varHandler, ITypeCollector typeCollector) {
+      TypeNameHandler varHandler, ITypeCollector typeCollector) {
     final SortedMap<String, IType> fields = new TreeMap<>();
     final SortedMap<String, IType> types = new TreeMap<>();
 
@@ -922,7 +930,7 @@ public class TypeParser {
   }
 
   private static void findMemberTypes(Location loc, IAbstract types, ITypeCollector collector, Dictionary dict,
-                                      ErrorReport errors, TypeNameHandler varHandler) {
+      ErrorReport errors, TypeNameHandler varHandler) {
     for (IAbstract el : CompilerUtils.unWrap(types)) {
       Location elLoc = el.getLoc();
       if (CompilerUtils.isKindAnnotation(el)) {
@@ -993,7 +1001,7 @@ public class TypeParser {
   }
 
   public static TypeContract parseTypeContract(IAbstract con, Dictionary dict, ErrorReport errors,
-                                               Map<String, Pair<IAbstract, IType>> defaultFuns, Map<String, IAbstract> integrity) {
+      Map<String, Pair<IAbstract, IType>> defaultFuns, Map<String, IAbstract> integrity) {
     assert CompilerUtils.isContractStmt(con);
 
     IAbstract tpTerm = CompilerUtils.contractForm(con);
@@ -1012,8 +1020,8 @@ public class TypeParser {
       IType face = parseInterfaceType(con.getLoc(), specTerm, errors, dict, varHandler, new NullCollector());
 
       Location loc = con.getLoc();
-      RecordSpecifier contractRecord = new RecordSpecifier(loc, contractName, null, 0, Freshen.generalizeType(TypeUtils
-          .constructorType(face, conImplType)));
+      RecordSpecifier contractRecord = new RecordSpecifier(loc, contractName, null, 0,
+          Freshen.generalizeType(TypeUtils.constructorType(face, conImplType)));
       TypeDescription contractType = new TypeDescription(loc, Freshen.generalizeType(conImplType), contractRecord);
 
       parseDefaults(CompilerUtils.braceTerm(loc, new Name(loc, contractImplName), specTerm), conImplType, dict,
@@ -1025,7 +1033,7 @@ public class TypeParser {
   }
 
   public static void fleshoutTypeContract(IAbstract con, TypeContract contract, Dictionary dict, ErrorReport errors,
-                                          Map<String, Pair<IAbstract, IType>> defaultFuns, Map<String, IAbstract> integrity) {
+      Map<String, Pair<IAbstract, IType>> defaultFuns, Map<String, IAbstract> integrity) {
     assert CompilerUtils.isContractStmt(con);
 
     IAbstract tpTerm = CompilerUtils.contractForm(con);
@@ -1048,8 +1056,8 @@ public class TypeParser {
 
       checkForExtraTypeVars(localTVars, tVars, loc, errors);
 
-      RecordSpecifier contractRecord = new RecordSpecifier(loc, contractName, null, 0, Freshen.generalizeType(TypeUtils
-          .constructorType(face, conImplType)));
+      RecordSpecifier contractRecord = new RecordSpecifier(loc, contractName, null, 0,
+          Freshen.generalizeType(TypeUtils.constructorType(face, conImplType)));
       TypeDescription contractType = (TypeDescription) contract.getContractType();
       contractType.defineValueSpecifier(contractImplName, contractRecord);
 
@@ -1079,12 +1087,12 @@ public class TypeParser {
     IType thisType = typeHead(CompilerUtils.typeAliasType(stmt), tmpCxt, errors, varHandler);
 
     IType replacement = parseType(CompilerUtils.typeAliasAlias(stmt), tmpCxt, errors, varHandler);
-    return new TypeAlias(stmt.getLoc(), Freshen.generalizeType(TypeUtils.typeExp(StandardNames.ALIAS, thisType,
-        replacement), cxt));
+    return new TypeAlias(stmt.getLoc(),
+        Freshen.generalizeType(TypeUtils.typeExp(StandardNames.ALIAS, thisType, replacement), cxt));
   }
 
   public static void parseDefaults(IAbstract spec, IType thisType, Dictionary cxt, IAlgebraicType desc,
-                                   Map<String, Pair<IAbstract, IType>> defaultFuns, Map<String, IAbstract> integrity, ErrorReport errors) {
+      Map<String, Pair<IAbstract, IType>> defaultFuns, Map<String, IAbstract> integrity, ErrorReport errors) {
     for (IAbstract con : CompilerUtils.unWrap(spec, StandardNames.OR)) {
       if (CompilerUtils.isBraceTerm(con)) {
         Location loc = con.getLoc();
@@ -1102,8 +1110,8 @@ public class TypeParser {
         Map<String, IAbstract> defaults = new HashMap<>();
 
         locateDefaults(CompilerUtils.braceArg(con), memberIndex.keySet(), defaults, errors);
-        locateIntegrityFuns(CompilerUtils.braceArg(con), memberIndex, integrity, CompilerUtils.integrityLabel(
-            typeLabel, conName), TypeUtils.getConstructorArgType(conType));
+        locateIntegrityFuns(CompilerUtils.braceArg(con), memberIndex, integrity,
+            CompilerUtils.integrityLabel(typeLabel, conName), TypeUtils.getConstructorArgType(conType));
 
         // Each default becomes a function from the non-default values to the
         // default value
@@ -1129,20 +1137,20 @@ public class TypeParser {
 
           IAbstract args[] = new IAbstract[argPtns.length];
           for (int ix = 0; ix < args.length; ix++)
-            args[ix] = DefFinder.isFound(nonDefaults, entry.getValue()) ? CompilerUtils.varPtn(new Name(loc,
-                argPtns[ix])) : CafeSyntax.anonymous(loc);
+            args[ix] = DefFinder.isFound(nonDefaults, entry.getValue())
+                ? CompilerUtils.varPtn(new Name(loc, argPtns[ix])) : CafeSyntax.anonymous(loc);
 
           // (F1,..,Fn) => <deflt>
           IAbstract defFun = CompilerUtils.lambda(loc, Abstract.tupleTerm(loc, args), entry.getValue());
-          defaultFuns.put(defName, Pair.pair(defFun, Freshen.generalizeType(TypeUtils.functionType(argTypes, conFace
-              .getFieldType(member)))));
+          defaultFuns.put(defName, Pair.pair(defFun,
+              Freshen.generalizeType(TypeUtils.functionType(argTypes, conFace.getFieldType(member)))));
         }
       }
     }
   }
 
   static void locateDefaults(IAbstract content, Collection<String> members, Map<String, IAbstract> defaults,
-                             ErrorReport errors) {
+      ErrorReport errors) {
     for (IAbstract el : CompilerUtils.unWrap(content)) {
       Location loc = el.getLoc();
       if (CompilerUtils.isFunctionStatement(el) && CompilerUtils.isDefaultRule(CompilerUtils.functionRules(el))) {
@@ -1177,7 +1185,7 @@ public class TypeParser {
   }
 
   private static void locateIntegrityFuns(IAbstract content, Map<String, Integer> memberIndex,
-                                          Map<String, IAbstract> integrity, final String conName, IType type) {
+      Map<String, IAbstract> integrity, final String conName, IType type) {
     Wrapper<IAbstract> ass = Wrapper.create(null);
 
     for (IAbstract el : CompilerUtils.unWrap(content)) {
@@ -1234,10 +1242,11 @@ public class TypeParser {
   }
 
   // Either a single type or a tuple of types
-  private static List<IType> parseArgTypes(IAbstract tp, Dictionary cxt, ErrorReport errors, TypeNameHandler varHandler) {
+  private static List<IType> parseArgTypes(IAbstract tp, Dictionary cxt, ErrorReport errors,
+      TypeNameHandler varHandler) {
     List<IType> argTypes = new ArrayList<>();
     if (Abstract.isTupleTerm(tp)) {
-      IList args = ((Apply) tp).getArgs();
+      IList args = ((AApply) tp).getArgs();
       if (!args.isEmpty())
         for (IValue a : args)
           argTypes.add(parseType((IAbstract) a, cxt, errors, varHandler));
@@ -1284,7 +1293,7 @@ public class TypeParser {
       IAbstract headArgs = Abstract.binaryRhs(tp);
 
       if (Abstract.isTupleTerm(headArgs)) {
-        for (IValue a : ((Apply) headArgs).getArgs())
+        for (IValue a : ((AApply) headArgs).getArgs())
           argTypes.add(headArg((IAbstract) a, errors, varHandler));
       } else
         argTypes.add(headArg(headArgs, errors, varHandler));
@@ -1314,7 +1323,7 @@ public class TypeParser {
   }
 
   private static List<IType> parseArgTypes(IList argTuple, Dictionary cxt, ErrorReport errors,
-                                           TypeNameHandler varHandler) {
+      TypeNameHandler varHandler) {
     List<IType> types = new ArrayList<>();
 
     for (IValue a : argTuple)

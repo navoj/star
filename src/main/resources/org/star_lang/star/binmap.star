@@ -20,7 +20,7 @@ private import base;
 private import option;
 private import arithmetic;
 
-type binmap of (%k,%v) is 
+public type binmap of (%k,%v) is 
      emptyTree
   or binNode(binmap of (%k,%v), %k, %v, binmap of (%k,%v));
   
@@ -50,14 +50,14 @@ fun mergeNodes(emptyTree,T) is T
 
 -- implement the various collection contracts
  
-implementation pPrint over binmap of (%k,%v) where pPrint over %k and pPrint over %v is {
+public implementation pPrint over binmap of (%k,%v) where pPrint over %k and pPrint over %v is {
   fun ppDisp(H) is ppSequence(2,cons of [ppStr("binmap of ["), dispContent(H), ppStr("]")]);
 } using {
   fun dispContent(binNode(L,K,V,R)) is ppSequence(2,cons of [dispContent(L), ppDisp(K), ppStr("->"), ppDisp(V), dispContent(R)])
    |  dispContent(emptyTree) is ppStr("");
 }
 
-implementation sequence over binmap of (%k,%v) determines ((%k,%v)) where equality over %k and comparable over %k is {
+public implementation sequence over binmap of (%k,%v) determines ((%k,%v)) where equality over %k and comparable over %k is {
   fun _cons((K,V),M) is insertNode(M,K,V);
   fun _apnd(M,(K,V)) is insertNode(M,K,V);
   fun _nil() is emptyTree;
@@ -66,7 +66,7 @@ implementation sequence over binmap of (%k,%v) determines ((%k,%v)) where equali
   ptn _back((raise "not implemented a"),(raise "not implemented b")) from X; 
 }
  
-implementation sizeable over binmap of (%k,%v) is {
+public implementation sizeable over binmap of (%k,%v) is {
   fun isEmpty(emptyTree) is true
    |  isEmpty(_) default is false
   
@@ -81,7 +81,7 @@ private fun checkIter(S,F) is switch S in {
   case _ default is F(S);
 }
 
-implementation iterable over binmap of (%k,%v) determines ((%k,%v)) is {
+public implementation iterable over binmap of (%k,%v) determines ((%k,%v)) is {
   fun _iterate(M,F,S) is iter(M,F,S);
 }
 
@@ -90,7 +90,7 @@ fun iter(emptyTree,_,S) is S
  |  iter(binNode(L,K,V,R),F,S0) is
       checkIter(iter(L,F,S0), ((S1) => checkIter(F(V,S1),((S2) => iter(R,F,S2))))))
 
-implementation indexed_iterable over binmap of (%k,%v) determines (%k,%v) is {
+public implementation indexed_iterable over binmap of (%k,%v) determines (%k,%v) is {
   fun _ixiterate(M,F,S) is ixIter(M,F,S);
 } using {
   fun ixIter(emptyTree,_,S) is S
@@ -98,7 +98,7 @@ implementation indexed_iterable over binmap of (%k,%v) determines (%k,%v) is {
         checkIter(ixIter(L,F,S0), ((S1) => checkIter(F(K,V,S1),((S2) => ixIter(R,F,S2))))))
 }
 
-implementation updateable over binmap of (%k,%v) determines ((%k,%v)) where equality over %kand comparable over %k is {
+public implementation updateable over binmap of (%k,%v) determines ((%k,%v)) where equality over %kand comparable over %k is {
   fun _extend(TM,(K,V)) is insertNode(TM,K,V);
   fun _merge(TM, S) is mergeTree(TM,S);
   fun _delete(TM, P) is checkIter(iter(TM,iterDelete(P),ContinueWith(TM)),razer);
@@ -125,7 +125,7 @@ implementation updateable over binmap of (%k,%v) determines ((%k,%v)) where equa
   private fun razer() is raise "problem";
 } 
 
-implementation indexable over binmap of (%k,%v) determines (%k,%v) where equality over %k is {
+public implementation indexable over binmap of (%k,%v) determines (%k,%v) where equality over %k is {
   fun _index(M,K) is findNode(M,K);
   fun _set_indexed(M,K,V) is insertNode(M,K,V);
   fun _delete_indexed(M,K) is removeNode(M,K);

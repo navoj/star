@@ -43,6 +43,7 @@ public abstract class ASyntax implements IAbstract
   protected static final int intIx = 4;
   protected static final int longIx = 5;
   protected static final int floatIx = 6;
+  protected static final int tupleIx = 7;
   protected static final int applyIx = 8;
 
   protected ASyntax(Location loc)

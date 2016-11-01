@@ -30,7 +30,14 @@ public class Complexity implements IAbstractVisitor {
   }
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitTuple(AsTuple tpl) {
+    count++;
+    for (IValue arg : tpl.getArgs())
+      ((IAbstract) arg).accept(this);
+  }
+
+  @Override
+  public void visitApply(AApply app) {
     count++;
     for (IValue arg : app.getArgs())
       ((IAbstract) arg).accept(this);

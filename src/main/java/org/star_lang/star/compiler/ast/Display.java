@@ -12,7 +12,6 @@ import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.IList;
 import org.star_lang.star.data.IValue;
 
-
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -62,7 +61,14 @@ public class Display implements IAbstractVisitor {
   }
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitTuple(AsTuple tpl) {
+    String brks = tpl.getBrackets().getLit();
+    int ln = brks.length();
+    display(tpl.getArgs(), brks.substring(0, ln / 2), ", ", brks.substring(ln / 2));
+  }
+
+  @Override
+  public void visitApply(AApply app) {
     if (CompilerUtils.isBraceTerm(app)) {
       CompilerUtils.braceLabel(app).accept(this);
       display(CompilerUtils.unWrap(CompilerUtils.braceArg(app)), "{ ", ";\n", "\n}", 2);
@@ -86,26 +92,26 @@ public class Display implements IAbstractVisitor {
     else if (app.hasAttribute(OpFormAttribute.name)) {
       OpFormAttribute opForm = (OpFormAttribute) app.getAttribute(OpFormAttribute.name);
       switch (opForm.getForm()) {
-        case infix:
-          assert Abstract.isBinary(app);
-          Abstract.binaryLhs(app).accept(this);
-          appendWord(Abstract.getOp(app));
-          Abstract.binaryRhs(app).accept(this);
-          return;
-        default:
-        case none:
-          app.getOperator().accept(this);
-          display(app.getArgs(), "(", ", ", ")");
-          return;
-        case prefix:
-          assert Abstract.isUnary(app);
-          appendWord(Abstract.getOp(app));
-          Abstract.unaryArg(app).accept(this);
-          return;
-        case postfix:
-          assert Abstract.isUnary(app);
-          Abstract.unaryArg(app).accept(this);
-          appendWord(Abstract.getOp(app));
+      case infix:
+        assert Abstract.isBinary(app);
+        Abstract.binaryLhs(app).accept(this);
+        appendWord(Abstract.getOp(app));
+        Abstract.binaryRhs(app).accept(this);
+        return;
+      default:
+      case none:
+        app.getOperator().accept(this);
+        display(app.getArgs(), "(", ", ", ")");
+        return;
+      case prefix:
+        assert Abstract.isUnary(app);
+        appendWord(Abstract.getOp(app));
+        Abstract.unaryArg(app).accept(this);
+        return;
+      case postfix:
+        assert Abstract.isUnary(app);
+        Abstract.unaryArg(app).accept(this);
+        appendWord(Abstract.getOp(app));
       }
     } else {
       app.getOperator().accept(this);

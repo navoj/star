@@ -1,6 +1,6 @@
 package org.star_lang.star.operators.ast.runtime;
 
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.EvaluationException;
@@ -35,10 +35,10 @@ public class AstReplace implements IFunction {
     if (path.equals(Cons.nilEnum))
       return repl;
     else {
-      assert path instanceof ConsCons && term instanceof Apply;
+      assert path instanceof ConsCons && term instanceof AApply;
       ConsCons consPath = (ConsCons) path;
       Cons tail = (Cons) consPath.get___1();
-      Apply app = (Apply) term;
+      AApply app = (AApply) term;
       IAbstract op = app.getOperator();
       IList args = app.getArgs();
       int ix = Factory.intValue(consPath.get___0());
@@ -47,7 +47,7 @@ public class AstReplace implements IFunction {
       else
         args = args.substituteCell(ix, enter((IAbstract) args.getCell(ix), tail, repl));
 
-      return new Apply(app.getLoc(), op, args, app.getCategories(), app.getAttributes());
+      return new AApply(app.getLoc(), op, args, app.getCategories(), app.getAttributes());
     }
   }
 

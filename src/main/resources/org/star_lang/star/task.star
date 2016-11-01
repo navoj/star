@@ -28,19 +28,19 @@ type taskEvalState of %a is
   or TaskFailure(exception)
 
 -- Type of asynchronous tasks (opaque)
-type task of %a is _task(() => taskEvalState of %a)
+public type task of %a is _task(() => taskEvalState of %a)
 
 -- Returns an asynchronous task, that will yield the given value when executed
-taskReturn has type (%a) => task of %a
+public taskReturn has type (%a) => task of %a
 fun taskReturn(v) is _task(() => TaskDone(v))
 
 -- Failure
-taskFail has type (exception) => task of %a
+public taskFail has type (exception) => task of %a
 fun taskFail(e) is
   _task( () => TaskFailure(e))
   
 -- Handle failure
-taskCatch has type (task of %a, (exception) => task of %a) => task of %a
+public taskCatch has type (task of %a, (exception) => task of %a) => task of %a
 fun taskCatch(_task(b),EF) is let{
   fun catchTask() is
     switch b() in {
@@ -53,7 +53,7 @@ fun taskCatch(_task(b),EF) is let{
 
 -- Returns an asynchronous task, that, when executed, will 'continue' in the given
 -- function as soon as the first task completes.
-taskBind has type (task of %b, (%b) => task of %a) => task of %a
+public taskBind has type (task of %b, (%b) => task of %a) => task of %a
 fun taskBind(_task(b), f) is let {
   fun boundTask() is
     switch b() in {
@@ -64,38 +64,37 @@ fun taskBind(_task(b), f) is let {
     }
 } in _task(boundTask)
 
-
-taskWaitExt has type ((action(task of %a)) => taskWaitResult of %a) => task of %a
+public taskWaitExt has type ((action(task of %a)) => taskWaitResult of %a) => task of %a
 fun taskWaitExt(start) is
   _task(() => TaskWait(start, id))
 
 -- Returns an asynchronous task, that, when executed, will call the given 'start' action.
 -- The passed 'wakener' action should then be called when the result of the asynchronous
 -- task is available or has failed - possibly by some other thread.
-taskWait has type (action(action(task of %a))) => task of %a
+public taskWait has type (action(action(task of %a))) => task of %a
 fun taskWait(start) is taskWaitExt((wakeup) => valof { start(wakeup); valis TaskSleep; })
   
 -- implement the computation contract
-implementation (computation) over task determines exception is {
+public implementation (computation) over task determines exception is {
   _encapsulate = taskReturn;
   _abort = taskFail;
   _handle = taskCatch;
   _combine = taskBind;
 }
 
-implementation execution over task is {
+public implementation execution over task is {
   fun _perform(T) is executeTask(T,raiser_fun);
 }
 
-implementation injection over (task,task) is {
+public implementation injection over (task,task) is {
   fun _inject(C) is C;
 }
 
-implementation injection over (task,action) is {
+public implementation injection over (task,action) is {
   fun _inject(t) is _done(executeTask(t, raiser_fun));
 }
 
-implementation injection over (action,task) is {
+public implementation injection over (action,task) is {
   fun _inject(a) is runCombo(a,taskReturn,taskFail);
 }
 
@@ -104,7 +103,7 @@ implementation injection over (action,task) is {
 #task{} ==> task computation {};
 
 -- Blocked for a longer time, or can continue immediately
-type taskWaitResult of %a is TaskSleep or TaskMicroSleep(task of %a)
+public type taskWaitResult of %a is TaskSleep or TaskMicroSleep(task of %a)
 
 private
 _doWait has type (action(task of %b), (action(task of %a)) => taskWaitResult of %a, (task of %a) => task of %b) => taskWaitResult of %b
@@ -160,7 +159,7 @@ private prc future_set(f, v) do __fjtComplete(f, v);
 
 -- Execute and wait until the given asynchronous task completes and return it's value.
 -- This functions throws (does not catch) exceptions thrown by the task.
-executeTask has type (task of %a,(exception)=>%a) => %a
+public executeTask has type (task of %a,(exception)=>%a) => %a
 
 -- two variants, one utilizes the calling thread only (potentially spending several thread sync ops),
 -- the other one uses the global thread pool and only one sync on the end of the whole computation.

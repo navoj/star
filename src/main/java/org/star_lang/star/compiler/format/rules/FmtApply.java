@@ -3,7 +3,7 @@ package org.star_lang.star.compiler.format.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.data.type.Location;
@@ -38,7 +38,7 @@ public class FmtApply implements FmtBuildOp
   {
     List<IAbstract> args = new ArrayList<>();
     for (FmtBuildOp argOp : argOps) args.add(argOp.build(env, loc));
-    return new Apply(loc, op.build(env, loc), args);
+    return new AApply(loc, op.build(env, loc), args);
   }
 
   @Override

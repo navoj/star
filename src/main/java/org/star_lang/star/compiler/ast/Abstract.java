@@ -98,18 +98,18 @@ public abstract class Abstract {
   }
 
   public static String getOp(IAbstract trm) {
-    assert trm instanceof Apply;
-    return ((Apply) trm).getOp();
+    assert trm instanceof AApply;
+    return ((AApply) trm).getOp();
   }
 
   public static IAbstract getOperator(IAbstract trm) {
-    assert trm instanceof Apply;
-    return ((Apply) trm).getOperator();
+    assert trm instanceof AApply;
+    return ((AApply) trm).getOperator();
   }
 
   public static int arity(IAbstract trm) {
-    assert trm instanceof Apply;
-    return ((Apply) trm).getArgs().size();
+    assert trm instanceof AApply;
+    return ((AApply) trm).getArgs().size();
   }
 
   public static BooleanLiteral newBoolean(Location loc, boolean trueVal) {
@@ -133,23 +133,23 @@ public abstract class Abstract {
   }
 
   public static boolean isApply(IAbstract term) {
-    return term instanceof Apply;
+    return term instanceof AApply;
   }
 
   public static boolean isApply(IAbstract term, String op) {
-    return term instanceof Apply && isName(((Apply) term).getOperator(), op);
+    return term instanceof AApply && isName(((AApply) term).getOperator(), op);
   }
 
   public static boolean isApply(IAbstract term, String op, int arity) {
-    if (term instanceof Apply) {
-      Apply app = (Apply) term;
+    if (term instanceof AApply) {
+      AApply app = (AApply) term;
       return isName(app.getOperator(), op) && app.arity() == arity;
     } else
       return false;
   }
 
   private static boolean isApply(IAbstract term, int arity) {
-    return term instanceof Apply && ((Apply) term).getOperator() instanceof Name && ((Apply) term).arity() == arity;
+    return term instanceof AApply && ((AApply) term).getOperator() instanceof Name && ((AApply) term).arity() == arity;
   }
 
   public static boolean isTernary(IAbstract term) {
@@ -180,7 +180,7 @@ public abstract class Abstract {
   }
 
   public static boolean isBinary(IAbstract term) {
-    return term instanceof Apply && arity(term) == 2;
+    return term instanceof AApply && arity(term) == 2;
   }
 
   public static IAbstract binaryLhs(IAbstract term) {
@@ -198,15 +198,15 @@ public abstract class Abstract {
   }
 
   public static boolean isUnary(IAbstract term) {
-    return term instanceof Apply && Abstract.arity(term) == 1;
+    return term instanceof AApply && Abstract.arity(term) == 1;
   }
 
   public static IAbstract unary(Location loc, String op, IAbstract lhs) {
-    return new Apply(loc, op, lhs);
+    return new AApply(loc, op, lhs);
   }
 
   public static IAbstract unary(Location loc, IAbstract op, IAbstract lhs) {
-    return new Apply(loc, op, new IAbstract[]{lhs});
+    return new AApply(loc, op, new IAbstract[]{lhs});
   }
 
   public static IAbstract unaryArg(IAbstract term) {
@@ -215,61 +215,61 @@ public abstract class Abstract {
   }
 
   public static IAbstract zeroary(Location loc, String op) {
-    return new Apply(loc, op);
+    return new AApply(loc, op);
   }
 
   public static IAbstract zeroary(Location loc, IAbstract op) {
-    return new Apply(loc, op);
+    return new AApply(loc, op);
   }
 
   public static boolean isZeroary(IAbstract exp) {
-    return exp instanceof Apply && Abstract.arity(exp) == 0;
+    return exp instanceof AApply && Abstract.arity(exp) == 0;
   }
 
   public static boolean isZeroary(IAbstract exp, String name) {
-    return exp instanceof Apply && Abstract.arity(exp) == 0 && isName(((Apply) exp).getOperator(), name);
+    return exp instanceof AApply && Abstract.arity(exp) == 0 && isName(((AApply) exp).getOperator(), name);
   }
 
   public static String zeroOp(IAbstract exp) {
     assert isZeroary(exp);
 
-    return getId(((Apply) exp).getOperator());
+    return getId(((AApply) exp).getOperator());
   }
 
   public static IAbstract binary(Location loc, String op, IAbstract lhs, IAbstract rhs) {
-    return new Apply(loc, op, lhs, rhs);
+    return new AApply(loc, op, lhs, rhs);
   }
 
   public static IAbstract binary(Location loc, IAbstract op, IAbstract lhs, IAbstract rhs) {
-    return new Apply(loc, op, lhs, rhs);
+    return new AApply(loc, op, lhs, rhs);
   }
 
   public static IAbstract ternary(Location loc, String op, IAbstract lhs, IAbstract mhs, IAbstract rhs) {
-    return new Apply(loc, op, lhs, mhs, rhs);
+    return new AApply(loc, op, lhs, mhs, rhs);
   }
 
   public static IAbstract ternary(Location loc, IAbstract op, IAbstract lhs, IAbstract mhs, IAbstract rhs) {
-    return new Apply(loc, op, lhs, mhs, rhs);
+    return new AApply(loc, op, lhs, mhs, rhs);
   }
 
-  public static Apply apply(Location loc, IAbstract op, IList args) {
-    return new Apply(loc, op, args);
+  public static AApply apply(Location loc, IAbstract op, IList args) {
+    return new AApply(loc, op, args);
   }
 
-  public static Apply apply(Location loc, String op, IAbstract... args) {
-    return new Apply(loc, op, args);
+  public static AApply apply(Location loc, String op, IAbstract... args) {
+    return new AApply(loc, op, args);
   }
 
-  public static Apply apply(Location loc, IAbstract op, IAbstract... args) {
-    return new Apply(loc, op, args);
+  public static AApply apply(Location loc, IAbstract op, IAbstract... args) {
+    return new AApply(loc, op, args);
   }
 
-  public static Apply apply(Location loc, IAbstract op, List<IAbstract> args) {
-    return new Apply(loc, op, args);
+  public static AApply apply(Location loc, IAbstract op, List<IAbstract> args) {
+    return new AApply(loc, op, args);
   }
 
   public static IAbstract unary(Location loc, String op, IAbstract lhs, Object... atts) {
-    Apply apply = new Apply(loc, op, lhs);
+    AApply apply = new AApply(loc, op, lhs);
     setAttributes(apply, atts);
     return apply;
   }
@@ -281,43 +281,43 @@ public abstract class Abstract {
   }
 
   public static IAbstract binary(Location loc, String op, IAbstract lhs, IAbstract rhs, Object... atts) {
-    Apply apply = new Apply(loc, op, lhs, rhs);
+    AApply apply = new AApply(loc, op, lhs, rhs);
     setAttributes(apply, atts);
     return apply;
   }
 
   public static IAbstract binary(Location loc, IAbstract op, IAbstract lhs, IAbstract rhs, Object... atts) {
-    Apply apply = new Apply(loc, op, lhs, rhs);
+    AApply apply = new AApply(loc, op, lhs, rhs);
     setAttributes(apply, atts);
     return apply;
   }
 
   public static IAbstract ternary(Location loc, String op, IAbstract lhs, IAbstract mhs, IAbstract rhs, Object... atts) {
-    Apply apply = new Apply(loc, op, lhs, mhs, rhs);
+    AApply apply = new AApply(loc, op, lhs, mhs, rhs);
     setAttributes(apply, atts);
     return apply;
   }
 
   public static IAbstract getArg(IAbstract term, int ix) {
-    assert term instanceof Apply;
-    return ((Apply) term).getArg(ix);
+    assert term instanceof AApply;
+    return ((AApply) term).getArg(ix);
   }
 
   public static IAbstract argPath(IAbstract term, Integer... path) {
     for (Integer aPath : path) {
-      assert term instanceof Apply;
-      term = ((Apply) term).getArg(aPath);
+      assert term instanceof AApply;
+      term = ((AApply) term).getArg(aPath);
     }
     return term;
   }
 
   public static IList getArgs(IAbstract ap) {
-    assert ap instanceof Apply;
-    return ((Apply) ap).getArgs();
+    assert ap instanceof AApply;
+    return ((AApply) ap).getArgs();
   }
 
   public static boolean isTupleTerm(IAbstract term) {
-    return term instanceof Apply && isTupleLabel(((Apply) term).getOperator());
+    return term instanceof AApply && isTupleLabel(((AApply) term).getOperator());
   }
 
   public static boolean isTupleLabel(IAbstract trm) {
@@ -325,19 +325,19 @@ public abstract class Abstract {
   }
 
   public static boolean isTupleTerm(IAbstract term, int arity) {
-    return term instanceof Apply && isIdentifier(((Apply) term).getOperator())
-        && TypeUtils.isTupleLabel(((Apply) term).getOp()) && arity(term) == arity;
+    return term instanceof AApply && isIdentifier(((AApply) term).getOperator())
+        && TypeUtils.isTupleLabel(((AApply) term).getOp()) && arity(term) == arity;
   }
 
   public static int tupleArity(IAbstract ptn) {
-    assert ptn instanceof Apply;
-    return ((Apply) ptn).arity();
+    assert ptn instanceof AApply;
+    return ((AApply) ptn).arity();
   }
 
   public static IList tupleArgs(IAbstract term) {
     assert isTupleTerm(term);
 
-    return ((Apply) term).getArgs();
+    return ((AApply) term).getArgs();
   }
 
   public static IAbstract tupleArg(IAbstract term, int ix) {
@@ -346,17 +346,17 @@ public abstract class Abstract {
 
   public static IAbstract tupleTerm(Location loc, IList els) {
     String label = TypeUtils.tupleLabel(els.size());
-    return new Apply(loc, new Name(loc, label), els);
+    return new AApply(loc, new Name(loc, label), els);
   }
 
   public static IAbstract tupleTerm(Location loc, List<IAbstract> els) {
     String label = TypeUtils.tupleLabel(els.size());
-    return new Apply(loc, new Name(loc, label), els);
+    return new AApply(loc, new Name(loc, label), els);
   }
 
   public static IAbstract tupleTerm(Location loc, IAbstract... els) {
     String label = TypeUtils.tupleLabel(els.length);
-    return new Apply(loc, new Name(loc, label), els);
+    return new AApply(loc, new Name(loc, label), els);
   }
 
   public static boolean isRoundTerm(IAbstract term, String label) {
@@ -364,17 +364,17 @@ public abstract class Abstract {
   }
 
   public static boolean isRoundTerm(IAbstract term) {
-    return term instanceof Apply && isIdentifier(((Apply) term).getOperator());
+    return term instanceof AApply && isIdentifier(((AApply) term).getOperator());
   }
 
   public static IList roundTermArgs(IAbstract term) {
     assert isRoundTerm(term);
 
-    return ((Apply) term).getArgs();
+    return ((AApply) term).getArgs();
   }
 
   public static String roundTermName(IAbstract term) {
     assert isRoundTerm(term);
-    return getId(((Apply) term).getOperator());
+    return getId(((AApply) term).getOperator());
   }
 }

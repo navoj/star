@@ -15,7 +15,7 @@
  */
 
 private import base;
-contract updateable over %r determines %t is {
+public contract updateable over %r determines %t is {
   _extend has type (%r,%t)=>%r;
   _merge has type (%r, %r) => %r;
   _delete has type (%r, ()<=%t) => %r;

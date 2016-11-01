@@ -17,7 +17,9 @@ package org.star_lang.star.compiler.ast;
 
 public interface IAbstractVisitor
 {
-  void visitApply(Apply app);
+  void visitApply(AApply app);
+  
+  void visitTuple(AsTuple tpl);
 
   void visitBooleanLiteral(BooleanLiteral lit);
 

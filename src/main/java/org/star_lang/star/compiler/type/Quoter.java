@@ -89,13 +89,24 @@ public class Quoter implements IAbstractVisitor {
     IContentExpression length = TypeCheckerUtils.integerLiteral(loc, loc.getLen());
 
     // must be in alphabetical order
-    IContentExpression args[] = new IContentExpression[]{charCount, length, lineCount, lineOffset, uri};
+    IContentExpression args[] = new IContentExpression[] { charCount, length, lineCount, lineOffset, uri };
 
     return new ConstructorTerm(loc, Location.somewhere, Location.type, args);
   }
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitTuple(AsTuple tpl) {
+    IContentExpression loc = genLocation(tpl.getLoc());
+
+    IList argList = tpl.getArgs();
+
+    IContentExpression args = partition(tpl.getLoc(), argList, 0, argList.size());
+
+    stack.push(new ConstructorTerm(tpl.getLoc(), AApply.name, astType, loc, args));
+  }
+
+  @Override
+  public void visitApply(AApply app) {
     if (CompilerUtils.isUnQuoted(app) || CompilerUtils.isQuestion(app))
       stack.push(checker.typeOfExp(CompilerUtils.unquotedExp(app), astType, cxt, outer));
     else if (Abstract.isBinary(app, StandardNames.MACRO_APPLY)) {
@@ -109,7 +120,7 @@ public class Quoter implements IAbstractVisitor {
         IContentExpression args = checker.typeOfExp(Abstract.binaryRhs(app), astArrayType, cxt, outer);
         IContentExpression op = stack.pop();
         IContentExpression loc = genLocation(app.getLoc());
-        stack.push(new ConstructorTerm(app.getLoc(), Apply.name, astType, loc, op, args));
+        stack.push(new ConstructorTerm(app.getLoc(), AApply.name, astType, loc, op, args));
       }
     } else {
       app.getOperator().accept(this);
@@ -120,7 +131,7 @@ public class Quoter implements IAbstractVisitor {
 
       IContentExpression args = partition(app.getLoc(), argList, 0, argList.size());
 
-      stack.push(new ConstructorTerm(app.getLoc(), Apply.name, astType, loc, op, args));
+      stack.push(new ConstructorTerm(app.getLoc(), AApply.name, astType, loc, op, args));
     }
   }
 
@@ -131,14 +142,14 @@ public class Quoter implements IAbstractVisitor {
       return new Application(loc, astArrayType, new Variable(loc, ArrayNil.type(), ArrayNil.name));
     else if (to == from + 1) {
       ((IAbstract) args.getCell(from)).accept(this);
-      IContentExpression argTpl[] = new IContentExpression[]{stack.pop()};
+      IContentExpression argTpl[] = new IContentExpression[] { stack.pop() };
       return new Application(loc, astArrayType, new Variable(loc, UnaryArray.type(), UnaryArray.name), argTpl);
     } else if (to == from + 2) {
       ((IAbstract) args.getCell(from)).accept(this);
       IContentExpression a1 = stack.pop();
       ((IAbstract) args.getCell(from + 1)).accept(this);
       IContentExpression a2 = stack.pop();
-      IContentExpression argTpl[] = new IContentExpression[]{a1, a2};
+      IContentExpression argTpl[] = new IContentExpression[] { a1, a2 };
       return new Application(loc, astArrayType, new Variable(loc, BinaryArray.type(), BinaryArray.name), argTpl);
     } else if (to == from + 3) {
       ((IAbstract) args.getCell(from)).accept(this);
@@ -147,13 +158,13 @@ public class Quoter implements IAbstractVisitor {
       IContentExpression a2 = stack.pop();
       ((IAbstract) args.getCell(from + 2)).accept(this);
       IContentExpression a3 = stack.pop();
-      IContentExpression argTpl[] = new IContentExpression[]{a1, a2, a3};
+      IContentExpression argTpl[] = new IContentExpression[] { a1, a2, a3 };
       return new Application(loc, astArrayType, new Variable(loc, TernaryArray.type(), TernaryArray.name), argTpl);
     } else {
       int s = (from + to) / 2;
       IContentExpression low = partition(loc, args, from, s);
       IContentExpression high = partition(loc, args, s, to);
-      IContentExpression argTpl[] = new IContentExpression[]{low, high};
+      IContentExpression argTpl[] = new IContentExpression[] { low, high };
       return new Application(loc, astArrayType, new Variable(loc, ArrayConcatenate.type(), ArrayConcatenate.name),
           argTpl);
     }

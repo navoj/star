@@ -714,7 +714,7 @@ public class OpGrammar implements PrettyPrintable {
         hed = tokenizer.headToken();
         if (isRightBracket(hed, pair)) {
           tokenizer.commitToken();
-          termStack.push(new Apply(opLoc.extendWith(hed.getLoc()), label, new IAbstract[]{bkOp}));
+          termStack.push(new AApply(opLoc.extendWith(hed.getLoc()), label, new IAbstract[]{bkOp}));
           lastLoc = hed.getLoc();
         } else if (pair.innerPriority == Operators.STATEMENT_PRIORITY) {
           // We process this level specially
@@ -791,7 +791,7 @@ public class OpGrammar implements PrettyPrintable {
 
       IAbstract op = termStack.pop();
 
-      Apply apply = new Apply(loc, op, args);
+      AApply apply = new AApply(loc, op, args);
       IAttribute opform = new OpFormAttribute(priority, form);
       apply.setAttribute(OpFormAttribute.name, opform);
 

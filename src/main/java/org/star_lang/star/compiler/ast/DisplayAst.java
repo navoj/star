@@ -50,7 +50,7 @@ public class DisplayAst implements IFunction {
   protected static void display(PrettyPrintDisplay disp, IAbstract term, int priority) {
     switch (term.astType()) {
       case Apply: {
-        Apply apply = (Apply) term;
+        AApply apply = (AApply) term;
         displayApply(disp, apply, priority);
         break;
       }
@@ -96,7 +96,7 @@ public class DisplayAst implements IFunction {
     }
   }
 
-  protected static void displayApply(PrettyPrintDisplay disp, Apply app, int priority) {
+  protected static void displayApply(PrettyPrintDisplay disp, AApply app, int priority) {
     IAbstract operator = app.getOperator();
 
     if (CompilerUtils.isBraceTerm(app)) {
@@ -174,7 +174,7 @@ public class DisplayAst implements IFunction {
       display0(disp, app);
   }
 
-  private static void display0(PrettyPrintDisplay disp, Apply app) {
+  private static void display0(PrettyPrintDisplay disp, AApply app) {
     display(disp, app.getOperator(), 0);
     display(disp, app.getArgs(), "(", ", ", ")", 0, 1000);
   }

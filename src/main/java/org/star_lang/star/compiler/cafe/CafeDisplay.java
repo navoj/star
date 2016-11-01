@@ -3,7 +3,7 @@ package org.star_lang.star.compiler.cafe;
 import java.util.List;
 
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.Display;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.standard.StandardNames;
@@ -52,7 +52,7 @@ public class CafeDisplay extends Display
   }
 
   @Override
-  public void visitApply(Apply trm)
+  public void visitApply(AApply trm)
   {
     if (CafeSyntax.isFunctionDefn(trm)) {
       Abstract.argPath(trm, 0, 0).accept(this);

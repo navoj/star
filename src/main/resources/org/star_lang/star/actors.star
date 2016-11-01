@@ -26,21 +26,21 @@ private import arrays;
 private import maps;
 private import macrosupport;
 
-contract speech over t determines (u,a) where execution over a is {
+public contract speech over t determines (u,a) where execution over a is {
   _query has type for all s such that (t,(u)=>s,()=>quoted,()=>dictionary of (string,quoted))=>a of s;
   _request has type (t,(u)=>(),()=>quoted,()=>dictionary of (string,quoted)) => a of ();
   _notify has type (t,(u)=>()) => a of ();
 };
 
-implementation speech over actor of %t determines (%t,action) is {
+public implementation speech over actor of %t determines (%t,action) is {
   fun _query(act0r(Ac),Qf,_,_) is action { valis Qf(Ac)};
   fun _request(act0r(Ac),Rf,_,_) is action{ Rf(Ac) };
   fun _notify(act0r(Ac),Np) is action{ Np(Ac) };
 };
 
-type actor of %t is act0r(%t);
+public type actor of %t is act0r(%t);
 
-type occurrence of %t is alias of action(%t);
+public type occurrence of %t is alias of action(%t);
 
 #prefix((notify),1100);
 #prefix((query),1000);

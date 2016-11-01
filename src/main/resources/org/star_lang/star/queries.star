@@ -29,8 +29,7 @@
 -- C1 and C2
 #transCondition(?C1 and ?C2, ?Aux, ?Acc, ?Add, ?Init) ==> 
    transCondition(C1, 
-
-( andGen( transCondition(C2, Aux, #$"init"), #$"init"), Init);
+                 ( andGen( transCondition(C2, Aux, #$"init"), #$"init"), Init);
 
 -- Aux function generators
 

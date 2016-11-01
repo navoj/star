@@ -146,7 +146,7 @@ public class CaseCompile {
           IAbstract rl = (IAbstract) r;
           assert CafeSyntax.isCaseRule(rl) && CafeSyntax.isConstructor(CafeSyntax.caseRulePtn(rl));
 
-          Apply ptn = (Apply) CafeSyntax.caseRulePtn(rl);
+          AApply ptn = (AApply) CafeSyntax.caseRulePtn(rl);
           String lbl = CafeSyntax.constructorOp(ptn);
           ICafeConstructorSpecifier con = (ICafeConstructorSpecifier) desc.getValueSpecifier(lbl);
 

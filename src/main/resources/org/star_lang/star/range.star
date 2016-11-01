@@ -25,14 +25,14 @@ private import strings;
 private import casting;
 private import folding;
 
-type range of t where arithmetic over t and comparable over t is range(t,t,t);
+public type range of t where arithmetic over t and comparable over t is range(t,t,t);
 
-implementation sizeable over range of %t where coercion over (%t,integer) is {
+public implementation sizeable over range of %t where coercion over (%t,integer) is {
   fun isEmpty(range(F,T,_)) is F>=T;
   fun size(range(F,T,S)) is ((T-F)/S) as integer;
 }
 
-implementation iterable over range of %t determines %t is {
+public implementation iterable over range of %t determines %t is {
   fun _iterate(range(Fr,To,Stp),Fn,St) is iotaIterate(Fr,To,Stp,Fn,St);
 }
 
@@ -63,7 +63,7 @@ implementation for all t such that sequence over range of t determines t where c
   }
 */
 
-implementation for all t such that foldable over range of t determines t is {
+public implementation for all t such that foldable over range of t determines t is {
   fun leftFold(F,I,range(Fr,To,Inc)) is  valof{
     var r := Fr
     def limit is To*Inc
@@ -94,7 +94,7 @@ implementation for all t such that foldable over range of t determines t is {
    |  rightFold1(F,_) is raise "range is empty";
 }
 
-implementation for all t such that concatenate over range of t where equality over t is {
+public implementation for all t such that concatenate over range of t where equality over t is {
   fun range(Fr,Md,Inc)++range(Md,To,Inc) is range(Fr,To,Inc);
 }
 

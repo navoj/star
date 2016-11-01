@@ -19,9 +19,9 @@ private import base;
 private import arithmetic;
 private import compute;
 
-type maybe of %t is possible(%t) or impossible(exception);
+public type maybe of %t is possible(%t) or impossible(exception);
 
-implementation (computation) over maybe determines exception is {
+public implementation (computation) over maybe determines exception is {
   fun _encapsulate(X) is possible(X)
     
   fun _combine(possible(X),F) is F(X)
@@ -33,6 +33,6 @@ implementation (computation) over maybe determines exception is {
    |  _handle(M,EF) is M
 }
   
-implementation execution over maybe is {
+public implementation execution over maybe is {
     fun _perform(possible(X)) is X
 }

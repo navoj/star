@@ -30,7 +30,7 @@ import org.star_lang.star.data.value.Array;
  */
 
 @SuppressWarnings("serial")
-public class Apply extends ASyntax
+public class AApply extends ASyntax
 {
   public static final String name = "applyAst";
 
@@ -43,44 +43,44 @@ public class Apply extends ASyntax
   private final IAbstract op;
   private final IList args;
 
-  public Apply(Location loc, IAbstract op, IList args)
+  public AApply(Location loc, IAbstract op, IList args)
   {
     super(loc);
     this.op = op;
     this.args = args;
   }
 
-  public Apply(Location loc, IAbstract op, IList args, List<String> categories, Map<String, IAttribute> attributes)
+  public AApply(Location loc, IAbstract op, IList args, List<String> categories, Map<String, IAttribute> attributes)
   {
     super(loc, categories, attributes);
     this.op = op;
     this.args = args;
   }
 
-  public Apply(Location loc, String op, IList args)
+  public AApply(Location loc, String op, IList args)
   {
     this(loc, new Name(loc, op), args);
   }
 
-  public Apply(Location loc, String op, List<IAbstract> args)
+  public AApply(Location loc, String op, List<IAbstract> args)
   {
     this(loc, new Name(loc, op), new Array(args));
     assert ListUtils.assertNoNulls(args);
   }
 
-  public Apply(Location loc, String op, IAbstract... args)
+  public AApply(Location loc, String op, IAbstract... args)
   {
     this(loc, new Name(loc, op), Array.newArray(args));
     assert ListUtils.assertNoNulls(args);
   }
 
-  public Apply(Location loc, IAbstract op, List<IAbstract> args)
+  public AApply(Location loc, IAbstract op, List<IAbstract> args)
   {
     this(loc, op, new Array(args));
     assert op != null && ListUtils.assertNoNulls(args);
   }
 
-  public Apply(Location loc, IAbstract op, List<IAbstract> args, Map<String, IAttribute> attributes)
+  public AApply(Location loc, IAbstract op, List<IAbstract> args, Map<String, IAttribute> attributes)
   {
     super(loc, attributes);
     this.op = op;
@@ -89,7 +89,7 @@ public class Apply extends ASyntax
     assert op != null && ListUtils.assertNoNulls(args);
   }
 
-  public Apply(Location loc, IAbstract op, List<IAbstract> args, List<String> categories,
+  public AApply(Location loc, IAbstract op, List<IAbstract> args, List<String> categories,
       Map<String, IAttribute> attributes)
   {
     super(loc, categories, attributes);
@@ -99,14 +99,14 @@ public class Apply extends ASyntax
     assert op != null && ListUtils.assertNoNulls(args);
   }
 
-  public Apply(Location loc, IAbstract op, IAbstract... args)
+  public AApply(Location loc, IAbstract op, IAbstract... args)
   {
     this(loc, op, Array.newArray(args));
 
     assert op != null & ListUtils.assertNoNulls(args);
   }
 
-  public Apply(IValue loc, IValue op, IValue args)
+  public AApply(IValue loc, IValue op, IValue args)
   {
     super((Location) loc);
     this.op = (IAbstract) op;
@@ -127,8 +127,8 @@ public class Apply extends ASyntax
   @Override
   public boolean equals(Object obj)
   {
-    if (obj instanceof Apply) {
-      Apply other = (Apply) obj;
+    if (obj instanceof AApply) {
+      AApply other = (AApply) obj;
       return other.op.equals(op) && other.args.equals(args);
     }
     return false;
@@ -142,7 +142,7 @@ public class Apply extends ASyntax
 
   public static ConstructorSpecifier spec()
   {
-    return new ConstructorSpecifier(Location.nullLoc, null, name, applyIx, conType, Apply.class, ASyntax.class);
+    return new ConstructorSpecifier(Location.nullLoc, null, name, applyIx, conType, AApply.class, ASyntax.class);
   }
 
   @Override
@@ -253,6 +253,6 @@ public class Apply extends ASyntax
   @Override
   public IConstructor shallowCopy() throws EvaluationException
   {
-    return new Apply(getLoc(), op, args);
+    return new AApply(getLoc(), op, args);
   }
 }

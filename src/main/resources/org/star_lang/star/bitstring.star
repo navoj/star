@@ -27,7 +27,7 @@ private import strings;
 #prefix(".~.",650);
 #prefix(".\#.",650);
 
-contract bitstring over %t is {
+public contract bitstring over %t is {
   (.&.) has type (%t,%t)=>%t;
   (.^.) has type (%t,%t)=>%t;
   (.|.) has type (%t,%t)=>%t;
@@ -38,7 +38,7 @@ contract bitstring over %t is {
   (.#.) has type (%t)=>integer;
 }
 
-implementation bitstring over integer is {
+public implementation bitstring over integer is {
   fun integer(L) .&. integer(R) is integer(__integer_bit_and(L,R));
   fun integer(L) .|. integer(R) is integer(__integer_bit_or(L,R));
   fun integer(L) .^. integer(R) is integer(__integer_bit_xor(L,R));
@@ -49,7 +49,7 @@ implementation bitstring over integer is {
   fun .#. integer(L) is integer(__integer_bit_count(L));
 }
 
-implementation bitstring over long is {
+public implementation bitstring over long is {
   fun long(L) .&. long(R) is long(__long_bit_and(L,R));
   fun long(L) .|. long(R) is long(__long_bit_or(L,R));
   fun long(L) .^. long(R) is long(__long_bit_xor(L,R));

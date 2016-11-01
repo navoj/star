@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.Name;
@@ -113,7 +113,7 @@ public class DisplayBuilder {
       IAbstract tpArgs = Abstract.binaryRhs(tp);
 
       if (Abstract.isTupleTerm(tpArgs)) {
-        for (IValue el : ((Apply) tpArgs).getArgs())
+        for (IValue el : ((AApply) tpArgs).getArgs())
           lookForAnonTypes((IAbstract) el, dict, theta, printers);
       } else
         lookForAnonTypes(tpArgs, dict, theta, printers);
@@ -394,21 +394,21 @@ public class DisplayBuilder {
    * </pre>
    */
   private static IAbstract displayConstructor(Location loc, String label, IAbstract term, IAbstract type) {
-    assert term instanceof Apply;
+    assert term instanceof AApply;
     List<IAbstract> lVars = new ArrayList<>();
 
-    Apply apply = (Apply) term;
+    AApply apply = (AApply) term;
     String conLabel = apply.getOp();
     IAbstract disp = argSeq(apply, 0, Abstract.arity(term), lVars, type, label, cons(loc, str(loc, ")"), nil(loc)));
     disp = cons(loc, str(loc, Abstract.isTupleTerm(term) ? "(" : conLabel + "("), disp);
 
     List<IAbstract> args = new ArrayList<>();
-    args.add(new Apply(loc, conLabel, lVars));
+    args.add(new AApply(loc, conLabel, lVars));
 
     return CompilerUtils.equation(loc, label, args, seq(loc, 2, disp));
   }
 
-  private static IAbstract argSeq(Apply term, int ix, int arity, List<IAbstract> lVars, IAbstract type, String label,
+  private static IAbstract argSeq(AApply term, int ix, int arity, List<IAbstract> lVars, IAbstract type, String label,
                                   IAbstract tail) {
     Location loc = term.getLoc();
     if (ix == arity)

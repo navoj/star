@@ -44,7 +44,7 @@ public class PtnQuoter implements IAbstractVisitor {
   private final ErrorReport errors;
 
   public PtnQuoter(Dictionary cxt, Dictionary outer, Wrapper<ICondition> cond, PtnVarHandler varHandler,
-                   TypeChecker checker, ErrorReport errors) {
+      TypeChecker checker, ErrorReport errors) {
     this.cxt = cxt;
     this.outer = outer;
     this.checker = checker;
@@ -64,7 +64,32 @@ public class PtnQuoter implements IAbstractVisitor {
   }
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitTuple(AsTuple tpl) {
+    IList args = tpl.getArgs();
+    int arity = args.size();
+    Location loc = tpl.getLoc();
+
+    Variable argsVar = new Variable(loc, TypeUtils.arrayType(astType), GenSym.genSym("__args"));
+    Variable hasSize = new Variable(loc, ArrayHasSize.type(), ArrayHasSize.name);
+    CompilerUtils.extendCondition(cond,
+        new IsTrue(loc, Application.apply(loc, StandardTypes.rawBoolType, hasSize, argsVar, rawInt(loc, arity))));
+
+    for (int ix = 0; ix < arity; ix++) {
+      Wrapper<ICondition> subCond = Wrapper.create(CompilerUtils.truth);
+      Variable get = new Variable(loc, ArrayEl.type(), ArrayEl.name);
+      IContentExpression getter = new Application(loc, astType, get, argsVar, rawInt(loc, ix));
+      PtnQuoter fork = fork(subCond);
+      ((IAbstract) args.getCell(ix)).accept(fork);
+      CompilerUtils.extendCondition(cond, new Matches(loc, getter, fork.stack.pop()));
+      CompilerUtils.extendCondition(cond, subCond.get());
+    }
+
+    IContentPattern lcPtn = Variable.anonymous(loc, Location.type);
+    stack.push(new ConstructorPtn(loc, AsTuple.name, astType, lcPtn, argsVar));
+  }
+
+  @Override
+  public void visitApply(AApply app) {
     Location loc = app.getLoc();
     if (CompilerUtils.isUnQuoted(app) || CompilerUtils.isQuestion(app))
       stack.push(checker.typeOfPtn(CompilerUtils.unquotedExp(app), astType, cond, cxt, outer, varHandler));
@@ -79,8 +104,8 @@ public class PtnQuoter implements IAbstractVisitor {
         Name anon = new Name(loc, "_");
 
         if (sym.equals(StandardTypes.INTEGER))
-          matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract
-              .binary(loc, IntegerLiteral.name, anon, anon), rhs);
+          matchTest = Abstract.binary(loc, StandardNames.MATCHING,
+              Abstract.binary(loc, IntegerLiteral.name, anon, anon), rhs);
         else if (sym.equals(StandardTypes.LONG))
           matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, LongLiteral.name, anon, anon),
               rhs);
@@ -90,8 +115,8 @@ public class PtnQuoter implements IAbstractVisitor {
         else if (sym.equals(StandardNames.IDENTIFIER))
           matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, Name.name, anon, anon), rhs);
         else if (sym.equals(StandardTypes.STRING))
-          matchTest = Abstract.binary(loc, StandardNames.MATCHING,
-              Abstract.binary(loc, StringLiteral.name, anon, anon), rhs);
+          matchTest = Abstract.binary(loc, StandardNames.MATCHING, Abstract.binary(loc, StringLiteral.name, anon, anon),
+              rhs);
         else
           errors.reportError(StringUtils.msg("invalid quote pattern: ", lhs), lhs.getLoc());
         if (matchTest != null)
@@ -108,11 +133,11 @@ public class PtnQuoter implements IAbstractVisitor {
       if (!Abstract.isUnary(rhs, StandardNames.QUESTION)) {
         errors.reportError(StringUtils.msg("expecting a ? after ", StandardNames.MACRO_APPLY), rhs.getLoc());
       } else {
-        IContentPattern args = checker.typeOfPtn(Abstract.unaryArg(rhs), TypeUtils.arrayType(astType), cond, cxt,
-            outer, varHandler);
+        IContentPattern args = checker.typeOfPtn(Abstract.unaryArg(rhs), TypeUtils.arrayType(astType), cond, cxt, outer,
+            varHandler);
         IContentPattern op = stack.pop();
         IContentPattern lcPtn = Variable.anonymous(app.getLoc(), Location.type);
-        stack.push(new ConstructorPtn(app.getLoc(), Apply.name, astType, lcPtn, op, args));
+        stack.push(new ConstructorPtn(app.getLoc(), AApply.name, astType, lcPtn, op, args));
       }
     } else {
       app.getOperator().accept(this);
@@ -123,8 +148,8 @@ public class PtnQuoter implements IAbstractVisitor {
 
       Variable argsVar = new Variable(loc, TypeUtils.arrayType(astType), GenSym.genSym("__args"));
       Variable hasSize = new Variable(loc, ArrayHasSize.type(), ArrayHasSize.name);
-      CompilerUtils.extendCondition(cond, new IsTrue(loc, Application.apply(loc, StandardTypes.rawBoolType, hasSize,
-          argsVar, rawInt(loc, arity))));
+      CompilerUtils.extendCondition(cond,
+          new IsTrue(loc, Application.apply(loc, StandardTypes.rawBoolType, hasSize, argsVar, rawInt(loc, arity))));
 
       for (int ix = 0; ix < arity; ix++) {
         Wrapper<ICondition> subCond = Wrapper.create(CompilerUtils.truth);
@@ -137,7 +162,7 @@ public class PtnQuoter implements IAbstractVisitor {
       }
 
       IContentPattern lcPtn = Variable.anonymous(app.getLoc(), Location.type);
-      stack.push(new ConstructorPtn(app.getLoc(), Apply.name, astType, lcPtn, op, argsVar));
+      stack.push(new ConstructorPtn(app.getLoc(), AApply.name, astType, lcPtn, op, argsVar));
     }
   }
 

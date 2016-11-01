@@ -18,7 +18,7 @@ import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.DisplayAst;
@@ -461,14 +461,14 @@ public class MacroCompiler {
       IAbstract locArg = Abstract.name(loc, GenSym.genSym("Loc"));
 
       // Define the walker itself
-      IAbstract head = Abstract.unary(loc, driver, Abstract.ternary(loc, Apply.name, locArg, opArg, argsArg));
+      IAbstract head = Abstract.unary(loc, driver, Abstract.ternary(loc, AApply.name, locArg, opArg, argsArg));
       IAbstract opRepl = Abstract.unary(loc, replaceVar, opArg);
 
       IAbstract quotedType = Abstract.name(loc, StandardTypes.QUOTED);
       IAbstract walkerTp = CompilerUtils.typeAnnotationStmt(loc, driver,
           CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
       IAbstract walkerRl1 = CompilerUtils.equation(loc, head,
-          Abstract.ternary(loc, Apply.name, locArg, opRepl, Abstract.binary(loc, ArrayMap.name, argsArg, replaceVar)));
+          Abstract.ternary(loc, AApply.name, locArg, opRepl, Abstract.binary(loc, ArrayMap.name, argsArg, replaceVar)));
       IAbstract walkerRl2 = CompilerUtils.equation(loc, Abstract.unary(loc, driver, argsArg), argsArg);
 
       pkgRules.add(walkerTp);
@@ -743,8 +743,8 @@ public class MacroCompiler {
       } else
         errors.reportWarning(StringUtils.msg(ptn, " not supported by macro compiler"), loc);
       return lhs;
-    } else if (ptn instanceof Apply) {
-      Apply apply = (Apply) ptn;
+    } else if (ptn instanceof AApply) {
+      AApply apply = (AApply) ptn;
       IAbstract opPtn = compilePtn(apply.getOperator(), cond, errors, vars, locationVar);
       Name argsVar = new Name(loc, GenSym.genSym("_args"));
       vars.add(Abstract.getId(argsVar));
@@ -763,7 +763,7 @@ public class MacroCompiler {
         CompilerUtils.appendCondition(cond, subCond);
       }
 
-      return Abstract.ternary(loc, Apply.name, anon, opPtn, argsVar);
+      return Abstract.ternary(loc, AApply.name, anon, opPtn, argsVar);
     } else if (ptn instanceof Name) {
       String sym = ((Name) ptn).getId();
 
@@ -963,7 +963,7 @@ public class MacroCompiler {
         MacroDescriptor desc = dict.get(key);
         switch (desc.type()) {
         case macroRule:
-          return new Apply(loc, desc.getInvokeName(loc),
+          return new AApply(loc, desc.getInvokeName(loc),
               stdMacroArgs(astName(loc, locationVar, key), locationVar, replaceVar, outerVar));
         case macroVar:
           return Abstract.zeroary(loc, desc.getInvokeName(loc));
@@ -1006,8 +1006,8 @@ public class MacroCompiler {
       } else
         return compileReplacement(Abstract.binaryLhs(repl), dict, errors, vars, counterVar, locationVar, replaceVar,
             outerVar);
-    } else if (repl instanceof Apply) {
-      Apply apply = (Apply) repl;
+    } else if (repl instanceof AApply) {
+      AApply apply = (AApply) repl;
       List<IAbstract> replArgs = new ArrayList<>();
       for (IValue arg : apply.getArgs())
         replArgs.add(
@@ -1032,7 +1032,7 @@ public class MacroCompiler {
             return Abstract.zeroary(loc, opRepl);
           case quotedFun:
           case builtin:
-            return new Apply(loc, desc.getInvokeName(loc), replArgs);
+            return new AApply(loc, desc.getInvokeName(loc), replArgs);
           default:
             return replTerm;
           }
@@ -1071,7 +1071,7 @@ public class MacroCompiler {
       }
 
       @Override
-      public void visitApply(Apply app) {
+      public void visitApply(AApply app) {
         if (Abstract.isIdentifier(app.getOperator())) {
           String key = patternKey(app, errors);
           keys.add(key);
@@ -1170,7 +1170,7 @@ public class MacroCompiler {
   }
 
   public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, IAbstract args) {
-    return Abstract.ternary(loc, Apply.name, aloc, op, args);
+    return Abstract.ternary(loc, AApply.name, aloc, op, args);
   }
 
   public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, List<IAbstract> args) {

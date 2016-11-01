@@ -27,7 +27,7 @@ private import arithmetic;
 private import folding;
 private import iterable;
 
-type treemap of (%k,%v) is trNode{
+public type treemap of (%k,%v) is trNode{
   maskLen has type integer_;
   mask has type integer_;
   left has type treemap of (%k,%v);
@@ -47,7 +47,7 @@ fun validTree(trEmpty,_) is true
       validTree(L,Ln) and validTree(R,Ln)
  |  validTree(T,Ln) default is false;
 
-implementation pPrint over treemap of (%k,%v) where pPrint over %k and pPrint over %v is {
+public implementation pPrint over treemap of (%k,%v) where pPrint over %k and pPrint over %v is {
   fun ppDisp(H) is ppSequence(2,cons of [ppStr("treemap of ["), dispHash(H), ppStr("]")]);
 } using {
   fun dispHash(trNode{left=L; right=R}) is ppSequence(0,cons of [dispHash(L), dispHash(R)])
@@ -55,7 +55,7 @@ implementation pPrint over treemap of (%k,%v) where pPrint over %k and pPrint ov
    |  dispHash(trLeaf(_,Els)) is ppSeqMap(Els);
 }
 
-implementation indexable over treemap of (%k,%v) determines (%k,%v) where equality over %k is {
+public implementation indexable over treemap of (%k,%v) determines (%k,%v) where equality over %k is {
   fun _index(M,K) is look(K,M);
   fun _set_indexed(M,K,V) is insrt(K,V,M);
   fun _delete_indexed(M,K) is remve(__hashCode(K),K,M);
@@ -249,7 +249,7 @@ fun tree_depth(trEmpty) is 0
  |  tree_depth(trLeaf(_,_)) is 1
  |  tree_depth(trNode{left=L;right=R}) is max(tree_depth(L),tree_depth(R))+1;
 
-implementation sequence over treemap of (%k,%v) determines ((%k,%v)) where equality over %k is {
+public implementation sequence over treemap of (%k,%v) determines ((%k,%v)) where equality over %k is {
   fun _cons((K,V),M) is insrt(K,V,M);
   fun _apnd(M,(K,V)) is insrt(K,V,M);
   fun _nil() is trEmpty;
@@ -258,7 +258,7 @@ implementation sequence over treemap of (%k,%v) determines ((%k,%v)) where equal
   ptn _back((raise "not implemented a"),(raise "not implemented b")) from X; 
 }
 
-implementation sizeable over treemap of (%k,%v) is {
+public implementation sizeable over treemap of (%k,%v) is {
   fun isEmpty(trEmpty) is true
    |  isEmpty(_) default is false;
   
@@ -274,11 +274,11 @@ fun iter(trLeaf(H,Els),F,S) is listMapIter(Els,F,S)
       case NoMore(X) is NoMore(X);
     }
 
-implementation iterable over treemap of (%k,%v) determines %v is {
+public implementation iterable over treemap of (%k,%v) determines %v is {
   fun _iterate(M,F,S) is iter(M,F,S);
 }
 
-implementation indexed_iterable over treemap of (%k,%v) determines (%k,%v) is {
+public implementation indexed_iterable over treemap of (%k,%v) determines (%k,%v) is {
   fun _ixiterate(M,F,S) is ixIter(M,F,S);
 }
 
@@ -291,7 +291,7 @@ fun ixIter(trLeaf(H,Els),F,S) is listmapIxIter(Els,F,S)
       case NoMore(X) is NoMore(X);
     }
 
-implementation updateable over treemap of (%k,%v) determines ((%k,%v)) where equality over %k is {
+public implementation updateable over treemap of (%k,%v) determines ((%k,%v)) where equality over %k is {
   fun _extend(TM,(K,V)) is insrt(K,V,TM);
   fun _merge(TM, S) is mergeTree(TM,S);
   fun _delete(TM, P) is _checkIterState(ixIter(TM,iterDelete(P),ContinueWith(TM)),razer);
@@ -326,11 +326,11 @@ implementation updateable over treemap of (%k,%v) determines ((%k,%v)) where equ
   private fun razer() is raise "problem";
 } 
 
-implementation concatenate over treemap of (%k,%v) where equality over %k is {
+public implementation concatenate over treemap of (%k,%v) where equality over %k is {
   (++) = _merge;
 };
 
-implementation foldable over treemap of (%k,%v) determines %v is {
+public implementation foldable over treemap of (%k,%v) determines %v is {
   leftFold = lftFold;
   rightFold = rgtFold;
 } using {

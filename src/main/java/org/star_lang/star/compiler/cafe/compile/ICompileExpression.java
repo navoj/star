@@ -1,6 +1,6 @@
 package org.star_lang.star.compiler.cafe.compile;
 
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
 
 /*
@@ -18,5 +18,5 @@ import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
  */
 
 public interface ICompileExpression {
-	ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt);
+	ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt);
 }

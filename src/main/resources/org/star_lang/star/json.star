@@ -30,7 +30,7 @@ private import folding;
   -- implement an json type
   -- intended to represent flexible datasets such as those found in JSON and XML
 
-  type json is 
+public type json is 
       iFalse or
       iTrue or
       iNull or
@@ -40,10 +40,10 @@ private import folding;
       iNum(long) or
       iFlt(float);
 
-  type infoPathKey is kString(string) or kInt(integer);
-  type infoPath is alias of list of infoPathKey;
+ public type infoPathKey is kString(string) or kInt(integer);
+public type infoPath is alias of list of infoPathKey;
 
-  implementation indexable over json determines (infoPath,json) is {
+public implementation indexable over json determines (infoPath,json) is {
     fun _index(I,K) is find(K,I);
     fun _set_indexed(I,K,V) is updte(K,I,V);
     fun _delete_indexed(I,K) is remve(K,I);
@@ -95,7 +95,7 @@ private import folding;
     } in IterateInfo(I,S);
   }
 
-  implementation indexed_iterable over json determines (infoPath,json) is {
+public implementation indexed_iterable over json determines (infoPath,json) is {
     fun _ixiterate(I,F,St) is indexInfoIterate(I,F,St,list of [])
   } using {
     fun indexInfoIterate(_,_,NoMore(X),_) is NoMore(X)
@@ -108,7 +108,7 @@ private import folding;
      |  indexInfoIterate(I,F,St,P) default is F(P,I,St);
   };
 
-  implementation pPrint over json is {
+public implementation pPrint over json is {
     fun ppDisp(iColl(M)) is ppSequence(2, cons of [ppStr("{"), ppSequence(0,dispContent(M)), ppStr("}")])
      |  ppDisp(iSeq(L)) is ppSequence(0, cons of [ppStr("["), ppSequence(0,dispSeq(L)), ppStr("]")])
      |  ppDisp(iText(S)) is ppStr(display(S))
@@ -125,14 +125,14 @@ private import folding;
     fun dispSeq(L) is interleave(cons of { ppDisp(E) where E in L},ppStr(","));
   }
   
-  implementation coercion over (string,json) is {
+public implementation coercion over (string,json) is {
     fun coerce(S) is valof{
       def (J,_) is jParse(explode(S))
       valis J
     }
   }
   
-  implementation coercion over (json,string) is {
+public implementation coercion over (json,string) is {
     fun coerce(I) is display(I);
   }
   

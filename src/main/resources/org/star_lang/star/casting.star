@@ -16,152 +16,153 @@
 
 private import base;
 
-contract coercion over (%s,%d) is {
+public contract coercion over (%s,%d) is {
   coerce has type (%s)=>%d;
 }
 
-implementation coercion over (string,boolean) is {
+public implementation coercion over (string,boolean) is {
   fun coerce(string(X)) is __string_boolean(X);
 }
 
-implementation coercion over (string,list of integer) is {
+public implementation coercion over (string,list of integer) is {
   fun coerce(string(X)) is __string_array(X);
 }
 
-implementation coercion over (string,integer) is {
+public implementation coercion over (string,integer) is {
   fun coerce(string(X)) is __string_integer(X);
 }
 
-implementation coercion over (string,long) is {
+public implementation coercion over (string,long) is {
   fun coerce(string(X)) is __string_long(X);
 }
 
-implementation coercion over (string,float) is {
+public implementation coercion over (string,float) is {
   fun coerce(string(X)) is __string_float(X);
 }
 
-implementation coercion over (string,binary) is {
+public implementation coercion over (string,binary) is {
   fun coerce(S) is __string_binary(S);
 }
 
-implementation coercion over (string,string) is {
+public implementation coercion over (string,string) is {
   fun coerce(S) is S;
 }
 
-implementation coercion over (boolean,string) is {
+public implementation coercion over (boolean,string) is {
   fun coerce(true) is "true"
    |  coerce(false) is "false"
 }
 
-implementation coercion over (list of integer,string) is {
+public implementation coercion over (list of integer,string) is {
   fun coerce(L) is string(__array_string(L))
 }
 
-implementation coercion over (integer,string) is {
+public implementation coercion over (integer,string) is {
   fun coerce(integer(I)) is string(__integer_string(I))
 }
 
-implementation coercion over (long,string) is {
+public implementation coercion over (long,string) is {
   fun coerce(long(L)) is string(__long_string(L));
 }
 
-implementation coercion over (float,integer) is {
+public implementation coercion over (float,integer) is {
   fun coerce(float(F)) is integer(__float_integer(F))
 }
-implementation coercion over (float,long) is {
+
+public implementation coercion over (float,long) is {
   fun coerce(float(F)) is long(__float_long(F))
 }
 
-implementation coercion over (float, float) is {
+public implementation coercion over (float, float) is {
   fun coerce(X) is X
 }
 
-implementation coercion over (float,string) is {
+public implementation coercion over (float,string) is {
   fun coerce(float(F)) is string(__float_string(F))
    |  coerce(nonFLoat) is "nonFloat"
 }
 
-implementation coercion over (integer, integer) is {
+public implementation coercion over (integer, integer) is {
   fun coerce(I) is I;
 }
 
-implementation coercion over (integer,long) is {
+public implementation coercion over (integer,long) is {
   fun coerce(integer(X)) is long(__integer_long(X));
 }
 
-implementation coercion over (integer,float) is {
+public implementation coercion over (integer,float) is {
   fun coerce(integer(X)) is float(__integer_float(X));
 }
 
-implementation coercion over (long,integer) is {
+public implementation coercion over (long,integer) is {
   fun coerce(long(X)) is integer(__long_integer(X));
 }
 
-implementation coercion over (long, long) is {
+public implementation coercion over (long, long) is {
   fun coerce(I) is I;
 }
 
-implementation coercion over (long,float) is {
+public implementation coercion over (long,float) is {
   fun coerce(long(X)) is float(__long_float(X));
 }
 
-implementation coercion over (string,uri) is {
+public implementation coercion over (string,uri) is {
   fun coerce(string(S)) is __string2uri(S)
 }
 
-implementation coercion over (uri,string) is {
+public implementation coercion over (uri,string) is {
   fun coerce(U) is string(__uri2string(U));
 }
 
-implementation coercion over (binary,string) is {
+public implementation coercion over (binary,string) is {
   fun coerce(S) is __binary_string(S);
 }
 
-implementation coercion over (quoted,string) is {
+public implementation coercion over (quoted,string) is {
   fun coerce(stringAst(_,S)) is S
    |  coerce(<|nonString|>) is nonString
    |  coerce(Q) is raise __string_concat(__macro_display(Q)," is not a string")
 }
 
-implementation coercion over (string,quoted) is {
+public implementation coercion over (string,quoted) is {
   fun coerce(string(S)) is stringAst(noWhere,string(S))
    |  coerce(nonString) is <|nonString|>
 }
 
-implementation coercion over (quoted,integer) is {
+public implementation coercion over (quoted,integer) is {
   fun coerce(integerAst(_,S)) is S
    |  coerce(<|nonInteger|>) is nonInteger
    |  coerce(Q) is raise __string_concat(__macro_display(Q)," is not an integer")
 }
 
-implementation coercion over (integer,quoted) is {
+public implementation coercion over (integer,quoted) is {
   fun coerce(integer(Ix)) is integerAst(noWhere,integer(Ix))
    |  coerce(nonInteger) is <|nonInteger|>
 }
 
-implementation coercion over (quoted,long) is {
+public implementation coercion over (quoted,long) is {
   fun coerce(longAst(_,S)) is S
    |  coerce(<|nonLong|>) is nonLong
    |  coerce(Q) is raise __string_concat(__macro_display(Q)," is not a long")
 }
 
-implementation coercion over (long,quoted) is {
+public implementation coercion over (long,quoted) is {
   fun coerce(long(Ix)) is longAst(noWhere,long(Ix))
    |  coerce(nonLong) is <|nonLong|>
 }
 
-implementation coercion over (quoted,float) is {
+public implementation coercion over (quoted,float) is {
   fun coerce(floatAst(_,S)) is S
    |  coerce(<|nonFloat|>) is nonFloat
    |  coerce(Q) is raise __string_concat(__macro_display(Q)," is not a float")
 }
 
-implementation coercion over (float,quoted) is {
+public implementation coercion over (float,quoted) is {
   fun coerce(float(Dx)) is floatAst(noWhere,float(Dx))
    |  coerce(nonFloat) is <|nonFloat|>
 }
 
-implementation for all t such that 
+public implementation for all t such that 
   coercion over (cons of t,quoted) where coercion over (t,quoted) is {
   fun coerce(L) is quoteList(L)
 } using {
@@ -169,7 +170,7 @@ implementation for all t such that
    |  quoteList(cons(H,T)) is <|cons(?(H as quoted),?(quoteList(T)))|>
 }
 
-implementation for all t such that
+public implementation for all t such that
     coercion over (quoted,cons of t) where coercion over (quoted,t) is {
   fun coerce(Q) is unquoteList(Q)
 } using {

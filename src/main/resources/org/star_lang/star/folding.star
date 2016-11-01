@@ -17,22 +17,22 @@
 private import base;
 private import iterable;
 
-contract mappable over c is {
+public contract mappable over c is {
   map has type for all e,f such that ((e)=>f,c of e) => c of f;
 }
 
-contract filterable over t determines e is {
+public contract filterable over t determines e is {
   filter has type ((e)=>boolean,t) => t
 }
 
 -- This has to be here, to avoid circular packages
 
-implementation filterable over string determines integer is {
+public implementation filterable over string determines integer is {
   fun filter(P,string(S)) is string(__string_filter(S,P))
    |  filter(_,nonString) is nonString;
 }
 
-contract foldable over c determines e is {
+public contract foldable over c determines e is {
   leftFold has type for all st such that ((st,e)=>st,st,c)=>st;
   leftFold1 has type ((e,e)=>e,c) => e;
   rightFold has type for all st such that ((e,st)=>st,st,c)=>st;

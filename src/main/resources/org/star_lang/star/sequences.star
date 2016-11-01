@@ -17,7 +17,7 @@
  */
 
 
-contract sequence over %t determines %e is {
+public contract sequence over %t determines %e is {
   _empty has type ()<=%t;
   _pair has type (%e,%t)<=%t;
   _cons has type (%e,%t)=>%t;
@@ -26,17 +26,17 @@ contract sequence over %t determines %e is {
   _nil has type ()=>%t;
 }
   
-contract concatenate over t is {
+public contract concatenate over t is {
   (++) has type (t,t)=>t;
 }
         
-contract indexable over s determines (k,v) is {
+public contract indexable over s determines (k,v) is {
   _index has type (s,k)=> option of v;
   _set_indexed has type (s,k,v)=>s;
   _delete_indexed has type (s,k)=>s;
 }
   
-contract sliceable over s determines k is {
+public contract sliceable over s determines k is {
   _slice has type (s,k,k)=>s;
   _tail has type (s,k)=>s;
   _splice has type (s,k,k,s)=>s;
@@ -84,15 +84,15 @@ contract sliceable over s determines k is {
 
 # #(?M)#[?Ix] ==> _index(M,Ix);
   
-contract sorting over %c determines %t is {
+public contract sorting over %c determines %t is {
   sort has type (%c,(%t,%t)=>boolean)=>%c
 }
   
-contract reversible over t is {
+public contract reversible over t is {
   reverse has type (t)=>t;
 }
 
-contract explosion over (t,c) is {
+public contract explosion over (t,c) is {
   explode has type (t)=>c;
   implode has type (c)=>t;
 }

@@ -6,7 +6,7 @@ import java.util.Stack;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
@@ -37,7 +37,7 @@ final class AstFreeFinder extends DefaultAbstractVisitor {
   }
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitApply(AApply app) {
     if (CompilerUtils.isQuoted(app)) {
 
     } else if (CompilerUtils.isAnonAggConLiteral(app)) {

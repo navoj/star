@@ -9,7 +9,7 @@ import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
@@ -46,10 +46,10 @@ public class Conditions {
   }
 
   public static void compileCond(IAbstract cond, Sense sense, LabelNode elLabel, CodeContext ccxt) {
-    if (cond instanceof Apply) {
-      ICompileCondition handler = handlers.get(((Apply) cond).getOp());
+    if (cond instanceof AApply) {
+      ICompileCondition handler = handlers.get(((AApply) cond).getOp());
       if (handler != null) {
-        handler.handleCond((Apply) cond, sense, elLabel, ccxt);
+        handler.handleCond((AApply) cond, sense, elLabel, ccxt);
         return;
       }
     }
@@ -62,7 +62,7 @@ public class Conditions {
   private static class CompileTruthValue implements ICompileCondition {
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+    public void handleCond(AApply cond, Sense sense, LabelNode elLabel,
                            CodeContext ccxt) {
       String label = CafeSyntax.constructorOp(cond);
       MethodNode mtd = ccxt.getMtd();
@@ -90,7 +90,7 @@ public class Conditions {
   private static class CompileConjunction implements ICompileCondition {
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+    public void handleCond(AApply cond, Sense sense, LabelNode elLabel,
                            CodeContext ccxt) {
       IAbstract lhs = cond.getArg(0);
       IAbstract rhs = cond.getArg(1);
@@ -117,7 +117,7 @@ public class Conditions {
     }
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+    public void handleCond(AApply cond, Sense sense, LabelNode elLabel,
                            CodeContext ccxt) {
       IAbstract lhs = cond.getArg(0);
       IAbstract rhs = cond.getArg(1);
@@ -143,7 +143,7 @@ public class Conditions {
     }
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+    public void handleCond(AApply cond, Sense sense, LabelNode elLabel,
                            CodeContext ccxt) {
       IAbstract rhs = cond.getArg(0);
 
@@ -154,7 +154,7 @@ public class Conditions {
   private static class CompileConditional implements ICompileCondition {
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel,
+    public void handleCond(AApply cond, Sense sense, LabelNode elLabel,
                            CodeContext ccxt) {
       IAbstract test = CafeSyntax.conditionalTest(cond);
       IAbstract lhs = CafeSyntax.conditionalThen(cond);
@@ -204,7 +204,7 @@ public class Conditions {
     }
 
     @Override
-    public void handleCond(Apply cond, Sense sense, LabelNode elLabel, CodeContext ccxt) {
+    public void handleCond(AApply cond, Sense sense, LabelNode elLabel, CodeContext ccxt) {
       assert CafeSyntax.isMatch(cond);
 
       MethodNode mtd = ccxt.getMtd();

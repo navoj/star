@@ -25,7 +25,7 @@ private import iterable;
 -- the cons is type built in to the compiler.
 -- type cons of %e is nil or cons(%e, cons of %e);
 
-implementation pPrint over cons of %t where pPrint over %t is {
+public implementation pPrint over cons of %t where pPrint over %t is {
   fun ppDisp(L) is ppSequence(0,cons(ppStr("cons of ["),cons(ppSequence(2,dispList(L,ppStr(""))),cons(ppStr("]"),nil))));
 } using {
   def inter is ppStr(",");
@@ -33,7 +33,7 @@ implementation pPrint over cons of %t where pPrint over %t is {
    |  dispList(cons(H,T),Sep) is cons(Sep,cons(ppDisp(H),dispList(T,inter)))
 }
 
-implementation sequence over cons of %e determines %e is {
+public implementation sequence over cons of %e determines %e is {
   fun _cons(H,T) is cons(H,T);
   fun _apnd(T,H) is append(T,H);
   ptn _empty() from nil;
@@ -47,11 +47,11 @@ implementation sequence over cons of %e determines %e is {
    |  append(cons(H,T),E) is cons(H,append(T,E))
 }
 
-implementation concatenate over cons of %e is {
+public implementation concatenate over cons of %e is {
   fun L++R is consConc(L,R);
 };
 
-implementation updateable over cons of %t determines %t is {
+public implementation updateable over cons of %t determines %t is {
   fun _extend(L,E) is cons(E,L);
   fun _merge(L,R) is consConc(L,R);
   fun _delete(R,P) is removeEls(R,P);
@@ -70,7 +70,7 @@ private
   fun consConc(nil,X) is X
    |  consConc(cons(H,T),X) is cons(H,consConc(T,X))
   
-implementation sorting over cons of %t determines %t is {
+public implementation sorting over cons of %t determines %t is {
   fun sort(In,C) is let{
     fun split(nil,P,L,R) is (L,R)
      |  split(cons(H,T),P,L,R) where C(H,P) is split(T,P,cons(H,L),R)
@@ -85,7 +85,7 @@ implementation sorting over cons of %t determines %t is {
   } in qsort(In)
 };
 
-implementation comparable over cons of %t where comparable over %t and equality over %t is {
+public implementation comparable over cons of %t where comparable over %t and equality over %t is {
     fun X < Y is consLess(X,Y);
     fun X =< Y is consLessEq(X,Y);
     fun X > Y is consLess(Y,X);
@@ -101,7 +101,7 @@ implementation comparable over cons of %t where comparable over %t and equality 
      |  consLessEq(_,_) default is false
   };
   
-implementation indexable over cons of %e determines (integer,%e) is {
+public implementation indexable over cons of %e determines (integer,%e) is {
   fun _index(L,Ix) is consEl(L,Ix,Ix);
   fun _set_indexed(L,Ix,E) is consSetEl(L,Ix,E);
   fun _delete_indexed(L,Ix) is consRemove(L,Ix);
@@ -118,7 +118,7 @@ implementation indexable over cons of %e determines (integer,%e) is {
    |  consRemove(cons(H,T),Ix) where Ix>0 is cons(H,consRemove(T,Ix-1))
 }
 
-implementation sliceable over cons of %e determines integer is {
+public implementation sliceable over cons of %e determines integer is {
   fun _slice(L,Fr,To) is consSlice(L,0,Fr,To);
   fun _tail(L,Fr) is drop(L,0,Fr);
   fun _splice(L,Fr,To,Rp) is consSplice(L,0,Fr,To,Rp);
@@ -140,7 +140,7 @@ implementation sliceable over cons of %e determines integer is {
    |  drop(cons(_,T),Fr,To) is drop(T,Fr+1,To)
 } 
 
-implementation sizeable over cons of %e is {
+public implementation sizeable over cons of %e is {
   fun size(L) is consSize(L);
  
   fun isEmpty(nil) is true
@@ -158,7 +158,7 @@ private
     valis S;
   };
 
-implementation equality over cons of %e where equality over %e is {
+public implementation equality over cons of %e where equality over %e is {
   (=) = consEq;
   hashCode = consHash
 } using {
@@ -168,15 +168,15 @@ implementation equality over cons of %e where equality over %e is {
   fun consHash(X) is integer(__hashCode(X))
 }
 
-implementation iterable over cons of %e determines %e is {
+public implementation iterable over cons of %e determines %e is {
   fun _iterate(L,F,S) is consIterate(L,F,S);
 };
 
-implementation indexed_iterable over cons of %e determines (integer,%e) is {
+public implementation indexed_iterable over cons of %e determines (integer,%e) is {
   fun _ixiterate(M,F,S) is consIxIterate(M,F,S,0);
 }
 
-implementation filterable over cons of %e determines %e is {
+public implementation filterable over cons of %e determines %e is {
   fun filter(_,nil) is nil
    |  filter(P,cons(H,T)) where P(H) is cons(H,filter(P,T))
    |  filter(P,cons(_,T)) is filter(P,T)
@@ -192,7 +192,7 @@ private
    |  consIterate(_,_,NoMore(X)) is NoMore(X)
    |  consIterate(cons(H,T),F,St) is consIterate(T,F,F(H,St))
 
-implementation reversible over cons of %t is {
+public implementation reversible over cons of %t is {
   fun reverse(L) is valof{
     var R := nil;
     var LL := L;
@@ -206,7 +206,7 @@ implementation reversible over cons of %t is {
   }
 }
 
-implementation for all t such that foldable over cons of t determines t is {
+public implementation for all t such that foldable over cons of t determines t is {
   fun leftFold(F,I,L) is  valof{
     var r := L;
     var st := I;
@@ -230,13 +230,13 @@ implementation for all t such that foldable over cons of t determines t is {
    |  rFold1(F,cons(H,T)) is F(H,rFold1(F,T))
 }
 
-implementation mappable over cons is {
+public implementation mappable over cons is {
   map=cons_map
 } using {
   fun cons_map(_,nil) is nil
    |  cons_map(F,cons(H,T)) is cons(F(H),cons_map(F,T))
 }
 
-fun interleave(nil,_) is nil
+public fun interleave(nil,_) is nil
  |  interleave(L matching cons(H,nil),_) is L
  |  interleave(cons(E1,L),S) is cons(E1,cons(S,interleave(L,S)))

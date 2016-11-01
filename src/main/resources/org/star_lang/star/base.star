@@ -19,12 +19,12 @@
 
 
 -- Define some standard contracts
-contract equality over t is {
+public contract equality over t is {
   (=) has type (t,t) => boolean;
   hashCode has type (t)=>integer;
 };
 
-implementation equality over boolean is {
+public implementation equality over boolean is {
   fun true=true is true
    |  false=false is true
    |  _ = _ default is false
@@ -32,77 +32,77 @@ implementation equality over boolean is {
    |  hashCode(false) is 0
 };
 
-implementation equality over integer is {
+public implementation equality over integer is {
   fun integer(X) = integer(Y) is __integer_eq(X,Y)
    |  _ = _ default is false
   fun hashCode(X) is X
 };
 
-implementation equality over long is {
+public implementation equality over long is {
   fun long(X) = long(Y) is __long_eq(X,Y)
    |  _ = _ default is false
   fun hashCode(X) is integer(__hashCode(X))
 };
 
-implementation equality over float is {
+public implementation equality over float is {
   fun float(X) = float(Y) is __float_eq(X,Y)
    |  _ = _ default is false
   fun hashCode(X) is integer(__hashCode(X))
 };
 
-implementation equality over string is {
+public implementation equality over string is {
   fun string(X) = string(Y) is __string_eq(X,Y) 
    | _ = _ default is false
   fun hashCode(S) is integer(__hashCode(S))
 };
 
-implementation equality over any is {
+public implementation equality over any is {
   fun X = Y is __equal(X,Y);
   fun hashCode(X) is integer(__hashCode(X))
 }
 
-implementation equality over binary is {
+public implementation equality over binary is {
   fun X=Y is __binary_equal(X,Y);
   fun hashCode(X) is integer(__hashCode(X))
 };
 
-implementation equality over astLocation is {
+public implementation equality over astLocation is {
   fun L=R is __equal(L,R);
   fun hashCode(L) is integer(__hashCode(L))
 };
 
-implementation equality over %t default is {
+public implementation equality over %t default is {
   fun L=R is __equal(L,R);
   fun hashCode(L) is integer(__hashCode(L))
 };
 
-contract largeSmall over %t is {
+public contract largeSmall over %t is {
   largest has type %t;
   smallest has type %t;
 }
 
-contract comparable over %t is {
+public contract comparable over %t is {
   (<) has type (%t,%t) =>boolean;
   (=<) has type (%t,%t) =>boolean;
   (>) has type (%t,%t) =>boolean;
   (>=) has type (%t,%t) =>boolean;
 }
 
-implementation comparable over integer is{
+public implementation comparable over integer is{
   fun integer(X)<integer(Y) is __integer_lt(X,Y);
   fun integer(X)=<integer(Y) is __integer_le(X,Y);
   fun integer(X)>integer(Y) is __integer_gt(X,Y);
   fun integer(X)>=integer(Y) is __integer_ge(X,Y);
  }
 
-implementation comparable over long is{
+public implementation comparable over long is{
   fun long(X)<long(Y) is __long_lt(X,Y);
   fun long(X)=<long(Y) is __long_le(X,Y);
   fun long(X)>long(Y) is __long_gt(X,Y);
   fun long(X)>=long(Y) is __long_ge(X,Y);
 }
 
-implementation comparable over float is{
+public implementation comparable over float is{
   fun float(X)<float(Y) is __float_lt(X,Y);
   fun float(X)=<float(Y) is __float_le(X,Y);
   fun float(X)>float(Y) is __float_gt(X,Y)
@@ -110,27 +110,27 @@ implementation comparable over float is{
   fun float(X)>=float(Y) is __float_ge(X,Y);
 }
 
-implementation comparable over string is{
+public implementation comparable over string is{
   fun string(X)<string(Y) is __string_lt(X,Y);
   fun string(X)=<string(Y) is __string_le(X,Y);
   fun string(X)>string(Y) is __string_gt(X,Y);
   fun string(X)>=string(Y) is __string_ge(X,Y);
 }
 
-implementation equality over () is {
+public implementation equality over () is {
   fun () = () is true
    |  _ = _ default is false;
   fun hashCode(()) is 0
 };
 
-implementation comparable over () is {
+public implementation comparable over () is {
   fun _ < _ is false;
   fun () =< () is true;
   fun _ > _ is false;
   fun ()>=() is true;
 };
 
-implementation equality over ((%l,%r) where equality over %l and equality over %r) is {
+public implementation equality over ((%l,%r) where equality over %l and equality over %r) is {
   (=) = pairEq;
   hashCode = pairHash
 } using {
@@ -141,7 +141,7 @@ implementation equality over ((%l,%r) where equality over %l and equality over %
   fun pairHash(L) is integer(__hashCode(L))
 }
 
-implementation comparable over ((%l,%r) where comparable over %l and equality over %l and comparable over %r and equality over %r) is {
+public implementation comparable over ((%l,%r) where comparable over %l and equality over %l and comparable over %r and equality over %r) is {
   (<) = pairLt;
   (=<) = pairLe;
   (>) = pairGt;
@@ -160,7 +160,7 @@ implementation comparable over ((%l,%r) where comparable over %l and equality ov
   fun pairGe(X,Y) is pairLe(Y,X);
 };
 
-implementation equality over ((%l,%m,%r) where equality over %l and
+public implementation equality over ((%l,%m,%r) where equality over %l and
  equality over %m and equality over %r) is {
   (=) = tripleEq;
   hashCode = tripleHash
@@ -169,7 +169,7 @@ implementation equality over ((%l,%m,%r) where equality over %l and
   fun tripleHash(L) is integer(__hashCode(L))
 }
 
-implementation comparable over ((%l,%m,%r) where comparable over %l and equality over %l 
+public implementation comparable over ((%l,%m,%r) where comparable over %l and equality over %l 
                                               and comparable over %m and equality over %m
                                               and comparable over %r and equality over %r) is {
   (<) = tripleLt;
@@ -193,10 +193,10 @@ implementation comparable over ((%l,%m,%r) where comparable over %l and equality
 };
 
 -- handle sizeable
-contract sizeable over t is {
+public contract sizeable over t is {
   size has type (t) => integer;
   isEmpty has type (t) => boolean;
 }
 
 -- This function has a variety of uses ...
-fun id(X) is X;
+public fun id(X) is X;

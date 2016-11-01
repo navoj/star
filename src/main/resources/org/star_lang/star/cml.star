@@ -29,36 +29,36 @@ import cml0;
 -- internally synchronize over something more complex than just the messages:
 
 -- we could differentiate between guarded and non-guarded (empty cvar list) rendezvous with two c'tors
-type rendezvous of %a is _Rendezvous(task of ((cons of cvar, prv of ((cons of cvar, task of %a)))))
+public type rendezvous of %a is _Rendezvous(task of ((cons of cvar, prv of ((cons of cvar, task of %a)))))
 
 -- the channel type is the same as in cmlLib1
-type channel of %a is alias of chan of %a
+public type channel of %a is alias of chan of %a
 
-channel has type () => channel of %a
+public channel has type () => channel of %a
 def channel is chan
 
-recvRv has type (channel of %a) => rendezvous of %a
-sendRv has type (channel of %a, %a) => rendezvous of ()
+public recvRv has type (channel of %a) => rendezvous of %a
+public sendRv has type (channel of %a, %a) => rendezvous of ()
 
-recv has type (channel of %a) => task of %a
-send has type (channel of %a, %a) => task of ()
+public recv has type (channel of %a) => task of %a
+public send has type (channel of %a, %a) => task of ()
 
-neverRv has type rendezvous of %a
-alwaysRv has type (%a) => rendezvous of %a
+public neverRv has type rendezvous of %a
+public alwaysRv has type (%a) => rendezvous of %a
 
-chooseRv has type (cons of rendezvous of %a) => rendezvous of %a
+public chooseRv has type (cons of rendezvous of %a) => rendezvous of %a
 
-wrapRv has type (rendezvous of %a, (%a) => task of %b) => rendezvous of %b
-guardRv has type (task of rendezvous of %a) => rendezvous of %a
-withNackRv has type ((rendezvous of ()) => rendezvous of %a) => rendezvous of %a
+public wrapRv has type (rendezvous of %a, (%a) => task of %b) => rendezvous of %b
+public guardRv has type (task of rendezvous of %a) => rendezvous of %a
+public withNackRv has type ((rendezvous of ()) => rendezvous of %a) => rendezvous of %a
 
 -- The timeoutRv rendezvous becomes available N milliseconds after a synchronization starts
-timeoutRv has type (long) => rendezvous of ()
+public timeoutRv has type (long) => rendezvous of ()
 
 -- The atDateRv rendezvous is available after the specified date
-atDateRv has type (date) => rendezvous of ()
+public atDateRv has type (date) => rendezvous of ()
 
-await has type (rendezvous of %a) => task of %a
+public await has type (rendezvous of %a) => task of %a
 
 -- Implementations
 

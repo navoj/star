@@ -19,7 +19,7 @@ private import strings
 private import arithmetic
 
 -- computation is an operator. 
-contract (computation) over m determines e is {
+public contract (computation) over m determines e is {
   _encapsulate has type for all t such that (t)=>m of t;
   _abort has type for all t such that (e)=>m of t;
   _handle has type for all t such that (m of t, (e)=>m of t) => m of t;
@@ -29,22 +29,22 @@ contract (computation) over m determines e is {
   fun _delay(F) default is _combine(_encapsulate(()),(_) => F());
 }
 
-contract execution over m is {
+public contract execution over m is {
   _perform has type for all t such that (m of t) => t;
 }
 
-contract injection over (m,n) is {
+public contract injection over (m,n) is {
   _inject has type for all t such that (m of t)=>n of t;
 }
  
 -- default exception handling function
-fun raiser_fun(X) is __raise(X);
+public fun raiser_fun(X) is __raise(X);
 
 -- An implementation of 'regular' actions that lie lightly over the implicit monad
 
-type action of t is _delayed(()=>action of t) or _aborted(exception) or _done(t);
+public type action of t is _delayed(()=>action of t) or _aborted(exception) or _done(t);
 
-fun runCombo(Act,C,H) is valof{
+public fun runCombo(Act,C,H) is valof{
   var A := Act;
   
   while A matches _delayed(D) do
@@ -57,7 +57,7 @@ fun runCombo(Act,C,H) is valof{
   }
 }
 
-implementation (computation) over action determines exception is {
+public implementation (computation) over action determines exception is {
   fun _encapsulate(V) is _done(V);
   fun _abort(E) is _aborted(E);
   fun _handle(A,H) is _delayed(() => runCombo(A,_encapsulate,H));
@@ -67,11 +67,11 @@ implementation (computation) over action determines exception is {
   fun _delay(F) is _delayed(F);
 }
  
-implementation execution over action is {
+public implementation execution over action is {
   fun _perform(A) is runCombo(A,id,raiser_fun);
 };
 
-implementation injection over (action,action) is {
+public implementation injection over (action,action) is {
   fun _inject(C) is C;
 }
 

@@ -20,7 +20,7 @@ import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
@@ -93,8 +93,8 @@ public class Actions {
     ErrorReport errors = ccxt.getErrors();
     CafeDictionary dict = ccxt.getDict();
 
-    if (term instanceof Apply) {
-      Apply app = (Apply) term;
+    if (term instanceof AApply) {
+      AApply app = (AApply) term;
       ICompileAction handler = handlers.get(app.getOp());
       if (handler != null)
         handler.handleAction(term, cont, ccxt);

@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.Name;
@@ -277,16 +277,16 @@ public class QuoteBuilder
    */
   private static IAbstract dequoteConstructor(Location loc, String label, IAbstract term, IAbstract type)
   {
-    assert term instanceof Apply;
+    assert term instanceof AApply;
     List<IAbstract> vars = new ArrayList<>();
     IAbstract anon = Abstract.anon(loc);
 
-    Apply apply = (Apply) term;
+    AApply apply = (AApply) term;
     String conLabel = apply.getOp();
     IAbstract opPtn = MacroCompiler.astName(loc, anon, conLabel);
     IAbstract argsVar = new Name(loc, GenSym.genSym("_args"));
 
-    IAbstract lhsPtn = Abstract.ternary(loc, Apply.name, anon, opPtn, argsVar);
+    IAbstract lhsPtn = Abstract.ternary(loc, AApply.name, anon, opPtn, argsVar);
 
     Wrapper<IAbstract> cond = Wrapper.create(null);
 
@@ -473,11 +473,11 @@ public class QuoteBuilder
    */
   private static IAbstract quoteConstructor(Location loc, String label, IAbstract term, IAbstract type)
   {
-    assert term instanceof Apply;
+    assert term instanceof AApply;
     List<IAbstract> vars = new ArrayList<>();
     List<IAbstract> args = new ArrayList<>();
 
-    Apply apply = (Apply) term;
+    AApply apply = (AApply) term;
     String conLabel = apply.getOp();
     IAbstract opPtn = new Name(loc, conLabel);
     IList argArray = apply.getArgs();

@@ -7,7 +7,6 @@ import java.util.Stack;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.type.Location;
 
-
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -35,13 +34,22 @@ public class CopyAbstract implements IAbstractVisitor {
   }
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitTuple(AsTuple tpl) {
+    List<IAbstract> nArgs = new ArrayList<>();
+    for (IValue arg : tpl.getArgs()) {
+      nArgs.add(copy((IAbstract) arg));
+    }
+    stack.push(new AsTuple(tpl.getLoc(), tpl.getBrackets(), nArgs));
+  }
+
+  @Override
+  public void visitApply(AApply app) {
     IAbstract nOp = copy(app.getOperator());
     List<IAbstract> nArgs = new ArrayList<>();
     for (IValue arg : app.getArgs()) {
       nArgs.add(copy((IAbstract) arg));
     }
-    stack.push(new Apply(getLocation(app), nOp, nArgs, app.getCategories(), app.getAttributes()));
+    stack.push(new AApply(getLocation(app), nOp, nArgs, app.getCategories(), app.getAttributes()));
   }
 
   @Override

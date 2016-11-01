@@ -1,6 +1,6 @@
 package org.star_lang.star.compiler.wff;
 
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.data.type.Location;
@@ -38,7 +38,7 @@ public class WffApply implements WffBuildOp
     IAbstract args[] = new IAbstract[argOps.length];
     for (int ix = 0; ix < argOps.length; ix++)
       args[ix] = argOps[ix].build(env, loc, engine);
-    return new Apply(loc, op.build(env, loc, engine), args);
+    return new AApply(loc, op.build(env, loc, engine), args);
   }
 
   @Override

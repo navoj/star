@@ -108,6 +108,6 @@ private import folding;
     #fun genMain(D) is <| prc main() do ?genWkSht(D) |> 
   }
   
-  prc showExpression(Val,Msg,Line) do logMsg(info,"",Msg++" -> $Val at $Line");
-  prc performAction(Prc,Msg,Line) do { Prc(); logMsg(info,"",Msg++" at $Line"); }
-  prc assertCondition(A,Msg,Line) do { if A() then logMsg(info,"",Msg++" ok at $Line") else logMsg(info,Msg++" failed at $Line") }
+  public prc showExpression(Val,Msg,Line) do logMsg(info,"",Msg++" -> $Val at $Line");
+  public prc performAction(Prc,Msg,Line) do { Prc(); logMsg(info,"",Msg++" at $Line"); }
+  public prc assertCondition(A,Msg,Line) do { if A() then logMsg(info,"",Msg++" ok at $Line") else logMsg(info,Msg++" failed at $Line") }

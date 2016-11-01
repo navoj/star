@@ -22,7 +22,7 @@ private import arithmetic;
 private import cons;
 private import signatures;
 
-priorityFun has type for all elem such that (comparison of elem)=>priorityQ of elem;
+public priorityFun has type for all elem such that (comparison of elem)=>priorityQ of elem;
 fun priorityFun(C) is priorityQ{
   type splay of elem is eQ or Nd(splay of elem, elem, splay of elem);
   

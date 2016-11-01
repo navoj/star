@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-contract updates over %t determines %e is {
+public contract updates over %t determines %e is {
   _assign_ has type action(%t);
   _replace_ has type action(ref %t,(%e)=>%e);
 };

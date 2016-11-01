@@ -77,7 +77,14 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction {
   }
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitTuple(AsTuple tpl) {
+    String brks = tpl.getBrackets().getLit();
+    int ln = brks.length();
+    display(tpl.getArgs(), brks.substring(0, ln / 2), ", ", brks.substring(ln / 2));
+  }
+
+  @Override
+  public void visitApply(AApply app) {
     if (CompilerUtils.isBraceTerm(app)) {
       CompilerUtils.braceLabel(app).accept(this);
       display(CompilerUtils.unWrap(CompilerUtils.braceArg(app), StandardNames.TERM), "{ ", ";\n", "\n}", 2,
@@ -93,7 +100,8 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction {
         content.accept(this);
       append("]");
     }
-    // else if (Abstract.isTupleTerm(app, 1) && Abstract.getArg(app, 0) instanceof Name)
+    // else if (Abstract.isTupleTerm(app, 1) && Abstract.getArg(app, 0)
+    // instanceof Name)
     // Abstract.getArg(app, 0).accept(this);
     else if (Abstract.isTupleTerm(app))
       display(app.getArgs(), " (", ", ", ")");
@@ -170,7 +178,7 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction {
       disp.append(paren);
   }
 
-  private void displayApp(Apply app) {
+  private void displayApp(AApply app) {
     app.getOperator().accept(this);
     display(app.getArgs(), "(", ", ", ")");
   }
@@ -254,7 +262,8 @@ public class DisplayQuoted implements IAbstractVisitor, IFunction {
     this.priority = priority;
   }
 
-  private void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble, int indent, int priority) {
+  private void display(Iterable<IAbstract> seq, String preamble, String sep, String postamble, int indent,
+      int priority) {
     int currPriority = this.priority;
     this.priority = priority;
     disp.append(preamble);

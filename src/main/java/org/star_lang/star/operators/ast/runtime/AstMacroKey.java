@@ -74,15 +74,15 @@ public class AstMacroKey implements IFunction
       else
         return StandardNames.BRACES;
     } else if (Abstract.isUnary(term) && Abstract.isName(Abstract.unaryArg(term), StandardNames.BRACES)) {
-      IAbstract lbl = ((Apply) term).getOperator();
+      IAbstract lbl = ((AApply) term).getOperator();
       if (Abstract.isName(lbl))
         return Abstract.getId(lbl) + StandardNames.BRACES;
       else
         return StandardNames.BRACES;
     } else if (CompilerUtils.isSquareTerm(term))
       return StandardNames.SQUARE;
-    else if (term instanceof Apply) {
-      IAbstract op = ((Apply) term).getOperator();
+    else if (term instanceof AApply) {
+      IAbstract op = ((AApply) term).getOperator();
 
       if (op instanceof Name)
         return ((Name) op).getId() + "()";

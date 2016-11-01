@@ -15,14 +15,14 @@
  */
 
 
-contract monad over %%m is {
+public contract monad over %%m is {
   _return has type (%a) => %%m of %a;
   _bind has type (%%m of %a, (%a) => %%m of %b) => %%m of %b
   _fail has type () => %%m of %a;
   _perform has type (%%m of %a) => %a;
 };
 
-implementation monad over option is {
+public implementation monad over option is {
   fun _return(x) is some(x);
   fun _bind(m, f) is switch m in {
     case none is none;

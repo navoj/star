@@ -1,7 +1,7 @@
 package org.star_lang.star.compiler.format.rules;
 
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.data.type.Location;
@@ -36,8 +36,8 @@ public class FmtApplyApplyPtn implements FmtPtnOp
   @Override
   public formatCode apply(IAbstract term, IAbstract env[], Location loc)
   {
-    if (term instanceof Apply) {
-      Apply apply = (Apply) term;
+    if (term instanceof AApply) {
+      AApply apply = (AApply) term;
 
       formatCode mode = opOp.apply(apply.getOperator(), env, loc);
 

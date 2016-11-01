@@ -17,7 +17,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import org.star_lang.star.code.repository.CodeCatalog;
 import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.type.Freshen;
 import org.star_lang.star.compiler.type.TypeUtils;
@@ -159,7 +159,7 @@ public class IFuncImplementation
    *          TODO
    * @return
    */
-  public static IType invokeIfunc(Apply app, CafeDictionary dict, CafeDictionary outer, ErrorReport errors,
+  public static IType invokeIfunc(AApply app, CafeDictionary dict, CafeDictionary outer, ErrorReport errors,
                                   CodeRepository repository, CodeCatalog bldCat, String inFunction, CodeContext ccxt)
   {
     String funName = app.getOp();

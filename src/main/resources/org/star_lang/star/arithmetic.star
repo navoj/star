@@ -16,7 +16,7 @@
 
 private import base;
 
-contract arithmetic over t is {
+public contract arithmetic over t is {
   (+) has type (t,t) => t;
   (-) has type (t,t) => t;
   (*) has type (t,t) => t;
@@ -28,7 +28,7 @@ contract arithmetic over t is {
   one has type t;
 };
 
-implementation arithmetic over integer is{
+public implementation arithmetic over integer is{
   fun integer(X)+integer(Y) is integer(__integer_plus(X,Y));
   fun integer(X)-integer(Y) is integer(__integer_minus(X,Y));
   fun integer(X)*integer(Y) is integer(__integer_times(X,Y));
@@ -40,7 +40,7 @@ implementation arithmetic over integer is{
   def one is 1;
 };
 
-implementation arithmetic over long is{
+public implementation arithmetic over long is{
   fun long(X)+long(Y) is long(__long_plus(X,Y));
   fun long(X)-long(Y) is long(__long_minus(X,Y));
   fun long(X)*long(Y) is long(__long_times(X,Y));
@@ -52,7 +52,7 @@ implementation arithmetic over long is{
   def one is 1l;
 };
 
-implementation arithmetic over float is{
+public implementation arithmetic over float is{
   fun float(X)+float(Y) is float(__float_plus(X,Y));
   fun float(X)-float(Y) is float(__float_minus(X,Y));
   fun float(X)*float(Y) is float(__float_times(X,Y));
@@ -64,22 +64,22 @@ implementation arithmetic over float is{
   def one is 1.0;
 };
 
-implementation largeSmall over integer is {
+public implementation largeSmall over integer is {
   def largest is integer(0x7fffffff_);
   def smallest is integer(0x80000000_);
 }
 
-implementation largeSmall over long is {
+public implementation largeSmall over long is {
   def largest is long(0x7fffffffffffffffL_);
   def smallest is long(0x8000000000000000L_);
 }
 
-implementation largeSmall over float is {
+public implementation largeSmall over float is {
   def largest is float(__bits_float(0x7fefffffffffffffL_));
   def smallest is float(__bits_float(0x1L_));
 }
 
-contract math over t is {
+public contract math over t is {
   min has type (t,t)=>t;
   max has type (t,t)=>t;
   random has type (t)=>t;
@@ -94,7 +94,7 @@ contract math over t is {
   (**) has type (t,t) => t;
 }
 
-implementation math over integer is {
+public implementation math over integer is {
   fun min(integer(X),integer(Y)) is integer(__integer_min(X,Y));
   fun max(integer(X),integer(Y)) is integer(__integer_max(X,Y));
   fun random(integer(X)) is integer(__integer_random(X));
@@ -109,7 +109,7 @@ implementation math over integer is {
   fun integer(X)**integer(Y) is integer(__integer_power(X,Y));
 }
   
-implementation math over long is {
+public implementation math over long is {
   fun min(long(X),long(Y)) is long(__long_min(X,Y));
   fun max(long(X),long(Y)) is long(__long_max(X,Y));
   fun random(long(X)) is long(__long_random(X));
@@ -124,7 +124,7 @@ implementation math over long is {
   fun long(X)**long(Y) is long(__long_power(X,Y));
 }
 
-implementation math over float is {
+public implementation math over float is {
   fun min(float(X),float(Y)) is float(__float_min(X,Y));
   fun max(float(X),float(Y)) is float(__float_max(X,Y));
   fun random(float(X)) is float(__float_random(X));
@@ -139,7 +139,7 @@ implementation math over float is {
   fun float(X)**float(Y) is float(__float_power(X,Y));
 }
 
-contract trig over t is {
+public contract trig over t is {
   sin has type (t)=>t;
   asin has type (t)=>t;
   cos has type (t)=>t;
@@ -151,7 +151,7 @@ contract trig over t is {
   tanh has type (t)=>t;
 };
 
-implementation trig over float is {
+public implementation trig over float is {
   fun sin(float(X)) is float(__float_sin(X));
   fun asin(float(X)) is float(__float_asin(X));
   fun cos(float(X)) is float(__float_cos(X));

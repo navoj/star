@@ -99,10 +99,10 @@ public class Expressions {
     CafeDictionary dict = ccxt.getDict();
     CafeDictionary outer = ccxt.getOuter();
 
-    if (exp instanceof Apply) {
-      ICompileExpression handler = handlers.get(((Apply) exp).getOp());
+    if (exp instanceof AApply) {
+      ICompileExpression handler = handlers.get(((AApply) exp).getOp());
       if (handler != null)
-        return handler.handleExp((Apply) exp, cont, ccxt);
+        return handler.handleExp((AApply) exp, cont, ccxt);
       else {
         errors.reportError("(internal) no expression handler for " + exp, loc);
         return SrcSpec.prcSrc;
@@ -197,7 +197,7 @@ public class Expressions {
   // fun(args...)
   private static class CompileEscape implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply escape, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply escape, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isEscape(escape);
       String funName = CafeSyntax.escapeOp(escape);
       Location loc = escape.getLoc();
@@ -283,7 +283,7 @@ public class Expressions {
   // fun(args...)
   private static class CompileFunCall implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply app, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply app, IContinuation cont, CodeContext ccxt) {
       Location loc = app.getLoc();
       ErrorReport errors = ccxt.getErrors();
       if (CafeSyntax.isFunCall(app)) {
@@ -371,7 +371,7 @@ public class Expressions {
   // fun(args...)
   private static class CompileConstructor implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply app, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply app, IContinuation cont, CodeContext ccxt) {
       ErrorReport errors = ccxt.getErrors();
 
       if (CafeSyntax.isTuple(app))
@@ -403,7 +403,7 @@ public class Expressions {
   // A tuple
   private static class CompileTuple implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply app, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply app, IContinuation cont, CodeContext ccxt) {
       return Constructors.buildTuple(app.getLoc(), app, cont, ccxt);
     }
   }
@@ -412,7 +412,7 @@ public class Expressions {
   // fun(args...)
   private static class CompileRecord implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply app, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply app, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isRecord(app);
       String funName = CafeSyntax.recordLabel(app);
       ErrorReport errors = ccxt.getErrors();
@@ -438,7 +438,7 @@ public class Expressions {
 
   private static class CompileFace implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isFace(exp);
 
       return Faces.buildRecord(exp, cont, ccxt);
@@ -555,7 +555,7 @@ public class Expressions {
 
   private static class CompileCopy implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       Location loc = exp.getLoc();
       CafeDictionary dict = ccxt.getDict();
       assert CafeSyntax.isCopy(exp);
@@ -709,7 +709,7 @@ public class Expressions {
   private static class CompileDot implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isDot(exp);
 
       IAbstract record = CafeSyntax.dotRecord(exp);
@@ -779,7 +779,7 @@ public class Expressions {
   private static class CompileCast implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isTypedTerm(exp);
       CodeCatalog bldCat = ccxt.getBldCat();
       ErrorReport errors = ccxt.getErrors();
@@ -803,7 +803,7 @@ public class Expressions {
   private static class CompileCase implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, final IContinuation cont, final CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, final IContinuation cont, final CodeContext ccxt) {
       assert CafeSyntax.isSwitch(exp);
       MethodNode mtd = ccxt.getMtd();
       ErrorReport errors = ccxt.getErrors();
@@ -836,7 +836,7 @@ public class Expressions {
   // A let looks like let <defs> in <bound>
   private static class CompileLet implements ICompileExpression {
     @Override
-    public ISpec handleExp(final Apply let, final IContinuation cont, final CodeContext ccxt) {
+    public ISpec handleExp(final AApply let, final IContinuation cont, final CodeContext ccxt) {
       assert CafeSyntax.isLetExp(let);
 
       IList theta = CafeSyntax.letDefs(let);
@@ -863,7 +863,7 @@ public class Expressions {
   // A local, in-line function definition
   private static class CompileLambda implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       ErrorReport errors = ccxt.getErrors();
       CafeDictionary dict = ccxt.getDict();
       IType funType = Theta.computeLambdaType(exp, dict, errors);
@@ -874,7 +874,7 @@ public class Expressions {
 
   private static class CompilePattern implements ICompileExpression {
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       CafeDictionary dict = ccxt.getDict();
       return cont.cont(Theta.compilePattern(exp, dict, ccxt), dict, exp.getLoc(), ccxt);
     }
@@ -911,7 +911,7 @@ public class Expressions {
   private static class CompileCondition implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       MethodNode mtd = ccxt.getMtd();
       HWM hwm = ccxt.getMtdHwm();
       InsnList ins = mtd.instructions;
@@ -936,7 +936,7 @@ public class Expressions {
   private static class CompileConditional implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isConditional(exp);
 
       IAbstract condition = CafeSyntax.conditionalTest(exp);
@@ -971,7 +971,7 @@ public class Expressions {
   private static class CompileThrow implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isThrow(exp);
 
       MethodNode mtd = ccxt.getMtd();
@@ -990,7 +990,7 @@ public class Expressions {
   private static class CompileValof implements ICompileExpression {
 
     @Override
-    public ISpec handleExp(Apply exp, final IContinuation cont, CodeContext ccxt) {
+    public ISpec handleExp(AApply exp, final IContinuation cont, CodeContext ccxt) {
       assert CafeSyntax.isValof(exp);
       final MethodNode mtd = ccxt.getMtd();
       final InsnList ins = mtd.instructions;

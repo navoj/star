@@ -1258,7 +1258,7 @@ public class GenerateCafe implements
   }
 
   private static boolean isSimple(IAbstract exp) {
-    return !(exp instanceof Apply) || CafeSyntax.isThrow(exp) || CafeSyntax.isLetExp(exp);
+    return !(exp instanceof AApply) || CafeSyntax.isThrow(exp) || CafeSyntax.isLetExp(exp);
   }
 
   private IAbstract scopedExpression(IContentExpression exp, CContext cxt) {

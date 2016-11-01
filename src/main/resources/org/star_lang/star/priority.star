@@ -21,7 +21,7 @@ private import arithmetic;
 private import cons;
 private import signatures;
 
-priorityFun has type for all elem such that (comparison of elem)=>priorityQ of elem;
+public priorityFun has type for all elem such that (comparison of elem)=>priorityQ of elem;
 fun priorityFun(C) is priorityQ{
   type queue of elem is eQ or queueNd(elem,cons of queue of elem);
   

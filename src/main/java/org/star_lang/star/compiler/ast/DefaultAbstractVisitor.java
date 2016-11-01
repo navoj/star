@@ -2,7 +2,6 @@ package org.star_lang.star.compiler.ast;
 
 import org.star_lang.star.data.IValue;
 
-
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -20,7 +19,15 @@ import org.star_lang.star.data.IValue;
 public class DefaultAbstractVisitor implements IAbstractVisitor {
 
   @Override
-  public void visitApply(Apply app) {
+  public void visitTuple(AsTuple tpl) {
+    tpl.getBrackets().accept(this);
+
+    for (IValue el : tpl.getArgs())
+      ((IAbstract) el).accept(this);
+  }
+
+  @Override
+  public void visitApply(AApply app) {
     app.getOperator().accept(this);
     for (IValue el : app.getArgs())
       ((IAbstract) el).accept(this);

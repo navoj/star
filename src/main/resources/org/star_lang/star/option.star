@@ -27,27 +27,27 @@ type option of a is
     or some(a);
 */  
 
-implementation pPrint over option of %a where pPrint over %a is {
+public implementation pPrint over option of %a where pPrint over %a is {
   fun ppDisp(X) is sho(X)
 } using {
   fun sho(none) is ppStr("none")
    |  sho(some(X)) is ppSequence(0,cons(ppStr("some("),cons(ppDisp(X),cons(ppStr(")"),nil))));
 }
   
-someValue has type (option of %a) => %a;
+public someValue has type (option of %a) => %a;
 fun someValue(some(x)) is x;
   
-fun isSome(some(_)) is true
+public fun isSome(some(_)) is true
  |  isSome(_) default is false;
   
-fun isNone(none) is true
+public fun isNone(none) is true
  |  isNone(_) default is false;
 
-implementation mappable over option is {
+public implementation mappable over option is {
   map = _optionMap
 }
 
-implementation for all t such that
+public implementation for all t such that
     coercion over (option of t,string) where coercion over (t,string) is {
   fun coerce(X) is toString(X)
 } using {
@@ -55,16 +55,16 @@ implementation for all t such that
    |  toString(none) is "none"
 }
  
-fun _optionMap(_,none) is none
+public fun _optionMap(_,none) is none
  |  _optionMap(F,some(X)) is some(F(X))
 
-fun _optionPartial(none,_) is none
+public fun _optionPartial(none,_) is none
  |  _optionPartial(some(X),F) is F(X)
 
-fun _optionDeflt(none,D) is D()
+public fun _optionDeflt(none,D) is D()
  |  _optionDeflt(some(X),_) is X
 
-fun _optionSelect(none,_,D) is D()
+public fun _optionSelect(none,_,D) is D()
  |  _optionSelect(some(X),A,_) is A(X)
 
 # prefix((present),500);
@@ -72,11 +72,11 @@ fun _optionSelect(none,_,D) is D()
 # ?E has value ?P :: condition :- E::expression :& P::pattern;
 # present ?E :: condition :- E :: expression;
 
-contract optional over t determines v is {
+public contract optional over t determines v is {
   _hasValue has type (v)<=t
 }
 
-implementation for all t such that
+public implementation for all t such that
   optional over option of t determines t is {
   ptn _hasValue(X) from some(X)
 }
@@ -88,7 +88,7 @@ implementation for all t such that
 
 # present ?E ==> E matches _hasValue(_);
 
-implementation for all t,e such that
+public implementation for all t,e such that
   iterable over option of t determines e where iterable over t determines e is {
   fun _iterate(none,_,S) is S
    |  _iterate(some(M),F,S) is iterate(M,F,S)
@@ -96,14 +96,14 @@ implementation for all t,e such that
   fun iterate(M,F,S) is _iterate(M,F,S)
 }
 
-implementation for all t such that
+public implementation for all t such that
   coercion over (quoted,option of t) where coercion over (quoted,t) is {
     coerce = optionDeQuote
   } using {
     fun optionDeQuote(Q) is some(Q as t)
   }
 
-implementation for all t such that
+public implementation for all t such that
   coercion over (option of t,quoted) where coercion over (t,quoted) is {
     coerce = optionQuote
   } using {
@@ -111,7 +111,7 @@ implementation for all t such that
      |  optionQuote(none) is <|none|>
   }
 
-implementation (computation) over option determines () is {
+public implementation (computation) over option determines () is {
   fun _encapsulate(x) is some(x);
   fun _abort(e) is none;
   fun _handle(some(x), h) is some(x)
@@ -123,10 +123,10 @@ implementation (computation) over option determines () is {
   	};
 }
 
-implementation execution over option is {
+public implementation execution over option is {
   fun _perform(some(X)) is X
 }
 
-implementation injection over (option,option) is {
+public implementation injection over (option,option) is {
   fun _inject(X) is X
 }

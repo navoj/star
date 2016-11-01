@@ -17,7 +17,7 @@
  */
 
  
-type priorityQ of elem is priorityQ{
+public type priorityQ of elem is priorityQ{
   queue has kind type of type;
 
   emptyQ has type queue of elem;
@@ -29,7 +29,7 @@ type priorityQ of elem is priorityQ{
   mergeQ has type (queue of elem,queue of elem)=>queue of elem;
 }
 
-type comparison of elem is compare{
+public type comparison of elem is compare{
   lt has type (elem,elem)=>boolean;
   le has type (elem,elem)=>boolean;
   eq has type (elem,elem)=>boolean;

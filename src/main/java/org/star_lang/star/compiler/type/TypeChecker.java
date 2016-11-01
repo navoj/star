@@ -471,10 +471,10 @@ public class TypeChecker {
         IAbstract reform = CompilerUtils.braceTerm(loc, CompilerUtils.fieldExp(loc, rc, CompilerUtils.braceLabel(
             field)), CompilerUtils.braceArg(field));
         return typeOfExp(reform, expectedType, dict, outer);
-      } else if (field instanceof Apply && CompilerUtils.isIdentifier(((Apply) field).getOperator())) {
+      } else if (field instanceof AApply && CompilerUtils.isIdentifier(((AApply) field).getOperator())) {
         // R.m(A1,..,An) -> (R.m)(A1,..,An)
-        IAbstract reform = new Apply(loc, Abstract.binary(loc, StandardNames.PERIOD, rc, ((Apply) field).getOperator()),
-            ((Apply) field).getArgs());
+        IAbstract reform = new AApply(loc, Abstract.binary(loc, StandardNames.PERIOD, rc, ((AApply) field).getOperator()),
+            ((AApply) field).getArgs());
         return typeOfExp(reform, expectedType, dict, outer);
       } else {
         errors.reportError(StringUtils.msg("invalid expression after period, got ", field), loc);
@@ -758,8 +758,8 @@ public class TypeChecker {
       IContentExpression rhs = typeOfExp(Abstract.binaryRhs(term), argType, dict, outer);
 
       return new Application(term.getLoc(), expectedType, lhs, rhs);
-    } else if (term instanceof Apply) {
-      Apply apply = ((Apply) term);
+    } else if (term instanceof AApply) {
+      AApply apply = ((AApply) term);
       IList args = apply.getArgs();
       int arity = args.size();
 
@@ -2032,8 +2032,8 @@ public class TypeChecker {
           lhs = Abstract.getArg(lhs, 0);
         }
 
-        if (lhs instanceof Apply) {
-          IList argTuple = ((Apply) lhs).getArgs();
+        if (lhs instanceof AApply) {
+          IList argTuple = ((AApply) lhs).getArgs();
           IContentPattern args[] = new IContentPattern[argTuple.size()];
 
           if (argTuple.size() != argTypes.length)
@@ -2223,7 +2223,7 @@ public class TypeChecker {
           lhs = Abstract.getArg(lhs, 0);
         }
 
-        IList argTuple = ((Apply) lhs).getArgs();
+        IList argTuple = ((AApply) lhs).getArgs();
 
         IContentPattern args[] = new IContentPattern[argTuple.size()];
 
@@ -2392,7 +2392,7 @@ public class TypeChecker {
 
         IContentPattern match = typeOfPtn(body, matchType, condition, eqCxt, cxt, new RuleVarHandler(cxt, errors));
 
-        IList argTuple = ((Apply) head).getArgs();
+        IList argTuple = ((AApply) head).getArgs();
         List<IType> resTypes = new ArrayList<>();
         List<IContentExpression> results = new ArrayList<>();
 
@@ -2707,7 +2707,7 @@ public class TypeChecker {
       findVarsInPtn(Abstract.getArg(ptn, 0), cxt, outer, varFinder);
       findVarsInPtn(Abstract.getArg(ptn, 1), cxt, outer, varFinder);
     } else if (CompilerUtils.isApply(ptn)) {
-      Apply apply = (Apply) ptn;
+      AApply apply = (AApply) ptn;
       for (IValue arg : apply.getArgs())
         findVarsInPtn((IAbstract) arg, cxt, outer, varFinder);
     }
@@ -3054,10 +3054,10 @@ public class TypeChecker {
       } else if (Abstract.isParenTerm(field)) {
         IAbstract reform = Abstract.binary(loc, StandardNames.PERIOD, rc, Abstract.deParen(field));
         return lvalueType(reform, expectedType, dict, outer);
-      } else if (field instanceof Apply && CompilerUtils.isIdentifier(((Apply) field).getOperator())) {
+      } else if (field instanceof AApply && CompilerUtils.isIdentifier(((AApply) field).getOperator())) {
         // R.m(A1,..,An) -> (R.m)(A1,..,An)
-        IAbstract reform = new Apply(loc, Abstract.binary(loc, StandardNames.PERIOD, rc, ((Apply) field).getOperator()),
-            ((Apply) field).getArgs());
+        IAbstract reform = new AApply(loc, Abstract.binary(loc, StandardNames.PERIOD, rc, ((AApply) field).getOperator()),
+            ((AApply) field).getArgs());
         return lvalueType(reform, expectedType, dict, outer);
       } else {
         errors.reportError(StringUtils.msg("invalid expression after period, got ", field), loc);
@@ -3536,7 +3536,7 @@ public class TypeChecker {
       errors.reportError(StringUtils.msg(conName, " not known"), loc);
       return Variable.anonymous(loc, expectedType);
     } else if (CompilerUtils.isApply(ptn)) {
-      Apply apply = ((Apply) ptn);
+      AApply apply = ((AApply) ptn);
       Location conLoc = apply.getOperator().getLoc();
       String conName = Abstract.getId(apply.getOperator());
       IList args = apply.getArgs();
@@ -3609,8 +3609,8 @@ public class TypeChecker {
           return Variable.anonymous(loc, expectedType);
         }
       }
-    } else if (ptn instanceof Apply) {
-      Apply apply = (Apply) ptn;
+    } else if (ptn instanceof AApply) {
+      AApply apply = (AApply) ptn;
       IList args = apply.getArgs();
       int arity = args.size();
 
@@ -3734,7 +3734,7 @@ public class TypeChecker {
   private IContentPattern typeOfTuplePtn(IAbstract ptn, IType expectedType, Wrapper<ICondition> condition,
                                          Dictionary dict, Dictionary outer, PtnVarHandler varHandler) {
     Location loc = ptn.getLoc();
-    IList tplArgs = ((Apply) ptn).getArgs();
+    IList tplArgs = ((AApply) ptn).getArgs();
     int arity = tplArgs.size();
     IType elTypes[];
 
@@ -4363,9 +4363,9 @@ public class TypeChecker {
         return FixedList.create((IContentAction) new ConditionalAction(loc, cond, thAct, nothing));
     }
     // refactor the form X.f(e1,..,en) to (X.f)(e1,..,en)
-    else if (Abstract.isBinary(action, StandardNames.PERIOD) && Abstract.binaryRhs(action) instanceof Apply) {
-      Apply act = (Apply) Abstract.binaryRhs(action);
-      IAbstract reform = new Apply(loc, Abstract.binary(loc, StandardNames.PERIOD, Abstract.binaryLhs(action), act
+    else if (Abstract.isBinary(action, StandardNames.PERIOD) && Abstract.binaryRhs(action) instanceof AApply) {
+      AApply act = (AApply) Abstract.binaryRhs(action);
+      IAbstract reform = new AApply(loc, Abstract.binary(loc, StandardNames.PERIOD, Abstract.binaryLhs(action), act
           .getOperator()), act.getArgs());
       return checkAction(reform, actionMonad, resultType, abortType, cxt, outer);
     } else if (CompilerUtils.isCaseAction(action)) {
@@ -4385,8 +4385,8 @@ public class TypeChecker {
         return FixedList.create(new VarDeclaration(selector.getLoc(), tmp, readOnly, selector), MatchCompiler
             .generateCaseAction(selector.getLoc(), tmp, cases, cxt, outer, errors));
       }
-    } else if (action instanceof Apply) {
-      Apply apply = (Apply) action;
+    } else if (action instanceof AApply) {
+      AApply apply = (AApply) action;
 
       IList args = apply.getArgs();
       int arity = args.size();

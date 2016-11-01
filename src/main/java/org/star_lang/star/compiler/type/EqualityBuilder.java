@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.standard.StandardNames;
@@ -320,10 +320,10 @@ public class EqualityBuilder {
   }
 
   private static IAbstract conHash(Location loc, String label, IAbstract term, IAbstract type) {
-    assert term instanceof Apply;
+    assert term instanceof AApply;
     List<IAbstract> lVars = new ArrayList<>();
 
-    Apply apply = (Apply) term;
+    AApply apply = (AApply) term;
     String conLabel = apply.getOp();
     IAbstract conHash = Abstract.newInteger(loc, conLabel.hashCode());
 
@@ -344,7 +344,7 @@ public class EqualityBuilder {
     }
 
     List<IAbstract> args = new ArrayList<>();
-    args.add(new Apply(loc, conLabel, lVars));
+    args.add(new AApply(loc, conLabel, lVars));
 
     return CompilerUtils.equation(loc, label, args, conHash);
   }
@@ -421,11 +421,11 @@ public class EqualityBuilder {
    * @param type Type whose equality is being defined. Allows for recursion.
    */
   private static IAbstract conEquality(Location loc, String label, IAbstract term, IAbstract type) {
-    assert term instanceof Apply;
+    assert term instanceof AApply;
     List<IAbstract> lVars = new ArrayList<>();
     List<IAbstract> rVars = new ArrayList<>();
 
-    Apply apply = (Apply) term;
+    AApply apply = (AApply) term;
     String conLabel = apply.getOp();
     IAbstract cond = Abstract.name(loc, StandardNames.TRUE);
 
@@ -444,8 +444,8 @@ public class EqualityBuilder {
     }
 
     List<IAbstract> args = new ArrayList<>();
-    args.add(new Apply(loc, conLabel, lVars));
-    args.add(new Apply(loc, conLabel, rVars));
+    args.add(new AApply(loc, conLabel, lVars));
+    args.add(new AApply(loc, conLabel, rVars));
 
     return CompilerUtils.equation(loc, label, args, cond);
   }

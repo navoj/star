@@ -10,7 +10,7 @@ import org.star_lang.star.code.repository.CodeCatalog;
 import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
@@ -127,7 +127,7 @@ public class Dependencies
     }
 
     @Override
-    public void visitApply(Apply app)
+    public void visitApply(AApply app)
     {
       if (CafeSyntax.isVarDeclaration(app)) {
         addVarToExcludes(CafeSyntax.varDeclLval(app));

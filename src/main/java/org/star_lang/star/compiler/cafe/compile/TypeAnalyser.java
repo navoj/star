@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
@@ -112,8 +112,8 @@ public class TypeAnalyser
         IAbstract constraints = Abstract.binaryRhs(tp);
         if (CompilerUtils.isBlockTerm(constraints)) {
           for (IAbstract c : CompilerUtils.unWrap(CompilerUtils.blockContent(constraints))) {
-            if (c instanceof Apply) {
-              Apply con = (Apply) c;
+            if (c instanceof AApply) {
+              AApply con = (AApply) c;
               String conName = con.getOp();
               TypeContract contract = cxt.getContract(conName);
               if (contract == null)
@@ -122,7 +122,7 @@ public class TypeAnalyser
                 errors.reportError("expecting " + contract.getArity() + " arguments to type constract", con.getLoc());
 
               List<IType> argTypes = new ArrayList<>();
-              for (IValue arg : ((Apply) tp).getArgs())
+              for (IValue arg : ((AApply) tp).getArgs())
                 argTypes.add(parseType((IAbstract) arg, typeVars, cxt, errors));
               try {
                 tV.addContractRequirement((TypeExp) TypeUtils.typeExp(conName, argTypes), loc, null);
@@ -197,15 +197,15 @@ public class TypeAnalyser
       IType resType = parseType(Abstract.binaryRhs(tp), typeVars, cxt, errors);
       return TypeUtils.constructorType(argTypes, resType);
     } else if (Abstract.isTupleTerm(tp)) {
-      Apply tExp = (Apply) tp;
+      AApply tExp = (AApply) tp;
 
       List<IType> argTypes = new ArrayList<>();
       for (IValue arg : tExp.getArgs())
         argTypes.add(parseType((IAbstract) arg, typeVars, cxt, errors));
 
       return TypeUtils.tupleType(argTypes);
-    } else if (tp instanceof Apply) {
-      Apply tExp = (Apply) tp;
+    } else if (tp instanceof AApply) {
+      AApply tExp = (AApply) tp;
 
       IType typeCon = parseType(tExp.getOperator(), typeVars, cxt, errors);
 

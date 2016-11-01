@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.Name;
@@ -35,7 +35,7 @@ import org.star_lang.star.data.value.ResourceURI;
 public class CafeSyntax {
 
   public static IAbstract importSpec(Location loc, String pkg) {
-    return new Apply(loc, Names.IMPORT, new StringLiteral(loc, pkg));
+    return new AApply(loc, Names.IMPORT, new StringLiteral(loc, pkg));
   }
 
   public static IAbstract importSpec(Location loc, ResourceURI uri) {
@@ -71,7 +71,7 @@ public class CafeSyntax {
 
   public static IList lambdaArgs(IAbstract fun) {
     assert isLambda(fun);
-    return ((Apply) Abstract.binaryLhs(fun)).getArgs();
+    return ((AApply) Abstract.binaryLhs(fun)).getArgs();
   }
 
   public static IAbstract lambdaValue(IAbstract fun) {
@@ -80,7 +80,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract lambdaFun(Location loc, List<IAbstract> args, IAbstract exp, IAbstract type) {
-    return Abstract.binary(loc, Names.ARROW, new Apply(loc, Names.FUNCTION, args), exp);
+    return Abstract.binary(loc, Names.ARROW, new AApply(loc, Names.FUNCTION, args), exp);
   }
 
   public static IAbstract functionDefn(Location loc, String name, List<IAbstract> args, IAbstract exp, IAbstract type) {
@@ -231,23 +231,23 @@ public class CafeSyntax {
   }
 
   public static IAbstract apply(Location loc, String op, IAbstract... args) {
-    return new Apply(loc, op, args);
+    return new AApply(loc, op, args);
   }
 
   public static IAbstract apply(Location loc, String op, List<IAbstract> args) {
-    return new Apply(loc, op, args);
+    return new AApply(loc, op, args);
   }
 
   public static IAbstract apply(Location loc, IAbstract op, List<IAbstract> args) {
-    return new Apply(loc, op, args);
+    return new AApply(loc, op, args);
   }
 
   public static IAbstract funcall(Location loc, String op, IAbstract args) {
-    return new Apply(loc, Names.FCALL, new Name(loc, op), args);
+    return new AApply(loc, Names.FCALL, new Name(loc, op), args);
   }
 
   public static IAbstract funcall(Location loc, IAbstract op, IAbstract args) {
-    return new Apply(loc, Names.FCALL, op, args);
+    return new AApply(loc, Names.FCALL, op, args);
   }
 
   public static boolean isFunCall(IAbstract trm) {
@@ -271,16 +271,16 @@ public class CafeSyntax {
   }
 
   public static IAbstract escape(Location loc, String op, IAbstract... args) {
-    return new Apply(loc, Names.ESCAPE, Abstract.name(loc, op), block(loc, args));
+    return new AApply(loc, Names.ESCAPE, Abstract.name(loc, op), block(loc, args));
   }
 
   public static IAbstract escape(Location loc, String op, List<IAbstract> args) {
-    return new Apply(loc, Names.ESCAPE, Abstract.name(loc, op), block(loc, args));
+    return new AApply(loc, Names.ESCAPE, Abstract.name(loc, op), block(loc, args));
   }
 
   public static IAbstract escape(Location loc, IAbstract op, IAbstract args) {
     assert isBlock(args);
-    return new Apply(loc, Names.ESCAPE, op, args);
+    return new AApply(loc, Names.ESCAPE, op, args);
   }
 
   public static boolean isEscape(IAbstract trm) {
@@ -347,11 +347,11 @@ public class CafeSyntax {
   }
 
   public static IAbstract builtinName(Location loc, String name, String javaName) {
-    return new Apply(loc, Names.BUILTIN, Abstract.name(loc, name), Abstract.name(loc, javaName));
+    return new AApply(loc, Names.BUILTIN, Abstract.name(loc, name), Abstract.name(loc, javaName));
   }
 
   public static IAbstract copy(Location loc, IAbstract exp) {
-    return new Apply(loc, Names.COPY, exp);
+    return new AApply(loc, Names.COPY, exp);
   }
 
   public static boolean isCopy(IAbstract exp) {
@@ -365,11 +365,11 @@ public class CafeSyntax {
   }
 
   public static IAbstract arith(Location loc, IAbstract lhs, String op, IAbstract rhs) {
-    return new Apply(loc, op, lhs, rhs);
+    return new AApply(loc, op, lhs, rhs);
   }
 
   public static IAbstract typeCast(Location loc, IAbstract term, IAbstract type) {
-    return new Apply(loc, Names.COLON, term, type);
+    return new AApply(loc, Names.COLON, term, type);
   }
 
   public static boolean isTypedTerm(IAbstract trm) {
@@ -402,7 +402,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract callPtn(Location loc, IAbstract pttrn, IAbstract reslt) {
-    return new Apply(loc, Names.QQUERY, pttrn, reslt);
+    return new AApply(loc, Names.QQUERY, pttrn, reslt);
   }
 
   public static boolean isPtnCall(IAbstract trm) {
@@ -420,11 +420,11 @@ public class CafeSyntax {
   }
 
   public static IAbstract predicate(Location loc, IAbstract lhs, String op, IAbstract rhs) {
-    return new Apply(loc, op, lhs, rhs);
+    return new AApply(loc, op, lhs, rhs);
   }
 
   public static IAbstract letExp(Location loc, List<IAbstract> defs, IAbstract bound) {
-    return new Apply(loc, Names.LET, block(loc, defs), bound);
+    return new AApply(loc, Names.LET, block(loc, defs), bound);
   }
 
   public static IAbstract letExp(Location loc, IAbstract def, IAbstract bound) {
@@ -456,15 +456,15 @@ public class CafeSyntax {
   }
 
   public static IAbstract block(Location loc, IList acts) {
-    return new Apply(loc, Names.BLOCK, acts);
+    return new AApply(loc, Names.BLOCK, acts);
   }
 
   public static IAbstract block(Location loc, List<IAbstract> acts) {
-    return new Apply(loc, Names.BLOCK, acts);
+    return new AApply(loc, Names.BLOCK, acts);
   }
 
   public static IAbstract block(Location loc, IAbstract... acts) {
-    return new Apply(loc, Names.BLOCK, acts);
+    return new AApply(loc, Names.BLOCK, acts);
   }
 
   public static boolean isBlock(IAbstract term) {
@@ -478,7 +478,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract conditional(Location loc, IAbstract test, IAbstract th, IAbstract el) {
-    return new Apply(loc, Names.IF, test, th, el);
+    return new AApply(loc, Names.IF, test, th, el);
   }
 
   public static boolean isConditional(IAbstract trm) {
@@ -515,7 +515,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract varDeclaration(Location loc, IAbstract lv, IAbstract exp) {
-    return new Apply(loc, Names.VAR, lv, exp);
+    return new AApply(loc, Names.VAR, lv, exp);
   }
 
   public static boolean isVarDeclaration(IAbstract trm) {
@@ -533,7 +533,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract isDeclaration(Location loc, IAbstract lv, IAbstract exp) {
-    return new Apply(loc, Names.IS, lv, exp);
+    return new AApply(loc, Names.IS, lv, exp);
   }
 
   public static boolean isIsDeclaration(IAbstract trm) {
@@ -551,7 +551,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract assignment(Location loc, IAbstract lv, IAbstract exp) {
-    return new Apply(loc, Names.ASSIGN, lv, exp);
+    return new AApply(loc, Names.ASSIGN, lv, exp);
   }
 
   public static boolean isAssignment(IAbstract term) {
@@ -589,7 +589,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract assertion(Location loc, IAbstract cond) {
-    return new Apply(loc, Names.ASSERT, cond);
+    return new AApply(loc, Names.ASSERT, cond);
   }
 
   public static boolean isAssert(IAbstract cond) {
@@ -603,7 +603,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract ignore(Location loc, IAbstract exp) {
-    return new Apply(loc, Names.IGNORE, exp);
+    return new AApply(loc, Names.IGNORE, exp);
   }
 
   public static boolean isIgnore(IAbstract cond) {
@@ -617,7 +617,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract loop(Location loc, IAbstract act) {
-    return new Apply(loc, Names.LOOP, act);
+    return new AApply(loc, Names.LOOP, act);
   }
 
   public static boolean isLoop(IAbstract act) {
@@ -631,7 +631,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract whileLoop(Location loc, IAbstract cond, IAbstract act) {
-    return new Apply(loc, Names.WHILE, cond, act);
+    return new AApply(loc, Names.WHILE, cond, act);
   }
 
   public static boolean isWhile(IAbstract act) {
@@ -651,7 +651,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract switchAction(Location loc, IAbstract sel, List<IAbstract> cases, IAbstract deflt) {
-    return new Apply(loc, Names.SWITCH, sel, block(loc, cases), deflt);
+    return new AApply(loc, Names.SWITCH, sel, block(loc, cases), deflt);
   }
 
   public static boolean isSwitch(IAbstract trm) {
@@ -677,7 +677,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract catchAction(Location loc, IAbstract body, IAbstract handler) {
-    return new Apply(loc, Names.CATCH, body, handler);
+    return new AApply(loc, Names.CATCH, body, handler);
   }
 
   public static IAbstract throwExp(Location loc, IAbstract exp) {
@@ -696,11 +696,11 @@ public class CafeSyntax {
 
   public static IAbstract caseExp(Location loc, IAbstract sel, List<IAbstract> cases, IAbstract deflt) {
     assert deflt != null;
-    return new Apply(loc, Names.SWITCH, sel, block(loc, cases), deflt);
+    return new AApply(loc, Names.SWITCH, sel, block(loc, cases), deflt);
   }
 
   public static IAbstract caseRule(Location loc, IAbstract ptn, IAbstract body) {
-    return new Apply(loc, Names.CASE, ptn, body);
+    return new AApply(loc, Names.CASE, ptn, body);
   }
 
   public static boolean isCaseRule(IAbstract trm) {
@@ -720,7 +720,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract match(Location loc, IAbstract exp, IAbstract ptn) {
-    return new Apply(loc, Names.MATCH, exp, ptn);
+    return new AApply(loc, Names.MATCH, exp, ptn);
   }
 
   public static boolean isMatch(IAbstract exp) {
@@ -745,7 +745,7 @@ public class CafeSyntax {
     else if (Abstract.isName(rhs, Names.TRUE))
       return lhs;
     else
-      return new Apply(loc, Names.AND, lhs, rhs);
+      return new AApply(loc, Names.AND, lhs, rhs);
   }
 
   public static IAbstract disjunction(Location loc, IAbstract lhs, IAbstract rhs) {
@@ -754,15 +754,15 @@ public class CafeSyntax {
     else if (Abstract.isName(rhs, Names.FALSE))
       return lhs;
     else
-      return new Apply(loc, Names.OR, lhs, rhs);
+      return new AApply(loc, Names.OR, lhs, rhs);
   }
 
   public static IAbstract negation(Location loc, IAbstract rhs) {
-    return new Apply(loc, Names.NOT, rhs);
+    return new AApply(loc, Names.NOT, rhs);
   }
 
   public static IAbstract valof(Location loc, IAbstract act) {
-    return new Apply(loc, Names.VALOF, act);
+    return new AApply(loc, Names.VALOF, act);
   }
 
   public static boolean isValof(IAbstract trm) {
@@ -775,7 +775,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract valis(Location loc, IAbstract exp) {
-    return new Apply(loc, Names.VALIS, exp);
+    return new AApply(loc, Names.VALIS, exp);
   }
 
   public static boolean isValis(IAbstract trm) {
@@ -788,7 +788,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract typeDef(Location loc, IAbstract type, List<IAbstract> specs) {
-    return new Apply(loc, Names.TYPE, type, CafeSyntax.block(loc, specs));
+    return new AApply(loc, Names.TYPE, type, CafeSyntax.block(loc, specs));
   }
 
   public static boolean isTypeDef(IAbstract trm) {
@@ -812,15 +812,15 @@ public class CafeSyntax {
   }
 
   public static IAbstract typeExp(Location loc, String name, List<IAbstract> typeArgs) {
-    return new Apply(loc, name, typeArgs);
+    return new AApply(loc, name, typeArgs);
   }
 
   public static IAbstract typeExp(Location loc, String name, IAbstract... typeArgs) {
-    return new Apply(loc, name, typeArgs);
+    return new AApply(loc, name, typeArgs);
   }
 
   public static boolean isTypeExp(IAbstract tp) {
-    return tp instanceof Name || (tp instanceof Apply && !(isTypeVar(tp) || isForallType(tp) || isExistsType(tp)));
+    return tp instanceof Name || (tp instanceof AApply && !(isTypeVar(tp) || isForallType(tp) || isExistsType(tp)));
   }
 
   public static String typeExpLabel(IAbstract tp) {
@@ -839,7 +839,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract typeVar(Location loc, String name) {
-    return new Apply(loc, Names.TYPEVAR, new Name(loc, name));
+    return new AApply(loc, Names.TYPEVAR, new Name(loc, name));
   }
 
   public static boolean isTypeFunVar(IAbstract trm) {
@@ -865,7 +865,7 @@ public class CafeSyntax {
     IAbstract tVar = typeVar(loc, name);
 
     if (!cons.isEmpty())
-      tVar = new Apply(loc, Names.REQUIRING, tVar, block(loc, cons));
+      tVar = new AApply(loc, Names.REQUIRING, tVar, block(loc, cons));
 
     return tVar;
   }
@@ -895,12 +895,12 @@ public class CafeSyntax {
   public static IAbstract arrowType(Location loc, List<IAbstract> typeArgs, IAbstract res) {
     List<IAbstract> args = new ArrayList<>(typeArgs);
     args.add(res);
-    return new Apply(loc, Names.ARROW, args);
+    return new AApply(loc, Names.ARROW, args);
   }
 
   public static boolean isArrowType(IAbstract tp) {
     tp = unwrapType(tp);
-    return Abstract.isApply(tp, Names.ARROW) && ((Apply) tp).arity() > 0;
+    return Abstract.isApply(tp, Names.ARROW) && ((AApply) tp).arity() > 0;
   }
 
   public static IAbstract arrowTypeArgs(IAbstract tp) {
@@ -913,7 +913,7 @@ public class CafeSyntax {
     assert isArrowType(tp);
     tp = unwrapType(tp);
 
-    IList tArgs = ((Apply) tp).getArgs();
+    IList tArgs = ((AApply) tp).getArgs();
 
     return (IAbstract) tArgs.getCell(tArgs.size() - 1);
   }
@@ -921,7 +921,7 @@ public class CafeSyntax {
   public static IAbstract procedureType(Location loc, List<IAbstract> argTypes) {
     List<IAbstract> args = new ArrayList<>(argTypes);
     args.add(new Name(loc, Names.VOID));
-    return new Apply(loc, Names.ARROW, args);
+    return new AApply(loc, Names.ARROW, args);
   }
 
   public static boolean isProcedureType(IAbstract tp) {
@@ -930,18 +930,18 @@ public class CafeSyntax {
 
   public static IAbstract patternType(Location loc, List<IAbstract> typeArgs, IAbstract res) {
     typeArgs.add(res);
-    return new Apply(loc, Names.LARROW, typeArgs);
+    return new AApply(loc, Names.LARROW, typeArgs);
   }
 
   public static boolean isPatternType(IAbstract trm) {
     trm = unwrapType(trm);
-    return Abstract.isApply(trm, Names.LARROW) && ((Apply) trm).arity() > 0;
+    return Abstract.isApply(trm, Names.LARROW) && ((AApply) trm).arity() > 0;
   }
 
   public static List<IAbstract> patternTypeArgs(IAbstract trm) {
     assert isPatternType(trm);
 
-    IList tArgs = ((Apply) trm).getArgs();
+    IList tArgs = ((AApply) trm).getArgs();
     List<IAbstract> args = new ArrayList<>();
     for (int ix = 0; ix < tArgs.size() - 1; ix++)
       args.add((IAbstract) tArgs.getCell(ix));
@@ -952,7 +952,7 @@ public class CafeSyntax {
     assert isPatternType(trm);
     trm = unwrapType(trm);
 
-    IList args = ((Apply) trm).getArgs();
+    IList args = ((AApply) trm).getArgs();
 
     return (IAbstract) args.getCell(args.size() - 1);
   }
@@ -966,11 +966,11 @@ public class CafeSyntax {
   }
 
   public static IAbstract tupleType(Location loc, List<IAbstract> argTypes) {
-    return new Apply(loc, TypeUtils.tupleLabel(argTypes.size()), argTypes);
+    return new AApply(loc, TypeUtils.tupleLabel(argTypes.size()), argTypes);
   }
 
   public static IAbstract tupleType(Location loc, IAbstract... argTypes) {
-    return new Apply(loc, TypeUtils.tupleLabel(argTypes.length), argTypes);
+    return new AApply(loc, TypeUtils.tupleLabel(argTypes.length), argTypes);
   }
 
   public static Name variable(Location loc, String name) {
@@ -1093,7 +1093,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract existentialType(Location loc, IAbstract tVar, IAbstract bound) {
-    return new Apply(loc, Names.EXISTS, tVar, bound);
+    return new AApply(loc, Names.EXISTS, tVar, bound);
   }
 
   public static boolean isExistentialType(IAbstract tp) {
@@ -1111,7 +1111,7 @@ public class CafeSyntax {
   }
 
   public static IAbstract universalType(Location loc, IAbstract tVar, IAbstract bound) {
-    return new Apply(loc, Names.FORALL, tVar, bound);
+    return new AApply(loc, Names.FORALL, tVar, bound);
   }
 
   public static boolean isUniversalType(IAbstract tp) {

@@ -26,15 +26,15 @@ private import arithmetic;
 
 -- a simple implementation of the dictionary interfaces using lists
 
-type seqmap of (%k,%v) is seqmap(list of ((%k,%v)));
+public type seqmap of (%k,%v) is seqmap(list of ((%k,%v)));
 
-implementation sizeable over seqmap of (%s,%t) is {
+public implementation sizeable over seqmap of (%s,%t) is {
   fun isEmpty(seqmap(_empty())) is true
    |  isEmpty(_) default is false
   fun size(seqmap(L)) is integer(__array_size(L));
 }
   
-implementation indexable over seqmap of (%k,%v) determines (%k,%v) where equality over %k is {
+public implementation indexable over seqmap of (%k,%v) determines (%k,%v) where equality over %k is {
   fun _index(seqmap(L),K) is findEl(L,K);
   fun _set_indexed(seqmap(L),K,V) is seqmap(replaceEl(L,K,V));
   fun _delete_indexed(seqmap(L),K) is seqmap(deleteEl(L,K));
@@ -76,30 +76,30 @@ fun deleteEls(M,P) is _delete(M,P);
 updateEls has type (list of %e, ()<=%e, (%e)=>%e) => list of %e;
 private fun updateEls(M,P,U) is _update(M,P,U);
 
-implementation iterable over seqmap of (%k,%e) determines %e is {
+public implementation iterable over seqmap of (%k,%e) determines %e is {
   fun _iterate(R,F,S) is listMapIter(R,F,S);
 }
 
-fun listMapIter(seqmap(R),F,S) is let {
+public fun listMapIter(seqmap(R),F,S) is let {
   fun dropFun((_,E),St) is F(E,St);
 } in __array_iterate(R,dropFun,S);
 
-fun listmapIxIter(seqmap(R),F,S) is listIxIter(R,F,S);
+public fun listmapIxIter(seqmap(R),F,S) is listIxIter(R,F,S);
 
 private
 fun listIxIter(_empty(),_,St) is St
  |  listIxIter(_,_,NoMore(X)) is NoMore(X)
  |  listIxIter(_pair((K,V),T),F,St) is listIxIter(T,F,F(K,V,St))
 
-implementation pPrint over seqmap of (%k,%v) where pPrint over %k and pPrint over %v is {
+public implementation pPrint over seqmap of (%k,%v) where pPrint over %k and pPrint over %v is {
   fun ppDisp(Els) is ppSequence(2,cons of [ppStr("listmap of ["), ppSeqMap(Els), ppStr("]")]);
 };
 
-fun ppSeqMap(seqmap(Els)) is
+public fun ppSeqMap(seqmap(Els)) is
   ppSequence(0,cons of {all ppSequence(2,cons of [ppDisp(K), ppStr("->"), ppDisp(V), ppStr(","), ppNl])
                                               where (K,V) in Els});  
                                               
-implementation foldable over seqmap of (%k,%v) determines %v is {
+public implementation foldable over seqmap of (%k,%v) determines %v is {
   leftFold = lftFold
   rightFold = rgtFold;
 } using {

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IAttribute;
 import org.star_lang.star.compiler.ast.Name;
@@ -64,7 +64,7 @@ public class FmtCompile
       final IAbstract ptnArg = Abstract.getArg(rule, 0);
 
       if (Abstract.isBinary(ptnArg, StandardNames.WFF_DEFINES)) {
-        Apply head = (Apply) ptnArg;
+        AApply head = (AApply) ptnArg;
         String category = identifierOf(Abstract.getArg(head, 1));
         if (category == null) {
           errors.reportError("missing category", head.getLoc());
@@ -86,8 +86,8 @@ public class FmtCompile
 
   private static FmtPtnOp compilePattern(IAbstract ptn, ErrorReport errors, Map<String, Integer> dict)
   {
-    if (ptn instanceof Apply) {
-      Apply app = (Apply) ptn;
+    if (ptn instanceof AApply) {
+      AApply app = (AApply) ptn;
 
       if (Abstract.isUnary(app, StandardNames.QUESTION)) {
         String var = identifierOf(Abstract.getArg(app, 0));
@@ -266,7 +266,7 @@ public class FmtCompile
     Location loc = term.getLoc();
 
     if (Abstract.isUnary(term, StandardNames.QUESTION)) {
-      String var = identifierOf(((Apply) term).getArg(0));
+      String var = identifierOf(((AApply) term).getArg(0));
       if (var == null) {
         errors.reportError("missing variable NAME", loc);
         return new FmtLiteral(term);
@@ -292,8 +292,8 @@ public class FmtCompile
     } else if (Abstract.isBinary(term, StandardNames.MACRO_APPLY))
       return new FmtApplyApplyBuild(compileBuilder(Abstract.getArg(term, 0), errors, dict), compileBuilder(Abstract
           .getArg(term, 1), errors, dict));
-    else if (term instanceof Apply) {
-      Apply apply = (Apply) term;
+    else if (term instanceof AApply) {
+      AApply apply = (AApply) term;
       FmtBuildOp op = compileBuilder(apply.getOperator(), errors, dict);
       IList args = apply.getArgs();
       FmtBuildOp argOps[] = new FmtBuildOp[args.size()];

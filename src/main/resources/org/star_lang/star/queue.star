@@ -22,12 +22,12 @@ private import cons;
 private import arithmetic;
 private import updateable;
 
-type queue of %t is queue{
+public type queue of %t is queue{
   front has type cons of %t;
   back has type cons of %t
 }
 
-implementation sequence over queue of %e determines %e is {
+public implementation sequence over queue of %e determines %e is {
   ptn _empty() from queue{front=nil; back=nil};
   fun _nil() is queue{front=nil; back=nil};
   
@@ -44,7 +44,7 @@ implementation sequence over queue of %e determines %e is {
   ptn backQ(E,Q) from _pair(E,Q);
 }
 
-implementation equality over queue of %t where equality over %t is {
+public implementation equality over queue of %t where equality over %t is {
   (=) = qEqual;
   hashCode = qHash
 } using {
@@ -52,7 +52,7 @@ implementation equality over queue of %t where equality over %t is {
   fun qHash(queue{front=F;back=B}) is hashCode(F++reverse(B))
 };
 
-implementation sizeable over queue of %t is {
+public implementation sizeable over queue of %t is {
   fun size(Q) is queueSize(Q);
   
   fun isEmpty(queue{front=nil;back=nil}) is true
@@ -61,7 +61,7 @@ implementation sizeable over queue of %t is {
   fun queueSize(queue{front=F;back=B}) is size(F)+size(B)
 }
 
-implementation iterable over queue of %e determines %e is {
+public implementation iterable over queue of %e determines %e is {
   fun _iterate(queue{front=F;back=B},Fn,St) is consIterate(F++reverse(B),Fn,St);
 }
 
@@ -70,13 +70,13 @@ private
    |  consIterate(_,_,NoMore(X)) is NoMore(X)
    |  consIterate(cons(H,T),F,St) is consIterate(T,F,F(H,St));
   
-implementation concatenate over queue of %e is {
+public implementation concatenate over queue of %e is {
   fun L++R is queueConc(L,R);
 } using {
   fun queueConc(queue{front=F1;back=B1},queue{front=F2;back=B2}) is queue{front=F1++reverse(B1); back=B2++reverse(F2)}
 }
 
-implementation updateable over queue of %t determines %t is {
+public implementation updateable over queue of %t determines %t is {
   fun _extend(queue{front=F;back=B},E) is queue{front=F;back=cons(E,B)};
   fun _merge(queue{front=F1;back=B1},queue{front=F2;back=B2}) is queue{front=F1++F2;back=B2++B1};
   fun _delete(queue{front=F;back=B},P) is queue{front=removeEls(F,P); back=removeEls(B,P)};
@@ -91,7 +91,7 @@ implementation updateable over queue of %t determines %t is {
    |  updateEls(cons(E,L),P,F) is cons(E,updateEls(L,P,F));
 };
 
-implementation reversible over queue of %t is {
+public implementation reversible over queue of %t is {
   fun reverse(Q) is revQ(Q)
 } using {
   fun revQ(queue{front=F;back=B}) is queue{front=reverse(B);back=reverse(F)}

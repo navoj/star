@@ -318,8 +318,8 @@ public class CompilerUtils {
       return getPackageIdentifier(Abstract.deParen(term));
     else if (Abstract.isBinary(term, StandardNames.EXPORTS))
       return getPackageIdentifier(Abstract.binaryLhs(term));
-    else if (term instanceof Apply)
-      return ((Apply) term).getOp();
+    else if (term instanceof AApply)
+      return ((AApply) term).getOp();
     else
       throw new IllegalArgumentException("expecting an identifier");
   }
@@ -380,7 +380,7 @@ public class CompilerUtils {
   }
 
   public static boolean isApply(IAbstract term) {
-    return term instanceof Apply && isIdentifier(((Apply) term).getOperator());
+    return term instanceof AApply && isIdentifier(((AApply) term).getOperator());
   }
 
   public static boolean isConditional(IAbstract term) {
@@ -572,7 +572,7 @@ public class CompilerUtils {
   }
 
   public static IAbstract regexp(Location loc, String exp) {
-    return new Apply(loc, StandardNames.REGEXP, new StringLiteral(loc, exp));
+    return new AApply(loc, StandardNames.REGEXP, new StringLiteral(loc, exp));
   }
 
   public static boolean isTrivial(ICondition cond) {
@@ -675,7 +675,7 @@ public class CompilerUtils {
     if (Abstract.isBinary(term, StandardNames.BRACES))
       return Abstract.binaryLhs(term);
     else
-      return ((Apply) term).getOperator();
+      return ((AApply) term).getOperator();
   }
 
   public static IAbstract braceArg(IAbstract term) {
@@ -1180,7 +1180,7 @@ public class CompilerUtils {
     else if (Abstract.isUnary(term, StandardNames.DEFAULT))
       return convertLambdaHead(Abstract.unaryArg(term));
     else if (Abstract.isApply(term))
-      return Abstract.tupleTerm(term.getLoc(), ((Apply) term).getArgs());
+      return Abstract.tupleTerm(term.getLoc(), ((AApply) term).getArgs());
     else
       return term;
   }
@@ -1892,7 +1892,7 @@ public class CompilerUtils {
   public static IList getEquationArgs(IAbstract eqn) {
     assert isEquation(eqn);
 
-    return ((Apply) equationLhs(eqn)).getArgs();
+    return ((AApply) equationLhs(eqn)).getArgs();
   }
 
   public static IAbstract equationLhs(IAbstract term) {
@@ -1920,7 +1920,7 @@ public class CompilerUtils {
   }
 
   public static IAbstract equation(Location loc, String label, List<IAbstract> args, IAbstract value) {
-    return Abstract.binary(loc, StandardNames.IS, new Apply(loc, label, args), value);
+    return Abstract.binary(loc, StandardNames.IS, new AApply(loc, label, args), value);
   }
 
   public static IAbstract equation(Location loc, IAbstract lhs, IAbstract value) {
@@ -1928,7 +1928,7 @@ public class CompilerUtils {
   }
 
   public static IAbstract equation(Location loc, String label, List<IAbstract> args, IAbstract cond, IAbstract value) {
-    IAbstract head = new Apply(loc, label, args);
+    IAbstract head = new AApply(loc, label, args);
     if (!isTrivial(cond))
       head = Abstract.binary(loc, StandardNames.WHERE, head, cond);
     return Abstract.binary(loc, StandardNames.IS, head, value);
@@ -1936,7 +1936,7 @@ public class CompilerUtils {
 
   public static IAbstract defaultEquation(Location loc, String label, List<IAbstract> args, IAbstract value) {
     return Abstract.binary(loc, StandardNames.IS,
-        Abstract.unary(loc, StandardNames.DEFAULT, new Apply(loc, label, args)), value);
+        Abstract.unary(loc, StandardNames.DEFAULT, new AApply(loc, label, args)), value);
   }
 
   public static IAbstract function(Location loc, IAbstract... equations) {
@@ -2028,7 +2028,7 @@ public class CompilerUtils {
     if (Abstract.isBinary(lhs, StandardNames.WHERE))
       lhs = Abstract.binaryLhs(lhs);
 
-    return ((Apply) lhs).getArgs().size();
+    return ((AApply) lhs).getArgs().size();
   }
 
   public static IAbstract actionRuleBody(IAbstract term) {
@@ -2099,7 +2099,7 @@ public class CompilerUtils {
 
     IAbstract lhs = patternRuleHead(term);
 
-    return ((Apply) lhs).getArgs().size();
+    return ((AApply) lhs).getArgs().size();
   }
 
   public static int arityOfPatternLambda(IAbstract term) {
@@ -2173,7 +2173,7 @@ public class CompilerUtils {
     else if (isAnonAggConLiteral(tp))
       return anonRecordTypeLabel(tp);
     else if (Abstract.isTupleTerm(tp))
-      return ((Apply) tp).getOp();
+      return ((AApply) tp).getOp();
     else
       return null;
   }
@@ -2371,7 +2371,7 @@ public class CompilerUtils {
     IAbstractVisitor finder = new DefaultAbstractVisitor() {
 
       @Override
-      public void visitApply(Apply tp) {
+      public void visitApply(AApply tp) {
         if (isTypeVar(tp)) {
           String name = typeFunVarName(tp);
           IAbstract var = Abstract.unaryArg(tp);
@@ -2440,8 +2440,8 @@ public class CompilerUtils {
     else if (Abstract.isBinary(stmt, StandardNames.FROM)) {
       IAbstract lhs = Abstract.binaryLhs(stmt);
 
-      if (lhs instanceof Apply)
-        return ((Apply) lhs).getOperator();
+      if (lhs instanceof AApply)
+        return ((AApply) lhs).getOperator();
       else
         return lhs;
     } else
@@ -2456,7 +2456,7 @@ public class CompilerUtils {
     else if (Abstract.isParenTerm(term))
       return isProgramHeadPtn(Abstract.deParen(term));
     else
-      return term instanceof Apply && !Abstract.isTupleTerm(term) && !isAnonAggConLiteral(term)
+      return term instanceof AApply && !Abstract.isTupleTerm(term) && !isAnonAggConLiteral(term)
           && !StandardNames.isKeyword(Abstract.getOperator(term)) && Abstract.isIdentifier(Abstract.getOperator(term));
   }
 
@@ -2474,8 +2474,8 @@ public class CompilerUtils {
 
       if (Abstract.isBinary(lhs, StandardNames.WHERE) || Abstract.isUnary(lhs, StandardNames.DEFAULT))
         lhs = Abstract.getArg(lhs, 0);
-      if (lhs instanceof Apply)
-        return ((Apply) lhs).getOperator();
+      if (lhs instanceof AApply)
+        return ((AApply) lhs).getOperator();
       else
         return lhs;
     }
@@ -2552,7 +2552,7 @@ public class CompilerUtils {
     else if (Abstract.isBinary(stmt)) {
       IAbstract ptn = typeAliasExtract(Abstract.binaryLhs(stmt));
       if (ptn != null)
-        return Abstract.binary(stmt.getLoc(), ((Apply) stmt).getOperator(), ptn, Abstract.binaryRhs(stmt));
+        return Abstract.binary(stmt.getLoc(), ((AApply) stmt).getOperator(), ptn, Abstract.binaryRhs(stmt));
       else
         return null;
     } else
@@ -2662,8 +2662,8 @@ public class CompilerUtils {
 
       if (Abstract.isBinary(lhs, StandardNames.WHERE) || Abstract.isUnary(lhs, StandardNames.DEFAULT))
         lhs = Abstract.getArg(lhs, 0);
-      if (lhs instanceof Apply)
-        return ((Apply) lhs).getOperator();
+      if (lhs instanceof AApply)
+        return ((AApply) lhs).getOperator();
       else
         return lhs;
     }

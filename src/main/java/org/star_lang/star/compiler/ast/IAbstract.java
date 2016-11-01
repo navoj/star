@@ -50,6 +50,6 @@ public interface IAbstract extends IConstructor
   astType astType();
 
   enum astType {
-    Bool, Int, Long, Flt, Str, Name, Apply
+    Bool, Int, Long, Flt, Str, Name, Tuple, Apply
   }
 }

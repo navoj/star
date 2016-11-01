@@ -37,7 +37,7 @@ private def MINUS_ONE is unwrapInt(-1);
 private def FINGER_LIST_NODE_WIDTH is 8;
 private def _FINGER_LIST_NODE_WIDTH is unwrapInt(FINGER_LIST_NODE_WIDTH);
 
-type FingerList of %a is
+public type FingerList of %a is
      FLEmpty
   or FLSingle(%a)
   or FLDeep(integer_, FLDigit of %a, FingerList of (FLNode of (%a)), FLDigit of %a); -- integer_ arg is amount of stored elements; used for indexing

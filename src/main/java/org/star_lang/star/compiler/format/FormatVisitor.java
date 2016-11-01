@@ -3,7 +3,8 @@ package org.star_lang.star.compiler.format;
 import java.util.Collection;
 import java.util.List;
 
-import org.star_lang.star.compiler.ast.Apply;
+import org.star_lang.star.compiler.ast.AApply;
+import org.star_lang.star.compiler.ast.AsTuple;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
 import org.star_lang.star.compiler.ast.FloatLiteral;
 import org.star_lang.star.compiler.ast.IAbstract;
@@ -26,7 +27,13 @@ final class FormatVisitor implements IAbstractVisitor {
   }
 
   @Override
-  public void visitApply(Apply term) {
+  public void visitTuple(AsTuple tpl) {
+    for (IValue arg : tpl.getArgs())
+      ((IAbstract) arg).accept(this);
+  }
+
+  @Override
+  public void visitApply(AApply term) {
     visit(term);
     term.getOperator().accept(this);
     for (IValue arg : term.getArgs())

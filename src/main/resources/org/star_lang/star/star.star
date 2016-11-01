@@ -42,33 +42,33 @@ import worksheet;
 import concurrency;
 
 -- used in processing ordered queries
-contract _project0 over %%c is {
+public contract _project0 over %%c is {
   __project0 has type for all k, v such that (%%c of ((k,v))) => %%c of k;
   __unique has type for all e such that (%%c of e,(e,e)=>boolean) => %%c of e;
 }
 
-implementation _project0 over list is {
+public implementation _project0 over list is {
   fun __project0(A) is __array_project_0(A);
   fun __unique(A,E) is __array_unique(A,E);
 }
 
-contract iotaC over (%%r,%t) is {
+public contract iotaC over (%%r,%t) is {
   iota has type (%t,%t,%t) => %%r of %t
 };
 
-implementation iotaC over (list,integer) is {
+public implementation iotaC over (list,integer) is {
   fun iota(integer(F),integer(T),integer(S)) is __integer_array_iota(F,T,S);
 }
 
-implementation iotaC over (list,long) is {
+public implementation iotaC over (list,long) is {
   fun iota(long(F),long(T),long(S)) is __long_array_iota(F,T,S);
 }
 
-implementation iotaC over (list,float) is {
+public implementation iotaC over (list,float) is {
   fun iota(float(F),float(T),float(S)) is __float_array_iota(F,T,S);
 }
 
-implementation iotaC over (cons,integer) is {
+public implementation iotaC over (cons,integer) is {
   fun iota(F,T,S) where S>0 is iotaF(F,T,S)
    |  iota(F,T,S) default is iotaB(F,T,S);
   
