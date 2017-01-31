@@ -1,8 +1,5 @@
 package org.star_lang.star.data.value;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
@@ -18,6 +15,9 @@ import org.star_lang.star.data.type.IValueSpecifier;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.TypeExp;
 import org.star_lang.star.operators.string.runtime.ValueDisplay;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

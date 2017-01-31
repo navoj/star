@@ -1,8 +1,5 @@
 package org.star_lang.star.compiler.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.canonical.CanonicalVisitor;
 import org.star_lang.star.compiler.canonical.ConditionCondition;
@@ -28,7 +25,6 @@ import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.canonical.WherePattern;
 import org.star_lang.star.compiler.transform.VarAnalysis.VarChecker;
 import org.star_lang.star.compiler.util.TopologySort;
-import org.star_lang.star.compiler.util.Wrapper;
 import org.star_lang.star.compiler.util.TopologySort.IDefinition;
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -43,6 +39,10 @@ import org.star_lang.star.compiler.util.TopologySort.IDefinition;
  * KIND, either express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+import org.star_lang.star.compiler.util.Wrapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlowAnalysis
 {

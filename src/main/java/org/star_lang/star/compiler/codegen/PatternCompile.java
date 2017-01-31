@@ -37,11 +37,11 @@ import org.star_lang.star.compiler.canonical.WherePattern;
  */
 public class PatternCompile implements TransformPattern<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
 
-  private PatternCompile() {
+  private PatternCompile(IContinuation fail, CodeContext cxt) {
   }
 
   public static ISpec compile(IContentPattern ptn, ISpec src, VarPattern handler, IContinuation succ, IContinuation fail, CodeContext cxt) {
-    PatternCompile comp = new PatternCompile();
+    PatternCompile comp = new PatternCompile(fail, cxt);
     return ptn.transformPattern(comp, succ);
   }
 

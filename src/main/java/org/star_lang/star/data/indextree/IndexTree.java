@@ -1,12 +1,12 @@
 package org.star_lang.star.data.indextree;
 
+import org.star_lang.star.compiler.util.NullIterator;
+import org.star_lang.star.compiler.util.PrettyPrintDisplay;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Stack;
-
-import org.star_lang.star.compiler.util.NullIterator;
-import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

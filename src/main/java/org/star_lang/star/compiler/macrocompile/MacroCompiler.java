@@ -1,13 +1,5 @@
 package org.star_lang.star.compiler.macrocompile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.star_lang.star.CompileDriver;
 import org.star_lang.star.StarCompiler;
 import org.star_lang.star.code.Manifest;
@@ -18,7 +10,7 @@ import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.AApply;
+import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.DisplayAst;
@@ -73,6 +65,14 @@ import org.star_lang.star.resource.URIUtils;
 import org.star_lang.star.resource.catalog.Catalog;
 import org.star_lang.star.resource.catalog.CatalogException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -88,8 +88,7 @@ import org.star_lang.star.resource.catalog.CatalogException;
  */
 
 /**
- * Transform a set of macro rules into a star program which is then compiled and
- * executed.
+ * Transform a set of macro rules into a star program which is then compiled and executed.
  * <p/>
  * A macro rule of the form:
  * <p/>
@@ -250,9 +249,6 @@ public class MacroCompiler {
     if (ruleset == null) {
       String macroName = macroRuleName(key);
       IAbstract macroRule = CompilerUtils.equation(loc, macroName, args, cond.get(), repl);
-      IAbstract quotedType = Abstract.name(loc, StandardTypes.QUOTED);
-      IAbstract walkerTp = CompilerUtils.typeAnnotationStmt(loc, Abstract.name(loc, macroName),
-          CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
 
       macros.put(key, Pair.pair(macroName, macroRule));
     } else {
@@ -433,42 +429,32 @@ public class MacroCompiler {
 
   private static IAbstract macroTypeAnnotation(Location loc, IAbstract name) {
     IAbstract quotedType = Abstract.name(loc, StandardTypes.QUOTED);
-    return CompilerUtils.typeAnnotationStmt(loc, name,
-        CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
-  }
-
-  @SuppressWarnings("unused")
-  private static IAbstract macroTypeAnnotation(Location loc, String name) {
-    IAbstract quotedType = Abstract.name(loc, StandardTypes.QUOTED);
-    return CompilerUtils.typeAnnotationStmt(loc, Abstract.name(loc, name),
-        CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
+    return CompilerUtils.typeAnnotationStmt(loc, name, CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
   }
 
   private static List<IAbstract> genWalker(Location loc, IAbstract replacer, IAbstract replaceVar, IAbstract driver) {
     List<IAbstract> pkgRules = new ArrayList<>();
-    pkgRules.add(macroTypeAnnotation(loc, replaceVar));
+    pkgRules.add(macroTypeAnnotation(loc,replaceVar));
 
     pkgRules.add(replacer);
 
     if (!CompilerUtils.isTrivialFunction(replacer)) {
 
       // Construct the walker boilerplate:
-      // fun pkg%walk(astApply(Loc,Op,Args)) is
-      // astApply(Loc,replacer(Op,pkg%walk),Args//replacer);
+      // fun pkg%walk(astApply(Loc,Op,Args)) is astApply(Loc,replacer(Op,pkg%walk),Args//replacer);
       //
       IAbstract argsArg = Abstract.name(loc, GenSym.genSym("A"));
       IAbstract opArg = Abstract.name(loc, GenSym.genSym("op"));
       IAbstract locArg = Abstract.name(loc, GenSym.genSym("Loc"));
 
       // Define the walker itself
-      IAbstract head = Abstract.unary(loc, driver, Abstract.ternary(loc, AApply.name, locArg, opArg, argsArg));
+      IAbstract head = Abstract.unary(loc, driver, Abstract.ternary(loc, Apply.name, locArg, opArg, argsArg));
       IAbstract opRepl = Abstract.unary(loc, replaceVar, opArg);
 
       IAbstract quotedType = Abstract.name(loc, StandardTypes.QUOTED);
-      IAbstract walkerTp = CompilerUtils.typeAnnotationStmt(loc, driver,
-          CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
-      IAbstract walkerRl1 = CompilerUtils.equation(loc, head,
-          Abstract.ternary(loc, AApply.name, locArg, opRepl, Abstract.binary(loc, ArrayMap.name, argsArg, replaceVar)));
+      IAbstract walkerTp = CompilerUtils.typeAnnotationStmt(loc, driver, CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
+      IAbstract walkerRl1 = CompilerUtils.equation(loc, head, Abstract.ternary(loc, Apply.name, locArg, opRepl,
+          Abstract.binary(loc, ArrayMap.name, argsArg, replaceVar)));
       IAbstract walkerRl2 = CompilerUtils.equation(loc, Abstract.unary(loc, driver, argsArg), argsArg);
 
       pkgRules.add(walkerTp);
@@ -647,9 +633,8 @@ public class MacroCompiler {
       List<IAbstract> localArgs = new ArrayList<>();
       localArgs.add(termArg);
 
-      return handler.generateResult(rules, otherRules,
-          CompilerUtils.function(loc, CompilerUtils.equation(loc, replaceVar.getId(), localArgs, replacer)), replaceVar,
-          subDict);
+      return handler.generateResult(rules, otherRules, CompilerUtils.function(loc, CompilerUtils.equation(loc,
+          replaceVar.getId(), localArgs, replacer)), replaceVar, subDict);
     } else {
       // If no local macros then simply return the term
       IAbstract termArg = new Name(loc, GenSym.genSym("T"));
@@ -847,8 +832,7 @@ public class MacroCompiler {
 
     // We build a search 'engine' along the lines of:
     //
-    // (var...var) from ptn$(ptn) -- where vars are the macro variables in
-    // ptn
+    // (var...var) from ptn$(ptn) -- where vars are the macro variables in ptn
     Set<String> subVars = new HashSet<>(vars);
     Wrapper<IAbstract> cond = Wrapper.create(null);
     IAbstract match = compilePtn(ptn, cond, errors, subVars, locationVar);
@@ -1071,7 +1055,7 @@ public class MacroCompiler {
       }
 
       @Override
-      public void visitApply(AApply app) {
+      public void visitApply(Apply app) {
         if (Abstract.isIdentifier(app.getOperator())) {
           String key = patternKey(app, errors);
           keys.add(key);
@@ -1154,10 +1138,8 @@ public class MacroCompiler {
     else if (Abstract.isUnary(repl, StandardNames.QUESTION))
       return compMsg(Abstract.unaryArg(repl), dict, errors, vars, counterVar, locationVar, replace, outer);
     else if (Abstract.isUnary(repl, StandardNames.MACRO_IDENT))
-      return Abstract.unary(loc, MacroDisplay.name,
-          genReplace(loc, replace,
-              compileReplacement(Abstract.unaryArg(repl), dict, errors, vars, counterVar, locationVar, replace, outer),
-              vars, dict));
+      return Abstract.unary(loc, MacroDisplay.name, genReplace(loc, replace, compileReplacement(
+          Abstract.unaryArg(repl), dict, errors, vars, counterVar, locationVar, replace, outer), vars, dict));
     else if (repl instanceof StringLiteral)
       return repl;
     else
@@ -1170,7 +1152,7 @@ public class MacroCompiler {
   }
 
   public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, IAbstract args) {
-    return Abstract.ternary(loc, AApply.name, aloc, op, args);
+    return Abstract.ternary(loc, Apply.name, aloc, op, args);
   }
 
   public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, List<IAbstract> args) {

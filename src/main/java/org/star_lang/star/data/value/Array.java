@@ -1,8 +1,5 @@
 package org.star_lang.star.data.value;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.ArrayIterator;
@@ -18,6 +15,9 @@ import org.star_lang.star.data.IValueVisitor;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.TypeVar;
 import org.star_lang.star.data.type.UniversalType;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

@@ -1,7 +1,7 @@
 package org.star_lang.star.compiler.cafe.compile;
 
 import org.objectweb.asm.tree.LabelNode;
-import org.star_lang.star.compiler.ast.AApply;
+import org.star_lang.star.compiler.ast.Apply;
 
 
 
@@ -20,6 +20,6 @@ import org.star_lang.star.compiler.ast.AApply;
  */
 
 public interface ICompileCondition {
-  void handleCond(AApply cond, Sense sense, LabelNode elLabel,
+  void handleCond(Apply cond, Sense sense, LabelNode elLabel,
                   CodeContext ccxt);
 }

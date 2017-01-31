@@ -18,6 +18,8 @@ import org.star_lang.star.data.indextree.Sets;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.TypeVar;
 
+import java.util.Iterator;
+
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *

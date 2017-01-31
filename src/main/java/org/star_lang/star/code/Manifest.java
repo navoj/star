@@ -1,13 +1,5 @@
 package org.star_lang.star.code;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.star_lang.star.code.repository.CodeTree;
 import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.TypeUtils;
@@ -18,6 +10,14 @@ import org.star_lang.star.data.type.ITypeDescription;
 import org.star_lang.star.data.type.TypeContract;
 import org.star_lang.star.data.type.TypeInterfaceType;
 import org.star_lang.star.data.value.ResourceURI;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe

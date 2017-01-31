@@ -79,20 +79,4 @@ public class ConstructorTerm extends BaseExpression {
   public <A, E, P, C, D, T> E transform(TransformExpression<A, E, P, C, D, T> transform, T context) {
     return transform.transformConstructor(this, context);
   }
-
-  @SuppressWarnings("unused")
-  private static IType makeType(IContentExpression args[]) {
-    IType aTypes[] = new IType[args.length];
-    for (int ix = 0; ix < args.length; ix++)
-      aTypes[ix] = args[ix].getType();
-    return TypeUtils.tupleType(aTypes);
-  }
-
-  @SuppressWarnings("unused")
-  private static IType makeType(List<IContentExpression> args) {
-    IType aTypes[] = new IType[args.size()];
-    for (int ix = 0; ix < args.size(); ix++)
-      aTypes[ix] = args.get(ix).getType();
-    return TypeUtils.tupleType(aTypes);
-  }
 }

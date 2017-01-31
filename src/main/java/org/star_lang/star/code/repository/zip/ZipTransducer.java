@@ -1,5 +1,10 @@
 package org.star_lang.star.code.repository.zip;
 
+import org.star_lang.star.compiler.util.FileUtil;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.resource.ResourceException;
+import org.star_lang.star.resource.Transducer;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -9,11 +14,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.star_lang.star.compiler.util.FileUtil;
-import org.star_lang.star.data.value.ResourceURI;
-import org.star_lang.star.resource.ResourceException;
-import org.star_lang.star.resource.Transducer;
 
 /**
  * A zip uri is a file uri with a fragment that encodes the particular sub-element to extract. E.g.,
