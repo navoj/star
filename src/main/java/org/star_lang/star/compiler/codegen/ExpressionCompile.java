@@ -1,5 +1,7 @@
 package org.star_lang.star.compiler.codegen;
 
+import java.util.List;
+
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -17,7 +19,34 @@ package org.star_lang.star.compiler.codegen;
 import org.star_lang.star.compiler.cafe.compile.CodeContext;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
-import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.compiler.canonical.AbortExpression;
+import org.star_lang.star.compiler.canonical.Application;
+import org.star_lang.star.compiler.canonical.CaseExpression;
+import org.star_lang.star.compiler.canonical.CastExpression;
+import org.star_lang.star.compiler.canonical.ConditionalExp;
+import org.star_lang.star.compiler.canonical.ConstructorTerm;
+import org.star_lang.star.compiler.canonical.ContentCondition;
+import org.star_lang.star.compiler.canonical.FieldAccess;
+import org.star_lang.star.compiler.canonical.FunctionLiteral;
+import org.star_lang.star.compiler.canonical.IContentExpression;
+import org.star_lang.star.compiler.canonical.LetTerm;
+import org.star_lang.star.compiler.canonical.MemoExp;
+import org.star_lang.star.compiler.canonical.MethodVariable;
+import org.star_lang.star.compiler.canonical.NullExp;
+import org.star_lang.star.compiler.canonical.Overloaded;
+import org.star_lang.star.compiler.canonical.OverloadedFieldAccess;
+import org.star_lang.star.compiler.canonical.OverloadedVariable;
+import org.star_lang.star.compiler.canonical.PatternAbstraction;
+import org.star_lang.star.compiler.canonical.RecordSubstitute;
+import org.star_lang.star.compiler.canonical.RecordTerm;
+import org.star_lang.star.compiler.canonical.Resolved;
+import org.star_lang.star.compiler.canonical.Scalar;
+import org.star_lang.star.compiler.canonical.Shriek;
+import org.star_lang.star.compiler.canonical.TransformExpression;
+import org.star_lang.star.compiler.canonical.TupleTerm;
+import org.star_lang.star.compiler.canonical.ValofExp;
+import org.star_lang.star.compiler.canonical.Variable;
+import org.star_lang.star.compiler.canonical.VoidExp;
 import org.star_lang.star.data.type.Location;
 
 public class ExpressionCompile implements TransformExpression<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
@@ -167,5 +196,9 @@ public class ExpressionCompile implements TransformExpression<ISpec, ISpec, ISpe
 
   public static ISpec compileEscape(Location loc,String name,IContentExpression[] args,IContinuation callCont, CodeContext cxt){
     return null;
+  }
+  
+  public static void argArray(List<IContentExpression> args,ISpec[] argSpecs,CodeContext cxt){
+    
   }
 }

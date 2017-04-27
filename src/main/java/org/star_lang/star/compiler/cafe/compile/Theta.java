@@ -98,8 +98,8 @@ public class Theta {
    * <p>
    * NAME : type
    * <p>
-   * or a more complex pattern. In the latter case, the right hand side is not permitted to be a
-   * function definition.
+   * or a more complex pattern. In the latter case, the right hand side is not
+   * permitted to be a function definition.
    * <p>
    * To do mutual recursion of functions as part of a larger group do:
    * <p>
@@ -111,15 +111,20 @@ public class Theta {
    * <p>
    * } in ...
    *
-   * @param defs     the definitions in the theta
-   * @param endLabel end label
-   * @param definer  how to declare variables
-   * @param loc      source location
-   * @param ccxt     context
+   * @param defs
+   *          the definitions in the theta
+   * @param endLabel
+   *          end label
+   * @param definer
+   *          how to declare variables
+   * @param loc
+   *          source location
+   * @param ccxt
+   *          context
    * @return spec of result
    */
-  public static ISpec compileDefinitions(IList defs, LabelNode endLabel,
-                                         Definer definer, IThetaBody bodyCompiler, Location loc, CodeContext ccxt) {
+  public static ISpec compileDefinitions(IList defs, LabelNode endLabel, Definer definer, IThetaBody bodyCompiler,
+      Location loc, CodeContext ccxt) {
     CafeDictionary dict = ccxt.getDict();
     CafeDictionary outer = ccxt.getOuter();
     CafeDictionary thetaDict = dict.fork();
@@ -131,8 +136,8 @@ public class Theta {
     Triple<List<IAbstract>, List<IAbstract>, List<IAbstract>> partitions = partition(defs, errors);
 
     List<IAbstract> imports = partitions.left;
-    List<List<IAbstract>> sortedTypes = Dependencies.dependencySort(repository, partitions.middle, loc, bldCat, errors);
-    List<List<IAbstract>> sortedVars = Dependencies.dependencySort(repository, partitions.right, loc, bldCat, errors);
+    List<List<IAbstract>> sortedTypes = Dependencies.dependencySort(partitions.middle, loc, errors);
+    List<List<IAbstract>> sortedVars = Dependencies.dependencySort(partitions.right, loc, errors);
 
     MethodNode mtd = ccxt.getMtd();
     HWM hwm = ccxt.getMtdHwm();
@@ -166,8 +171,8 @@ public class Theta {
       // Second phase: compile programs
       for (IAbstract def : group) {
         Actions.doLineNumber(def.getLoc(), mtd);
-        compileDef(def, repository, bldCat, outer, hwm, mtd, endLabel, definer, bodyCompiler, errors,
-            thetaDict, funDictionaries, ccxt);
+        compileDef(def, repository, bldCat, outer, hwm, mtd, endLabel, definer, bodyCompiler, errors, thetaDict,
+            funDictionaries, ccxt);
       }
 
       // Third phase: fix up program definitions
@@ -201,8 +206,7 @@ public class Theta {
       if (var != null && var.getKind() == JavaKind.general) {
         CallCont callCont = new CallCont(ins, new NullCont());
 
-        Expressions.compileFunCall(loc, var, CafeSyntax.tuple(loc),
-            callCont, ccxt);
+        Expressions.compileFunCall(loc, var, CafeSyntax.tuple(loc), callCont, ccxt);
       } else
         errors.reportError(Names.DO + " not declared", loc);
     }
@@ -236,8 +240,8 @@ public class Theta {
   }
 
   private static void compileDef(IAbstract def, CodeRepository repository, CodeCatalog bldCat, CafeDictionary outer,
-                                 HWM hwm, MethodNode mtd, LabelNode endLabel, Definer definer, IThetaBody bodyCompiler,
-                                 ErrorReport errors, CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ccxt) {
+      HWM hwm, MethodNode mtd, LabelNode endLabel, Definer definer, IThetaBody bodyCompiler, ErrorReport errors,
+      CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ccxt) {
     if (CafeSyntax.isTypeDef(def))
       bodyCompiler.introduceType(Constructors.compileTypeDef(def, thetaDict, errors, ccxt));
     else if (CafeSyntax.isFunctionDefn(def))
@@ -256,8 +260,8 @@ public class Theta {
       IContinuation succ = new JumpCont(next);
       IContinuation fail = new ThrowContinuation("initialization failed");
 
-      Expressions.compileExp(exp, new PatternCont(lv, thetaDict, outer,
-          AccessMode.readOnly, mtd, endLabel, succ, fail), ccxt.fork(thetaDict, outer));
+      Expressions.compileExp(exp, new PatternCont(lv, thetaDict, outer, AccessMode.readOnly, mtd, endLabel, succ, fail),
+          ccxt.fork(thetaDict, outer));
 
       Utils.jumpTarget(mtd.instructions, next);
       hwm.reset(mark);
@@ -269,9 +273,9 @@ public class Theta {
 
       declareArg(lv, AccessMode.readWrite, false, thetaDict, errors, definer, 0);
 
-      Expressions.compileExp(CafeSyntax.varDeclValue(def), new PatternCont(lv,
-          thetaDict, outer, AccessMode.readWrite, mtd, endLabel, new JumpCont(next), new ThrowContinuation(
-          "initialization failed")), ccxt.fork(thetaDict,outer));
+      Expressions.compileExp(CafeSyntax.varDeclValue(def), new PatternCont(lv, thetaDict, outer, AccessMode.readWrite,
+          mtd, endLabel, new JumpCont(next), new ThrowContinuation("initialization failed")),
+          ccxt.fork(thetaDict, outer));
 
       Utils.jumpTarget(mtd.instructions, next);
       hwm.reset(mark);
@@ -279,7 +283,7 @@ public class Theta {
   }
 
   private static void declareProgram(IAbstract def, CodeRepository repository, Definer definer, ErrorReport errors,
-                                     CafeDictionary thetaDict) {
+      CafeDictionary thetaDict) {
     if (CafeSyntax.isImport(def))
       CompileCafe.pkgImport(repository, def, thetaDict, errors);
     else if (CafeSyntax.isTypeDef(def))
@@ -301,16 +305,17 @@ public class Theta {
   }
 
   private static void javaImport(String className, CafeDictionary thetaDict, ErrorReport errors, Location loc,
-                                 CodeRepository repository) {
+      CodeRepository repository) {
     try {
       JavaInfo javaInfo = repository.locateJava(className);
       for (Entry<String, ICafeBuiltin> entry : javaInfo.getMethods().entrySet()) {
         ICafeBuiltin builtin = entry.getValue();
         String name = builtin instanceof NestedBuiltin ? entry.getKey() : JavaImport.javaName(entry.getKey());
-        thetaDict.declare(name, new VarInfo(loc, name, true, builtin.isStatic() ? VarSource.staticMethod
-            : VarSource.field, null, JavaKind.builtin, 0, AccessMode.readOnly, builtin.getType(),
-            builtin.getJavaName(), null, builtin.getJavaType(), builtin.getJavaSig(), builtin.getJavaInvokeSignature(),
-            builtin.getJavaInvokeName(), builtin.getJavaType()));
+        thetaDict.declare(name,
+            new VarInfo(loc, name, true, builtin.isStatic() ? VarSource.staticMethod : VarSource.field, null,
+                JavaKind.builtin, 0, AccessMode.readOnly, builtin.getType(), builtin.getJavaName(), null,
+                builtin.getJavaType(), builtin.getJavaSig(), builtin.getJavaInvokeSignature(),
+                builtin.getJavaInvokeName(), builtin.getJavaType()));
       }
       for (ITypeDescription type : javaInfo.getTypes())
         thetaDict.defineType(type);
@@ -343,8 +348,9 @@ public class Theta {
             || CafeSyntax.isMemoDefn(def))
           ;
         else if (CafeSyntax.isIsDeclaration(def))
-          errors.reportError("variable: " + CafeSyntax.isDeclLval(def) + " depends on programs defined at "
-              + showDeps(defs, def), def.getLoc());
+          errors.reportError(
+              "variable: " + CafeSyntax.isDeclLval(def) + " depends on programs defined at " + showDeps(defs, def),
+              def.getLoc());
         else if (CafeSyntax.isVarDeclaration(def))
           errors.reportError("variable: " + CafeSyntax.varDeclLval(def)
               + " depends on programs which depend on it, defined at " + showDeps(defs, def), def.getLoc());
@@ -385,7 +391,7 @@ public class Theta {
   }
 
   private static void compileFunction(CodeRepository repository, IAbstract def, CodeCatalog bldCat, ErrorReport errors,
-                                      CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ocxt) {
+      CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ocxt) {
     assert CafeSyntax.isFunctionDefn(def);
 
     Location loc = def.getLoc();
@@ -426,7 +432,7 @@ public class Theta {
     closure.interfaces.add(Types.IFUNC);
     closure.interfaces.add(Types.IVALUE);
 
-    MethodNode funMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, javaInvokeSig, javaInvokeSig, new String[]{});
+    MethodNode funMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, javaInvokeSig, javaInvokeSig, new String[] {});
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
@@ -437,12 +443,13 @@ public class Theta {
 
     List<LocalVariableNode> localVariables = funMtd.localVariables;
 
-    localVariables.add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel,
-        THIS_OFFSET));
+    localVariables
+        .add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel, THIS_OFFSET));
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, funType, javaName, closure.signature, javaInvokeSig,
         javaInvokeName, AccessMode.readOnly);
 
-    CodeContext funCxt = ocxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), funName, endFunLabel).fork(funDict, thetaDict);
+    CodeContext funCxt = ocxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), funName, endFunLabel).fork(funDict,
+        thetaDict);
 
     defineArgs(args, loc, bldCat, errors, hwm, funDict, funMtd, endFunLabel, funCxt);
 
@@ -455,8 +462,8 @@ public class Theta {
     closure.methods.add(funMtd);
 
     // Implement the IFunc interface...
-    closure.methods.add(IFuncImplementation.ifunc(loc, javaName, javaInvokeSig, thetaDict, TypeUtils
-        .getFunArgTypes(refreshed), resType, bldCat, errors));
+    closure.methods.add(IFuncImplementation.ifunc(loc, javaName, javaInvokeSig, thetaDict,
+        TypeUtils.getFunArgTypes(refreshed), resType, bldCat, errors));
 
     MethodNode constructor = closureConstructor(loc, thetaDict, errors, closure, funDict);
     closure.methods.add(constructor);
@@ -486,7 +493,7 @@ public class Theta {
     outerHwm.reset(mark);
   }
 
-  public static ISpec compileLambda(IAbstract lambda, IType funType,CodeContext ccxt) {
+  public static ISpec compileLambda(IAbstract lambda, IType funType, CodeContext ccxt) {
     assert CafeSyntax.isLambda(lambda);
     String funName = GenSym.genSym("lambda");
     CodeCatalog bldCat = ccxt.getBldCat();
@@ -527,12 +534,13 @@ public class Theta {
     closure.interfaces.add(Types.IFUNC);
     closure.interfaces.add(Types.IVALUE);
 
-    MethodNode funMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, javaInvokeSig, javaInvokeSig, new String[]{});
+    MethodNode funMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, javaInvokeSig, javaInvokeSig, new String[] {});
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
 
-    CodeContext lcxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER, endFunLabel).fork(funDict, dict);
+    CodeContext lcxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER, endFunLabel).fork(funDict,
+        dict);
 
     InsnList funIns = funMtd.instructions;
     Actions.doLineNumber(loc, funMtd);
@@ -540,8 +548,8 @@ public class Theta {
 
     List<LocalVariableNode> localVariables = funMtd.localVariables;
 
-    localVariables.add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel,
-        THIS_OFFSET));
+    localVariables
+        .add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel, THIS_OFFSET));
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, funType, javaName, closure.signature, javaInvokeSig,
         javaInvokeName, AccessMode.readOnly);
 
@@ -556,8 +564,8 @@ public class Theta {
     closure.methods.add(funMtd);
 
     // Implement the IFunc interface...
-    closure.methods.add(IFuncImplementation.ifunc(loc, javaName, javaInvokeSig, dict, TypeUtils
-        .getFunArgTypes(refreshed), resType, bldCat, errors));
+    closure.methods.add(IFuncImplementation.ifunc(loc, javaName, javaInvokeSig, dict,
+        TypeUtils.getFunArgTypes(refreshed), resType, bldCat, errors));
 
     MethodNode constructor = closureConstructor(loc, dict, errors, closure, funDict);
     closure.methods.add(constructor);
@@ -594,8 +602,8 @@ public class Theta {
         Expressions.checkType(info, free, mtd, funDict, stackHWM);
 
         // We are updating the owner of the variable...
-        mtd.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, funDict.getOwnerName(), free.getJavaSafeName(), free
-            .getJavaSig()));
+        mtd.instructions.add(
+            new FieldInsnNode(Opcodes.PUTFIELD, funDict.getOwnerName(), free.getJavaSafeName(), free.getJavaSig()));
         stackHWM.reset(mark);
       }
     }
@@ -627,16 +635,16 @@ public class Theta {
   }
 
   public static void defineArgs(IList args, Location loc, CodeCatalog bldCat, ErrorReport errors, HWM hwm,
-                                CafeDictionary funDict, MethodNode funMtd, LabelNode endFunLabel, CodeContext ccxt) {
+      CafeDictionary funDict, MethodNode funMtd, LabelNode endFunLabel, CodeContext ccxt) {
     final Definer definer;
 
     if (args.size() < MAX_ARGS)
       definer = new ArgDefiner(funMtd, hwm, endFunLabel, bldCat, ccxt);
     else {
       VarInfo argArray = new VarInfo(loc, Names.ARG_ARRAY, true, VarSource.localVar, null, JavaKind.general,
-          FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType), Utils
-          .javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null, funDict
-          .getOwnerName());
+          FIRST_OFFSET, AccessMode.readOnly, TypeUtils.arrayType(StandardTypes.anyType),
+          Utils.javaIdentifierOf(Names.ARG_ARRAY), null, Types.IVALUE_ARRAY, Types.IVALUE_ARRAY, null, null,
+          funDict.getOwnerName());
       definer = new LongArgDefiner(argArray, ccxt.getRepository());
     }
 
@@ -654,7 +662,7 @@ public class Theta {
   }
 
   public static void compileMemo(CodeRepository repository, IAbstract def, CodeCatalog bldCat, ErrorReport errors,
-                                 CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ccxt) {
+      CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ccxt) {
     assert CafeSyntax.isMemoDefn(def);
 
     Location loc = def.getLoc();
@@ -695,7 +703,7 @@ public class Theta {
 
     addField(closure, var.getJavaSafeName(), resSpec.getJavaSig(), 0);
 
-    MethodNode funMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, javaInvokeSig, javaInvokeSig, new String[]{});
+    MethodNode funMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.ENTER, javaInvokeSig, javaInvokeSig, new String[] {});
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
 
@@ -705,15 +713,16 @@ public class Theta {
 
     InsnList ins = funMtd.instructions;
 
-    CodeContext memoCxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER, endFunLabel).fork(funDict, thetaDict);
+    CodeContext memoCxt = ccxt.fork(closure, funMtd, hwm, funDict.getLocalAvail(), Names.ENTER, endFunLabel)
+        .fork(funDict, thetaDict);
 
     Actions.doLineNumber(loc, funMtd);
     ins.add(firstLabel);
 
     List<LocalVariableNode> localVariables = funMtd.localVariables;
 
-    localVariables.add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel,
-        THIS_OFFSET));
+    localVariables
+        .add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel, THIS_OFFSET));
     funDict.declareLocal(loc, Names.PRIVATE_THIS, true, memoType, javaName, closure.signature, javaInvokeSig,
         javaInvokeName, AccessMode.readOnly);
 
@@ -767,8 +776,8 @@ public class Theta {
     closure.methods.add(funMtd);
 
     // Implement the IFunc interface...
-    closure.methods.add(IFuncImplementation.ifunc(loc, javaName, javaInvokeSig, thetaDict, new IType[]{}, resType,
-        bldCat, errors));
+    closure.methods.add(
+        IFuncImplementation.ifunc(loc, javaName, javaInvokeSig, thetaDict, new IType[] {}, resType, bldCat, errors));
 
     MethodNode constructor = closureConstructor(loc, thetaDict, errors, closure, funDict);
     closure.methods.add(constructor);
@@ -797,7 +806,7 @@ public class Theta {
   }
 
   public static void compileNamedPattern(CodeRepository repository, IAbstract def, CodeCatalog bldCat,
-                                         ErrorReport errors, CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ccxt) {
+      ErrorReport errors, CafeDictionary thetaDict, Map<String, CafeDictionary> funDictionaries, CodeContext ccxt) {
     assert CafeSyntax.isPatternDefn(def);
 
     Location loc = def.getLoc();
@@ -834,20 +843,22 @@ public class Theta {
     CafeDictionary pttrnDict = thetaDict.funDict(thetaDict.getPath(), closure);
     funDictionaries.put(pttrnName, pttrnDict);
 
-    MethodNode matchMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.MATCH, javaInvokeSig, javaInvokeSig, new String[]{});
+    MethodNode matchMtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.MATCH, javaInvokeSig, javaInvokeSig,
+        new String[] {});
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
 
-    CodeContext mcxt = ccxt.fork(closure, matchMtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH, endFunLabel).fork(pttrnDict, thetaDict);
+    CodeContext mcxt = ccxt.fork(closure, matchMtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH, endFunLabel)
+        .fork(pttrnDict, thetaDict);
 
     InsnList ins = matchMtd.instructions;
     ins.add(firstLabel);
 
     List<LocalVariableNode> localVariables = matchMtd.localVariables;
 
-    localVariables.add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel,
-        THIS_OFFSET));
+    localVariables
+        .add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel, THIS_OFFSET));
     pttrnDict.declareLocal(loc, Names.PRIVATE_THIS, true, pttrnType, javaName, closure.signature, javaInvokeSig,
         javaInvokeName, AccessMode.readOnly);
 
@@ -864,14 +875,14 @@ public class Theta {
 
     // Load up the pattern argument to match against
     LabelNode testLabel = new LabelNode();
-    Expressions.compileExp(Abstract.name(loc, Names.PTN_ARG),new JumpCont(testLabel), mcxt);
+    Expressions.compileExp(Abstract.name(loc, Names.PTN_ARG), new JumpCont(testLabel), mcxt);
     Utils.jumpTarget(ins, testLabel);
 
     LabelNode firstOkLabel = new LabelNode();
     IAbstract ptn = CafeSyntax.patternPtn(def);
 
-    Patterns.compilePttrn(ptn, AccessMode.readOnly, ptnSpec, pttrnDict, thetaDict, endFunLabel, new JumpCont(
-        firstOkLabel), fail, mcxt);
+    Patterns.compilePttrn(ptn, AccessMode.readOnly, ptnSpec, pttrnDict, thetaDict, endFunLabel,
+        new JumpCont(firstOkLabel), fail, mcxt);
 
     Utils.jumpTarget(ins, firstOkLabel);
     Expressions.compileExp(CafeSyntax.patternResult(def), new ReturnCont(resType, resSpec, pttrnDict), mcxt);
@@ -953,19 +964,20 @@ public class Theta {
 
     CafeDictionary pttrnDict = dict.funDict(dict.getPath(), closure);
 
-    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.MATCH, javaInvokeSig, javaInvokeSig, new String[]{});
+    MethodNode mtd = new MethodNode(Opcodes.ACC_PUBLIC, Names.MATCH, javaInvokeSig, javaInvokeSig, new String[] {});
     LabelNode firstLabel = new LabelNode();
     LabelNode endFunLabel = new LabelNode();
 
-    CodeContext ccxt = ocxt.fork(closure, mtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH, endFunLabel).fork(pttrnDict, dict);
+    CodeContext ccxt = ocxt.fork(closure, mtd, hwm, pttrnDict.getLocalAvail(), Names.MATCH, endFunLabel).fork(pttrnDict,
+        dict);
 
     InsnList ins = mtd.instructions;
     ins.add(firstLabel);
 
     List<LocalVariableNode> localVariables = mtd.localVariables;
 
-    localVariables.add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel,
-        THIS_OFFSET));
+    localVariables
+        .add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endFunLabel, THIS_OFFSET));
     pttrnDict.declareLocal(loc, Names.PRIVATE_THIS, true, pttrnType, javaName, closure.signature, javaInvokeSig,
         javaInvokeName, AccessMode.readOnly);
 
@@ -977,19 +989,19 @@ public class Theta {
     IType resType = TypeUtils.getPtnResultType(refreshed);
     ISpec resSpec = SrcSpec.typeSpec(loc, resType, dict, bldCat, errors);
 
-    declareArg(loc, Names.PTN_ARG, ptnType, AccessMode.readOnly, true, mtd, hwm, pttrnDict, endFunLabel, errors,
-        bldCat, repository);
+    declareArg(loc, Names.PTN_ARG, ptnType, AccessMode.readOnly, true, mtd, hwm, pttrnDict, endFunLabel, errors, bldCat,
+        repository);
 
     // Load up the pattern argument to match against
     LabelNode testLabel = new LabelNode();
-    Expressions.compileExp(Abstract.name(loc, Names.PTN_ARG),  new JumpCont(testLabel), ccxt);
+    Expressions.compileExp(Abstract.name(loc, Names.PTN_ARG), new JumpCont(testLabel), ccxt);
     Utils.jumpTarget(ins, testLabel);
 
     LabelNode firstOkLabel = new LabelNode();
     IAbstract ptn = CafeSyntax.patternPtn(def);
 
-    Patterns.compilePttrn(ptn, AccessMode.readOnly, ptnSpec, pttrnDict, dict, endFunLabel, new JumpCont(
-        firstOkLabel), fail, ccxt);
+    Patterns.compilePttrn(ptn, AccessMode.readOnly, ptnSpec, pttrnDict, dict, endFunLabel, new JumpCont(firstOkLabel),
+        fail, ccxt);
 
     Utils.jumpTarget(ins, firstOkLabel);
     Expressions.compileExp(CafeSyntax.patternResult(def), new ReturnCont(resType, resSpec, pttrnDict), ccxt);
@@ -1031,7 +1043,7 @@ public class Theta {
   }
 
   private static void handleFixups(VarInfo var, CafeDictionary funDict, CafeDictionary thetaDict, CafeDictionary outer,
-                                   MethodNode mtd, HWM hwm, Location loc, ErrorReport errors) {
+      MethodNode mtd, HWM hwm, Location loc, ErrorReport errors) {
     InsnList ins = mtd.instructions;
 
     for (Entry<String, VarInfo> entry : funDict.allEntries().entrySet()) {
@@ -1066,9 +1078,9 @@ public class Theta {
   }
 
   static MethodNode closureConstructor(Location loc, CafeDictionary dict, ErrorReport errors, ClassNode closure,
-                                       CafeDictionary funDict) {
+      CafeDictionary funDict) {
     // Closure is a constructor
-    MethodNode constructor = new MethodNode(Opcodes.ACC_PUBLIC, Types.INIT, Types.VOID_SIG, null, new String[]{});
+    MethodNode constructor = new MethodNode(Opcodes.ACC_PUBLIC, Types.INIT, Types.VOID_SIG, null, new String[] {});
 
     InsnList conIns = constructor.instructions;
     List<LocalVariableNode> localVariables = constructor.localVariables;
@@ -1092,23 +1104,23 @@ public class Theta {
 
     conIns.add(new InsnNode(Opcodes.RETURN));
     conIns.add(endLabel);
-    localVariables.add(new LocalVariableNode(Names.PRIVATE_THIS, "L" + closure.name + ";", null, firstLabel, endLabel,
-        THIS_OFFSET));
+    localVariables.add(
+        new LocalVariableNode(Names.PRIVATE_THIS, "L" + closure.name + ";", null, firstLabel, endLabel, THIS_OFFSET));
     constructor.maxLocals = 1;
     constructor.maxStack = 1;
     return constructor;
   }
 
   public static MethodNode genHashCode(Location loc, String functionSig, CafeDictionary dict, ErrorReport errors,
-                                       ClassNode closure, CafeDictionary funDict) {
+      ClassNode closure, CafeDictionary funDict) {
     // compute hashCode of a function
-    MethodNode hashMtd = new MethodNode(Opcodes.ACC_PUBLIC, "hashCode", Types.HASH_SIG, null, new String[]{});
+    MethodNode hashMtd = new MethodNode(Opcodes.ACC_PUBLIC, "hashCode", Types.HASH_SIG, null, new String[] {});
 
     LabelNode firstLabel = new LabelNode();
     LabelNode endLabel = new LabelNode();
     InsnList ins = hashMtd.instructions;
-    hashMtd.localVariables.add(new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endLabel,
-        Theta.THIS_OFFSET));
+    hashMtd.localVariables.add(
+        new LocalVariableNode(Names.PRIVATE_THIS, closure.signature, null, firstLabel, endLabel, Theta.THIS_OFFSET));
 
     ins.add(firstLabel);
 
@@ -1130,48 +1142,48 @@ public class Theta {
         ins.add(new InsnNode(Opcodes.IMUL));
 
         switch (free.getKind()) {
-          case rawBool:
-          case rawInt:
-            hwm.probe(2);
-            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-            ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, free.getJavaSafeName(), free.getJavaSig()));
-            ins.add(new InsnNode(Opcodes.IADD));
-            break;
-          case rawLong:
-            hwm.probe(6);
-            // Copied from java.lang.Long
-            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-            ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, free.getJavaSafeName(), free.getJavaSig()));
-            ins.add(new InsnNode(Opcodes.DUP2));
-            ins.add(new IntInsnNode(Opcodes.BIPUSH, BITS_IN_INTEGER));
-            ins.add(new InsnNode(Opcodes.LUSHR));
-            ins.add(new InsnNode(Opcodes.LXOR));
-            ins.add(new InsnNode(Opcodes.L2I));
-            ins.add(new InsnNode(Opcodes.IADD));
-            break;
-          case rawFloat:
-            hwm.probe(6);
-            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-            ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, free.getJavaSafeName(), free.getJavaSig()));
-            ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Types.JAVA_DOUBLE_TYPE, "doubleToLongBits", "(D)J"));
-            ins.add(new InsnNode(Opcodes.DUP2));
-            ins.add(new IntInsnNode(Opcodes.BIPUSH, BITS_IN_INTEGER));
-            ins.add(new InsnNode(Opcodes.LUSHR));
-            ins.add(new InsnNode(Opcodes.LXOR));
-            ins.add(new InsnNode(Opcodes.L2I));
-            ins.add(new InsnNode(Opcodes.IADD));
-            break;
-          case rawBinary:
-          case rawString:
-          case general:
-            hwm.probe(4);
-            ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
-            ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, frVar.getJavaSafeName(), frVar.getJavaSig()));
-            ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "hashCode", Types.HASH_SIG));
-            ins.add(new InsnNode(Opcodes.IADD));
-            break;
-          default:
-            errors.reportError("illegal type of field", free.getLoc());
+        case rawBool:
+        case rawInt:
+          hwm.probe(2);
+          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+          ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, free.getJavaSafeName(), free.getJavaSig()));
+          ins.add(new InsnNode(Opcodes.IADD));
+          break;
+        case rawLong:
+          hwm.probe(6);
+          // Copied from java.lang.Long
+          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+          ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, free.getJavaSafeName(), free.getJavaSig()));
+          ins.add(new InsnNode(Opcodes.DUP2));
+          ins.add(new IntInsnNode(Opcodes.BIPUSH, BITS_IN_INTEGER));
+          ins.add(new InsnNode(Opcodes.LUSHR));
+          ins.add(new InsnNode(Opcodes.LXOR));
+          ins.add(new InsnNode(Opcodes.L2I));
+          ins.add(new InsnNode(Opcodes.IADD));
+          break;
+        case rawFloat:
+          hwm.probe(6);
+          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+          ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, free.getJavaSafeName(), free.getJavaSig()));
+          ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Types.JAVA_DOUBLE_TYPE, "doubleToLongBits", "(D)J"));
+          ins.add(new InsnNode(Opcodes.DUP2));
+          ins.add(new IntInsnNode(Opcodes.BIPUSH, BITS_IN_INTEGER));
+          ins.add(new InsnNode(Opcodes.LUSHR));
+          ins.add(new InsnNode(Opcodes.LXOR));
+          ins.add(new InsnNode(Opcodes.L2I));
+          ins.add(new InsnNode(Opcodes.IADD));
+          break;
+        case rawBinary:
+        case rawString:
+        case general:
+          hwm.probe(4);
+          ins.add(new VarInsnNode(Opcodes.ALOAD, Theta.THIS_OFFSET));
+          ins.add(new FieldInsnNode(Opcodes.GETFIELD, closure.name, frVar.getJavaSafeName(), frVar.getJavaSig()));
+          ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Types.OBJECT, "hashCode", Types.HASH_SIG));
+          ins.add(new InsnNode(Opcodes.IADD));
+          break;
+        default:
+          errors.reportError("illegal type of field", free.getLoc());
         }
       }
     }
@@ -1229,13 +1241,13 @@ public class Theta {
   }
 
   public static void buildFunInterface(IType funType, CodeCatalog bldCat, ErrorReport errors, Location loc,
-                                       String funSig) {
+      String funSig) {
     if (!bldCat.isPresent(funSig, CafeCode.EXTENSION))
       buildFunctionInterface(funType, bldCat, errors, loc, funSig);
   }
 
   public static void buildFunctionInterface(IType funType, CodeCatalog bldCat, ErrorReport errors, Location loc,
-                                            String funSig) {
+      String funSig) {
     ClassNode klass = new ClassNode();
     assert TypeUtils.isFunType(funType);
 
@@ -1252,7 +1264,7 @@ public class Theta {
 
     String javaMethodSig = Types.javaMethodSig(funType);
     MethodNode enter = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, Names.ENTER, javaMethodSig, null,
-        new String[]{});
+        new String[] {});
     klass.methods.add(enter);
     CompileCafe.genByteCode(funSig, loc, klass, bldCat, errors);
     if (!generics.equals(funSig)) {
@@ -1288,7 +1300,7 @@ public class Theta {
   }
 
   public static void buildPatternInterface(IType progType, CodeCatalog synCat, ErrorReport errors, Location loc,
-                                           String funSig) {
+      String funSig) {
     ClassNode klass = new ClassNode();
     assert TypeUtils.isPatternType(progType);
 
@@ -1305,7 +1317,7 @@ public class Theta {
 
     String javaMethodSig = Types.javaMethodSig(progType);
     MethodNode enter = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, Names.MATCH, javaMethodSig, null,
-        new String[]{});
+        new String[] {});
     klass.methods.add(enter);
     CompileCafe.genByteCode(funSig, loc, klass, synCat, errors);
     if (!generics.equals(funSig)) {
@@ -1345,7 +1357,7 @@ public class Theta {
   }
 
   public static void buildConstructorInterface(IType funType, CodeCatalog bldCat, ErrorReport errors, Location loc,
-                                               String funSig) {
+      String funSig) {
     ClassNode klass = new ClassNode();
     assert TypeUtils.isConstructorType(funType);
 
@@ -1361,8 +1373,8 @@ public class Theta {
     if (!generics.equals(funSig))
       klass.interfaces.add(generics);
 
-    MethodNode enter = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, Names.ENTER, Types
-        .javaMethodSig(TypeUtils.funTypeFromConType(funType)), null, new String[]{});
+    MethodNode enter = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, Names.ENTER,
+        Types.javaMethodSig(TypeUtils.funTypeFromConType(funType)), null, new String[] {});
     klass.methods.add(enter);
 
     CompileCafe.genByteCode(funSig, loc, klass, bldCat, errors);
@@ -1377,7 +1389,7 @@ public class Theta {
   }
 
   private static void declareArgs(IList args, AccessMode access, boolean isInited, CafeDictionary dict,
-                                  ErrorReport errors, Definer definer) {
+      ErrorReport errors, Definer definer) {
     for (int ix = 0; ix < args.size(); ix++) {
       IAbstract arg = (IAbstract) args.getCell(ix);
 
@@ -1389,7 +1401,7 @@ public class Theta {
   }
 
   private static void declareArg(IAbstract term, AccessMode access, boolean isInited, CafeDictionary dict,
-                                 ErrorReport errors, Definer definer, int varOffset) {
+      ErrorReport errors, Definer definer, int varOffset) {
     if (Abstract.isIdentifier(term) && CafeSyntax.termHasType(term)) {
       Location loc = term.getLoc();
       String id = Abstract.getId(term);
@@ -1408,15 +1420,15 @@ public class Theta {
   }
 
   static VarInfo declareArg(Location loc, String name, IType varType, AccessMode access, boolean isInited,
-                            MethodNode mtd, HWM hwm, CafeDictionary dict, LabelNode endLabel, ErrorReport errors, CodeCatalog bldCat,
-                            CodeRepository repository) {
+      MethodNode mtd, HWM hwm, CafeDictionary dict, LabelNode endLabel, ErrorReport errors, CodeCatalog bldCat,
+      CodeRepository repository) {
     ISpec vrSpec = SrcSpec.generic(loc, varType, dict, repository, errors);
 
     VarInfo var = dict.declareLocal(name, vrSpec, isInited, access);
     if (isInited) {
       LabelNode startLabel = new LabelNode();
-      mtd.localVariables.add(new LocalVariableNode(var.getJavaSafeName(), var.getJavaSig(), null, startLabel, endLabel,
-          var.getOffset()));
+      mtd.localVariables.add(
+          new LocalVariableNode(var.getJavaSafeName(), var.getJavaSig(), null, startLabel, endLabel, var.getOffset()));
       InsnList ins = mtd.instructions;
       ins.add(startLabel);
       if (!TypeUtils.isRawType(varType)) {
@@ -1440,12 +1452,12 @@ public class Theta {
 
     @Override
     public VarInfo declareArg(Location loc, String name, int varOffset, IType varType, CafeDictionary dict,
-                              AccessMode access, boolean isInited, ErrorReport errors) {
+        AccessMode access, boolean isInited, ErrorReport errors) {
       ISpec vrSpec = SrcSpec.generic(loc, varType, dict, repository, errors);
 
       VarInfo var = new VarInfo(loc, name, isInited, VarSource.arrayArg, argArray, JavaKind.general, varOffset, access,
-          varType, Utils.javaIdentifierOf(name), null, vrSpec.getJavaType(), vrSpec.getJavaSig(), vrSpec
-          .getJavaInvokeSig(), vrSpec.getJavaInvokeName(), dict.getOwnerName());
+          varType, Utils.javaIdentifierOf(name), null, vrSpec.getJavaType(), vrSpec.getJavaSig(),
+          vrSpec.getJavaInvokeSig(), vrSpec.getJavaInvokeName(), dict.getOwnerName());
       dict.declare(name, var);
       return var;
     }
@@ -1453,7 +1465,7 @@ public class Theta {
 
   // Convert a reference to a free reference
   public static VarInfo varReference(String name, CafeDictionary dict, CafeDictionary outer, Location loc,
-                                     ErrorReport errors) {
+      ErrorReport errors) {
     VarInfo var = dict.find(name);
 
     if (var == null && outer != null) {

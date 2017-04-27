@@ -227,7 +227,6 @@ public class Subsume {
         IType rArgs[] = c2.getTypeArgs();
 
         String tp1Label = c1TyCon.typeLabel();
-        String tp2Label = c2TyCon.typeLabel();
 
         // Special cases, e.g. for function types -- they are contravariant
         if ((tp1Label.equals(StandardNames.FUN_TYPE) || tp1Label.equals(StandardNames.OVERLOADED_TYPE)) && arity1 == 2) {

@@ -24,14 +24,12 @@ import org.star_lang.star.data.type.Location;
 
 public class PttrnCont implements IContinuation {
   private final IContentPattern ptn;
-  private final CodeContext cxt;
   private final IContinuation succ, fail;
   private final VarPattern handler;
 
-  public PttrnCont(IContentPattern ptn, VarPattern handler, CodeContext cxt, IContinuation succ, IContinuation fail) {
+  public PttrnCont(IContentPattern ptn, VarPattern handler, IContinuation succ, IContinuation fail) {
     this.ptn = ptn;
     this.handler = handler;
-    this.cxt = cxt;
     this.succ = succ;
     this.fail = fail;
   }

@@ -94,7 +94,7 @@ public class ConditionCompile implements TransformCondition<ISpec, ISpec, ISpec,
 
   @Override
   public ISpec transformMatches(Matches matches, IContinuation cont) {
-    PttrnCont ptnCont = new PttrnCont(matches.getPtn(),new Patterns.NamePtn(),cxt,cont,fail);
+    PttrnCont ptnCont = new PttrnCont(matches.getPtn(),new Patterns.NamePtn(),cont,fail);
     return ExpressionCompile.compile(matches.getExp(),ptnCont,cxt);
   }
 

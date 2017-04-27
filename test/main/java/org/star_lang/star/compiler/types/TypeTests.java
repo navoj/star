@@ -1,5 +1,6 @@
 package org.star_lang.star.compiler.types;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -94,6 +95,13 @@ public class TypeTests extends SRTest
   public void badCon1()
   {
     runStar("badCon1.star");
+  }
+  
+  @Test
+  @Ignore
+  public void squareType()
+  {
+    runStar("squaretype.star");
   }
 
   @Test

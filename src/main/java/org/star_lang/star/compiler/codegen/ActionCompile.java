@@ -1,5 +1,4 @@
 package org.star_lang.star.compiler.codegen;
-
 /*
  * Copyright (c) 2015. Francis G. McCabe
  *
@@ -14,27 +13,72 @@ package org.star_lang.star.compiler.codegen;
  * permissions and limitations under the License.
  */
 
+import java.util.List;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.LineNumberNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.star_lang.star.code.repository.CodeCatalog;
+import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.Names;
-import org.star_lang.star.compiler.cafe.compile.*;
+import org.star_lang.star.compiler.cafe.compile.CafeDictionary;
+import org.star_lang.star.compiler.cafe.compile.CodeContext;
+import org.star_lang.star.compiler.cafe.compile.Expressions;
+import org.star_lang.star.compiler.cafe.compile.HWM;
+import org.star_lang.star.compiler.cafe.compile.IFuncImplementation;
+import org.star_lang.star.compiler.cafe.compile.ISpec;
+import org.star_lang.star.compiler.cafe.compile.Inliner;
+import org.star_lang.star.compiler.cafe.compile.JavaKind;
+import org.star_lang.star.compiler.cafe.compile.SrcSpec;
+import org.star_lang.star.compiler.cafe.compile.Theta;
+import org.star_lang.star.compiler.cafe.compile.Types;
+import org.star_lang.star.compiler.cafe.compile.Utils;
+import org.star_lang.star.compiler.cafe.compile.VarInfo;
 import org.star_lang.star.compiler.cafe.compile.cont.CallCont;
 import org.star_lang.star.compiler.cafe.compile.cont.DeclareLocal;
 import org.star_lang.star.compiler.cafe.compile.cont.IContinuation;
 import org.star_lang.star.compiler.cafe.compile.cont.JumpCont;
-import org.star_lang.star.compiler.canonical.*;
+import org.star_lang.star.compiler.canonical.AbortAction;
+import org.star_lang.star.compiler.canonical.AssertAction;
+import org.star_lang.star.compiler.canonical.Assignment;
+import org.star_lang.star.compiler.canonical.CaseAction;
+import org.star_lang.star.compiler.canonical.ConditionalAction;
+import org.star_lang.star.compiler.canonical.ExceptionHandler;
+import org.star_lang.star.compiler.canonical.ForLoopAction;
+import org.star_lang.star.compiler.canonical.IContentAction;
+import org.star_lang.star.compiler.canonical.IContentExpression;
+import org.star_lang.star.compiler.canonical.Ignore;
+import org.star_lang.star.compiler.canonical.IsTrue;
+import org.star_lang.star.compiler.canonical.LetAction;
+import org.star_lang.star.compiler.canonical.NullAction;
+import org.star_lang.star.compiler.canonical.ProcedureCallAction;
+import org.star_lang.star.compiler.canonical.Sequence;
+import org.star_lang.star.compiler.canonical.TransformAction;
+import org.star_lang.star.compiler.canonical.ValisAction;
+import org.star_lang.star.compiler.canonical.VarDeclaration;
+import org.star_lang.star.compiler.canonical.WhileAction;
+import org.star_lang.star.compiler.type.Freshen;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.AccessMode;
+import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.type.IType;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.operators.ICafeBuiltin;
+import org.star_lang.star.operators.Intrinsics;
 import org.star_lang.star.operators.assignment.runtime.Assignments;
-
-import java.util.List;
 
 public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec, ISpec, IContinuation> {
   private final CodeContext cxt;
@@ -103,7 +147,85 @@ public class ActionCompile implements TransformAction<ISpec, ISpec, ISpec, ISpec
     else
       assignmentEscape = Assignments.Assign.name;
 
-    return ExpressionCompile.compileEscape(loc, assignmentEscape, new IContentExpression[]{lval, exp}, cont, cxt);
+    compileEscape(loc, assignmentEscape, FixedList.create(lval, exp), cont);
+    return SrcSpec.prcSrc;
+  }
+
+  private void compileEscape(Location loc, String funName, List<IContentExpression> args, IContinuation cont) {
+    MethodNode mtd = cxt.getMtd();
+    HWM hwm = cxt.getMtdHwm();
+    CodeCatalog bldCat = cxt.getBldCat();
+    CodeRepository repository = cxt.getRepository();
+    CafeDictionary dict = cxt.getDict();
+    CafeDictionary outer = cxt.getOuter();
+
+    InsnList ins = mtd.instructions;
+    final ErrorReport errors = cxt.getErrors();
+
+    VarInfo var = Theta.varReference(funName, dict, outer, loc, errors);
+
+    IType varType = Freshen.freshenForUse(var.getType());
+    if (TypeUtils.isFunType(varType)) {
+      int mark = hwm.getDepth();
+
+      if (TypeUtils.arityOfFunctionType(varType) != args.size())
+        errors.reportError("expecting " + TypeUtils.arityOfFunctionType(varType) + " arguments", loc);
+      else {
+        // preamble to access the appropriate value
+        assert var.getKind() == JavaKind.builtin;
+
+        final ISpec[] argSpecs;
+
+        ICafeBuiltin builtin = Intrinsics.getBuiltin(funName);
+
+        if (builtin instanceof Inliner)
+          ((Inliner) builtin).preamble(mtd, hwm);
+        else if (!var.isStatic()) {
+          hwm.bump(1);
+          String javaName = Expressions.escapeReference(var.getName(), dict, var.getJavaType(), var.getJavaSig());
+
+          ins.add(new FieldInsnNode(Opcodes.GETSTATIC, Expressions.escapeOwner(var.getName(), dict), javaName,
+              var.getJavaSig()));
+        }
+        if (var.getJavaInvokeSig().equals(IFuncImplementation.IFUNCTION_INVOKE_SIG)) {
+          argSpecs = SrcSpec.generics(varType, dict, bldCat, repository, errors, loc);
+
+          ExpressionCompile.argArray(args, argSpecs, cxt);
+        } else {
+          argSpecs = SrcSpec.typeSpecs(var.getJavaInvokeSig(), dict, bldCat, errors, loc);
+
+          ExpressionCompile.argArray(args, argSpecs, cxt);
+        }
+
+        // actually invoke the escape
+        if (builtin instanceof Inliner) {
+          ((Inliner) builtin).inline(dict.getOwner(), mtd, hwm, loc);
+          hwm.reset(mark);
+          cont.cont(SrcSpec.voidSrc, dict, loc, cxt);
+        } else if (var.isStatic()) {
+          String funSig = var.getJavaInvokeSig();
+          String classSig = var.getJavaType();
+
+          ins.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classSig, var.getJavaInvokeName(), funSig));
+        } else if (var.getJavaInvokeSig().equals(IFuncImplementation.IFUNCTION_INVOKE_SIG)) {
+          ins.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Types.IFUNC, Names.ENTERFUNCTION,
+              IFuncImplementation.IFUNCTION_INVOKE_SIG));
+        } else {
+          String methodName = var.getJavaInvokeName();
+          String funSig = var.getJavaInvokeSig();
+          String classSig = var.getJavaType();
+
+          ins.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classSig, methodName, funSig));
+        }
+        hwm.reset(mark);
+
+        ISpec resltSpec = argSpecs[argSpecs.length - 1];
+        hwm.bump(Types.stackAmnt(Types.varType(resltSpec.getType())));
+
+        cont.cont(resltSpec, dict, loc, cxt);
+      }
+    } else
+      errors.reportError("tried to invoke non-function: " + funName + ":" + varType, loc);
   }
 
   @Override

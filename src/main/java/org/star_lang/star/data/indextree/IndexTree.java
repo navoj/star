@@ -30,7 +30,7 @@ public abstract class IndexTree<K, V> implements Mapping<K, V>, Pick<Entry<K, V>
 
   protected static final boolean SHOW_HEX = false;
 
-  public IndexTree(short maskLen, int mask) {
+  protected IndexTree(short maskLen, int mask) {
     this.mask = mask;
     this.maskLen = maskLen;
   }

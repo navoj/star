@@ -51,6 +51,7 @@ private import macrosupport;
 # type ?N counts as ?M :: statement :- N::typeExpression :& M::typeSpec;
 
 # ?N of ?A :: typeSpec :- #(N::id :| N::typeVar)# :& A::typeArgs;
+# #(?N)#[?A] :: typeSpec :- #(N::id :| N::typeVar)# :& A::typeArgs;
 # ?T where ?C :: typeSpec :- T::typeSpec :& C::typeConstraint;
 # identifier :: typeSpec;
 # (?T) :: typeSpec :- T::typeSpec;
@@ -121,6 +122,7 @@ private import macrosupport;
 # tuple?T :: typeExpression :- T:*typeExpression;
 # ref ?T :: typeExpression :- T::typeExpression;
 # ?N of ?T :: typeExpression :- #(N::identifier :| N::typeVar)# :& T::typeExpression;
+# #(?N)#[?A] :: typeExpression :- #(N::id :| N::typeVar)# :& A::typeExpression;
 # symbol :: typeExpression;
 # #(?M)#.#(?P)# :: typeExpression :- M::id :& P::path ## {
   # #(?L)# . #(?R)# :: path :- L::path :& R::path;
