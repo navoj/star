@@ -8,9 +8,9 @@ import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.code.repository.RepositoryManager;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
+import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.ASyntax;
 import org.star_lang.star.compiler.ast.Abstract;
-import org.star_lang.star.compiler.ast.Apply;
 import org.star_lang.star.compiler.ast.BooleanLiteral;
 import org.star_lang.star.compiler.ast.DefaultAbstractVisitor;
 import org.star_lang.star.compiler.ast.DisplayAst;
@@ -93,7 +93,7 @@ import java.util.Set;
  * A macro rule of the form:
  * <p/>
  * <p>
- * 
+ *
  * <pre>
  * # logMsg(?L,?M) ==> logMsg(L, #(#__location__)#,M);
  * </pre>
@@ -101,7 +101,7 @@ import java.util.Set;
  * is transformed to
  * <p/>
  * <p>
- * 
+ *
  * <pre>
  * %_logMsg(astApply(_,astName(_,"logMsg"),cons(L,cons(M,nil))),locVar,Replacer,Outer) is
  *     Replacer(astApply(locVar,astName(locVar,"logMsg"), cons(L, cons(AstString(locVar,__display(locVar),cons(M,
@@ -114,7 +114,7 @@ import java.util.Set;
  * A macro rule environment looks like:
  * <p/>
  * <p>
- * 
+ *
  * <pre>
  * .. repl ## { Rules }
  * </pre>
@@ -122,7 +122,7 @@ import java.util.Set;
  * which is mapped to:
  * <p/>
  * <p>
- * 
+ *
  * <pre>
  * let {
  *   ... -- compiled rules, as above
@@ -139,7 +139,7 @@ import java.util.Set;
  * replacer.
  * <p/>
  * <p>
- * 
+ *
  * <pre>
  * pkg%macro is package{
  *   import "pkg?%macro";  -- note special uri for imported macros
@@ -448,12 +448,12 @@ public class MacroCompiler {
       IAbstract locArg = Abstract.name(loc, GenSym.genSym("Loc"));
 
       // Define the walker itself
-      IAbstract head = Abstract.unary(loc, driver, Abstract.ternary(loc, Apply.name, locArg, opArg, argsArg));
+      IAbstract head = Abstract.unary(loc, driver, Abstract.ternary(loc, AApply.name, locArg, opArg, argsArg));
       IAbstract opRepl = Abstract.unary(loc, replaceVar, opArg);
 
       IAbstract quotedType = Abstract.name(loc, StandardTypes.QUOTED);
       IAbstract walkerTp = CompilerUtils.typeAnnotationStmt(loc, driver, CompilerUtils.functionType(loc, FixedList.create(quotedType), quotedType));
-      IAbstract walkerRl1 = CompilerUtils.equation(loc, head, Abstract.ternary(loc, Apply.name, locArg, opRepl,
+      IAbstract walkerRl1 = CompilerUtils.equation(loc, head, Abstract.ternary(loc, AApply.name, locArg, opRepl,
           Abstract.binary(loc, ArrayMap.name, argsArg, replaceVar)));
       IAbstract walkerRl2 = CompilerUtils.equation(loc, Abstract.unary(loc, driver, argsArg), argsArg);
 
@@ -1055,7 +1055,7 @@ public class MacroCompiler {
       }
 
       @Override
-      public void visitApply(Apply app) {
+      public void visitApply(AApply app) {
         if (Abstract.isIdentifier(app.getOperator())) {
           String key = patternKey(app, errors);
           keys.add(key);
@@ -1152,7 +1152,7 @@ public class MacroCompiler {
   }
 
   public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, IAbstract args) {
-    return Abstract.ternary(loc, Apply.name, aloc, op, args);
+    return Abstract.ternary(loc, AApply.name, aloc, op, args);
   }
 
   public static IAbstract astApply(Location loc, IAbstract aloc, IAbstract op, List<IAbstract> args) {
