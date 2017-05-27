@@ -1,7 +1,19 @@
 package org.star_lang.star;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.star_lang.star.code.Manifest;
-import org.star_lang.star.code.repository.*;
+import org.star_lang.star.code.repository.CodeCatalog;
+import org.star_lang.star.code.repository.CodeMemory;
+import org.star_lang.star.code.repository.CodeRepository;
+import org.star_lang.star.code.repository.RepositoryException;
+import org.star_lang.star.code.repository.RepositoryManager;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
@@ -12,8 +24,6 @@ import org.star_lang.star.compiler.cafe.CafeDisplay;
 import org.star_lang.star.compiler.cafe.compile.CompileCafe;
 import org.star_lang.star.compiler.canonical.PackageTerm;
 import org.star_lang.star.compiler.canonical.TypeDefinition;
-import org.star_lang.star.compiler.format.rules.FmtCompile;
-import org.star_lang.star.compiler.format.rules.FmtProgram;
 import org.star_lang.star.compiler.generate.GenerateCafe;
 import org.star_lang.star.compiler.grammar.OpGrammar;
 import org.star_lang.star.compiler.grammar.TermListener;
@@ -39,14 +49,6 @@ import org.star_lang.star.resource.Resources;
 import org.star_lang.star.resource.URIUtils;
 import org.star_lang.star.resource.catalog.Catalog;
 import org.star_lang.star.resource.catalog.CatalogException;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -98,7 +100,6 @@ public class CompileDriver {
     CodeCatalog bldCatalog = new CodeMemory(pkgName);
     Operators operators = Operators.operatorRoot().copy();
     WffProgram wffRules = new WffProgram();
-    FmtProgram fmtRules = new FmtProgram();
 
     if (!isPreamble) {
       MetaRules meta = RepositoryManager.locateMeta(repository, StarCompiler.starRulesURI);
@@ -106,7 +107,6 @@ public class CompileDriver {
 
       operators.importOperators(meta.getOperators(), errors, loc);
       wffRules.importRules(meta.getWffRules());
-      fmtRules.importRules(meta.getFmtRules());
       errors.recordTime("import meta");
     }
     WffEngine validator = new WffEngine(errors, wffRules);
@@ -125,14 +125,13 @@ public class CompileDriver {
     if (errors.noNewErrors(errCount)) {
       Operators pkgOps = new Operators();
       WffProgram pkgWff = new WffProgram();
-      FmtProgram pkgFmt = new FmtProgram();
 
       List<IAbstract> macroStmts = new ArrayList<>();
       List<IAbstract> normalStmts = new ArrayList<>();
       List<ResourceURI> imports = new ArrayList<>();
 
       errors.startTimer("find meta");
-      findMetaRules(repository, term, errors, pkgOps, pkgWff, pkgFmt, catalog, macroStmts, normalStmts, imports, null);
+      findMetaRules(repository, term, errors, pkgOps, pkgWff, catalog, macroStmts, normalStmts, imports, null);
       errors.recordTime("find meta");
 
       if (!isPreamble) {
@@ -216,13 +215,12 @@ public class CompileDriver {
 
       try {
         bldCatalog.addCodeEntry(StandardNames.METAENTRY,
-            new MetaRules(uri, pkgName, imports, pkgOps, macrolabel, pkgWff, pkgFmt));
+            new MetaRules(uri, pkgName, imports, pkgOps, macrolabel, pkgWff));
       } catch (RepositoryException e) {
         errors.reportError(e.getMessage(), loc);
       }
       operators.importOperators(pkgOps, errors, loc);
       wffRules.importRules(pkgWff);
-      fmtRules.importRules(pkgFmt);
 
       if (!isPreamble) {
         validator.validate(normalTerm, StandardNames.WFF_STATEMENT);
@@ -372,21 +370,21 @@ public class CompileDriver {
   }
 
   private static void findMetaRules(CodeRepository repository, IAbstract term, ErrorReport errors, Operators operators,
-      WffProgram wffRules, FmtProgram fmtRules, Catalog catalog, List<IAbstract> macroStmts,
-      List<IAbstract> normalStmts, List<ResourceURI> imports, Visibility visibility)
+      WffProgram wffRules, Catalog catalog, List<IAbstract> macroStmts, List<IAbstract> normalStmts,
+      List<ResourceURI> imports, Visibility visibility)
       throws CatalogException, ResourceException {
     for (IAbstract stmt : CompilerUtils.unWrap(term)) {
       if (CompilerUtils.isPackageStmt(stmt) && CompilerUtils.packageContents(stmt) != null) {
         List<IAbstract> pkgContent = new ArrayList<>();
-        findMetaRules(repository, CompilerUtils.packageContents(stmt), errors, operators, wffRules, fmtRules, catalog,
-            macroStmts, pkgContent, imports, visibility);
+        findMetaRules(repository, CompilerUtils.packageContents(stmt), errors, operators, wffRules, catalog, macroStmts,
+            pkgContent, imports, visibility);
         normalStmts.add(CompilerUtils.packageStmt(stmt.getLoc(), CompilerUtils.packageName(stmt), pkgContent));
       } else if (CompilerUtils.isPrivate(stmt))
-        findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, fmtRules, catalog,
-            macroStmts, normalStmts, imports, Visibility.priVate);
+        findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, catalog, macroStmts,
+            normalStmts, imports, Visibility.priVate);
       else if (CompilerUtils.isPublic(stmt))
-        findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, fmtRules, catalog,
-            macroStmts, normalStmts, imports, Visibility.pUblic);
+        findMetaRules(repository, CompilerUtils.stripVisibility(stmt), errors, operators, wffRules, catalog, macroStmts,
+            normalStmts, imports, Visibility.pUblic);
       else if (CompilerUtils.isImport(stmt)) {
         if (visibility != null) {
           switch (visibility) {
@@ -417,7 +415,6 @@ public class CompileDriver {
         if (meta != null) {
           operators.importOperators(meta.getOperators(), errors, loc);
           wffRules.importRules(meta.getWffRules());
-          fmtRules.importRules(meta.getFmtRules());
         } else
           errors.reportError("cannot import " + pkgName, loc);
       } else if (Abstract.isUnary(stmt, StandardNames.META_HASH)) {
@@ -426,8 +423,7 @@ public class CompileDriver {
           wffRules.defineValidationRule(rl, errors);
         else if (Abstract.isBinary(rl, StandardNames.MACRORULE) || Abstract.isBinary(rl, StandardNames.IS)) {
           macroStmts.add(stmt);
-        } else if (Abstract.isBinary(rl, StandardNames.FMT_RULE))
-          fmtRules.defineFormattingRule(FmtCompile.compileRule(rl, fmtRules, errors));
+        }
         else
           operators.declareOperator(errors, rl);
       } else if (CompilerUtils.isBraceTerm(stmt)) { // A special hack to allow

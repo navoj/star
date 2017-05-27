@@ -10,7 +10,7 @@
 
     logMsg(info,"current time: $(currentTimeMillis())");
     
-    logMsg(info,"current properties: $(getProperties())");
+   -- logMsg(info,"current properties: $(getProperties())");
     
     logMsg(info,"ifunc(4,5)=$(ifunc(4,5))");
   }

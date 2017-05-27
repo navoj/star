@@ -11,7 +11,6 @@ import java.util.List;
 import org.star_lang.star.code.repository.CodeParser;
 import org.star_lang.star.code.repository.CodeTree;
 import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.format.rules.FmtProgram;
 import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.wff.WffProgram;
@@ -36,11 +35,10 @@ import org.star_lang.star.resource.Resources;
 /**
  * Collect together the meta rules from a Star source package
  * 
-*/
+ */
 
 @SuppressWarnings("serial")
-public class MetaRules implements CodeTree, CodeParser
-{
+public class MetaRules implements CodeTree, CodeParser {
   public static final String MANIFEST = "metarules";
   public static final String EXTENSION = "metarules";
 
@@ -50,86 +48,67 @@ public class MetaRules implements CodeTree, CodeParser
   private final Operators operators;
   private final String macroEntry;
   private final WffProgram wffRules;
-  private final FmtProgram fmtRules;
   private final List<ResourceURI> imports;
 
   // Constructor for use as a MetaRulesParser
-  public MetaRules()
-  {
-    this(null, null, null, null, null, null, null);
+  public MetaRules() {
+    this(null, null, null, null, null, null);
   }
 
   public MetaRules(ResourceURI uri, String name, List<ResourceURI> imports, Operators operators, String macroEntry,
-      WffProgram wffRules, FmtProgram fmtRules)
-  {
+      WffProgram wffRules) {
     this.uri = uri;
     this.name = name;
     this.macroEntry = macroEntry;
     this.wffRules = wffRules;
-    this.fmtRules = fmtRules;
     this.operators = operators;
     this.imports = imports;
   }
 
   @Override
-  public String getPath()
-  {
+  public String getPath() {
     return uri.getPath();
   }
 
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
 
-  public String getMacroEntry()
-  {
+  public String getMacroEntry() {
     return macroEntry;
   }
 
-  public Operators getOperators()
-  {
+  public Operators getOperators() {
     return operators;
   }
 
-  public WffProgram getWffRules()
-  {
+  public WffProgram getWffRules() {
     return wffRules;
   }
 
-  public FmtProgram getFmtRules()
-  {
-    return fmtRules;
-  }
-
-  public List<ResourceURI> getImports()
-  {
+  public List<ResourceURI> getImports() {
     return imports;
   }
 
   @Override
-  public void prettyPrint(PrettyPrintDisplay disp)
-  {
+  public void prettyPrint(PrettyPrintDisplay disp) {
     disp.appendId(getName());
     int mark = disp.markIndent(2);
     disp.append(" is meta{\n");
 
     operators.prettyPrint(disp);
-    fmtRules.prettyPrint(disp);
     wffRules.prettyPrint(disp);
     disp.popIndent(mark);
     disp.append("}\n");
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return PrettyPrintDisplay.toString(this);
   }
 
   @Override
-  public void write(File file) throws IOException
-  {
+  public void write(File file) throws IOException {
     try (FileOutputStream fos = new FileOutputStream(file)) {
       try (ObjectOutputStream oostream = new ObjectOutputStream(fos)) {
         oostream.writeObject(this);
@@ -138,8 +117,7 @@ public class MetaRules implements CodeTree, CodeParser
   }
 
   @Override
-  public CodeTree parse(ResourceURI uri, ErrorReport errors)
-  {
+  public CodeTree parse(ResourceURI uri, ErrorReport errors) {
     MetaRules newMetaRules = null;
     try (InputStream fis = Resources.getInputStream(uri)) {
       return parse(uri, fis, errors);
@@ -150,8 +128,7 @@ public class MetaRules implements CodeTree, CodeParser
   }
 
   @Override
-  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException
-  {
+  public CodeTree parse(ResourceURI uri, InputStream input, ErrorReport errors) throws ResourceException {
     try (ObjectInputStream in = new ObjectInputStream(input)) {
       return (MetaRules) in.readObject();
     } catch (IOException ex) {
@@ -164,8 +141,7 @@ public class MetaRules implements CodeTree, CodeParser
   }
 
   @Override
-  public String getExtension()
-  {
+  public String getExtension() {
     return EXTENSION;
   }
 }

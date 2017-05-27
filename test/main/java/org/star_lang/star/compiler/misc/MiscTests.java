@@ -299,12 +299,6 @@ public class MiscTests extends SRTest
   }
 
   @Test
-  public void testbinaryCoerce()
-  {
-    runStar("binarycoerce.star");
-  }
-
-  @Test
   public void testHashCollision()
   {
     runStar("unsorted.star");

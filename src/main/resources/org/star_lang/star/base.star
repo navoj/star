@@ -61,11 +61,6 @@ public implementation equality over any is {
   fun hashCode(X) is integer(__hashCode(X))
 }
 
-public implementation equality over binary is {
-  fun X=Y is __binary_equal(X,Y);
-  fun hashCode(X) is integer(__hashCode(X))
-};
-
 public implementation equality over astLocation is {
   fun L=R is __equal(L,R);
   fun hashCode(L) is integer(__hashCode(L))

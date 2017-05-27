@@ -2,19 +2,13 @@ package org.star_lang.star;
 
 import java.io.StringReader;
 
-import org.star_lang.star.code.repository.CodeRepository;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.IAbstract;
-import org.star_lang.star.compiler.format.Formatter;
 import org.star_lang.star.compiler.grammar.OpGrammar;
 import org.star_lang.star.compiler.operator.Operators;
-import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.data.type.Location;
-import org.star_lang.star.data.value.ResourceURI;
-import org.star_lang.star.resource.ResourceException;
 import org.star_lang.star.resource.URIUtils;
 import org.star_lang.star.resource.catalog.Catalog;
-import org.star_lang.star.resource.catalog.CatalogException;
 import org.star_lang.star.resource.catalog.MemoryCatalog;
 
 /**
@@ -22,44 +16,31 @@ import org.star_lang.star.resource.catalog.MemoryCatalog;
  *
  * Copyright (c) 2015. Francis G. McCabe
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
-public class StarRules
-{
+public class StarRules {
 
-  public static String format(CodeRepository repository, ResourceURI uri, Catalog catalog, ErrorReport errors)
-      throws LanguageException, ResourceException, CatalogException
-  {
-    try {
-      return Formatter.formatSource(uri, errors, StandardNames.PACKAGE, repository, catalog);
-    } catch (Exception e) {
-      errors.reportError("problem in formatting ", Location.location(uri));
-      return null;
-    }
-  }
-
-  public static IAbstract parseString(String text, Location loc, ErrorReport errors)
-  {
+  public static IAbstract parseString(String text, Location loc, ErrorReport errors) {
     OpGrammar parser = new OpGrammar(Operators.operatorRoot(), errors);
 
     return parser.parse(loc.getUri(), new StringReader(text), loc);
   }
 
-  public static void main(String args[])
-  {
+  public static void main(String args[]) {
     StarMain.main(args);
   }
 
-  public static Catalog starCatalog()
-  {
+  public static Catalog starCatalog() {
     Catalog cat = new MemoryCatalog("star", URIUtils.create("star", "."));
 
     try {
@@ -89,7 +70,6 @@ public class StarRules
       cat.addEntry("actors", URIUtils.parseUri("std:actors.star"));
       cat.addEntry("macrosupport", URIUtils.parseUri("std:macrosupport.star"));
       cat.addEntry("quoteable", URIUtils.parseUri("std:quoteable.star"));
-      cat.addEntry("formatter", URIUtils.parseUri("std:formatter.star"));
       cat.addEntry("fileio", URIUtils.parseUri("std:fileio.star"));
       cat.addEntry("dateNtime", URIUtils.parseUri("std:dateNtime.star"));
       cat.addEntry("iterable", URIUtils.parseUri("std:iterable.star"));
@@ -113,9 +93,12 @@ public class StarRules
       cat.addEntry("concurrency", URIUtils.parseUri("std:concurrency.star"));
       // cat.addEntry("custodians", URIUtils.parseUri("std:custodians.star"));
       // cat.addEntry("buffer", URIUtils.parseUri("std:io/buffer.star"));
-      // cat.addEntry("bytebuffer", URIUtils.parseUri("std:io/bytebuffer.star"));
-      // cat.addEntry("primitiveIO", URIUtils.parseUri("std:io/primitiveIO.star"));
-      // cat.addEntry("serialization", URIUtils.parseUri("std:io/serialization.star"));
+      // cat.addEntry("bytebuffer",
+      // URIUtils.parseUri("std:io/bytebuffer.star"));
+      // cat.addEntry("primitiveIO",
+      // URIUtils.parseUri("std:io/primitiveIO.star"));
+      // cat.addEntry("serialization",
+      // URIUtils.parseUri("std:io/serialization.star"));
       cat.addEntry("rdf", URIUtils.parseUri("std:rdf.star"));
       cat.addEntry("worksheet", URIUtils.parseUri("std:worksheet.star"));
     } catch (Exception e) {

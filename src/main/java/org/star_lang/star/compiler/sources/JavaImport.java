@@ -1,25 +1,5 @@
 package org.star_lang.star.compiler.sources;
 
-import org.star_lang.star.compiler.ErrorReport;
-import org.star_lang.star.compiler.ast.ASyntax;
-import org.star_lang.star.compiler.cafe.compile.Types;
-import org.star_lang.star.compiler.cafe.compile.Utils;
-import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.type.Freshen;
-import org.star_lang.star.compiler.type.TypeUtils;
-import org.star_lang.star.compiler.util.Sequencer.SequenceException;
-import org.star_lang.star.compiler.util.StringSequence;
-import org.star_lang.star.data.IFunction;
-import org.star_lang.star.data.type.*;
-import org.star_lang.star.data.value.ResourceURI;
-import org.star_lang.star.operators.Builtin;
-import org.star_lang.star.operators.ICafeBuiltin;
-import org.star_lang.star.operators.arith.runtime.NumericWrapper.*;
-import org.star_lang.star.operators.string.runtime.StringWrappers.Raw2String;
-import org.star_lang.star.operators.string.runtime.StringWrappers.String2Raw;
-import org.star_lang.star.operators.system.runtime.RawWrappers.UnwrapRaw;
-import org.star_lang.star.operators.system.runtime.RawWrappers.WrapRaw;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -28,6 +8,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.star_lang.star.compiler.ErrorReport;
+import org.star_lang.star.compiler.ast.ASyntax;
+import org.star_lang.star.compiler.cafe.compile.Types;
+import org.star_lang.star.compiler.cafe.compile.Utils;
+import org.star_lang.star.compiler.canonical.Application;
+import org.star_lang.star.compiler.canonical.FunctionLiteral;
+import org.star_lang.star.compiler.canonical.IContentExpression;
+import org.star_lang.star.compiler.canonical.IContentPattern;
+import org.star_lang.star.compiler.canonical.ProcedureCallAction;
+import org.star_lang.star.compiler.canonical.TupleTerm;
+import org.star_lang.star.compiler.canonical.ValisAction;
+import org.star_lang.star.compiler.canonical.ValofExp;
+import org.star_lang.star.compiler.canonical.Variable;
+import org.star_lang.star.compiler.canonical.VoidExp;
+import org.star_lang.star.compiler.type.Freshen;
+import org.star_lang.star.compiler.type.TypeUtils;
+import org.star_lang.star.compiler.util.Sequencer.SequenceException;
+import org.star_lang.star.compiler.util.StringSequence;
+import org.star_lang.star.data.IFunction;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeConstraintException;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.operators.Builtin;
+import org.star_lang.star.operators.ICafeBuiltin;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapBool;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapDbl;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapDouble;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapFloat;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapFlt;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapInt;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapInteger;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapLng;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.UnwrapLong;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapBool;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapDbl;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapDouble;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapFloat;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapFlt;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapInt;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapInteger;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapLng;
+import org.star_lang.star.operators.arith.runtime.NumericWrapper.WrapLong;
+import org.star_lang.star.operators.string.runtime.StringWrappers.Raw2String;
+import org.star_lang.star.operators.string.runtime.StringWrappers.String2Raw;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -115,7 +144,7 @@ public class JavaImport {
   }
 
   private static void declareIFunc(SortedMap<String, ICafeBuiltin> funs, Class<? extends IFunction> klass,
-                                   ErrorReport errors) {
+      ErrorReport errors) {
     try {
       String name = klass.getName();
       if (name.contains("$"))
@@ -161,39 +190,39 @@ public class JavaImport {
 
   private static IType javaType(StringSequence str) throws TypeConstraintException, SequenceException {
     switch (str.next().intValue()) {
-      case 'Z':
-        return StandardTypes.rawBoolType;
-      case 'I':
-        return StandardTypes.rawIntegerType;
-      case 'J':
-        return StandardTypes.rawLongType;
-      case 'D':
-        return StandardTypes.rawFloatType;
-      case 'L': {
-        StringBuilder buff = new StringBuilder();
-        for (; str.hasNext() && str.peek() != ';'; )
-          buff.appendCodePoint(str.next());
-        str.next(); // skip over trailing semi
+    case 'Z':
+      return StandardTypes.rawBoolType;
+    case 'I':
+      return StandardTypes.rawIntegerType;
+    case 'J':
+      return StandardTypes.rawLongType;
+    case 'D':
+      return StandardTypes.rawFloatType;
+    case 'L': {
+      StringBuilder buff = new StringBuilder();
+      for (; str.hasNext() && str.peek() != ';';)
+        buff.appendCodePoint(str.next());
+      str.next(); // skip over trailing semi
 
-        String buffContent = buff.toString();
-        if (buffContent.equals(Types.JAVA_STRING_TYPE))
-          return StandardTypes.rawStringType;
-        else if (buffContent.equals(Types.JAVA_INTEGER_TYPE))
-          return StandardTypes.rawIntegerType;
-        else if (buffContent.equals(Types.JAVA_LONG_TYPE))
-          return StandardTypes.rawLongType;
-        else if (buffContent.equals(Types.IVALUE))
-          return new TypeVar();
-        else if (buffContent.equals(Types.URI))
-          return ResourceURI.type;
-        else if (buffContent.equals(Types.QUOTED))
-          return ASyntax.type;
-        else
-          return StandardTypes.rawBinaryType;
-      }
-      case '[':
-      default:
-        throw new TypeConstraintException("cannot handle java type: " + str.prev());
+      String buffContent = buff.toString();
+      if (buffContent.equals(Types.JAVA_STRING_TYPE))
+        return StandardTypes.rawStringType;
+      else if (buffContent.equals(Types.JAVA_INTEGER_TYPE))
+        return StandardTypes.rawIntegerType;
+      else if (buffContent.equals(Types.JAVA_LONG_TYPE))
+        return StandardTypes.rawLongType;
+      else if (buffContent.equals(Types.IVALUE))
+        return new TypeVar();
+      else if (buffContent.equals(Types.URI))
+        return ResourceURI.type;
+      else if (buffContent.equals(Types.QUOTED))
+        return ASyntax.type;
+      else
+        return StandardTypes.rawBinaryType;
+    }
+    case '[':
+    default:
+      throw new TypeConstraintException("cannot handle java type: " + str.prev());
     }
   }
 
@@ -201,6 +230,7 @@ public class JavaImport {
    * Convert a java imported function to a regular one by wrapping:
    * <p>
    * <p>
+   * 
    * <pre>
    * string_ __Fun(integer_)
    * </pre>
@@ -208,6 +238,7 @@ public class JavaImport {
    * -->
    * <p>
    * <p>
+   * 
    * <pre>
    * Fun(I) is wrap_string(__javaFun(unwrap_int(I)))
    * </pre>
@@ -216,7 +247,8 @@ public class JavaImport {
   public static FunctionLiteral javaWrapper(String funName, JavaInfo info, Location loc, ErrorReport errors) {
     ICafeBuiltin builtin = info.getMethods().get(funName);
     if (builtin != null) {
-      // We need to do this carefully because Java's types are not identical to Star's
+      // We need to do this carefully because Java's types are not identical to
+      // Star's
       String javaInvokeSig = builtin.getJavaInvokeSignature();
       StringSequence seq = new StringSequence(javaInvokeSig);
       IType builtinType = builtin.getType();
@@ -246,7 +278,8 @@ public class JavaImport {
           Variable escVar = new Variable(loc, builtinType, javaName(funName));
 
           if (seq.peek() == 'V') {
-            inner = new ValofExp(loc, StandardTypes.unitType, new ProcedureCallAction(loc, escVar, new TupleTerm(loc, eArgs)),
+            inner = new ValofExp(loc, StandardTypes.unitType,
+                new ProcedureCallAction(loc, escVar, new TupleTerm(loc, eArgs)),
                 new ValisAction(loc, new VoidExp(loc)));
             resultType = StandardTypes.unitType;
           } else {
@@ -255,7 +288,7 @@ public class JavaImport {
           }
 
           IType functionType = Freshen.generalizeType(TypeUtils.functionType(argTypes, resultType));
-          return new FunctionLiteral(loc, funName, functionType, args, inner, new Variable[]{escVar});
+          return new FunctionLiteral(loc, funName, functionType, args, inner, new Variable[] { escVar });
         } else {
           errors.reportError("invalid type signature for " + funName, loc);
           return null;
@@ -264,7 +297,7 @@ public class JavaImport {
         errors.reportError("cannot handle type signature for " + funName, loc);
         return null;
       } catch (ImportException e) {
-        errors.reportError("cannot handle type signature for " + funName + "\nbecause " + e.getMessage(), loc);
+ //       errors.reportError("cannot handle type signature for " + funName + "\nbecause " + e.getMessage(), loc);
         return null;
       }
     } else
@@ -276,42 +309,42 @@ public class JavaImport {
     Location loc = var.getLoc();
 
     switch (javaSig.next().intValue()) {
-      case 'Z':
-        return unary(loc, StandardTypes.booleanType, WrapBool.WRAP_BOOL, WrapBool.type(), var);
-      case 'I':
-        return unary(loc, StandardTypes.integerType, WrapInt.WRAP_INT, WrapInt.type(), var);
-      case 'J':
-        return unary(loc, StandardTypes.longType, WrapLng.WRAP_LNG, WrapLng.type(), var);
-      case 'F':
-        return unary(loc, StandardTypes.floatType, WrapFlt.WRAP_FLT, WrapFlt.type(), var);
-      case 'D':
-        return unary(loc, StandardTypes.floatType, WrapDbl.WRAP_DBL, WrapDbl.type(), var);
-      case 'L': {
-        StringBuilder buff = new StringBuilder();
-        for (; javaSig.hasNext() && javaSig.peek() != ';'; )
-          buff.appendCodePoint(javaSig.next());
-        javaSig.next(); // skip over trailing semi
+    case 'Z':
+      return unary(loc, StandardTypes.booleanType, WrapBool.WRAP_BOOL, WrapBool.type(), var);
+    case 'I':
+      return unary(loc, StandardTypes.integerType, WrapInt.WRAP_INT, WrapInt.type(), var);
+    case 'J':
+      return unary(loc, StandardTypes.longType, WrapLng.WRAP_LNG, WrapLng.type(), var);
+    case 'F':
+      return unary(loc, StandardTypes.floatType, WrapFlt.WRAP_FLT, WrapFlt.type(), var);
+    case 'D':
+      return unary(loc, StandardTypes.floatType, WrapDbl.WRAP_DBL, WrapDbl.type(), var);
+    case 'L': {
+      StringBuilder buff = new StringBuilder();
+      for (; javaSig.hasNext() && javaSig.peek() != ';';)
+        buff.appendCodePoint(javaSig.next());
+      javaSig.next(); // skip over trailing semi
 
-        String buffContent = buff.toString();
-        if (buffContent.equals(Types.JAVA_STRING_TYPE))
-          return unary(loc, StandardTypes.stringType, Raw2String.WRAP_STRING, Raw2String.type(), var);
-        else if (buffContent.equals(Types.JAVA_INTEGER_TYPE))
-          return unary(loc, StandardTypes.integerType, WrapInteger.WRAP_INTEGER, WrapInteger.type(), var);
-        else if (buffContent.equals(Types.JAVA_LONG_TYPE))
-          return unary(loc, StandardTypes.longType, WrapLong.WRAP_LONG, WrapLong.type(), var);
-        else if (buffContent.equals(Types.JAVA_FLOAT_TYPE))
-          return unary(loc, StandardTypes.floatType, WrapFloat.WRAP_FLOAT, WrapFloat.type(), var);
-        else if (buffContent.equals(Types.JAVA_DOUBLE_TYPE))
-          return unary(loc, StandardTypes.floatType, WrapDouble.WRAP_DOUBLE, WrapDouble.type(), var);
-        else if (buffContent.equals(Types.IVALUE) || buffContent.equals(Types.URI) || buffContent.equals(Types.QUOTED))
-          return var;
-        else
-          return unary(loc, StandardTypes.binaryType, WrapRaw.WRAP_RAW, WrapRaw.type(), var);
-      }
-      case '[':
-      default:
-        errors.reportError("cannot handle java type: " + javaSig.prev(), loc);
+      String buffContent = buff.toString();
+      if (buffContent.equals(Types.JAVA_STRING_TYPE))
+        return unary(loc, StandardTypes.stringType, Raw2String.WRAP_STRING, Raw2String.type(), var);
+      else if (buffContent.equals(Types.JAVA_INTEGER_TYPE))
+        return unary(loc, StandardTypes.integerType, WrapInteger.WRAP_INTEGER, WrapInteger.type(), var);
+      else if (buffContent.equals(Types.JAVA_LONG_TYPE))
+        return unary(loc, StandardTypes.longType, WrapLong.WRAP_LONG, WrapLong.type(), var);
+      else if (buffContent.equals(Types.JAVA_FLOAT_TYPE))
+        return unary(loc, StandardTypes.floatType, WrapFloat.WRAP_FLOAT, WrapFloat.type(), var);
+      else if (buffContent.equals(Types.JAVA_DOUBLE_TYPE))
+        return unary(loc, StandardTypes.floatType, WrapDouble.WRAP_DOUBLE, WrapDouble.type(), var);
+      else if (buffContent.equals(Types.IVALUE) || buffContent.equals(Types.URI) || buffContent.equals(Types.QUOTED))
+        return var;
+      else
         throw new ImportException("cannot handle java type", loc);
+    }
+    case '[':
+    default:
+      errors.reportError("cannot handle java type: " + javaSig.prev(), loc);
+      throw new ImportException("cannot handle java type", loc);
     }
   }
 
@@ -324,42 +357,42 @@ public class JavaImport {
     Location loc = var.getLoc();
 
     switch (javaSig.next().intValue()) {
-      case 'Z':
-        return unary(loc, StandardTypes.rawBoolType, UnwrapBool.UNWRAP_BOOL, UnwrapBool.type(), var);
-      case 'I':
-        return unary(loc, StandardTypes.rawIntegerType, UnwrapInt.UNWRAP_INT, UnwrapInt.type(), var);
-      case 'J':
-        return unary(loc, StandardTypes.rawLongType, UnwrapLng.UNWRAP_LNG, UnwrapLng.type(), var);
-      case 'F':
-        return unary(loc, StandardTypes.rawFloatType, UnwrapFlt.UNWRAP_FLT, UnwrapFlt.type(), var);
-      case 'D':
-        return unary(loc, StandardTypes.rawFloatType, UnwrapDbl.UNWRAP_DBL, UnwrapDbl.type(), var);
-      case 'L': {
-        StringBuilder buff = new StringBuilder();
-        for (; javaSig.hasNext() && javaSig.peek() != ';'; )
-          buff.appendCodePoint(javaSig.next());
-        javaSig.next(); // skip over trailing semi
+    case 'Z':
+      return unary(loc, StandardTypes.rawBoolType, UnwrapBool.UNWRAP_BOOL, UnwrapBool.type(), var);
+    case 'I':
+      return unary(loc, StandardTypes.rawIntegerType, UnwrapInt.UNWRAP_INT, UnwrapInt.type(), var);
+    case 'J':
+      return unary(loc, StandardTypes.rawLongType, UnwrapLng.UNWRAP_LNG, UnwrapLng.type(), var);
+    case 'F':
+      return unary(loc, StandardTypes.rawFloatType, UnwrapFlt.UNWRAP_FLT, UnwrapFlt.type(), var);
+    case 'D':
+      return unary(loc, StandardTypes.rawFloatType, UnwrapDbl.UNWRAP_DBL, UnwrapDbl.type(), var);
+    case 'L': {
+      StringBuilder buff = new StringBuilder();
+      for (; javaSig.hasNext() && javaSig.peek() != ';';)
+        buff.appendCodePoint(javaSig.next());
+      javaSig.next(); // skip over trailing semi
 
-        String buffContent = buff.toString();
-        if (buffContent.equals(Types.JAVA_STRING_TYPE))
-          return unary(loc, StandardTypes.rawStringType, String2Raw.UNWRAP_STRING, String2Raw.type(), var);
-        else if (buffContent.equals(Types.JAVA_INTEGER_TYPE))
-          return unary(loc, StandardTypes.rawIntegerType, UnwrapInteger.UNWRAP_INTEGER, UnwrapInteger.type(), var);
-        else if (buffContent.equals(Types.JAVA_LONG_TYPE))
-          return unary(loc, StandardTypes.rawLongType, UnwrapLong.UNWRAP_LONG, UnwrapLong.type(), var);
-        else if (buffContent.equals(Types.JAVA_FLOAT_TYPE))
-          return unary(loc, StandardTypes.rawFloatType, UnwrapFloat.UNWRAP_FLOAT, UnwrapFloat.type(), var);
-        else if (buffContent.equals(Types.JAVA_DOUBLE_TYPE))
-          return unary(loc, StandardTypes.rawFloatType, UnwrapDouble.UNWRAP_DOUBLE, UnwrapDouble.type(), var);
-        else if (buffContent.equals(Types.IVALUE) || buffContent.equals(Types.URI) || buffContent.equals(Types.QUOTED))
-          return var;
-        else
-          return unary(loc, StandardTypes.rawBinaryType, UnwrapRaw.UNWRAP_RAW, UnwrapRaw.type(), var);
-      }
-      case '[':
-      default:
-        errors.reportError("cannot handle java type: " + javaSig.prev(), loc);
+      String buffContent = buff.toString();
+      if (buffContent.equals(Types.JAVA_STRING_TYPE))
+        return unary(loc, StandardTypes.rawStringType, String2Raw.UNWRAP_STRING, String2Raw.type(), var);
+      else if (buffContent.equals(Types.JAVA_INTEGER_TYPE))
+        return unary(loc, StandardTypes.rawIntegerType, UnwrapInteger.UNWRAP_INTEGER, UnwrapInteger.type(), var);
+      else if (buffContent.equals(Types.JAVA_LONG_TYPE))
+        return unary(loc, StandardTypes.rawLongType, UnwrapLong.UNWRAP_LONG, UnwrapLong.type(), var);
+      else if (buffContent.equals(Types.JAVA_FLOAT_TYPE))
+        return unary(loc, StandardTypes.rawFloatType, UnwrapFloat.UNWRAP_FLOAT, UnwrapFloat.type(), var);
+      else if (buffContent.equals(Types.JAVA_DOUBLE_TYPE))
+        return unary(loc, StandardTypes.rawFloatType, UnwrapDouble.UNWRAP_DOUBLE, UnwrapDouble.type(), var);
+      else if (buffContent.equals(Types.IVALUE) || buffContent.equals(Types.URI) || buffContent.equals(Types.QUOTED))
+        return var;
+      else
         throw new ImportException("cannot handle java type", loc);
+    }
+    case '[':
+    default:
+      errors.reportError("cannot handle java type: " + javaSig.prev(), loc);
+      throw new ImportException("cannot handle java type", loc);
     }
   }
 

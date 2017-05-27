@@ -11,7 +11,6 @@ import org.star_lang.star.atomic.AtomicCellTests;
 import org.star_lang.star.compiler.computation.ComputationTests;
 import org.star_lang.star.compiler.computation.TaskExpTest;
 import org.star_lang.star.compiler.contracts.ContractTest;
-import org.star_lang.star.compiler.formatting.FormatTest;
 import org.star_lang.star.compiler.library.LibraryTestSuite;
 import org.star_lang.star.compiler.lists.ListTests;
 import org.star_lang.star.compiler.macro.MacroTests;
@@ -56,7 +55,7 @@ import org.star_lang.star.volunteer.VolunteerTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ActorTest.class, ArithTests.class, ArrayTests.class, AtomicCellTests.class, CompilerTest.class,
-    ContractTest.class, DateTests.class, ExternalURITests.class, ForLoopTests.class, FormatTest.class, HelloTest.class,
+    ContractTest.class, DateTests.class, ExternalURITests.class, ForLoopTests.class, HelloTest.class,
     ImportTest.class, JavaImportTest.class, LibraryTestSuite.class, ListTests.class, MacroTests.class, MapTests.class,
     MetaModelTest.class, MiscTests.class, OverloadTests.class, PtnTest.class, PtnTests.class, QueryTest.class,
     QueryTests.class, RdfMacroTest.class, RegexpTests.class, RepositorySuite.class, SequenceTest.class, SpawnTest.class,

@@ -45,8 +45,6 @@ public abstract class Reason implements IConstructor, PrettyPrintable
 {
   public static final String typeLabel = "reason";
   public static final IType type = new TypeExp(typeLabel);
-  public static NoPermission noPermissionEnum = new NoPermission();
-  public static Busy busyEnum = new Busy();
 
   public static class NoPermission extends Reason
   {

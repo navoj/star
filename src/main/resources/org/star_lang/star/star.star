@@ -15,7 +15,6 @@
 
 import base;         -- stuff that is core to all star base
 import validate;     -- Standard validation rules
-import formatter;
 import macrosupport; -- Support for compiled macros
 
 -- Standard macros

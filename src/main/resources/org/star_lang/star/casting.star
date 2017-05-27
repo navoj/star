@@ -40,10 +40,6 @@ public implementation coercion over (string,float) is {
   fun coerce(string(X)) is __string_float(X);
 }
 
-public implementation coercion over (string,binary) is {
-  fun coerce(S) is __string_binary(S);
-}
-
 public implementation coercion over (string,string) is {
   fun coerce(S) is S;
 }
@@ -112,10 +108,6 @@ public implementation coercion over (string,uri) is {
 
 public implementation coercion over (uri,string) is {
   fun coerce(U) is string(__uri2string(U));
-}
-
-public implementation coercion over (binary,string) is {
-  fun coerce(S) is __binary_string(S);
 }
 
 public implementation coercion over (quoted,string) is {

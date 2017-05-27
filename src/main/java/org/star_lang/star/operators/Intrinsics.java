@@ -1,5 +1,11 @@
 package org.star_lang.star.operators;
 
+import java.io.File;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
 import org.star_lang.star.compiler.type.BuiltinInfo;
 import org.star_lang.star.compiler.type.Dict;
@@ -11,35 +17,65 @@ import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IMap;
 import org.star_lang.star.data.ISet;
 import org.star_lang.star.data.IValue;
-import org.star_lang.star.data.type.*;
-import org.star_lang.star.data.value.*;
-import org.star_lang.star.operators.arith.*;
+import org.star_lang.star.data.type.IType;
+import org.star_lang.star.data.type.ITypeDescription;
+import org.star_lang.star.data.type.Location;
+import org.star_lang.star.data.type.StandardTypes;
+import org.star_lang.star.data.type.TypeDescription;
+import org.star_lang.star.data.type.TypeVar;
+import org.star_lang.star.data.value.Array;
+import org.star_lang.star.data.value.BoolWrap;
+import org.star_lang.star.data.value.Cons;
+import org.star_lang.star.data.value.FloatWrap;
+import org.star_lang.star.data.value.IntWrap;
+import org.star_lang.star.data.value.LongWrap;
+import org.star_lang.star.data.value.NTuple;
+import org.star_lang.star.data.value.Option;
+import org.star_lang.star.data.value.Reason;
+import org.star_lang.star.data.value.ResourceURI;
+import org.star_lang.star.data.value.Result;
+import org.star_lang.star.data.value.StringWrap;
+import org.star_lang.star.data.value.VoidWrap;
+import org.star_lang.star.operators.arith.BoolCompare;
+import org.star_lang.star.operators.arith.FloatBinary;
+import org.star_lang.star.operators.arith.FloatCompare;
+import org.star_lang.star.operators.arith.FloatTrig;
+import org.star_lang.star.operators.arith.FloatUnary;
+import org.star_lang.star.operators.arith.IntBinary;
+import org.star_lang.star.operators.arith.IntCompare;
+import org.star_lang.star.operators.arith.IntUnary;
+import org.star_lang.star.operators.arith.IntegerBitString;
+import org.star_lang.star.operators.arith.LongBinary;
+import org.star_lang.star.operators.arith.LongBitString;
+import org.star_lang.star.operators.arith.LongCompare;
+import org.star_lang.star.operators.arith.LongUnary;
+import org.star_lang.star.operators.arith.Number2Number;
+import org.star_lang.star.operators.arith.NumericWrapper;
 import org.star_lang.star.operators.arrays.ArrayOps;
 import org.star_lang.star.operators.assignment.runtime.AtomicCell;
 import org.star_lang.star.operators.assignment.runtime.AtomicInt;
 import org.star_lang.star.operators.assignment.runtime.RefCell;
 import org.star_lang.star.operators.ast.AstOperators;
 import org.star_lang.star.operators.asynchio.AsynchIo;
-import org.star_lang.star.operators.binary.BinaryCoercion;
-import org.star_lang.star.operators.binary.BinaryEquality;
 import org.star_lang.star.operators.general.General;
 import org.star_lang.star.operators.hash.HashTreeOps;
 import org.star_lang.star.operators.misc.MiscOps;
 import org.star_lang.star.operators.resource.ResourceOps;
 import org.star_lang.star.operators.sets.SetOpsDecl;
 import org.star_lang.star.operators.spawn.SpawnOps;
-import org.star_lang.star.operators.string.*;
-import org.star_lang.star.operators.system.BinaryWrappers;
+import org.star_lang.star.operators.string.DateOps;
+import org.star_lang.star.operators.string.DisplayValue;
+import org.star_lang.star.operators.string.KeyGen;
+import org.star_lang.star.operators.string.Number2String;
+import org.star_lang.star.operators.string.RegexpOps;
+import org.star_lang.star.operators.string.String2Number;
+import org.star_lang.star.operators.string.StringCompare;
+import org.star_lang.star.operators.string.StringOps;
+import org.star_lang.star.operators.string.StringWrappers;
 import org.star_lang.star.operators.system.Clock;
 import org.star_lang.star.operators.system.GStopHere;
 import org.star_lang.star.operators.system.SystemUtils;
 import org.star_lang.star.operators.uri.URIOps;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 /*
  * Copyright (c) 2015. Francis G. McCabe
@@ -71,16 +107,16 @@ public class Intrinsics extends Dict {
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.voidType, IValue.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.voidType, Object.class.getCanonicalName()));
     intrinsics.defineType(new CafeTypeDescription(StandardTypes.anyType, IValue.class.getCanonicalName()));
-    intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils
-        .dictionaryType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
-    intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils.setType(new TypeVar())), ISet.class.getCanonicalName()));
+    intrinsics.defineType(new CafeTypeDescription(
+        Freshen.generalizeType(TypeUtils.dictionaryType(new TypeVar(), new TypeVar())), IMap.class.getCanonicalName()));
+    intrinsics.defineType(new CafeTypeDescription(Freshen.generalizeType(TypeUtils.setType(new TypeVar())),
+        ISet.class.getCanonicalName()));
 
     // Define standard types
     VoidWrap.declare(intrinsics);
     EvaluationException.declare(intrinsics);
     BoolWrap.declare(intrinsics);
     StringWrap.declare(intrinsics);
-    BinaryWrap.declare(intrinsics);
     Location.declare(intrinsics);
     ResourceURI.declare(intrinsics);
     RefCell.declare();
@@ -99,7 +135,6 @@ public class Intrinsics extends Dict {
 
     NumericWrapper.declare(intrinsics);
     StringWrappers.declare(intrinsics);
-    BinaryWrappers.declare(intrinsics);
 
     LongBitString.declare(intrinsics);
     IntegerBitString.declare(intrinsics);
@@ -123,8 +158,6 @@ public class Intrinsics extends Dict {
     SetOpsDecl.declare(intrinsics);
     MiscOps.declare(intrinsics);
     Number2Number.declare(intrinsics);
-    BinaryEquality.declare(intrinsics);
-    BinaryCoercion.declare(intrinsics);
     RegexpOps.declare(intrinsics);
     AsynchIo.declare();
     SpawnOps.declare(intrinsics);
@@ -151,18 +184,20 @@ public class Intrinsics extends Dict {
   /**
    * Declare a built-in function to the type context.
    * <p>
-   * Although an instance value is passed to the {@code declareBuiltin} method, this value is NOT
-   * used in actual code. It MUST be the case that a new copy of the passed-in built-in is
-   * sufficient for execution.
+   * Although an instance value is passed to the {@code declareBuiltin} method,
+   * this value is NOT used in actual code. It MUST be the case that a new copy
+   * of the passed-in built-in is sufficient for execution.
    * <p>
    * I.e., the following code fragments MUST be equivalent:
    * <p>
+   * 
    * <pre>
    * XX = builtin.enter(X, Y);
    * </pre>
    * <p>
    * and
    * <p>
+   * 
    * <pre>
    * Class<? extends ICafeBuiltin> klass = builtin.getClass();
    *   ...
@@ -171,7 +206,8 @@ public class Intrinsics extends Dict {
    * XX = nFun.enter(X,Y)
    * </pre>
    *
-   * @param builtin an instance of the built-in function object.
+   * @param builtin
+   *          an instance of the built-in function object.
    */
 
   public void declareBuiltin(ICafeBuiltin builtin) {
@@ -193,7 +229,8 @@ public class Intrinsics extends Dict {
    * Retrieve a built-in operator associated with a given NAME.
    *
    * @param name
-   * @return the built-in function object (if it exists) associated with a given NAME
+   * @return the built-in function object (if it exists) associated with a given
+   *         NAME
    */
 
   public ICafeBuiltin getBuiltinOperator(String name) {
