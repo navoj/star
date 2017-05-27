@@ -28,7 +28,6 @@ import org.star_lang.star.external.ExternalURITests;
 import org.star_lang.star.imports.ImportTest;
 import org.star_lang.star.model.MetaModelTest;
 import org.star_lang.star.patterns.PtnTest;
-import org.star_lang.star.queries.QueryTest;
 import org.star_lang.star.queries.TestUpdate;
 import org.star_lang.star.relations.TestRelations;
 import org.star_lang.star.repository.RepositorySuite;
@@ -57,7 +56,7 @@ import org.star_lang.star.volunteer.VolunteerTest;
 @SuiteClasses({ActorTest.class, ArithTests.class, ArrayTests.class, AtomicCellTests.class, CompilerTest.class,
     ContractTest.class, DateTests.class, ExternalURITests.class, ForLoopTests.class, HelloTest.class,
     ImportTest.class, JavaImportTest.class, LibraryTestSuite.class, ListTests.class, MacroTests.class, MapTests.class,
-    MetaModelTest.class, MiscTests.class, OverloadTests.class, PtnTest.class, PtnTests.class, QueryTest.class,
+    MetaModelTest.class, MiscTests.class, OverloadTests.class, PtnTest.class, PtnTests.class, 
     QueryTests.class, RdfMacroTest.class, RegexpTests.class, RepositorySuite.class, SequenceTest.class, SpawnTest.class,
     StdLibTests.class, StringTests.class, TestRelations.class, TestUpdate.class, TransformerTest.class, SetTests.class,
     TypesResolutionPOCTest.class, ComputationTests.class, TaskExpTest.class, TaskTest.class, TypeTests.class, TypeJTest.class,
