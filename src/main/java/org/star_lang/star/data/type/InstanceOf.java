@@ -3,7 +3,7 @@ package org.star_lang.star.data.type;
 import java.util.Collection;
 
 import org.star_lang.star.compiler.operator.Operators;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.Subsume;

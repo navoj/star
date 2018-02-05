@@ -4,7 +4,7 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.canonical.MethodVariable;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.transform.Over;
 import org.star_lang.star.compiler.util.*;
 import org.star_lang.star.data.type.*;

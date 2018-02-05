@@ -2,7 +2,7 @@ package org.star_lang.star.operators.string.runtime;
 
 import java.util.Map.Entry;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;

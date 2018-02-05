@@ -6,7 +6,7 @@ import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.AApply;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.Name;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.data.IList;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.type.StandardTypes;

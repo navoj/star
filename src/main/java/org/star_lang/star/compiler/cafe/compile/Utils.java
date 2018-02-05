@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.StringIterator;
 import org.star_lang.star.compiler.util.StringSequence;
 

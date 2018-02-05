@@ -3,7 +3,7 @@ package org.star_lang.star.compiler;
 import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.TypeContracts;
 import org.star_lang.star.compiler.type.TypeUtils;
@@ -1778,21 +1778,21 @@ public class CompilerUtils {
   }
 
   public static IAbstract defStatement(Location loc, IAbstract lhs, IAbstract rhs) {
-    return Abstract.unary(loc, StandardNames.DEF, Abstract.binary(loc, StandardNames.IS, lhs, rhs));
+    return Abstract.binary(loc, StandardNames.EQUAL, lhs, rhs);
   }
 
   public static boolean isIsStatement(IAbstract stmt) {
     stmt = stripVisibility(stmt);
 
-    return Abstract.isUnary(stmt, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.IS);
+    return Abstract.isBinary(stmt, StandardNames.EQUAL);
   }
 
   public static IAbstract isStmtPattern(IAbstract stmt) {
     assert isIsStatement(stmt);
     stmt = stripVisibility(stmt);
 
-    if (Abstract.isUnary(stmt, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.IS))
-      return Abstract.binaryLhs(Abstract.unaryArg(stmt));
+    if (Abstract.isBinary(stmt, StandardNames.EQUAL))
+      return Abstract.binaryLhs(stmt);
     else
       return null;
   }
@@ -1801,18 +1801,18 @@ public class CompilerUtils {
     assert isIsStatement(stmt);
     stmt = stripVisibility(stmt);
 
-    if (Abstract.isUnary(stmt, StandardNames.DEF) && Abstract.isBinary(Abstract.unaryArg(stmt), StandardNames.IS))
-      return Abstract.binaryRhs(Abstract.unaryArg(stmt));
+    if (isIsStatement(stmt))
+      return Abstract.binaryRhs(stmt);
     else
       return null;
   }
 
   public static IAbstract varIsDeclaration(Location loc, IAbstract ptn, IAbstract exp) {
-    return Abstract.unary(loc, StandardNames.DEF, Abstract.binary(loc, StandardNames.IS, ptn, exp));
+    return Abstract.binary(loc, StandardNames.EQUAL, ptn, exp);
   }
 
   public static boolean isIsForm(IAbstract term) {
-    return Abstract.isBinary(term, StandardNames.IS);
+    return Abstract.isBinary(term, StandardNames.EQUAL);
   }
 
   public static IAbstract isFormPattern(IAbstract term) {

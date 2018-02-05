@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.canonical.Variable;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;

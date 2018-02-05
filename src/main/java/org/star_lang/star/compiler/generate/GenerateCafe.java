@@ -6,7 +6,7 @@ import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.cafe.CafeSyntax;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.BindingKind;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.*;

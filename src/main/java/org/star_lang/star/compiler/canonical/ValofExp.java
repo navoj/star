@@ -3,7 +3,7 @@ package org.star_lang.star.compiler.canonical;
 import java.util.Iterator;
 import java.util.List;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.SingleIterator;

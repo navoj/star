@@ -10,7 +10,7 @@ import java.util.SortedMap;
 import org.star_lang.star.compiler.cafe.compile.ISpec;
 import org.star_lang.star.compiler.cafe.compile.SrcSpec;
 import org.star_lang.star.compiler.cafe.compile.Utils;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.data.type.ConstructorSpecifier;

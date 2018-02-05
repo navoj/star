@@ -1,6 +1,6 @@
 package org.star_lang.star.operators.string;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.transform.PrimitiveOverloader;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.type.IType;

@@ -1,6 +1,6 @@
 package org.star_lang.star.compiler.type;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 
 /*

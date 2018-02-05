@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.star_lang.star.StarCompiler;
 import org.star_lang.star.compiler.operator.Operators;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.LayeredHash;
 import org.star_lang.star.compiler.util.LayeredMap;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;

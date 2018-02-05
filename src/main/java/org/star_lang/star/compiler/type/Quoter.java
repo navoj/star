@@ -3,7 +3,7 @@ package org.star_lang.star.compiler.type;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.StringUtils;

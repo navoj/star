@@ -1,4 +1,4 @@
-package org.star_lang.star.compiler.standard;
+package org.star_lang.star.compiler.operator;
 
 import java.util.Collection;
 import java.util.Set;
@@ -66,10 +66,10 @@ public class StandardNames
   public static final String GREATER = graphic(">");
   public static final String GREATER_EQUAL = graphic(">=");
 
-  public static final String AND = keyword("and");
-  public static final String OR = keyword("or");
-  public static final String NOT = keyword("not");
-  public static final String IMPLIES = keyword("implies");
+  public static final String AND = keyword("&&");
+  public static final String OR = keyword("||");
+  public static final String NOT = keyword("\\+");
+  public static final String IMPLIES = keyword("*>");
 
   public static final String WHEN = keyword("when");
 
@@ -82,7 +82,6 @@ public class StandardNames
   public static final String HASHCODE = standard("hashCode");
   public static final String DICTIONARY = standard("dictionary");
   public static final String SET = standard("set");
-  public static final String ANY = keyword("any");
   public static final String VOID = standard("void");
 
   public static final String COMPUTATION = keyword(Computations.COMPUTATION);
@@ -151,11 +150,6 @@ public class StandardNames
   public static final String SUBSTITUTE = keyword("substitute");
 
   public static final String REF = keyword("ref");
-  public static final String VAR = keyword("var");
-  public static final String DEF = keyword("def");
-  public static final String FUN = keyword("fun");
-  public static final String PRC = keyword("prc");
-  public static final String PTN = keyword("ptn");
 
   public static final String SHRIEK = graphic("!");
 

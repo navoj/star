@@ -13,7 +13,7 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.StringLiteral;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.FileUtil;
 import org.star_lang.star.data.type.Location;
 import org.star_lang.star.data.value.ResourceURI;

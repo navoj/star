@@ -25,7 +25,7 @@ import org.star_lang.star.compiler.ast.MacroError;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.macrocompile.MacroDescriptor.MacroRuleType;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.GenSym;

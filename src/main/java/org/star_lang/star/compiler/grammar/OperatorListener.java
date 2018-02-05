@@ -1,7 +1,7 @@
 package org.star_lang.star.compiler.grammar;
 
 import org.star_lang.star.compiler.grammar.Token.TokenType;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 
 
 /*

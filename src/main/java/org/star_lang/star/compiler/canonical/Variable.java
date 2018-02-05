@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.Utils;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.transform.Over;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.Freshen;

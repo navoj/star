@@ -11,7 +11,7 @@ import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.ast.TypeAttribute;
 import org.star_lang.star.compiler.cafe.compile.Utils;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.data.IList;

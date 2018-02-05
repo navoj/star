@@ -14,7 +14,7 @@ package org.star_lang.star.compiler.canonical;
  * permissions and limitations under the License.
  */
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.data.type.Location;
 

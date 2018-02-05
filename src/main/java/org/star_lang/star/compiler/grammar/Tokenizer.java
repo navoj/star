@@ -3,7 +3,7 @@ package org.star_lang.star.compiler.grammar;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.grammar.Token.TokenType;
 import org.star_lang.star.compiler.operator.Operators;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.Pair;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.type.Location;

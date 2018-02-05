@@ -7,7 +7,7 @@ import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.FreeVariables;
 import org.star_lang.star.compiler.canonical.*;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.DictionaryChecker;
 import org.star_lang.star.compiler.type.TypeChecker;

@@ -7,7 +7,7 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.ComboIterable;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.GenSym;
@@ -538,7 +538,7 @@ public class DisplayBuilder {
   }
 
   private static boolean supportsDisplay(IAbstract type) {
-    return !CompilerUtils.isProgramType(type) && !Abstract.isName(type, StandardNames.ANY);
+    return !CompilerUtils.isProgramType(type);
   }
 
 }

@@ -12,7 +12,7 @@ import org.star_lang.star.compiler.ast.IntegerLiteral;
 import org.star_lang.star.compiler.ast.Name;
 import org.star_lang.star.compiler.ast.StringLiteral;
 import org.star_lang.star.compiler.macrocompile.MacroCompiler;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.GenSym;
 import org.star_lang.star.compiler.util.Wrapper;
@@ -402,7 +402,7 @@ public class QuoteBuilder
 
   private static boolean supportsQuoting(IAbstract type)
   {
-    return !CompilerUtils.isProgramType(type) && !Abstract.isName(type, StandardNames.ANY);
+    return !CompilerUtils.isProgramType(type);
   }
 
   /**

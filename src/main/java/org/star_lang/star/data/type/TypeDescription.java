@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.star_lang.star.compiler.cafe.type.ICafeConstructorSpecifier;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.Freshen;

@@ -77,7 +77,7 @@ import org.star_lang.star.compiler.canonical.Variable;
 import org.star_lang.star.compiler.canonical.VoidExp;
 import org.star_lang.star.compiler.canonical.WherePattern;
 import org.star_lang.star.compiler.canonical.WhileAction;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.Freshen;
 import org.star_lang.star.compiler.type.TypeChecker;

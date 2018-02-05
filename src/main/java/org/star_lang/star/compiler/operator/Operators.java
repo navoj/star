@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.ast.*;
 import org.star_lang.star.compiler.grammar.Tokenizer;
-import org.star_lang.star.compiler.standard.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.PrettyPrintable;
 import org.star_lang.star.compiler.util.StringUtils;
@@ -100,12 +99,6 @@ public class Operators implements PrettyPrintable {
 
     definePrefix(StandardNames.CONTRACT, 1300);
     definePrefix(StandardNames.IMPLEMENTATION, 1300);
-
-    definePrefix(StandardNames.DEF, 1300);
-    definePrefix(StandardNames.VAR, 1300);
-    definePrefix(StandardNames.FUN, 1300);
-    definePrefix(StandardNames.PRC, 1300);
-    definePrefix(StandardNames.PTN, 1300);
 
     definePrefix(StandardNames.JAVA, 1300);
     definePrefix(StandardNames.OPEN, 1300);

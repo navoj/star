@@ -2,7 +2,7 @@ package org.star_lang.star.data.type;
 
 import java.util.Map.Entry;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.IValue;
 import org.star_lang.star.data.value.NTuple;

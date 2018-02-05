@@ -41,7 +41,7 @@ import org.star_lang.star.compiler.canonical.NFA.CharClassNFA;
 import org.star_lang.star.compiler.canonical.NFA.Disjunct;
 import org.star_lang.star.compiler.canonical.NFA.Sequence;
 import org.star_lang.star.compiler.canonical.NFA.StarNFA;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.transform.MatchCompiler.Generate;
 import org.star_lang.star.compiler.type.Dictionary;
 import org.star_lang.star.compiler.type.TypeChecker;

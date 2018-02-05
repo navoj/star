@@ -2,7 +2,7 @@ package org.star_lang.star.compiler.canonical;
 
 import java.util.Collection;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.DisplayType;
 import org.star_lang.star.compiler.type.Visibility;
 import org.star_lang.star.compiler.util.FixedList;

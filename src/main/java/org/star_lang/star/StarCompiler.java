@@ -14,7 +14,7 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.grammar.OpGrammar;
 import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.sources.MetaRules;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.ApplicationProperties;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IValue;

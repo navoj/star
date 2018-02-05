@@ -13,7 +13,7 @@ import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.cafe.compile.Types;
 import org.star_lang.star.compiler.sources.JavaImport;
 import org.star_lang.star.compiler.sources.JavaInfo;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.data.type.ITypeContext;
 import org.star_lang.star.data.value.ResourceURI;
 import org.star_lang.star.resource.URIUtils;

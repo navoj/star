@@ -20,7 +20,7 @@ import org.star_lang.star.compiler.sources.JavaImport;
 import org.star_lang.star.compiler.sources.JavaInfo;
 import org.star_lang.star.compiler.sources.NestedBuiltin;
 import org.star_lang.star.compiler.sources.Pkg;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.transform.*;
 import org.star_lang.star.compiler.transform.Dependencies.DependencyResults;
 import org.star_lang.star.compiler.util.*;

@@ -2,7 +2,7 @@ package org.star_lang.star.operators.arrays.runtime;
 
 import java.util.Iterator;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.EvaluationException;
 import org.star_lang.star.data.IArray;

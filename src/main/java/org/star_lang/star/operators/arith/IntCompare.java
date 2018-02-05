@@ -8,7 +8,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.star_lang.star.compiler.cafe.compile.HWM;
 import org.star_lang.star.compiler.cafe.compile.InlinePredicate;
 import org.star_lang.star.compiler.cafe.compile.Sense;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.transform.PrimitiveOverloader;
 import org.star_lang.star.compiler.type.TypeUtils;
 import org.star_lang.star.data.type.IType;

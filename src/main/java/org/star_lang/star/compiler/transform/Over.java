@@ -37,7 +37,7 @@ import org.star_lang.star.compiler.canonical.Resolved;
 import org.star_lang.star.compiler.canonical.VarDeclaration;
 import org.star_lang.star.compiler.canonical.VarEntry;
 import org.star_lang.star.compiler.canonical.Variable;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.ContractDependencies;
 import org.star_lang.star.compiler.type.DictInfo;
 import org.star_lang.star.compiler.type.Dictionary;

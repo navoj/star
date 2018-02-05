@@ -31,7 +31,7 @@ import org.star_lang.star.compiler.macrocompile.MacroCompiler;
 import org.star_lang.star.compiler.operator.Operators;
 import org.star_lang.star.compiler.sources.MetaRules;
 import org.star_lang.star.compiler.sources.Pkg;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.TypeChecker;
 import org.star_lang.star.compiler.type.Visibility;
 import org.star_lang.star.compiler.wff.WffEngine;

@@ -15,7 +15,7 @@ import org.star_lang.star.compiler.cafe.compile.CafeManifest;
 import org.star_lang.star.compiler.cafe.compile.ClassRoot;
 import org.star_lang.star.compiler.cafe.compile.Utils;
 import org.star_lang.star.compiler.sources.PackageGrapher;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.ApplicationProperties;
 import org.star_lang.star.compiler.util.Instrument;
 import org.star_lang.star.compiler.util.StringUtils;

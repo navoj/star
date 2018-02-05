@@ -7,7 +7,7 @@ import org.star_lang.star.compiler.ast.Abstract;
 import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.canonical.IContentExpression;
 import org.star_lang.star.compiler.canonical.MethodVariable;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.operators.general.runtime.GeneralEq;
 
 

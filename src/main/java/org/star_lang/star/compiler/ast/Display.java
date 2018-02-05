@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.star_lang.star.compiler.CompilerUtils;
 import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.operator.OpFormAttribute;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.PrettyPrintDisplay;
 import org.star_lang.star.compiler.util.StringUtils;
 import org.star_lang.star.data.IList;

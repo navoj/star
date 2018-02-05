@@ -16,7 +16,7 @@ import org.star_lang.star.compiler.cafe.Names;
 import org.star_lang.star.compiler.cafe.type.CafeConstructor;
 import org.star_lang.star.compiler.cafe.type.CafeRecordSpecifier;
 import org.star_lang.star.compiler.cafe.type.CafeTypeDescription;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.Freshen;
 import org.star_lang.star.compiler.type.Refresher;
 import org.star_lang.star.compiler.type.TypeUtils;

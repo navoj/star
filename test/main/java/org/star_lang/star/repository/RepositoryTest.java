@@ -17,7 +17,7 @@ import org.star_lang.star.code.repository.DirectoryRepository;
 import org.star_lang.star.code.repository.RepositoryException;
 import org.star_lang.star.compiler.ErrorReport;
 import org.star_lang.star.compiler.SRTest;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.ApplicationProperties;
 import org.star_lang.star.compiler.util.FileUtil;
 import org.star_lang.star.compiler.util.TemplateString;

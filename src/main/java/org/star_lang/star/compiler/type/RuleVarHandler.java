@@ -7,7 +7,7 @@ import org.star_lang.star.compiler.ast.IAbstract;
 import org.star_lang.star.compiler.canonical.ICondition;
 import org.star_lang.star.compiler.canonical.Shriek;
 import org.star_lang.star.compiler.canonical.Variable;
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.type.TypeChecker.PtnVarHandler;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.GenSym;

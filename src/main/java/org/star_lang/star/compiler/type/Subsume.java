@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
-import org.star_lang.star.compiler.standard.StandardNames;
+import org.star_lang.star.compiler.operator.StandardNames;
 import org.star_lang.star.compiler.util.AccessMode;
 import org.star_lang.star.compiler.util.FixedList;
 import org.star_lang.star.compiler.util.Pair;
